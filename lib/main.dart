@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/color_schemes.dart';
 import 'package:legwork/features/auth/presentation/screens/login_screen.dart';
 import 'package:legwork/features/onboarding/data/onboarding_repo.dart';
 
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: lightMode,
       home: isOnboardingComplete
           ? const LoginScreen()
           : Onboarding(

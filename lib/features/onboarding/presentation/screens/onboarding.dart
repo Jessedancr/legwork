@@ -3,9 +3,10 @@ import 'package:legwork/features/onboarding/domain/onboarding_status_check.dart'
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../widgets/onboard_button.dart';
+import '../widgets/page_indicator.dart';
 import 'onboarding_screen2.dart';
 import 'onboarding_screen3.dart';
-import 'welcome_screen1.dart';
+import 'onboarding_screen1.dart';
 
 class Onboarding extends StatefulWidget {
   final OnboardingStatusCheck onboardingStatusCheck;
@@ -43,30 +44,23 @@ class _OnboardingState extends State<Onboarding> {
               });
             },
             children: const [
-              WelcomeScreen1(),
+              OnboardingScreen1(),
               OnboardingScreen2(),
               OnboardingScreen3()
             ],
           ),
 
           // Indicator
-          Container(
-            alignment: const Alignment(0, 0.75),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+          Positioned(
+            bottom: 10.0,
+            left: 40.0,
+            right: 40.0,
+            child: Column(
+              //mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Skip button
-                OnboardButton(
-                  buttonText: 'SKIP',
-                  onPressed: () => pageController.jumpToPage(2),
-                ),
-
                 // Indicator
-                SmoothPageIndicator(
-                  effect: const SwapEffect(),
-                  controller: pageController,
-                  count: 3,
-                ),
+                PageIndicator(pageController: pageController),
+                const SizedBox(height: 10),
 
                 // GET STARTED OR NEXT button
                 isLastPage
@@ -82,7 +76,7 @@ class _OnboardingState extends State<Onboarding> {
                         },
                       )
                     : OnboardButton(
-                        buttonText: 'NEXT',
+                        buttonText: 'Next',
                         onPressed: () {
                           pageController.nextPage(
                             duration: const Duration(milliseconds: 500),

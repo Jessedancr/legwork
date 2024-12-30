@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/glass_box.dart';
 
-class OnboardingScreen3 extends StatelessWidget {
-  const OnboardingScreen3({
+class OnboardingScreen1 extends StatelessWidget {
+  const OnboardingScreen1({
     super.key,
   });
 
@@ -14,18 +14,18 @@ class OnboardingScreen3 extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
+    // RETURNED SCAFFOLD
     return Scaffold(
-      backgroundColor: Colors.grey[500],
       // Image
       body: Container(
         height: screenHeight,
         width: screenWidth,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
             filterQuality: FilterQuality.high,
             image: AssetImage(
-              'images/OnboardingImages/onboarding_image3.png',
+              'images/OnboardingImages/onboarding_image1.jpg',
             ),
           ),
         ),
@@ -39,7 +39,7 @@ class OnboardingScreen3 extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Safe and Secure Payments',
+                    'Welcome To Legwork!',
                     style: GoogleFonts.robotoSlab(
                       color: Colors.white,
                       fontSize: 24,
@@ -54,7 +54,7 @@ class OnboardingScreen3 extends StatelessWidget {
                       vertical: 10.0,
                     ),
                     child: Text(
-                      'Get swift payments on every dance gig',
+                      'Empowering Nigerian dancers: Join the platform that puts your talents to work',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.robotoCondensed(
                         color: Colors.white,
