@@ -12,9 +12,14 @@ import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/onboarding/domain/onboarding_status_check.dart';
 import 'features/onboarding/presentation/screens/onboarding.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 void main() async {
   // This is required in order to use async in main
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load .env file
+  await dotenv.load(fileName: ".env");
 
   // Firebase setup
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
