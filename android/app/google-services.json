@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "725137144668",
+    "project_id": "legwork-jessedancr",
+    "storage_bucket": "legwork-jessedancr.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725137144668:android:8f915abb9fed49520e1f99",
+        "android_client_info": {
+          "package_name": "com.example.legwork"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZpwFiBEg0onTH1lEsxHP0WZIPj6r5jnQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

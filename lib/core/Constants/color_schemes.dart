@@ -11,3 +11,10 @@ ThemeData lightMode = ThemeData(
     surface: Color(0xff8B4513), // Warm brown
   ),
 );
+
+ThemeData seedScheme = ThemeData(
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color.fromARGB(255, 30, 11, 64),
+     brightness: Brightness.light,
+  ),
+);

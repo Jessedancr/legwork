@@ -72,7 +72,8 @@ class _OnboardingState extends State<Onboarding> {
                           if (!mounted) return;
 
                           // Navigate to the LOGIN SCREEN
-                          Navigator.of(context).pushReplacementNamed('/login');
+                          Navigator.of(context)
+                              .pushReplacementNamed('/acctType');
                         },
                       )
                     : OnboardButton(
