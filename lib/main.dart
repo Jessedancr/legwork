@@ -1,13 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/color_schemes.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/screens/account_type_or_register.dart';
 import 'package:legwork/features/auth/presentation/screens/account_type_screen.dart';
 import 'package:legwork/features/onboarding/data/onboarding_repo.dart';
 import 'package:legwork/firebase_options.dart';
+import 'package:provider/provider.dart';
 
+import 'features/auth/domain/Repos/auth_repo.dart';
 import 'features/auth/presentation/screens/client_sign_up_screen.dart';
 import 'features/auth/presentation/screens/dancer_sign_up_screen.dart';
+import 'features/auth/presentation/screens/dancers_home_screen.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/onboarding/domain/onboarding_status_check.dart';
 import 'features/onboarding/presentation/screens/onboarding.dart';
@@ -34,15 +39,28 @@ void main() async {
   final isOnboardingComplete =
       await onboardingStatusCheck.isOnboardingCompleteCall();
 
-  runApp(MyApp(
-    isOnboardingComplete: isOnboardingComplete,
-    onboardingStatusCheck: onboardingStatusCheck,
-  ));
+  // Instance of auth repo
+  final authRepo = AuthRepoImpl();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => MyAuthProvider(authRepo: authRepo),
+        ),
+      ],
+      child: MyApp(
+        onboardingStatusCheck: onboardingStatusCheck,
+        isOnboardingComplete: isOnboardingComplete,
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final OnboardingStatusCheck onboardingStatusCheck;
   final bool isOnboardingComplete;
+
   const MyApp({
     super.key,
     required this.onboardingStatusCheck,
@@ -64,6 +82,7 @@ class MyApp extends StatelessWidget {
         '/loginScreen': (context) => LoginScreen(),
         '/clientSignUpScreen': (context) => ClientSignUpScreen(),
         '/dancerSignUpScreen': (context) => DancerSignUpScreen(),
+        '/dancersHomeScreen' : (context) => DancersHomeScreen(),
       },
     );
   }

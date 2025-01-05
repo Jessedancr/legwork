@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+
 import 'package:legwork/features/auth/presentation/widgets/auth_textfield.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/auth_button.dart';
+import 'package:dartz/dartz.dart' hide State;
 
 //TODO: PROPERLY BUILD OUT THE UI ONCE DONE INTEGRATING WITH FIREBASE
 
 class DancerSignUpScreen extends StatefulWidget {
-  const DancerSignUpScreen({super.key});
+  const DancerSignUpScreen({
+    super.key,
+  });
 
   @override
   State<DancerSignUpScreen> createState() => _DancerSignUpScreenState();
 }
 
 class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
-  // Controllers
+  // CONTROLLERS
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -21,8 +28,47 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
+  final TextEditingController danceStylesController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    // Auth Provider
+    var authProvider = Provider.of<MyAuthProvider>(context);
+
+    // Function to sign dancer in
+    void dancerSignUpFunction() async {
+      try {
+        final result = await authProvider.dancerSignUpFunction(
+          firstName: firstNameController.text,
+          lastName: lastNameController.text,
+          username: usernameController.text,
+          email: emailController.text,
+          phoneNumber: int.parse(phoneNumberController.text),
+          password: pwController.text,
+          danceStyles: danceStylesController.text.split(','),
+        );
+
+        result.fold(
+          (fail) {
+            // Handle failure
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(fail.toString())),
+            );
+          },
+          (user) {
+            // Handle success
+            debugPrint('Sign-up successful: ${user.username}');
+            Navigator.of(context).pushNamed('/dancersHomeScreen');
+          },
+        );
+      } catch (e) {
+        debugPrint('SIGN-UP ERROR: $e');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+
+    // RETURNED SCAFFOLD
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -62,6 +108,14 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               ),
               const SizedBox(height: 10),
 
+              // Dance styles textfield
+              AuthTextfield(
+                controller: danceStylesController,
+                hintText: 'Dance styles',
+                obscureText: false,
+              ),
+              const SizedBox(height: 10),
+
               // Email textfield
               AuthTextfield(
                 controller: emailController,
@@ -97,7 +151,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               // Sign up button
               AuthButton(
                 buttonText: 'Sign up',
-                onPressed: () {},
+                onPressed: dancerSignUpFunction,
               )
             ],
           ),
