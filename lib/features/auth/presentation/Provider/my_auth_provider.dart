@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
+import 'package:legwork/features/auth/domain/BusinessLogic/login_business_logic.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 import '../../domain/BusinessLogic/sign_up_business_logic.dart';
@@ -11,16 +13,18 @@ class MyAuthProvider extends ChangeNotifier {
 
   MyAuthProvider({required this.authRepo});
 
-  // Sign up function
-  Future<Either<String, DancerEntity>> dancerSignUpFunction({
+  /// USER SIGN UP METHOD
+  Future<Either<String, dynamic>> userSignUp({
     required String firstName,
     required String lastName,
     required String username,
     required String email,
     required int phoneNumber,
     required String password,
-    required List<String> danceStyles,
-    dynamic portfolio,
+    required UserType userType,
+    List<String>? danceStyles, // for dancers
+    dynamic portfolio, // for dancers
+    String? organisationName, // for clients
   }) async {
     SignUpBusinessLogic signUpBusinessLogic =
         SignUpBusinessLogic(authRepo: authRepo);
@@ -37,7 +41,10 @@ class MyAuthProvider extends ChangeNotifier {
         email: email,
         phoneNumber: phoneNumber,
         password: password,
+        userType: userType,
         danceStyles: danceStyles,
+        portfolio: portfolio,
+        organizationName: organisationName,
       );
 
       isLoading = false;
@@ -47,18 +54,93 @@ class MyAuthProvider extends ChangeNotifier {
       return result.fold((fail) {
         debugPrint(fail);
         return Left(fail);
-      }, (user) {
-        debugPrint('user created: $user');
+      }, (userEntity) {
+        debugPrint('user created: $userEntity');
+        if (userType == UserType.dancer) {
+          return Right(
+            DancerEntity(
+              firstName: firstName,
+              lastName: lastName,
+              username: username,
+              email: email,
+              password: password,
+              phoneNumber: phoneNumber,
+              danceStyles: danceStyles!,
+              portfolio: portfolio,
+            ),
+          );
+        } else {
+          return Right(
+            ClientEntity(
+              firstName: firstName,
+              lastName: lastName,
+              username: username,
+              email: email,
+              phoneNumber: phoneNumber,
+              password: password,
+              organisationName: organisationName,
+            ),
+          );
+        }
+      });
+    } catch (e) {
+      debugPrint('Error with auth provider $e');
+      isLoading = false;
+      notifyListeners();
+      return Left('Omo some Error occured with auth provider $e');
+    }
+  }
+
+  /// USER LOGIN FUNCTION
+  Future<Either<String, dynamic>> userlogin({
+    required String email,
+    required String password,
+    required UserType userType,
+    String? firstName,
+    String? lastName,
+    String? username,
+    int? phoneNumber,
+    List<String>? danceStyles, // for dancers
+    dynamic portfolio, // for dancers,
+    String? organisationName, // for clients
+  }) async {
+    LoginBusinessLogic loginBusinessLogic =
+        LoginBusinessLogic(authRepo: authRepo);
+
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final result = await loginBusinessLogic.loginExecute(
+        email: email,
+        password: password,
+        userType: userType,
+      );
+
+      return result.fold((fail) => Left(fail), (userEntity) {
+        if (userType == UserType.dancer) {
+          return Right(
+            DancerEntity(
+              email: email,
+              password: password,
+              firstName: firstName ?? '',
+              lastName: lastName ?? '',
+              username: username ?? '',
+              phoneNumber: phoneNumber ?? 0,
+              danceStyles: danceStyles ?? [],
+              portfolio: portfolio,
+            ),
+          );
+        }
         return Right(
-          DancerEntity(
-            firstName: firstName,
-            lastName: lastName,
-            username: username,
+          ClientEntity(
+            firstName: firstName ?? '',
+            lastName: lastName ?? '',
+            username: username ?? '',
             email: email,
+            phoneNumber: phoneNumber ?? 0,
             password: password,
-            phoneNumber: phoneNumber,
-            danceStyles: danceStyles,
-            portfolio: portfolio,
+            organisationName: organisationName,
           ),
         );
       });

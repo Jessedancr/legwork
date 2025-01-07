@@ -5,35 +5,49 @@ import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Data/Models/user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  // Dancer Sign up method
-  Future<Either<Fail, DancerModel>> dancerSignUp({
+  /// DANCER SIGN UP METHOD
+  Future<Either<String, dynamic>> dancerSignUp({
     required String firstName,
     required String lastName,
     required String username,
     required String email,
     required int phoneNumber,
     required String password,
-    required List<dynamic> danceStyles
+    List<dynamic>? danceStyles,
+    dynamic portfolio,
   });
 
-  // Client Sign up method
+  /// CLIENT SIGN UP METHOD
+
+  /// USER LOGIN METHOD
+  Future<Either<String, dynamic>> userLogin({
+    required String email,
+    required String password,
+  });
 }
+
+/**
+ * CONCRETE IMPLEMENTATION
+ */
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // Instance of firebase auth and firestore
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
-  /// DANCER SIGN IN METHOD
+  /// USER SIGN IN METHOD
+  // TODO: MAKE PORTFOLIO A MAP
   @override
-  Future<Either<Fail, DancerModel>> dancerSignUp({
+  Future<Either<String, dynamic>> dancerSignUp({
     required String firstName,
     required String lastName,
     required String username,
     required String email,
     required int phoneNumber,
     required String password,
-    required List<dynamic> danceStyles,
+    List<dynamic>? danceStyles, // for dancers
+    String? organisationName, // for clients
+    dynamic portfolio, // For dancers
   }) async {
     try {
       // Sign dancer in
@@ -46,10 +60,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // Check if user is null
       if (user == null) {
-        return Left((Fail('User not found')));
+        return const Left('User not found');
       }
 
       final uid = user.uid;
+
+      if (organisationName != null) {
+        // Add organisation name to client document
+        final clientData = {
+          'firstName': firstName,
+          'lastName': lastName,
+          'username': username,
+          'organisationName': organisationName,
+          'password': password,
+          'email': email,
+          'phoneNumber': phoneNumber,
+        };
+
+        await db.collection('clients').doc(uid).set(clientData);
+        DocumentSnapshot userDoc =
+            await db.collection('clients').doc(uid).get();
+        final clientModel = ClientModel.fromDocument(userDoc);
+        return Right(clientModel);
+      }
 
       // Save additional information to Firestore
       final dancerData = {
@@ -59,7 +92,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'email': email,
         'phoneNumber': phoneNumber,
         'danceStyles': danceStyles,
-        'portfolio': '', // Default to empty string
+        'portfolio': portfolio,
         'password': password,
       };
 
@@ -72,10 +105,59 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final dancerModel = DancerModel.fromDocument(userDoc);
       return Right(dancerModel);
     } on FirebaseAuthException catch (e) {
-      debugPrint("Firebase Login error: $e");
-      return Left(Fail(e.message ?? 'Unexpected error'));
+      debugPrint("Firebase Signup error: $e");
+      return Left(e.message ?? 'Unexpected error');
     }
   }
 
-  /// CLIENT SIGN UP METHOD
+  /// USER LOGIN METHOD
+  @override
+  Future<Either<String, dynamic>> userLogin({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      // sign dancer in using the sign in method in firebase auth
+      final userCred = await auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      final user = userCred.user;
+
+      // Check if user is null or if user exists
+      if (user == null) {
+        return const Left('User not found');
+      }
+
+      final uid = user.uid; // get uid of current user
+
+      // the Future.wait method checks both collections at the same time
+      final results = await Future.wait([
+        db.collection('dancers').doc(uid).get(),
+        db.collection('clients').doc(uid).get()
+      ]);
+      final dancersDoc = results[0];
+      final clientsDoc = results[1];
+
+      // Check if the document is in the dancers collection
+      if (dancersDoc.exists) {
+        debugPrint('Dancer Document: ${dancersDoc.data()}');
+
+        // convert firebase doc to user profile so we can use in the app
+        final dancerModel = DancerModel.fromDocument(dancersDoc);
+        return Right(dancerModel);
+      }
+
+      // Check if document is in the clients collection
+      else if (clientsDoc.exists) {
+        debugPrint('Client Document: ${clientsDoc.data()}');
+        // convert firebase doc to user profile so we can use in the app
+        final clientModel = ClientModel.fromDocument(clientsDoc);
+        return Right(clientModel);
+      }
+      debugPrint('User not found brr');
+      return const Left('User not found');
+    } on FirebaseAuthException catch (e) {
+      debugPrint("Firebase  Login error: $e");
+      return Left(e.toString());
+    }
+  }
 }

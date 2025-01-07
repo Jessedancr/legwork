@@ -6,11 +6,13 @@ class AuthTextfield extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
+  final String? helperText;
   const AuthTextfield({
     super.key,
     required this.hintText,
     required this.obscureText,
     required this.controller,
+    this.helperText,
   });
 
   @override
@@ -22,6 +24,7 @@ class AuthTextfield extends StatelessWidget {
         obscureText: obscureText,
         decoration: InputDecoration(
           //fillColor: Theme.of(context).colorScheme.primary,
+          helper: Text(helperText ?? ''),
           filled: true,
           hintText: hintText,
           hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/domain/Repos/auth_repo.dart';
 
@@ -18,6 +19,8 @@ class SignUpBusinessLogic {
     required String email,
     required int phoneNumber,
     required String password,
+    required UserType userType,
+    dynamic portfolio,
     String? organizationName,
     List<dynamic>? danceStyles = const [], // default to empty list
   }) async {
@@ -33,18 +36,30 @@ class SignUpBusinessLogic {
       );
     }
 
-    // Validating email validity and password length
-    if (!email.contains('@gmail.com') || password.length < 6) {
-      debugPrint(
-          'Only gmail accounts are allowed for now and password must be more than 6 characters');
-      return const Left(
-          'Omo only gmail accounts are allowed for now and passwords must be more than 6 characters');
+    // Validating email  and password length
+    if (!email.contains('@gmail.com')) {
+      debugPrint('Only gmail accounts are allowed for now ');
+      return const Left('Omo only gmail accounts are allowed for now');
     }
 
     // TODO: ADD SOME MORE VALIDATION RULES
+    if (password.length < 6) {
+      debugPrint('Password must be at least 6 characters');
+      return const Left('Password must be at least 6 characters');
+    }
+
+    // if (userType == UserType.client &&
+    //     (organizationName == null || organizationName.isEmpty)) {
+    //   return const Left('Organization name is required for clients');
+    // }
+
+    if (userType == UserType.dancer &&
+        (danceStyles == null || danceStyles.isEmpty)) {
+      return const Left('At least one dance style is required for dancers');
+    }
 
     // Calling the signUp method from authRepo
-    return await authRepo.userSignup(
+    final result = await authRepo.userSignUp(
       firstName: firstName,
       lastName: lastName,
       username: username,
@@ -52,6 +67,13 @@ class SignUpBusinessLogic {
       phoneNumber: phoneNumber,
       password: password,
       danceStyles: danceStyles,
+      organizationName: organizationName,
+      userType: userType,
+    );
+
+    return result.fold(
+      (fail) => Left(fail),
+      (userEntity) => Right(userEntity),
     );
   }
 }

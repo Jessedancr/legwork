@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
+import '../../../../core/enums/user_type.dart';
+
 /**
  * TWO MODELS FOR DANCER AND CLIENT
  * 
@@ -11,6 +13,7 @@ import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 /**
  * DANCER MODEL CLASS
  */
+
 class DancerModel extends DancerEntity {
   // Constructor
   DancerModel({
@@ -63,6 +66,7 @@ class DancerModel extends DancerEntity {
       phoneNumber: phoneNumber,
       danceStyles: danceStyles,
       portfolio: portfolio,
+      
     );
   }
 }
@@ -79,7 +83,7 @@ class ClientModel extends ClientEntity {
     required super.lastName,
     required super.phoneNumber,
     required super.username,
-    required super.organisationName,
+    super.organisationName,
   });
 
   /// Convert firebase doc to user profile so we can use in the app

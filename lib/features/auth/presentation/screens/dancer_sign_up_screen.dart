@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
 
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
 
 import 'package:legwork/features/auth/presentation/widgets/auth_textfield.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/auth_button.dart';
-import 'package:dartz/dartz.dart' hide State;
+import 'package:legwork/features/auth/presentation/screens/dancers_home_screen.dart';
 
 //TODO: PROPERLY BUILD OUT THE UI ONCE DONE INTEGRATING WITH FIREBASE
 
@@ -30,6 +33,8 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController danceStylesController = TextEditingController();
 
+  final auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     // Auth Provider
@@ -37,34 +42,69 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
     // Function to sign dancer in
     void dancerSignUpFunction() async {
-      try {
-        final result = await authProvider.dancerSignUpFunction(
-          firstName: firstNameController.text,
-          lastName: lastNameController.text,
-          username: usernameController.text,
-          email: emailController.text,
-          phoneNumber: int.parse(phoneNumberController.text),
-          password: pwController.text,
-          danceStyles: danceStylesController.text.split(','),
+      if (pwController.text != pwConfirmController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Passwords do not match!'),
+          ),
         );
+        return;
+      } else {
+        // show loading indicator
+        showLoadingIndicator(context);
+        try {
+          final result = await authProvider.userSignUp(
+            firstName: firstNameController.text,
+            lastName: lastNameController.text,
+            username: usernameController.text,
+            email: emailController.text,
+            phoneNumber: int.parse(phoneNumberController.text),
+            password: pwController.text,
+            danceStyles: danceStylesController.text.split(','),
+            userType: UserType.dancer,
+          );
 
-        result.fold(
-          (fail) {
-            // Handle failure
+          if (mounted) {
+            hideLoadingIndicator(context);
+          }
+          // hide loading indicator if mounted
+
+          result.fold(
+            (fail) {
+              // Handle failure
+              debugPrint(fail.toString());
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Some unknown error occured'),
+                ),
+              );
+            },
+            (user) {
+              // Handle success
+              debugPrint('Sign-up successful: ${user.username}');
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => DancersHomeScreen(
+                    uid: auth.currentUser!.uid,
+                  ),
+                ),
+                (route) => false,
+              );
+            },
+          );
+        } catch (e) {
+          // Hide loading circle after failed sign up
+          // and display snackbar with error message
+          if (mounted) {
+            hideLoadingIndicator(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(fail.toString())),
+              SnackBar(
+                content: Text(e.toString()),
+              ),
             );
-          },
-          (user) {
-            // Handle success
-            debugPrint('Sign-up successful: ${user.username}');
-            Navigator.of(context).pushNamed('/dancersHomeScreen');
-          },
-        );
-      } catch (e) {
-        debugPrint('SIGN-UP ERROR: $e');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+          }
+          debugPrint('SIGN-UP ERROR: $e');
+        }
       }
     }
 

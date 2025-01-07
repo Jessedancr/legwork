@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/color_schemes.dart';
@@ -5,11 +6,11 @@ import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/screens/account_type_or_register.dart';
 import 'package:legwork/features/auth/presentation/screens/account_type_screen.dart';
+import 'package:legwork/features/auth/presentation/screens/clients_home_screen.dart';
 import 'package:legwork/features/onboarding/data/onboarding_repo.dart';
 import 'package:legwork/firebase_options.dart';
 import 'package:provider/provider.dart';
 
-import 'features/auth/domain/Repos/auth_repo.dart';
 import 'features/auth/presentation/screens/client_sign_up_screen.dart';
 import 'features/auth/presentation/screens/dancer_sign_up_screen.dart';
 import 'features/auth/presentation/screens/dancers_home_screen.dart';
@@ -42,6 +43,7 @@ void main() async {
   // Instance of auth repo
   final authRepo = AuthRepoImpl();
 
+  // THIS FUNCTION IS CALLED WHEN THE APP IS LAUNCHED
   runApp(
     MultiProvider(
       providers: [
@@ -60,8 +62,9 @@ void main() async {
 class MyApp extends StatelessWidget {
   final OnboardingStatusCheck onboardingStatusCheck;
   final bool isOnboardingComplete;
+  final auth = FirebaseAuth.instance;
 
-  const MyApp({
+  MyApp({
     super.key,
     required this.onboardingStatusCheck,
     required this.isOnboardingComplete,
@@ -82,7 +85,10 @@ class MyApp extends StatelessWidget {
         '/loginScreen': (context) => LoginScreen(),
         '/clientSignUpScreen': (context) => ClientSignUpScreen(),
         '/dancerSignUpScreen': (context) => DancerSignUpScreen(),
-        '/dancersHomeScreen' : (context) => DancersHomeScreen(),
+        '/dancersHomeScreen': (context) => DancersHomeScreen(
+              uid: auth.currentUser!.uid,
+            ),
+        '/clientsHomeScreen' : (context) => ClientsHomeScreen()
       },
     );
   }
