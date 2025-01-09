@@ -25,6 +25,7 @@ class DancerModel extends DancerEntity {
     required super.password,
     required super.phoneNumber,
     required super.username,
+    required super.userType,
   });
 
   /// Convert firebase doc to user profile so we can use in the app
@@ -38,6 +39,7 @@ class DancerModel extends DancerEntity {
       password: doc['password'] ?? '',
       phoneNumber: doc['phoneNumber'] ?? 0,
       username: doc['username'] ?? '',
+      userType: doc['userType'] ?? 'dancer',
     );
   }
 
@@ -52,6 +54,7 @@ class DancerModel extends DancerEntity {
       'phoneNumber': phoneNumber,
       'danceStyles': danceStyles,
       'portfolio': portfolio,
+      'userType': UserType.dancer.name, // Include userType
     };
   }
 
@@ -66,7 +69,7 @@ class DancerModel extends DancerEntity {
       phoneNumber: phoneNumber,
       danceStyles: danceStyles,
       portfolio: portfolio,
-      
+      userType: userType,
     );
   }
 }
@@ -83,6 +86,7 @@ class ClientModel extends ClientEntity {
     required super.lastName,
     required super.phoneNumber,
     required super.username,
+    required super.userType,
     super.organisationName,
   });
 
@@ -96,6 +100,7 @@ class ClientModel extends ClientEntity {
       phoneNumber: doc['phoneNumber'] ?? 0,
       username: doc['username'] ?? '',
       organisationName: doc['organisationName'] ?? '',
+      userType: doc['userType'] ?? 'client',
     );
   }
 
@@ -109,18 +114,21 @@ class ClientModel extends ClientEntity {
       'phoneNumber': phoneNumber,
       'password': password,
       'organisationName': organisationName,
+      'userType': UserType.client.name, // Include userType
     };
   }
 
   // Convert user profile to entity for business logic use
   ClientEntity toClientEntity() {
     return ClientEntity(
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password,
-        organisationName: organisationName);
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      email: email,
+      phoneNumber: phoneNumber,
+      password: password,
+      organisationName: organisationName,
+      userType: userType,
+    );
   }
 }

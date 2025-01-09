@@ -41,7 +41,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
     var authProvider = Provider.of<MyAuthProvider>(context);
 
     // Function to sign dancer in
-    void dancerSignUpFunction() async {
+    void dancerSignUp() async {
       if (pwController.text != pwConfirmController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -74,20 +74,16 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               // Handle failure
               debugPrint(fail.toString());
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Some unknown error occured'),
+                 SnackBar(
+                  content: Text(fail),
                 ),
               );
             },
             (user) {
               // Handle success
               debugPrint('Sign-up successful: ${user.username}');
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (context) => DancersHomeScreen(
-                    uid: auth.currentUser!.uid,
-                  ),
-                ),
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/dancersHomeScreen',
                 (route) => false,
               );
             },
@@ -191,7 +187,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               // Sign up button
               AuthButton(
                 buttonText: 'Sign up',
-                onPressed: dancerSignUpFunction,
+                onPressed: dancerSignUp,
               )
             ],
           ),

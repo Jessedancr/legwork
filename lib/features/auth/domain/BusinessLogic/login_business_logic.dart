@@ -12,7 +12,7 @@ class LoginBusinessLogic {
   Future<Either<String, dynamic>> loginExecute({
     required String email,
     required String password,
-    required UserType userType,
+    required String userType,
   }) async {
     // TODO: ADD VALIDATION RULES
 

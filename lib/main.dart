@@ -86,9 +86,11 @@ class MyApp extends StatelessWidget {
         '/clientSignUpScreen': (context) => ClientSignUpScreen(),
         '/dancerSignUpScreen': (context) => DancerSignUpScreen(),
         '/dancersHomeScreen': (context) => DancersHomeScreen(
-              uid: auth.currentUser!.uid,
+              uid: auth.currentUser!.email ?? '',
             ),
-        '/clientsHomeScreen' : (context) => ClientsHomeScreen()
+        '/clientsHomeScreen': (context) => ClientsHomeScreen(
+              email: auth.currentUser!.email ?? '',
+            )
       },
     );
   }

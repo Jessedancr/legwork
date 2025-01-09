@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class ClientsHomeScreen extends StatefulWidget {
-  const ClientsHomeScreen({super.key});
+  final String email;
+  const ClientsHomeScreen({
+    super.key,
+    required this.email,
+  });
 
   @override
   State<ClientsHomeScreen> createState() => _ClientsHomeScreenState();
@@ -10,11 +14,16 @@ class ClientsHomeScreen extends StatefulWidget {
 class _ClientsHomeScreenState extends State<ClientsHomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text(
-          'CLIENTS HOME SCREEN',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        child: Column(
+          children: [
+            const Text(
+              'CLIENTS HOME SCREEN',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(widget.email),
+          ],
         ),
       ),
     );

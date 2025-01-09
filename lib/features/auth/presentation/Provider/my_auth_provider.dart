@@ -67,6 +67,7 @@ class MyAuthProvider extends ChangeNotifier {
               phoneNumber: phoneNumber,
               danceStyles: danceStyles!,
               portfolio: portfolio,
+              userType: userType.name,
             ),
           );
         } else {
@@ -79,6 +80,7 @@ class MyAuthProvider extends ChangeNotifier {
               phoneNumber: phoneNumber,
               password: password,
               organisationName: organisationName,
+              userType: userType.name,
             ),
           );
         }
@@ -95,7 +97,7 @@ class MyAuthProvider extends ChangeNotifier {
   Future<Either<String, dynamic>> userlogin({
     required String email,
     required String password,
-    required UserType userType,
+    required String? userType,
     String? firstName,
     String? lastName,
     String? username,
@@ -114,21 +116,27 @@ class MyAuthProvider extends ChangeNotifier {
       final result = await loginBusinessLogic.loginExecute(
         email: email,
         password: password,
-        userType: userType,
+        userType: userType ?? 'dancer'
       );
 
-      return result.fold((fail) => Left(fail), (userEntity) {
-        if (userType == UserType.dancer) {
+      return result.fold(
+          // Handle failure
+          (fail) => Left(fail),
+
+          // Handle success
+          (userEntity) {
+        if (userType == UserType.dancer.name) {
           return Right(
             DancerEntity(
-              email: email,
-              password: password,
               firstName: firstName ?? '',
               lastName: lastName ?? '',
               username: username ?? '',
+              email: email,
+              password: password,
               phoneNumber: phoneNumber ?? 0,
               danceStyles: danceStyles ?? [],
               portfolio: portfolio,
+              userType: userType ?? 'dancer',
             ),
           );
         }
@@ -141,6 +149,7 @@ class MyAuthProvider extends ChangeNotifier {
             phoneNumber: phoneNumber ?? 0,
             password: password,
             organisationName: organisationName,
+            userType: userType ?? 'client',
           ),
         );
       });

@@ -10,6 +10,7 @@ abstract class UserEntity {
   final String email;
   final int phoneNumber;
   final String password;
+  final String userType;
 
   // Constructor
   UserEntity({
@@ -19,9 +20,10 @@ abstract class UserEntity {
     required this.firstName,
     required this.lastName,
     required this.phoneNumber,
+    required this.userType,
   });
 
-  UserType get userType;
+  //UserType get userType;
 }
 
 /// DANCER ENTITY
@@ -39,10 +41,16 @@ class DancerEntity extends UserEntity {
     required super.phoneNumber,
     required this.danceStyles,
     required this.portfolio,
+    required super.userType,
   });
 
+  // @override
+  // UserType get userType => UserType.dancer;
+
   @override
-  UserType get userType => UserType.dancer;
+  String toString() {
+    return 'DancerEntity(firstName: $firstName, lastName: $lastName, email: $email, danceStyles: $danceStyles, userType: $userType)';
+  }
 }
 
 /// CLIENT ENTITY
@@ -58,8 +66,14 @@ class ClientEntity extends UserEntity {
     required super.phoneNumber,
     required super.password,
     this.organisationName,
+    required super.userType,
   });
 
+  // @override
+  // UserType get userType => UserType.client;
+
   @override
-  UserType get userType => UserType.client;
+  String toString() {
+    return 'ClientEntity(firstName: $firstName, lastName: $lastName, email: $email, organisationName: $organisationName, userType: $userType)';
+  }
 }

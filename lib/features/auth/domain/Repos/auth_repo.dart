@@ -14,7 +14,7 @@ abstract class AuthRepo {
   Future<Either<String, UserEntity>> userLogin({
     required String email,
     required String password,
-    required UserType userType,
+    String userType,
   });
 
   // Sign up method

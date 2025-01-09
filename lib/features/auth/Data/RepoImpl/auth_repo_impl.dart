@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/core/enums/user_type.dart';
+import 'package:legwork/features/auth/Data/Models/user_model.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/domain/Repos/auth_repo.dart';
 
@@ -32,34 +32,29 @@ class AuthRepoImpl implements AuthRepo {
     List<dynamic>? danceStyles, // for dancers
   }) async {
     try {
-      final result = await _authRemoteDataSource.dancerSignUp(
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password,
-        danceStyles: danceStyles ?? [],
-        portfolio: porfolio,
-        organisationName: organizationName ?? '',
-      );
+      final result = await _authRemoteDataSource.userSignUp(
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          email: email,
+          phoneNumber: phoneNumber,
+          password: password,
+          danceStyles: danceStyles ?? [],
+          portfolio: porfolio,
+          organisationName: organizationName ?? '',
+          userType: userType);
 
       // Return either a fail or a dancer or client entity
-      return result.fold((fail) => Left(fail.toString()), (dancerModel) {
+      return result.fold(
+          // Handle failure
+          (fail) => Left(fail.toString()),
+
+          // Handle success
+          (userModel) {
         if (userType == UserType.dancer) {
-          return Right(dancerModel.toDancerEntity());
+          return Right((userModel as DancerModel).toDancerEntity());
         } else {
-          return Right(
-            ClientEntity(
-              email: email,
-              firstName: firstName,
-              lastName: lastName,
-              password: password,
-              phoneNumber: phoneNumber,
-              username: username,
-              organisationName: organizationName,
-            ),
-          );
+          return Right((userModel as ClientModel).toClientEntity());
         }
       });
     } catch (e) {
@@ -72,11 +67,13 @@ class AuthRepoImpl implements AuthRepo {
   Future<Either<String, UserEntity>> userLogin({
     required String email,
     required String password,
-    required UserType userType,
+    String? userType,
     String? firstName,
     String? lastName,
     String? username,
     int? phoneNumber,
+    List<String>? danceStyles,
+    dynamic portfolio,
   }) async {
     try {
       final result = await _authRemoteDataSource.userLogin(
@@ -85,26 +82,39 @@ class AuthRepoImpl implements AuthRepo {
       );
 
       // User type check
-      if (userType == UserType.dancer) {
+      if (userType == UserType.dancer.name) {
         return result.fold(
           (fail) => Left(fail.toString()),
-          (userEntity) => Right(userEntity.toDancerEntity()),
+          (userEntity) => Right(
+            DancerEntity(
+              firstName: firstName ?? '',
+              lastName: lastName ?? '',
+              username: username ?? '',
+              email: email,
+              password: password,
+              phoneNumber: phoneNumber ?? 0,
+              danceStyles: danceStyles ?? [],
+              portfolio: portfolio,
+              userType: UserType.dancer.name,
+            ),
+          ),
+        );
+      } else {
+        return result.fold(
+          (fail) => Left(fail.toString()),
+          (userEntity) => Right(
+            ClientEntity(
+              firstName: firstName ?? '',
+              lastName: lastName ?? '',
+              username: username ?? '',
+              email: email,
+              phoneNumber: phoneNumber ?? 0,
+              password: password,
+              userType: UserType.dancer.name,
+            ),
+          ),
         );
       }
-
-      return result.fold(
-        (fail) => Left(fail.toString()),
-        (userEntity) => Right(
-          ClientEntity(
-            firstName: firstName ?? '',
-            lastName: lastName ?? '',
-            username: username ?? '',
-            email: email,
-            phoneNumber: phoneNumber ?? 0,
-            password: password,
-          ),
-        ),
-      );
     } catch (e) {
       debugPrint(e.toString());
       return Left(e.toString());

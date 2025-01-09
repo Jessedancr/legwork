@@ -1,1 +1,1 @@
-enum UserType {dancer, client, user}
+enum UserType { dancer, client }
