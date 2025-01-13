@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/features/onboarding/domain/onboarding_status_check.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:legwork/Features/onboarding/domain/onboarding_status_check.dart';
 
 import '../widgets/onboard_button.dart';
 import '../widgets/page_indicator.dart';
@@ -39,8 +38,8 @@ class _OnboardingState extends State<Onboarding> {
             controller: pageController,
             onPageChanged: (value) {
               setState(() {
-                isLastPage = (value == 2);
-                debugPrint('LAST PAGE');
+                 isLastPage = (value == 2);
+                debugPrint('ONBOARDING LAST PAGE');
               });
             },
             children: const [
@@ -59,7 +58,7 @@ class _OnboardingState extends State<Onboarding> {
               //mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 // Indicator
-                PageIndicator(pageController: pageController),
+                PageIndicator(pageController: pageController, count: 3),
                 const SizedBox(height: 10),
 
                 // GET STARTED OR NEXT button

@@ -1,15 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/core/enums/user_type.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Enums/user_type.dart';
 
-import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
+import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/Features/auth/presentation/widgets/auth_loading_indicator.dart';
 
-import 'package:legwork/features/auth/presentation/widgets/auth_textfield.dart';
+import 'package:legwork/Features/auth/presentation/widgets/auth_textfield.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/auth_button.dart';
-import 'package:legwork/features/auth/presentation/screens/dancers_home_screen.dart';
 
 //TODO: PROPERLY BUILD OUT THE UI ONCE DONE INTEGRATING WITH FIREBASE
 
@@ -37,6 +37,10 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     // Auth Provider
     var authProvider = Provider.of<MyAuthProvider>(context);
 
@@ -74,7 +78,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               // Handle failure
               debugPrint(fail.toString());
               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
+                SnackBar(
                   content: Text(fail),
                 ),
               );
@@ -83,7 +87,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               // Handle success
               debugPrint('Sign-up successful: ${user.username}');
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/dancersHomeScreen',
+                '/dancerProfileCompletionFlow',
                 (route) => false,
               );
             },
@@ -106,25 +110,38 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
     // RETURNED SCAFFOLD
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.transparent,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             children: [
               // Icon
-              const Icon(
-                Icons.person,
-                size: 50,
+              Image.asset(
+                'images/logos/dance_icon_purple_cropped.png',
+                width: screenWidth * 0.45,
+                color: Theme.of(context).colorScheme.primary,
+                filterQuality: FilterQuality.high,
               ),
 
-              // Some texr for the form
-              const Text('Dancer Sign Up'),
+              // create your account
+              Text(
+                'Create your Dancer account',
+                style: GoogleFonts.robotoSlab(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 15),
 
-              // First name text field
+              // FIRST AND LAST NAME TEXTFIELDS
               AuthTextfield(
                 controller: firstNameController,
                 hintText: 'First name',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -133,6 +150,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                 controller: lastNameController,
                 hintText: 'Last name',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -141,6 +159,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                 controller: usernameController,
                 hintText: 'Username',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -149,6 +168,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                 controller: danceStylesController,
                 hintText: 'Dance styles',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -157,14 +177,17 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                 controller: emailController,
                 hintText: 'email',
                 obscureText: false,
+                icon: Icons.email,
+                helperText: 'e.g: johndoe@gmail.com',
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 18),
 
               // Phone number textfield
               AuthTextfield(
                 controller: phoneNumberController,
                 hintText: 'phone Number',
                 obscureText: false,
+                icon: Icons.numbers,
               ),
               const SizedBox(height: 10),
 
@@ -173,6 +196,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                 controller: pwController,
                 hintText: 'password',
                 obscureText: true,
+                icon: Icons.lock_open,
               ),
               const SizedBox(height: 10),
 
@@ -181,6 +205,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                 controller: pwConfirmController,
                 hintText: 'confirm password',
                 obscureText: true,
+                icon: Icons.lock,
               ),
               const SizedBox(height: 10),
 

@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/core/enums/user_type.dart';
-import 'package:legwork/features/auth/Data/Models/user_model.dart';
-import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
-import 'package:legwork/features/auth/domain/Repos/auth_repo.dart';
+import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
+import 'package:legwork/core/Enums/user_type.dart';
+import 'package:legwork/Features/auth/Data/Models/user_model.dart';
+import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
 
 import '../DataSources/auth_remote_data_source.dart';
 
@@ -33,16 +33,17 @@ class AuthRepoImpl implements AuthRepo {
   }) async {
     try {
       final result = await _authRemoteDataSource.userSignUp(
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          email: email,
-          phoneNumber: phoneNumber,
-          password: password,
-          danceStyles: danceStyles ?? [],
-          portfolio: porfolio,
-          organisationName: organizationName ?? '',
-          userType: userType);
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        danceStyles: danceStyles ?? [],
+        resume: porfolio,
+        organisationName: organizationName ?? '',
+        userType: userType,
+      );
 
       // Return either a fail or a dancer or client entity
       return result.fold(
@@ -72,8 +73,10 @@ class AuthRepoImpl implements AuthRepo {
     String? lastName,
     String? username,
     int? phoneNumber,
-    List<String>? danceStyles,
-    dynamic portfolio,
+    String? bio,
+    dynamic profilePicture,
+    List<String>? danceStyles, // for dancers
+    dynamic resume, // for dancers
   }) async {
     try {
       final result = await _authRemoteDataSource.userLogin(
@@ -94,7 +97,9 @@ class AuthRepoImpl implements AuthRepo {
               password: password,
               phoneNumber: phoneNumber ?? 0,
               danceStyles: danceStyles ?? [],
-              portfolio: portfolio,
+              resume: resume,
+              bio: bio,
+              profilePicture: profilePicture,
               userType: UserType.dancer.name,
             ),
           ),
@@ -110,7 +115,9 @@ class AuthRepoImpl implements AuthRepo {
               email: email,
               phoneNumber: phoneNumber ?? 0,
               password: password,
-              userType: UserType.dancer.name,
+              bio: bio,
+              profilePicture: profilePicture,
+              userType: UserType.client.name,
             ),
           ),
         );

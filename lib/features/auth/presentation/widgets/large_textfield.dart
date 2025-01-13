@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 //TODO: PROPERLY STYLE THIS TEXTFIELD ONCE DONE INTEGRATING WITH FIREBASE
 
-class AuthTextfield extends StatelessWidget {
+class LargeTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
@@ -10,7 +10,7 @@ class AuthTextfield extends StatelessWidget {
   final IconData icon;
   final double? width;
 
-  const AuthTextfield({
+  const LargeTextField({
     super.key,
     required this.hintText,
     required this.obscureText,
@@ -40,6 +40,8 @@ class AuthTextfield extends StatelessWidget {
             width: width,
             child: TextField(
               //keyboardType: TextInputType.emailAddress,
+              maxLines: 4,
+              maxLength: 150,
               controller: controller,
               obscureText: obscureText,
               textAlign: TextAlign.center,
@@ -77,7 +79,8 @@ class AuthTextfield extends StatelessWidget {
         Positioned(
           top: -0.5,
           left: 20,
-          bottom: 25,
+          height: 30,
+          width: 50,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40),
             child: Container(

@@ -2,12 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/features/auth/Data/Models/user_model.dart';
+import 'package:legwork/Features/auth/Data/Models/resume_model.dart';
+import 'package:legwork/Features/auth/Data/Models/user_model.dart';
 
-import '../../../../core/enums/user_type.dart';
+import '../../../../core/Enums/user_type.dart';
 
+/**
+ * AUTH ABSTRACT CLASS
+ */
 abstract class AuthRemoteDataSource {
-  /// DANCER SIGN UP METHOD
+  /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
     required String firstName,
     required String lastName,
@@ -15,12 +19,11 @@ abstract class AuthRemoteDataSource {
     required String email,
     required int phoneNumber,
     required String password,
-    List<dynamic>? danceStyles,
-    dynamic portfolio,
     required UserType userType,
+    List<dynamic>? danceStyles,
+    Map<String, dynamic>? resume,
+    String? bio,
   });
-
-  /// CLIENT SIGN UP METHOD
 
   /// USER LOGIN METHOD
   Future<Either<String, dynamic>> userLogin({
@@ -30,16 +33,14 @@ abstract class AuthRemoteDataSource {
 }
 
 /**
- * CONCRETE IMPLEMENTATION
+ * CONCRETE IMPLEMENTATION OF AUTH ABSTRACT CLASS
  */
-
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // Instance of firebase auth and firestore
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
   /// USER SIGN IN METHOD
-  // TODO: MAKE PORTFOLIO A MAP
   @override
   Future<Either<String, dynamic>> userSignUp({
     required String firstName,
@@ -48,10 +49,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required int phoneNumber,
     required String password,
+    required UserType userType,
     List<dynamic>? danceStyles, // for dancers
     String? organisationName, // for clients
-    dynamic portfolio, // For dancers
-    required UserType userType,
+    Map<String, dynamic>? resume, // For dancers
+    dynamic profilePicture,
+    String? bio,
   }) async {
     try {
       // Sign dancer in
@@ -74,11 +77,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'firstName': firstName,
           'lastName': lastName,
           'username': username,
-          'organisationName': organisationName,
+          'organisationName': organisationName ?? '',
           'password': password,
           'email': email,
           'phoneNumber': phoneNumber,
+          'profilePicture': profilePicture,
           'userType': UserType.client.name, // Store the userType
+          'bio': bio ?? '',
         };
 
         await db.collection('clients').doc(uid).set(clientData);
@@ -94,10 +99,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'username': username,
           'email': email,
           'phoneNumber': phoneNumber,
-          'danceStyles': danceStyles,
-          'portfolio': portfolio,
+          'danceStyles': danceStyles ?? [],
+          'resume': resume ?? {},
           'password': password,
+          'profilePicture': profilePicture,
+          'bio': bio ?? '',
           'userType': UserType.dancer.name, // Store the userType
+          
         };
 
         await db.collection('dancers').doc(uid).set(dancerData);
@@ -177,6 +185,100 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return const Left('User not found');
     } on FirebaseAuthException catch (e) {
       debugPrint("Firebase  Login error: $e");
+      return Left(e.toString());
+    }
+  }
+}
+
+/**
+ * RESUME UPLOAD ABSTRACT CLASS
+ */
+abstract class ResumeUploadRemoteDataSource {
+  // METHOD TO UPLOAD RESUME
+  Future<Either<String, ResumeModel>> uploadResume({
+    required String professionalTitle,
+    required List<Map<String, dynamic>> workExperience,
+    dynamic resumeFile,
+  });
+}
+
+class ResumeUploadRemoteDataSourceImpl extends ResumeUploadRemoteDataSource {
+  // Instance of firebase auth and firestore
+  final auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
+
+  @override
+  Future<Either<String, ResumeModel>> uploadResume({
+    required String professionalTitle,
+    required List<Map<String, dynamic>> workExperience,
+    dynamic resumeFile,
+  }) async {
+    try {
+      // Get uid of currently logged in user
+      final uid = auth.currentUser!.uid;
+
+      // Get the resume details from user
+      final resumeDetails = {
+        'professionalTitle': professionalTitle,
+        'workExperience': workExperience,
+        'resumeFile': resumeFile,
+      };
+
+      // Query the database to save the resume details and also retrieve it
+      await db.collection('dancers').doc(uid).set(resumeDetails);
+      DocumentSnapshot userDoc = await db.collection('dancers').doc(uid).get();
+
+      // Convert firebase doc to Resume  so we can use in app
+      final resumeModel = ResumeModel.fromDocument(userDoc);
+      return Right(resumeModel);
+    } catch (e) {
+      debugPrint('error with uploading or updating resume');
+      return Left(e.toString());
+    }
+  }
+}
+
+
+/**
+ * UPDATE PROFILE CLASS
+ */
+class UpdateProfile {
+  final auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
+
+  Future<Either<String, dynamic>> updateUserProfile({
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        debugPrint('User not found');
+        return const Left('User not found');
+      }
+      final String uid = user.uid;
+      final results = await Future.wait([
+        db.collection('dancers').doc(uid).get(),
+        db.collection('clients').doc(uid).get()
+      ]);
+
+      final dancersDoc = results[0];
+      final clientsDoc = results[1];
+
+      if(dancersDoc.exists){
+        await db.collection('dancers').doc(uid).update(data);
+        DocumentSnapshot userDoc = await db.collection('dancers').doc(uid).get();
+        final dancerModel = DancerModel.fromDocument(userDoc);
+        return Right(dancerModel);
+      } else if(clientsDoc.exists){
+        await db.collection('clients').doc(uid).update(data);
+        DocumentSnapshot userDoc = await db.collection('clients').doc(uid).get();
+        final clientModel = ClientModel.fromDocument(userDoc);
+        return Right(clientModel);
+      } else {
+        return const Left('User not found');
+      }
+    } catch (e) {
+      debugPrint('error updating profile');
       return Left(e.toString());
     }
   }

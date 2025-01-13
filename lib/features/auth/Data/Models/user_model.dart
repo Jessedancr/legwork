@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
 
-import '../../../../core/enums/user_type.dart';
+import '../../../../core/Enums/user_type.dart';
 
 /**
  * TWO MODELS FOR DANCER AND CLIENT
@@ -19,28 +19,31 @@ class DancerModel extends DancerEntity {
   DancerModel({
     required super.firstName,
     required super.lastName,
-    required super.portfolio,
+    required super.resume,
     required super.danceStyles,
     required super.email,
     required super.password,
     required super.phoneNumber,
     required super.username,
     required super.userType,
+    super.profilePicture,
+    super.bio,
   });
 
   /// Convert firebase doc to user profile so we can use in the app
   factory DancerModel.fromDocument(DocumentSnapshot doc) {
     return DancerModel(
-      firstName: doc['firstName'] ?? '',
-      lastName: doc['lastName'] ?? '',
-      portfolio: doc['portfolio'] ?? '',
-      danceStyles: doc['danceStyles'] ?? [],
-      email: doc['email'] ?? '',
-      password: doc['password'] ?? '',
-      phoneNumber: doc['phoneNumber'] ?? 0,
-      username: doc['username'] ?? '',
-      userType: doc['userType'] ?? 'dancer',
-    );
+        firstName: doc['firstName'] ?? '',
+        lastName: doc['lastName'] ?? '',
+        resume: doc['resume'] ?? {},
+        danceStyles: doc['danceStyles'] ?? [],
+        email: doc['email'] ?? '',
+        password: doc['password'] ?? '',
+        phoneNumber: doc['phoneNumber'] ?? 0,
+        username: doc['username'] ?? '',
+        userType: doc['userType'] ?? 'dancer',
+        profilePicture: doc['profilePicture'] ?? '',
+        bio: doc['bio'] ?? '');
   }
 
   /// Convert user profile to firebase doc to store in firebase
@@ -53,8 +56,10 @@ class DancerModel extends DancerEntity {
       'lastName': lastName,
       'phoneNumber': phoneNumber,
       'danceStyles': danceStyles,
-      'portfolio': portfolio,
+      'resume': resume,
       'userType': UserType.dancer.name, // Include userType
+      'profilePicture': profilePicture,
+      'bio': bio
     };
   }
 
@@ -68,8 +73,10 @@ class DancerModel extends DancerEntity {
       lastName: lastName,
       phoneNumber: phoneNumber,
       danceStyles: danceStyles,
-      portfolio: portfolio,
+      resume: resume,
       userType: userType,
+      profilePicture: profilePicture,
+      bio: bio,
     );
   }
 }
@@ -88,6 +95,8 @@ class ClientModel extends ClientEntity {
     required super.username,
     required super.userType,
     super.organisationName,
+    super.profilePicture,
+    super.bio,
   });
 
   /// Convert firebase doc to user profile so we can use in the app
@@ -100,7 +109,9 @@ class ClientModel extends ClientEntity {
       phoneNumber: doc['phoneNumber'] ?? 0,
       username: doc['username'] ?? '',
       organisationName: doc['organisationName'] ?? '',
+      profilePicture: doc['profilePicture'],
       userType: doc['userType'] ?? 'client',
+      bio: doc['bio'] ?? '',
     );
   }
 
@@ -114,7 +125,9 @@ class ClientModel extends ClientEntity {
       'phoneNumber': phoneNumber,
       'password': password,
       'organisationName': organisationName,
+      'profilePicture': profilePicture,
       'userType': UserType.client.name, // Include userType
+      'bio': bio,
     };
   }
 
@@ -128,7 +141,9 @@ class ClientModel extends ClientEntity {
       phoneNumber: phoneNumber,
       password: password,
       organisationName: organisationName,
+      profilePicture: profilePicture,
       userType: userType,
+      bio: bio
     );
   }
 }

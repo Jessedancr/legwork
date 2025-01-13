@@ -1,22 +1,25 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
+import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/core/Constants/color_schemes.dart';
-import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
-import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/features/auth/presentation/screens/account_type_or_register.dart';
-import 'package:legwork/features/auth/presentation/screens/account_type_screen.dart';
-import 'package:legwork/features/auth/presentation/screens/clients_home_screen.dart';
-import 'package:legwork/features/onboarding/data/onboarding_repo.dart';
+import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/Features/auth/presentation/Screens/account_type_or_register.dart';
+import 'package:legwork/Features/auth/presentation/Screens/account_type_screen.dart';
+import 'package:legwork/Features/auth/presentation/Screens/client_complete_profile_screen.dart';
+import 'package:legwork/Features/onboarding/data/onboarding_repo.dart';
 import 'package:legwork/firebase_options.dart';
 import 'package:provider/provider.dart';
 
-import 'features/auth/presentation/screens/client_sign_up_screen.dart';
-import 'features/auth/presentation/screens/dancer_sign_up_screen.dart';
-import 'features/auth/presentation/screens/dancers_home_screen.dart';
-import 'features/auth/presentation/screens/login_screen.dart';
-import 'features/onboarding/domain/onboarding_status_check.dart';
-import 'features/onboarding/presentation/screens/onboarding.dart';
+import 'Features/auth/presentation/Provider/update_profile_provider.dart';
+import 'Features/auth/presentation/Screens/client_sign_up_screen.dart';
+import 'Features/auth/presentation/Screens/dancer_sign_up_screen.dart';
+import 'Features/auth/presentation/Screens/dancer_profile_completion_flow.dart';
+import 'Features/auth/presentation/Screens/login_screen.dart';
+import 'Features/onboarding/domain/onboarding_status_check.dart';
+import 'Features/onboarding/presentation/screens/onboarding.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -43,12 +46,21 @@ void main() async {
   // Instance of auth repo
   final authRepo = AuthRepoImpl();
 
+  // Instance of Resume repo
+  final resumeRepo = ResumeRepoImpl();
+
   // THIS FUNCTION IS CALLED WHEN THE APP IS LAUNCHED
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (context) => MyAuthProvider(authRepo: authRepo),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ResumeProvider(resumeRepo: resumeRepo),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UpdateProfileProvider(),
         ),
       ],
       child: MyApp(
@@ -85,10 +97,10 @@ class MyApp extends StatelessWidget {
         '/loginScreen': (context) => LoginScreen(),
         '/clientSignUpScreen': (context) => ClientSignUpScreen(),
         '/dancerSignUpScreen': (context) => DancerSignUpScreen(),
-        '/dancersHomeScreen': (context) => DancersHomeScreen(
-              uid: auth.currentUser!.email ?? '',
-            ),
-        '/clientsHomeScreen': (context) => ClientsHomeScreen(
+        '/dancerProfileCompletionFlow': (context) =>
+            DancerProfileCompletionFlow(),
+        '/clientCompleteProfileScreen': (context) =>
+            ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
             )
       },

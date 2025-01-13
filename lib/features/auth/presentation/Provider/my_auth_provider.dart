@@ -1,17 +1,23 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/core/enums/user_type.dart';
-import 'package:legwork/features/auth/domain/BusinessLogic/login_business_logic.dart';
-import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
+import 'package:legwork/core/Enums/user_type.dart';
+import 'package:legwork/Features/auth/domain/BusinessLogic/login_business_logic.dart';
+import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
+
 
 import '../../domain/BusinessLogic/sign_up_business_logic.dart';
-import '../../domain/Repos/auth_repo.dart';
 
 class MyAuthProvider extends ChangeNotifier {
-  final AuthRepo authRepo; // Instance of auth repo
+  // Instance of auth repo
+  final AuthRepo authRepo;
+
+
   bool isLoading = false;
 
-  MyAuthProvider({required this.authRepo});
+  MyAuthProvider({
+    required this.authRepo,
+  });
 
   /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
@@ -66,7 +72,7 @@ class MyAuthProvider extends ChangeNotifier {
               password: password,
               phoneNumber: phoneNumber,
               danceStyles: danceStyles!,
-              portfolio: portfolio,
+              resume: portfolio,
               userType: userType.name,
             ),
           );
@@ -93,7 +99,7 @@ class MyAuthProvider extends ChangeNotifier {
     }
   }
 
-  /// USER LOGIN FUNCTION
+  /// USER LOGIN METHOD
   Future<Either<String, dynamic>> userlogin({
     required String email,
     required String password,
@@ -114,10 +120,7 @@ class MyAuthProvider extends ChangeNotifier {
 
     try {
       final result = await loginBusinessLogic.loginExecute(
-        email: email,
-        password: password,
-        userType: userType ?? 'dancer'
-      );
+          email: email, password: password, userType: userType ?? 'dancer');
 
       return result.fold(
           // Handle failure
@@ -135,7 +138,7 @@ class MyAuthProvider extends ChangeNotifier {
               password: password,
               phoneNumber: phoneNumber ?? 0,
               danceStyles: danceStyles ?? [],
-              portfolio: portfolio,
+              resume: portfolio,
               userType: userType ?? 'dancer',
             ),
           );
@@ -160,4 +163,7 @@ class MyAuthProvider extends ChangeNotifier {
       return Left('Omo some Error occured with auth provider $e');
     }
   }
+
+  /// RESUME UPLOAD METHOD
+  
 }

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class AccountTypeButton extends StatelessWidget {
   final String buttonText;
   final Function()? onTap;
-  final icon;
+  final dynamic icon;
   const AccountTypeButton({
     super.key,
     required this.buttonText,
@@ -19,15 +19,17 @@ class AccountTypeButton extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Returned Widget
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: screenHeight * 0.15,
-        width: screenWidth * 0.85,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(30),
-        ),
+    return Ink(
+      height: screenHeight * 0.15,
+      width: screenWidth * 0.85,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: InkWell(
+        splashColor: Theme.of(context).colorScheme.onPrimary,
+        splashFactory: InkSplash.splashFactory,
+        onTap: onTap,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

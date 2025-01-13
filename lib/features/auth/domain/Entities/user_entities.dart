@@ -1,5 +1,3 @@
-import '../../../../core/enums/user_type.dart';
-
 /**
  * BASE ENTITY FOR USER
  */
@@ -11,6 +9,8 @@ abstract class UserEntity {
   final int phoneNumber;
   final String password;
   final String userType;
+  final String? bio;
+  dynamic profilePicture;
 
   // Constructor
   UserEntity({
@@ -21,6 +21,8 @@ abstract class UserEntity {
     required this.lastName,
     required this.phoneNumber,
     required this.userType,
+    this.profilePicture,
+    this.bio,
   });
 
   //UserType get userType;
@@ -29,7 +31,7 @@ abstract class UserEntity {
 /// DANCER ENTITY
 class DancerEntity extends UserEntity {
   final List<dynamic> danceStyles;
-  final dynamic portfolio;
+  final Map<String, dynamic>? resume;
 
   // Constructor
   DancerEntity({
@@ -39,9 +41,11 @@ class DancerEntity extends UserEntity {
     required super.email,
     required super.password,
     required super.phoneNumber,
-    required this.danceStyles,
-    required this.portfolio,
     required super.userType,
+    super.profilePicture,
+    super.bio,
+    required this.danceStyles,
+    this.resume,
   });
 
   // @override
@@ -49,7 +53,7 @@ class DancerEntity extends UserEntity {
 
   @override
   String toString() {
-    return 'DancerEntity(firstName: $firstName, lastName: $lastName, email: $email, danceStyles: $danceStyles, userType: $userType)';
+    return 'DancerEntity(email: $email, userType: $userType)';
   }
 }
 
@@ -65,6 +69,8 @@ class ClientEntity extends UserEntity {
     required super.email,
     required super.phoneNumber,
     required super.password,
+    super.profilePicture,
+    super.bio,
     this.organisationName,
     required super.userType,
   });
@@ -74,6 +80,6 @@ class ClientEntity extends UserEntity {
 
   @override
   String toString() {
-    return 'ClientEntity(firstName: $firstName, lastName: $lastName, email: $email, organisationName: $organisationName, userType: $userType)';
+    return 'ClientEntity(email: $email, organisationName: $organisationName, userType: $userType)';
   }
 }

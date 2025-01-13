@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/core/enums/user_type.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Enums/user_type.dart';
 
 import 'package:provider/provider.dart';
 
 import '../Provider/my_auth_provider.dart';
 import '../widgets/auth_button.dart';
+import '../widgets/auth_dropdown_menu.dart';
 import '../widgets/auth_loading_indicator.dart';
 import '../widgets/auth_textfield.dart';
 
@@ -33,6 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     // Auth Provider
     var authProvider = Provider.of<MyAuthProvider>(context);
 
@@ -67,13 +73,13 @@ class _LoginScreenState extends State<LoginScreen> {
             if (user.userType == UserType.dancer.name) {
               debugPrint('DANCER BLOCK');
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/dancersHomeScreen',
+                '/dancerProfileCompletionFlow',
                 (route) => false,
               );
             } else if (user.userType == UserType.client.name) {
               debugPrint('CLIENT BLOCK');
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/clientsHomeScreen',
+                '/clientProfileCompletionFlow',
                 (route) => false,
               ); // This is client's homepage
             } else {
@@ -100,25 +106,50 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // RETURNED SCAFFOLD
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Icon
-              const Icon(
-                Icons.person,
-                size: 50,
+              Image.asset(
+                'images/logos/dance_icon_purple_cropped.png',
+                width: screenWidth * 0.45,
+                color: Theme.of(context).colorScheme.primary,
+                filterQuality: FilterQuality.high,
               ),
+              const SizedBox(height: 15),
 
-              // Some texr for the form
-              const Text('User log Sign Up'),
+              // Welcome back message
+              Text(
+                'Welcome back!',
+                style: GoogleFonts.robotoSlab(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                'Login to your account',
+                style: GoogleFonts.robotoCondensed(
+                  fontSize: 15,
+                ),
+              ),
+              const SizedBox(height: 5),
+
+              // TODO: DROP DOWN MENU FOR USER TYPE
 
               // USERTYPE textfield
               AuthTextfield(
                 controller: userTypecontroller,
                 hintText: 'userType',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -127,16 +158,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: emailController,
                 hintText: 'Email',
                 obscureText: false,
+                icon: Icons.email,
+                helperText: 'e.g: Johndoe@gmail.com',
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
               // Password text field
               AuthTextfield(
                 controller: pwController,
                 hintText: 'Password',
                 obscureText: true,
+                icon: Icons.lock,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
 
               // Forgot password
               Row(

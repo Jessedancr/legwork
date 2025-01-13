@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-class ClientsHomeScreen extends StatefulWidget {
+class ClientProfileCompletionFlow extends StatefulWidget {
   final String email;
-  const ClientsHomeScreen({
+  const ClientProfileCompletionFlow({
     super.key,
     required this.email,
   });
 
   @override
-  State<ClientsHomeScreen> createState() => _ClientsHomeScreenState();
+  State<ClientProfileCompletionFlow> createState() =>
+      _ClientProfileCompletionFlowState();
 }
 
-class _ClientsHomeScreenState extends State<ClientsHomeScreen> {
+class _ClientProfileCompletionFlowState
+    extends State<ClientProfileCompletionFlow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

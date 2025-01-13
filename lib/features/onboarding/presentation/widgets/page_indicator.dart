@@ -3,9 +3,11 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class PageIndicator extends StatelessWidget {
   final PageController pageController;
+  final int count;
   const PageIndicator({
     super.key,
     required this.pageController,
+    required this.count,
   });
 
   @override
@@ -20,7 +22,7 @@ class PageIndicator extends StatelessWidget {
         spacing: 10.0,
       ),
       controller: pageController,
-      count: 3,
+      count: count,
     );
   }
 }

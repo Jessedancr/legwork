@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/core/enums/user_type.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Enums/user_type.dart';
 import 'package:provider/provider.dart';
 
 import '../Provider/my_auth_provider.dart';
@@ -29,6 +30,9 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     // Auth Provider
     var authProvider = Provider.of<MyAuthProvider>(context);
 
@@ -74,7 +78,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             debugPrint('Sign-up successful: ${user.username}');
             Navigator.pushNamedAndRemoveUntil(
               context,
-              '/clientsHomeScreen',
+              '/clientCompleteProfileScreen',
               (route) => false,
             );
           });
@@ -96,25 +100,38 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
     // RETURNED SCAFFOLD
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.transparent,
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             children: [
               // Icon
-              const Icon(
-                Icons.person,
-                size: 50,
+              Image.asset(
+                'images/logos/dance_icon_purple_cropped.png',
+                width: screenWidth * 0.45,
+                color: Theme.of(context).colorScheme.primary,
+                filterQuality: FilterQuality.high,
               ),
 
-              // Some texr for the form
-              const Text('CLIENT SIGN UP'),
+              // create your account
+              Text(
+                'Create your Client account',
+                style: GoogleFonts.robotoSlab(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 15),
 
               // First name text field
               AuthTextfield(
                 controller: firstNameController,
                 hintText: 'First name',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 5),
 
@@ -123,6 +140,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                 controller: lastNameController,
                 hintText: 'Last name',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -131,6 +149,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                 controller: usernameController,
                 hintText: 'Username',
                 obscureText: false,
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -140,6 +159,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                 hintText: 'Organisation name',
                 obscureText: false,
                 helperText: 'optional',
+                icon: Icons.person,
               ),
               const SizedBox(height: 10),
 
@@ -148,6 +168,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                 controller: emailController,
                 hintText: 'email',
                 obscureText: false,
+                icon: Icons.email,
               ),
               const SizedBox(height: 10),
 
@@ -156,6 +177,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                 controller: phoneNumberController,
                 hintText: 'phone Number',
                 obscureText: false,
+                icon: Icons.phone,
               ),
               const SizedBox(height: 10),
 
@@ -164,6 +186,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                 controller: pwController,
                 hintText: 'password',
                 obscureText: true,
+                icon: Icons.lock_open,
               ),
               const SizedBox(height: 10),
 
@@ -172,6 +195,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                 controller: pwConfirmController,
                 hintText: 'confirm password',
                 obscureText: true,
+                icon: Icons.lock,
               ),
               //const SizedBox(height: 10),
 

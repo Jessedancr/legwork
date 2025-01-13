@@ -27,8 +27,9 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
           children: [
             // App Logo
             Image.asset(
-              'images/logos/nobg_dance_icon.png',
-              width: screenWidth * 0.45,
+              'images/logos/dance_icon_purple_cropped.png',
+              color: Theme.of(context).colorScheme.primary,
+              width: screenWidth * 0.4,
             ),
 
             // Select Account Type

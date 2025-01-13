@@ -14,7 +14,7 @@ ThemeData lightMode = ThemeData(
 
 ThemeData seedScheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 30, 11, 64),
-     brightness: Brightness.light,
+    seedColor: const Color.fromARGB(255, 46, 9, 109),
+    brightness: Brightness.light,
   ),
 );
