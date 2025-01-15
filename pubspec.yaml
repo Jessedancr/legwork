@@ -44,6 +44,7 @@ dependencies:
   dartz: ^0.10.1
   cloud_firestore: ^5.4.4
   provider: ^6.1.2
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

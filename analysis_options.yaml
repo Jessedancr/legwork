@@ -11,6 +11,7 @@ analyzer:
   errors:
     slash_for_doc_comments: ignore
     dangling_library_doc_comments: ignore
+    use_build_context_synchronously: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:

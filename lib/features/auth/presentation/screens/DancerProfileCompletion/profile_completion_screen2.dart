@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_textfield.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_search_bar.dart';
 
 class ProfileCompletionScreen2 extends StatefulWidget {
   const ProfileCompletionScreen2({super.key});
@@ -21,17 +22,30 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
           children: [
             const Text('What type of work are you looking for?'),
             const SizedBox(height: 10),
+            const Padding(
+              padding: EdgeInsets.only(left: 60),
+              child: Row(
+                children: [
+                  Text('Your skills'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
 
             // TEXT FIELD FOR JOB TYPE
-            AuthTextfield(
-              hintText: 'Enter skills',
-              obscureText: false,
-              controller: skillTypeController,
-              icon: Icons.work,
-            ),
+            // AuthTextfield(
+            //   hintText: 'Enter skills',
+            //   obscureText: false,
+            //   controller: skillTypeController,
+            //   icon: Icons.work,
+            // ),
+
+            LegworkSearchBar()
           ],
         ),
       ),
     );
   }
 }
+
+

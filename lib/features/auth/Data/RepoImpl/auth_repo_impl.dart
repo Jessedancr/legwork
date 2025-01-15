@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
 import 'package:legwork/core/Enums/user_type.dart';
@@ -123,7 +124,7 @@ class AuthRepoImpl implements AuthRepo {
         );
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint('Auth repo impl error: $e');
       return Left(e.toString());
     }
   }

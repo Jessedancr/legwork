@@ -1,17 +1,16 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:legwork/Features/auth/domain/BusinessLogic/login_business_logic.dart';
 import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
 
-
 import '../../domain/BusinessLogic/sign_up_business_logic.dart';
 
 class MyAuthProvider extends ChangeNotifier {
   // Instance of auth repo
   final AuthRepo authRepo;
-
 
   bool isLoading = false;
 
@@ -91,11 +90,19 @@ class MyAuthProvider extends ChangeNotifier {
           );
         }
       });
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       debugPrint('Error with auth provider $e');
       isLoading = false;
       notifyListeners();
-      return Left('Omo some Error occured with auth provider $e');
+      if (e.code == 'user-not-found') {
+        return const Left('No user found for this email.');
+      } else if (e.code == 'wrong-password') {
+        return const Left('Incorrect password. Please try again.');
+      } else if (e.code == 'invalid-email') {
+        return const Left('The email address is not valid.');
+      } else {
+        return const Left('An unexpected error occurred.');
+      }
     }
   }
 
@@ -120,7 +127,10 @@ class MyAuthProvider extends ChangeNotifier {
 
     try {
       final result = await loginBusinessLogic.loginExecute(
-          email: email, password: password, userType: userType ?? 'dancer');
+        email: email,
+        password: password,
+        userType: userType ?? 'dancer',
+      );
 
       return result.fold(
           // Handle failure
@@ -157,13 +167,12 @@ class MyAuthProvider extends ChangeNotifier {
         );
       });
     } catch (e) {
-      debugPrint('Error with auth provider $e');
+      debugPrint('Caught Unknown exception: $e');
       isLoading = false;
       notifyListeners();
-      return Left('Omo some Error occured with auth provider $e');
+      return Left(e.toString());
     }
   }
 
   /// RESUME UPLOAD METHOD
-  
 }

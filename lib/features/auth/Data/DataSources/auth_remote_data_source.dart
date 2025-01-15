@@ -105,7 +105,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'profilePicture': profilePicture,
           'bio': bio ?? '',
           'userType': UserType.dancer.name, // Store the userType
-          
         };
 
         await db.collection('dancers').doc(uid).set(dancerData);
@@ -184,7 +183,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       debugPrint('User not found brr');
       return const Left('User not found');
     } on FirebaseAuthException catch (e) {
-      debugPrint("Firebase  Login error: $e");
+      debugPrint("Firebase  Login error: ${e.code}");
+      if (e.code == 'user-not-found') {
+        return const Left('No user found for this email.');
+      } else if (e.code == 'wrong-password') {
+        return const Left('Incorrect password. Please try again.');
+      } else if (e.code == 'invalid-credential') {
+        return const Left('Invalid email or password.');
+      } else {
+        return const Left('An unexpected error occurred.');
+      }
+    } catch (e) {
+      debugPrint("An unknown error occurred while logging in");
       return Left(e.toString());
     }
   }
@@ -238,7 +248,6 @@ class ResumeUploadRemoteDataSourceImpl extends ResumeUploadRemoteDataSource {
   }
 }
 
-
 /**
  * UPDATE PROFILE CLASS
  */
@@ -264,14 +273,16 @@ class UpdateProfile {
       final dancersDoc = results[0];
       final clientsDoc = results[1];
 
-      if(dancersDoc.exists){
+      if (dancersDoc.exists) {
         await db.collection('dancers').doc(uid).update(data);
-        DocumentSnapshot userDoc = await db.collection('dancers').doc(uid).get();
+        DocumentSnapshot userDoc =
+            await db.collection('dancers').doc(uid).get();
         final dancerModel = DancerModel.fromDocument(userDoc);
         return Right(dancerModel);
-      } else if(clientsDoc.exists){
+      } else if (clientsDoc.exists) {
         await db.collection('clients').doc(uid).update(data);
-        DocumentSnapshot userDoc = await db.collection('clients').doc(uid).get();
+        DocumentSnapshot userDoc =
+            await db.collection('clients').doc(uid).get();
         final clientModel = ClientModel.fromDocument(userDoc);
         return Right(clientModel);
       } else {

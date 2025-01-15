@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
 
 class LoginBusinessLogic {
@@ -13,17 +15,28 @@ class LoginBusinessLogic {
     required String password,
     required String userType,
   }) async {
-    // TODO: ADD VALIDATION RULES
+    // VALIDATIONS
+    if (!email.contains('@')) {
+      return const Left('Invalid email format.');
+    }
+    if (password.isEmpty) {
+      return const Left('Password cannot be empty.');
+    }
 
-    final result = await authRepo.userLogin(
-      email: email,
-      password: password,
-      userType: userType,
-    );
+    try {
+      final result = await authRepo.userLogin(
+        email: email,
+        password: password,
+        userType: userType,
+      );
 
-    return result.fold(
-      (fail) => Left(fail),
-      (userEntity) => Right(userEntity),
-    );
+      return result.fold(
+        (fail) => Left(fail),
+        (userEntity) => Right(userEntity),
+      );
+    } catch (e) {
+      debugPrint('LoginBusinessLogic error: $e');
+      return Left(e.toString());
+    }
   }
 }
