@@ -28,9 +28,10 @@ class AuthRepoImpl implements AuthRepo {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    dynamic porfolio,
+    Map<String, dynamic>? resume,
     String? organizationName, // For clients
     List<dynamic>? danceStyles, // for dancers
+    List<String>? jobPrefs,
   }) async {
     try {
       final result = await _authRemoteDataSource.userSignUp(
@@ -41,9 +42,10 @@ class AuthRepoImpl implements AuthRepo {
         phoneNumber: phoneNumber,
         password: password,
         danceStyles: danceStyles ?? [],
-        resume: porfolio,
+        resume: resume,
         organisationName: organizationName ?? '',
         userType: userType,
+        jobPrefs: jobPrefs
       );
 
       // Return either a fail or a dancer or client entity

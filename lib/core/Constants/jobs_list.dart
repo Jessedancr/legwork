@@ -1,12 +1,12 @@
-final List<String> jobs = [
-  "Social media promotion",
-  "Music video features",
-  "Brand advertisements",
-  "Music video production",
-  "Dance classes",
-  "Event planning",
-  "Theater and stage performance",
-  "Freelance choreography",
-  "Dance therapy",
-  "Live entertainment",
+final List jobs = [
+  ["Social media promotion", false],
+  ["Music video features", false],
+  ["Brand advertisements", false],
+  ["Music video production", false],
+  ["Dance classes", false],
+  ["Event planning", false],
+  ["Theater and stage performance", false],
+  ["Freelance choreography", false],
+  ["Dance therapy", false],
+  ["Live entertainment", false],
 ];

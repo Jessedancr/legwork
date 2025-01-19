@@ -28,22 +28,25 @@ class DancerModel extends DancerEntity {
     required super.userType,
     super.profilePicture,
     super.bio,
+    super.jobPrefs,
   });
 
   /// Convert firebase doc to user profile so we can use in the app
   factory DancerModel.fromDocument(DocumentSnapshot doc) {
     return DancerModel(
-        firstName: doc['firstName'] ?? '',
-        lastName: doc['lastName'] ?? '',
-        resume: doc['resume'] ?? {},
-        danceStyles: doc['danceStyles'] ?? [],
-        email: doc['email'] ?? '',
-        password: doc['password'] ?? '',
-        phoneNumber: doc['phoneNumber'] ?? 0,
-        username: doc['username'] ?? '',
-        userType: doc['userType'] ?? 'dancer',
-        profilePicture: doc['profilePicture'] ?? '',
-        bio: doc['bio'] ?? '');
+      firstName: doc['firstName'] ?? '',
+      lastName: doc['lastName'] ?? '',
+      resume: doc['resume'] ?? {},
+      danceStyles: doc['danceStyles'] ?? [],
+      email: doc['email'] ?? '',
+      password: doc['password'] ?? '',
+      phoneNumber: doc['phoneNumber'] ?? 0,
+      username: doc['username'] ?? '',
+      userType: doc['userType'] ?? 'dancer',
+      profilePicture: doc['profilePicture'] ?? '',
+      bio: doc['bio'] ?? '',
+      jobPrefs: doc['jobPrefs'] ?? [],
+    );
   }
 
   /// Convert user profile to firebase doc to store in firebase
@@ -59,7 +62,8 @@ class DancerModel extends DancerEntity {
       'resume': resume,
       'userType': UserType.dancer.name, // Include userType
       'profilePicture': profilePicture,
-      'bio': bio
+      'bio': bio,
+      'jobPrefs': jobPrefs
     };
   }
 
@@ -77,6 +81,7 @@ class DancerModel extends DancerEntity {
       userType: userType,
       profilePicture: profilePicture,
       bio: bio,
+      jobPrefs: jobPrefs,
     );
   }
 }
@@ -134,16 +139,15 @@ class ClientModel extends ClientEntity {
   // Convert user profile to entity for business logic use
   ClientEntity toClientEntity() {
     return ClientEntity(
-      firstName: firstName,
-      lastName: lastName,
-      username: username,
-      email: email,
-      phoneNumber: phoneNumber,
-      password: password,
-      organisationName: organisationName,
-      profilePicture: profilePicture,
-      userType: userType,
-      bio: bio
-    );
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        organisationName: organisationName,
+        profilePicture: profilePicture,
+        userType: userType,
+        bio: bio);
   }
 }

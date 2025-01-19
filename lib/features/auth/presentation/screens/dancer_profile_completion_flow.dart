@@ -1,14 +1,17 @@
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen1.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../../onboarding/presentation/widgets/page_indicator.dart';
 import 'DancerProfileCompletion/profile_completion_screen2.dart';
 import 'DancerProfileCompletion/profile_completion_screen3.dart';
+
 
 class DancerProfileCompletionFlow extends StatefulWidget {
   const DancerProfileCompletionFlow({
@@ -27,6 +30,7 @@ class _DancerProfileCompletionFlowState
   // CONTROLLERS
   final PageController pageController = PageController();
   final TextEditingController bioController = TextEditingController();
+  final SearchController searchController = SearchController();
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
@@ -34,6 +38,10 @@ class _DancerProfileCompletionFlowState
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     // PROVIDER
     final updateProfileProvider = Provider.of<UpdateProfileProvider>(context);
 
@@ -44,6 +52,7 @@ class _DancerProfileCompletionFlowState
         await updateProfileProvider.updateProfileExecute(
           data: {
             'bio': bioController.text,
+            'jobPrefs': selectedSkills,
           },
         );
         hideLoadingIndicator(context);
@@ -52,10 +61,10 @@ class _DancerProfileCompletionFlowState
             content: Text('Profile Updated'),
           ),
         );
-        // Navigate to next page
-        pageController.nextPage(
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
+
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/dancerHomeScreen',
+          (route) => false,
         );
       } catch (e) {
         debugPrint('error updating profile');
@@ -65,6 +74,14 @@ class _DancerProfileCompletionFlowState
           SnackBar(content: Text('Failed to update profile: $e')),
         );
       }
+    }
+
+    // NAVIGATE TO NEXT PAGE
+    void nextPage() {
+      pageController.nextPage(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
     }
 
     // RETURNED SCAFFOLD
@@ -83,31 +100,31 @@ class _DancerProfileCompletionFlowState
                 });
               },
               children: [
-                const ProfileCompletionScreen2(),
                 ProfileCompletionScreen1(
                   email: auth.currentUser!.email,
                   bioController: bioController,
                 ),
+                const ProfileCompletionScreen2(),
                 const ProfileCompletionScreen3(),
               ],
             ),
 
             // PAGE INDICATOR
             Positioned(
-              bottom: 60,
-              left: 150,
+              bottom: screenHeight * 0.1,
+              left: screenWidth * 0.45,
               child: PageIndicator(
                 pageController: pageController,
                 count: 3,
+                dotColor: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
 
             // BUTTONS
             Positioned(
-              bottom: 10,
-              left: 40,
+              bottom: screenHeight * 0.01,
+              left: screenWidth * 0.05,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   // PREVIOUS PAGE BUTTON
                   IconButton(
@@ -119,23 +136,25 @@ class _DancerProfileCompletionFlowState
                     },
                     icon: const Icon(Icons.arrow_back),
                   ),
+                  SizedBox(width: screenWidth * 0.05),
+
                   // SKIP BUTTON
-                  ElevatedButton(
-                    onPressed: () {
-                      // Navigate to next page
-                      pageController.nextPage(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    child: const Text('Skip'),
-                  ),
+                  // LegworkElevatedButton(
+                  //   buttonText: 'Skip',
+                  //   onPressed: nextPage,
+                  // ),
+                  // SizedBox(width: screenWidth * 0.1),
 
                   // SAVE AND CONTINUE BUTTON
-                  ElevatedButton(
-                    onPressed: saveAndUpdateProfile,
-                    child: const Text('Save and Continue'),
-                  ),
+                  isLastPage
+                      ? LegworkElevatedButton(
+                          buttonText: 'Save and continue',
+                          onPressed:  saveAndUpdateProfile,
+                        )
+                      : LegworkElevatedButton(
+                          onPressed: nextPage,
+                          buttonText: 'Next',
+                        ),
                 ],
               ),
             ),

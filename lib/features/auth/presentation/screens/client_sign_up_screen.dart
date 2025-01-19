@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,9 @@ class ClientSignUpScreen extends StatefulWidget {
 }
 
 class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
+  // TEXTFORMFIELD KEY
+  final formKey = GlobalKey<FormState>();
+
   // CONTROLLERS
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
@@ -38,14 +42,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
     // CLIENT SIGN UP METHOD
     void clientSignUp() async {
-      if (pwController.text != pwConfirmController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Passwords do not match!'),
-          ),
-        );
-        return;
-      } else {
+      if (formKey.currentState!.validate()) {
         // show loading indicator
         showLoadingIndicator(context);
         try {
@@ -96,115 +93,179 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
           debugPrint('SIGN-UP ERROR: $e');
         }
       }
+      if (pwController.text != pwConfirmController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Theme.of(context).colorScheme.error,
+            content: const Text('Passwords do not match!'),
+          ),
+        );
+        return;
+      }
     }
 
     // RETURNED SCAFFOLD
-    return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0.0,
-        backgroundColor: Colors.transparent,
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Icon
-              Image.asset(
-                'images/logos/dance_icon_purple_cropped.png',
-                width: screenWidth * 0.45,
-                color: Theme.of(context).colorScheme.primary,
-                filterQuality: FilterQuality.high,
-              ),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          scrolledUnderElevation: 0.0,
+          backgroundColor: Colors.transparent,
+        ),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  // Icon
+                  Image.asset(
+                    'images/logos/dance_icon_purple_cropped.png',
+                    width: screenWidth * 0.45,
+                    color: Theme.of(context).colorScheme.primary,
+                    filterQuality: FilterQuality.high,
+                  ),
 
-              // create your account
-              Text(
-                'Create your Client account',
-                style: GoogleFonts.robotoSlab(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 15),
+                  // create your account
+                  Text(
+                    'Create your Client account',
+                    style: GoogleFonts.robotoSlab(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
 
-              // First name text field
-              AuthTextfield(
-                controller: firstNameController,
-                hintText: 'First name',
-                obscureText: false,
-                icon: Icons.person,
-              ),
-              const SizedBox(height: 5),
+                  // First name text field
+                  AuthTextFormField(
+                    hintText: 'First name',
+                    obscureText: false,
+                    controller: firstNameController,
+                    icon: Icons.person,
+                    keyboardType: TextInputType.name,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'First name is compulsory';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 5),
 
-              // Last name text field
-              AuthTextfield(
-                controller: lastNameController,
-                hintText: 'Last name',
-                obscureText: false,
-                icon: Icons.person,
-              ),
-              const SizedBox(height: 10),
+                  // Last name text field
+                  AuthTextFormField(
+                    hintText: 'Last name',
+                    obscureText: false,
+                    controller: lastNameController,
+                    icon: Icons.person,
+                    keyboardType: TextInputType.name,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Last name is compulsory';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
 
-              // Username textfield
-              AuthTextfield(
-                controller: usernameController,
-                hintText: 'Username',
-                obscureText: false,
-                icon: Icons.person,
-              ),
-              const SizedBox(height: 10),
+                  // Username textfield
+                  AuthTextFormField(
+                    hintText: 'username',
+                    obscureText: false,
+                    controller: usernameController,
+                    icon: Icons.person,
+                    keyboardType: TextInputType.name,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Username is compulsory';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
 
-              // Organisation name textfield
-              AuthTextfield(
-                controller: organisationNameController,
-                hintText: 'Organisation name',
-                obscureText: false,
-                helperText: 'optional',
-                icon: Icons.person,
-              ),
-              const SizedBox(height: 10),
+                  // Organisation name textfield
+                  AuthTextFormField(
+                    hintText: 'Organisation name',
+                    obscureText: false,
+                    controller: organisationNameController,
+                    icon: Icons.person,
+                    keyboardType: TextInputType.name,
+                  ),
+                  const SizedBox(height: 10),
 
-              // Email textfield
-              AuthTextfield(
-                controller: emailController,
-                hintText: 'email',
-                obscureText: false,
-                icon: Icons.email,
-              ),
-              const SizedBox(height: 10),
+                  // Email textfield
+                  AuthTextFormField(
+                    hintText: 'Email Address',
+                    obscureText: false,
+                    controller: emailController,
+                    icon: Icons.email,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'First name is compulsory';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
 
-              // Phone number textfield
-              AuthTextfield(
-                controller: phoneNumberController,
-                hintText: 'phone Number',
-                obscureText: false,
-                icon: Icons.phone,
-              ),
-              const SizedBox(height: 10),
+                  // Phone number textfield
+                  AuthTextFormField(
+                    hintText: 'Phone number',
+                    obscureText: false,
+                    controller: phoneNumberController,
+                    icon: Icons.numbers,
+                    keyboardType: TextInputType.phone,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'First name is compulsory';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
 
-              // Password textfield
-              AuthTextfield(
-                controller: pwController,
-                hintText: 'password',
-                obscureText: true,
-                icon: Icons.lock_open,
-              ),
-              const SizedBox(height: 10),
+                  // Password textfield
+                  AuthTextFormField(
+                    hintText: 'password',
+                    obscureText: true,
+                    controller: pwController,
+                    icon: Icons.lock_open,
+                    keyboardType: TextInputType.visiblePassword,
+                    validator: (value) {
+                      if (value!.length < 6) {
+                        return 'This your password no strong reach o';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
 
-              // Confirm password textfield
-              AuthTextfield(
-                controller: pwConfirmController,
-                hintText: 'confirm password',
-                obscureText: true,
-                icon: Icons.lock,
-              ),
-              //const SizedBox(height: 10),
+                  // Confirm password textfield
+                  AuthTextFormField(
+                    hintText: 'confirm password',
+                    obscureText: true,
+                    controller: pwConfirmController,
+                    icon: Icons.lock,
+                    keyboardType: TextInputType.name,
+                    validator: (value) {
+                      if (pwController.text != pwConfirmController.text ||
+                          value!.length < 6) {
+                        return "Your passwword no match o!, check am well";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
 
-              // Sign up button
-              AuthButton(
-                buttonText: 'Sign up',
-                onPressed: clientSignUp,
-              )
-            ],
+                  // Sign up button
+                  AuthButton(
+                    buttonText: 'Sign up',
+                    onPressed: clientSignUp,
+                  )
+                ],
+              ),
+            ),
           ),
         ),
       ),

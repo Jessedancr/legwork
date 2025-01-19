@@ -7,7 +7,7 @@ class LargeTextField extends StatelessWidget {
   final bool obscureText;
   final TextEditingController controller;
   final String? helperText;
-  final IconData icon;
+  final Widget icon;
   final double? width;
 
   const LargeTextField({
@@ -86,10 +86,7 @@ class LargeTextField extends StatelessWidget {
             child: Container(
               width: screenWidth * 0.13,
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: Icon(
-                icon,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              child: icon,
             ),
           ),
         )

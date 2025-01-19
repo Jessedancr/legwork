@@ -23,6 +23,7 @@ abstract class AuthRemoteDataSource {
     List<dynamic>? danceStyles,
     Map<String, dynamic>? resume,
     String? bio,
+    List<String>? jobPrefs,
   });
 
   /// USER LOGIN METHOD
@@ -55,6 +56,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     Map<String, dynamic>? resume, // For dancers
     dynamic profilePicture,
     String? bio,
+    List<String>? jobPrefs,
   }) async {
     try {
       // Sign dancer in
@@ -105,6 +107,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'profilePicture': profilePicture,
           'bio': bio ?? '',
           'userType': UserType.dancer.name, // Store the userType
+          'jobPrefs': jobPrefs,
         };
 
         await db.collection('dancers').doc(uid).set(dancerData);
@@ -120,6 +123,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return const Left('Invalid user type');
     } on FirebaseAuthException catch (e) {
       debugPrint("Firebase Signup error: $e");
+      if (e.code == 'network-request-failed') {
+        return const Left('Check your internet connection and try again');
+      }
       return Left(e.message ?? 'Unexpected error');
     }
   }
@@ -289,7 +295,7 @@ class UpdateProfile {
         return const Left('User not found');
       }
     } catch (e) {
-      debugPrint('error updating profile');
+      debugPrint('error updating profile to firebase');
       return Left(e.toString());
     }
   }

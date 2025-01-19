@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
+import 'package:legwork/Features/home/presentation/screens/dancer_home_screen.dart';
 import 'package:legwork/core/Constants/color_schemes.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
@@ -102,7 +103,8 @@ class MyApp extends StatelessWidget {
         '/clientCompleteProfileScreen': (context) =>
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
-            )
+            ),
+        '/dancerHomeScreen': (context) => DancerHomeScreen()
       },
     );
   }

@@ -1,12 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
 
 class SignUpBusinessLogic {
   // Instance of auth repo
-  final AuthRepo authRepo;
+  final AuthRepoImpl authRepo;
 
   // Constructor
   SignUpBusinessLogic({required this.authRepo});
@@ -20,9 +21,11 @@ class SignUpBusinessLogic {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    dynamic portfolio,
+    Map<String, dynamic>? resume,
     String? organizationName,
     List<dynamic>? danceStyles = const [], // default to empty list
+    List<String>? jobPrefs,
+    
   }) async {
     // Validating firstname, lastname, username, email and password
     if (firstName.isEmpty ||
@@ -69,6 +72,8 @@ class SignUpBusinessLogic {
       danceStyles: danceStyles,
       organizationName: organizationName,
       userType: userType,
+      resume: resume,
+      jobPrefs: jobPrefs,
     );
 
     return result.fold(

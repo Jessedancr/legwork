@@ -7,7 +7,7 @@ class UpdateProfileProvider extends ChangeNotifier {
   bool isLoading = false;
 
   /// UPDATE PROFILE METHOD
-  Future<Either<String, dynamic>?> updateProfileExecute({
+  Future<Either<String, dynamic>> updateProfileExecute({
     required Map<String, dynamic> data,
   }) async {
     isLoading = true;

@@ -5,12 +5,13 @@ import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:legwork/Features/auth/domain/BusinessLogic/login_business_logic.dart';
 import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 
 import '../../domain/BusinessLogic/sign_up_business_logic.dart';
 
 class MyAuthProvider extends ChangeNotifier {
   // Instance of auth repo
-  final AuthRepo authRepo;
+  final AuthRepoImpl authRepo;
 
   bool isLoading = false;
 
@@ -28,8 +29,9 @@ class MyAuthProvider extends ChangeNotifier {
     required String password,
     required UserType userType,
     List<String>? danceStyles, // for dancers
-    dynamic portfolio, // for dancers
+    Map<String, dynamic>? resume , // for dancers
     String? organisationName, // for clients
+    List<String>? jobPrefs,
   }) async {
     SignUpBusinessLogic signUpBusinessLogic =
         SignUpBusinessLogic(authRepo: authRepo);
@@ -48,8 +50,9 @@ class MyAuthProvider extends ChangeNotifier {
         password: password,
         userType: userType,
         danceStyles: danceStyles,
-        portfolio: portfolio,
+        resume: resume,
         organizationName: organisationName,
+        jobPrefs: jobPrefs
       );
 
       isLoading = false;
@@ -71,7 +74,7 @@ class MyAuthProvider extends ChangeNotifier {
               password: password,
               phoneNumber: phoneNumber,
               danceStyles: danceStyles!,
-              resume: portfolio,
+              resume: resume,
               userType: userType.name,
             ),
           );

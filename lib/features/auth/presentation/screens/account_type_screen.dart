@@ -3,8 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/account_type_button.dart';
 
-//TODO: COME BACK TO ADD A SPLASH EFFECT ON THE BUTTONS
-
 class AccountTypeScreen extends StatefulWidget {
   const AccountTypeScreen({super.key});
 
@@ -16,7 +14,6 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
   @override
   Widget build(BuildContext context) {
     // Screen size
-    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(

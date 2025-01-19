@@ -38,7 +38,7 @@ class _OnboardingState extends State<Onboarding> {
             controller: pageController,
             onPageChanged: (value) {
               setState(() {
-                 isLastPage = (value == 2);
+                isLastPage = (value == 2);
                 debugPrint('ONBOARDING LAST PAGE');
               });
             },
@@ -58,7 +58,11 @@ class _OnboardingState extends State<Onboarding> {
               //mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 // Indicator
-                PageIndicator(pageController: pageController, count: 3),
+                PageIndicator(
+                  pageController: pageController,
+                  count: 3,
+                  dotColor: Theme.of(context).colorScheme.primaryContainer,
+                ),
                 const SizedBox(height: 10),
 
                 // GET STARTED OR NEXT button

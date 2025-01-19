@@ -32,6 +32,7 @@ abstract class UserEntity {
 class DancerEntity extends UserEntity {
   final List<dynamic> danceStyles;
   final Map<String, dynamic>? resume;
+  List? jobPrefs;
 
   // Constructor
   DancerEntity({
@@ -42,10 +43,11 @@ class DancerEntity extends UserEntity {
     required super.password,
     required super.phoneNumber,
     required super.userType,
+    required this.danceStyles,
     super.profilePicture,
     super.bio,
-    required this.danceStyles,
     this.resume,
+    this.jobPrefs,
   });
 
   // @override

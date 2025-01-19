@@ -4,11 +4,15 @@ void showLoadingIndicator(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) {
-      return const AlertDialog(
+      return AlertDialog(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         content: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.inversePrimary,
+            strokeWidth: 3.0,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
         ),
       );
     },

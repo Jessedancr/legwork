@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart' hide State;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,11 +8,8 @@ import 'package:provider/provider.dart';
 
 import '../Provider/my_auth_provider.dart';
 import '../widgets/auth_button.dart';
-import '../widgets/auth_dropdown_menu.dart';
-import '../widgets/auth_loading_indicator.dart';
-import '../widgets/auth_textfield.dart';
 
-//TODO: BUILD OUT THE UI ONCE DONE INTEGRATING WITH FIREBASE
+import '../widgets/auth_loading_indicator.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -150,7 +146,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 5),
 
-                  // TODO: DROP DOWN MENU FOR USER TYPE
                   AuthTextFormField(
                     hintText: 'Are you a dancer or a client',
                     obscureText: false,

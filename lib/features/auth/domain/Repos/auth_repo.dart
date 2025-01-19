@@ -26,8 +26,9 @@ abstract class AuthRepo {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    dynamic porfolio,
+    Map<String, dynamic>? resume,
     String? organizationName, // for client
     List<dynamic>? danceStyles, // for dancer
+    List<String>? jobPrefs // for dancer
   });
 }
