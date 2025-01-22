@@ -74,6 +74,7 @@ flutter:
     - images/OnboardingImages/
     - images/logos/
     - images/icons/
+    - images/depictions/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

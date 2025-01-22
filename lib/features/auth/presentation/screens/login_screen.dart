@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Are you a dancer or a client',
                     obscureText: false,
                     controller: userTypecontroller,
-                    icon: Icons.person,
+                    icon: const Icon(Icons.person_outline),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Please enter 'dancer' or 'client'";
@@ -165,7 +165,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Email',
                     obscureText: false,
                     controller: emailController,
-                    icon: Icons.email,
+                    icon: const Icon(Icons.email_outlined),
+                    helperText: 'Ex: johndoe@gmail.com',
                     validator: (value) {
                       if (!value!.contains('@gmail.com') || value.isEmpty) {
                         return 'Please enter a valid email address';
@@ -186,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Password',
                     obscureText: true,
                     controller: pwController,
-                    icon: Icons.lock,
+                    icon: const Icon(Icons.lock_outlined),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';

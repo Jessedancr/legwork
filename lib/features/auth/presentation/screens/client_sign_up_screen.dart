@@ -75,7 +75,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             debugPrint('Sign-up successful: ${user.username}');
             Navigator.pushNamedAndRemoveUntil(
               context,
-              '/clientCompleteProfileScreen',
+              '/clientProfileCompletionFlow',
               (route) => false,
             );
           });
@@ -140,7 +140,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'First name',
                     obscureText: false,
                     controller: firstNameController,
-                    icon: Icons.person,
+                    icon: const Icon(Icons.person_outline),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -156,7 +156,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Last name',
                     obscureText: false,
                     controller: lastNameController,
-                    icon: Icons.person,
+                    icon: const Icon(Icons.person_outline),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -172,7 +172,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'username',
                     obscureText: false,
                     controller: usernameController,
-                    icon: Icons.person,
+                    icon: Image.asset('images/icons/username.png'),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -188,8 +188,9 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Organisation name',
                     obscureText: false,
                     controller: organisationNameController,
-                    icon: Icons.person,
+                    icon: Image.asset('images/icons/username.png'),
                     keyboardType: TextInputType.name,
+                    helperText: 'Optional',
                   ),
                   const SizedBox(height: 10),
 
@@ -198,7 +199,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Email Address',
                     obscureText: false,
                     controller: emailController,
-                    icon: Icons.email,
+                    icon: const Icon(Icons.email_outlined),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -214,7 +215,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Phone number',
                     obscureText: false,
                     controller: phoneNumberController,
-                    icon: Icons.numbers,
+                    icon: const Icon(Icons.numbers),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -230,7 +231,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'password',
                     obscureText: true,
                     controller: pwController,
-                    icon: Icons.lock_open,
+                    icon: const Icon(Icons.lock_open_sharp),
                     keyboardType: TextInputType.visiblePassword,
                     validator: (value) {
                       if (value!.length < 6) {
@@ -246,7 +247,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'confirm password',
                     obscureText: true,
                     controller: pwConfirmController,
-                    icon: Icons.lock,
+                    icon: const Icon(Icons.lock_outline_rounded),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (pwController.text != pwConfirmController.text ||

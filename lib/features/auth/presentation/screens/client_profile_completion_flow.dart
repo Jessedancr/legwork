@@ -1,36 +1,34 @@
-//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Provider/update_profile_provider.dart';
-import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen1.dart';
-import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen4.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/Features/onboarding/presentation/widgets/page_indicator.dart';
 import 'package:provider/provider.dart';
 
-import '../../../onboarding/presentation/widgets/page_indicator.dart';
-import 'DancerProfileCompletion/profile_completion_screen2.dart';
-import 'DancerProfileCompletion/profile_completion_screen3.dart';
+import 'ClientProfileCompletion/profile_completion_screen1.dart';
+import 'ClientProfileCompletion/profile_completion_screen2.dart';
+import 'ClientProfileCompletion/profile_completion_screen3.dart';
 
-class DancerProfileCompletionFlow extends StatefulWidget {
-  const DancerProfileCompletionFlow({
+class ClientProfileCompletionFlow extends StatefulWidget {
+  final String email;
+  const ClientProfileCompletionFlow({
     super.key,
+    required this.email,
   });
 
   @override
-  State<DancerProfileCompletionFlow> createState() =>
-      _DancerProfileCompletionFlowState();
+  State<ClientProfileCompletionFlow> createState() =>
+      _ClientProfileCompletionFlowState();
 }
 
-class _DancerProfileCompletionFlowState
-    extends State<DancerProfileCompletionFlow> {
+class _ClientProfileCompletionFlowState
+    extends State<ClientProfileCompletionFlow> {
   final auth = FirebaseAuth.instance;
 
   // CONTROLLERS
   final PageController pageController = PageController();
   final TextEditingController bioController = TextEditingController();
-  final SearchController searchController = SearchController();
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
@@ -63,7 +61,7 @@ class _DancerProfileCompletionFlowState
         );
 
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/dancerHomeScreen',
+          '/clientHomeScreen',
           (route) => false,
         );
       } catch (e) {
@@ -84,7 +82,7 @@ class _DancerProfileCompletionFlowState
       );
     }
 
-    // RETURNED SCAFFOLD
+    // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -95,8 +93,8 @@ class _DancerProfileCompletionFlowState
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (value) {
                 setState(() {
-                  isLastPage = (value == 3);
-                  debugPrint('DANCER PROFILE COMPLETION LAST PAGE');
+                  isLastPage = (value == 2);
+                  debugPrint('CLIENT PROFILE COMPLETION LAST PAGE');
                 });
               },
               children: [
@@ -104,14 +102,8 @@ class _DancerProfileCompletionFlowState
                   email: auth.currentUser!.email,
                   bioController: bioController,
                 ),
-                const ProfileCompletionScreen2(),
-                ProfileCompletionScreen3(
-                  onPressed: () => pageController.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  ),
-                ),
-                const ProfileCompletionScreen4()
+                ProfileCompletionScreen2(),
+                ProfileCompletionScreen3(),
               ],
             ),
 
@@ -121,8 +113,7 @@ class _DancerProfileCompletionFlowState
               left: screenWidth * 0.45,
               child: PageIndicator(
                 pageController: pageController,
-                count: 4,
-                dotColor: Theme.of(context).colorScheme.primaryContainer,
+                count: 3,
               ),
             ),
 
@@ -137,9 +128,8 @@ class _DancerProfileCompletionFlowState
                     onPressed: () {
                       // back to previous screen
                       pageController.previousPage(
-                        duration: const Duration(microseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
+                          duration: const Duration(microseconds: 500),
+                          curve: Curves.easeInOut);
                     },
                     icon: const Icon(Icons.arrow_back),
                   ),

@@ -77,14 +77,13 @@ class LargeTextField extends StatelessWidget {
         // Custom leading icon
 
         Positioned(
-          top: -0.5,
-          left: 20,
+          //top: -0.5,
+          left: 35,
           height: 30,
-          width: 50,
+          width: 41,
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(40),
+            borderRadius: BorderRadius.circular(50),
             child: Container(
-              width: screenWidth * 0.13,
               color: Theme.of(context).colorScheme.primaryContainer,
               child: icon,
             ),

@@ -9,7 +9,7 @@ import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/account_type_or_register.dart';
 import 'package:legwork/Features/auth/presentation/Screens/account_type_screen.dart';
-import 'package:legwork/Features/auth/presentation/Screens/client_complete_profile_screen.dart';
+import 'package:legwork/Features/auth/presentation/Screens/client_profile_completion_flow.dart';
 import 'package:legwork/Features/onboarding/data/onboarding_repo.dart';
 import 'package:legwork/firebase_options.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +19,7 @@ import 'Features/auth/presentation/Screens/client_sign_up_screen.dart';
 import 'Features/auth/presentation/Screens/dancer_sign_up_screen.dart';
 import 'Features/auth/presentation/Screens/dancer_profile_completion_flow.dart';
 import 'Features/auth/presentation/Screens/login_screen.dart';
+import 'Features/home/presentation/screens/client_home_screen.dart';
 import 'Features/onboarding/domain/onboarding_status_check.dart';
 import 'Features/onboarding/presentation/screens/onboarding.dart';
 
@@ -89,22 +90,23 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: seedScheme,
       home: isOnboardingComplete
-          ? AccountTypeOrRegister()
+          ? const AccountTypeOrRegister()
           : Onboarding(
               onboardingStatusCheck: onboardingStatusCheck,
             ),
       routes: {
-        '/acctType': (context) => AccountTypeScreen(),
-        '/loginScreen': (context) => LoginScreen(),
-        '/clientSignUpScreen': (context) => ClientSignUpScreen(),
-        '/dancerSignUpScreen': (context) => DancerSignUpScreen(),
+        '/acctType': (context) =>  const AccountTypeScreen(),
+        '/loginScreen': (context) =>  LoginScreen(),
+        '/clientSignUpScreen': (context) =>  ClientSignUpScreen(),
+        '/dancerSignUpScreen': (context) =>  DancerSignUpScreen(),
         '/dancerProfileCompletionFlow': (context) =>
-            DancerProfileCompletionFlow(),
-        '/clientCompleteProfileScreen': (context) =>
+            const DancerProfileCompletionFlow(),
+        '/clientProfileCompletionFlow': (context) =>
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
             ),
-        '/dancerHomeScreen': (context) => DancerHomeScreen()
+        '/dancerHomeScreen': (context) =>  DancerHomeScreen(),
+        '/clientHomeScreen': (context) =>  ClientHomeScreen(),
       },
     );
   }

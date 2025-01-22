@@ -61,7 +61,6 @@ class _OnboardingState extends State<Onboarding> {
                 PageIndicator(
                   pageController: pageController,
                   count: 3,
-                  dotColor: Theme.of(context).colorScheme.primaryContainer,
                 ),
                 const SizedBox(height: 10),
 

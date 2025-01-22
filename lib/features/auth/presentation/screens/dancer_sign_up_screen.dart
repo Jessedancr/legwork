@@ -138,7 +138,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'First name',
                     obscureText: false,
                     controller: firstNameController,
-                    icon: Icons.person,
+                    icon: const Icon(Icons.person_outline),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -154,7 +154,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'last name',
                     obscureText: false,
                     controller: lastNameController,
-                    icon: Icons.person,
+                    icon: const Icon(Icons.person_outline),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -170,7 +170,11 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'username',
                     obscureText: false,
                     controller: usernameController,
-                    icon: Icons.person,
+                    icon: Image.asset(
+                      'images/icons/username.png',
+                      width: 0.5,
+                      height: 0.5,
+                    ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -186,7 +190,14 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'dance styles',
                     obscureText: false,
                     controller: danceStylesController,
-                    icon: Icons.person,
+                    icon: SizedBox(
+                      width: screenWidth * 0.8,
+                      height: screenHeight * 0.8,
+                      child: Image.asset(
+                        'images/icons/dance.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please fill in your dance styles, abi you no wan see job ni';
@@ -201,7 +212,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'email',
                     obscureText: false,
                     controller: emailController,
-                    icon: Icons.email,
+                    icon: const Icon(Icons.email_outlined),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -217,7 +228,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'phone Number',
                     obscureText: false,
                     controller: phoneNumberController,
-                    icon: Icons.numbers,
+                    icon: const Icon(Icons.numbers),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -233,7 +244,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'password',
                     obscureText: true,
                     controller: pwController,
-                    icon: Icons.lock_open,
+                    icon: const Icon(Icons.lock_open),
                     keyboardType: TextInputType.visiblePassword,
                     validator: (value) {
                       if (value!.length < 6) {
@@ -250,7 +261,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     obscureText: true,
                     controller: pwConfirmController,
                     keyboardType: TextInputType.visiblePassword,
-                    icon: Icons.lock,
+                    icon: const Icon(Icons.lock_outline_rounded),
                     validator: (value) {
                       if (pwController.text != pwConfirmController.text ||
                           value!.length < 6) {

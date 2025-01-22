@@ -279,13 +279,17 @@ class UpdateProfile {
       final dancersDoc = results[0];
       final clientsDoc = results[1];
 
+      // IF DOCUMENT IS IN DANCERS COLLECTION
       if (dancersDoc.exists) {
         await db.collection('dancers').doc(uid).update(data);
         DocumentSnapshot userDoc =
             await db.collection('dancers').doc(uid).get();
         final dancerModel = DancerModel.fromDocument(userDoc);
         return Right(dancerModel);
-      } else if (clientsDoc.exists) {
+      }
+
+      // IF DOCUMENT IS IN CLIENTS COLLECTION
+      else if (clientsDoc.exists) {
         await db.collection('clients').doc(uid).update(data);
         DocumentSnapshot userDoc =
             await db.collection('clients').doc(uid).get();

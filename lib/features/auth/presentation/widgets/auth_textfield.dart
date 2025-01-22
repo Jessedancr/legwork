@@ -7,7 +7,7 @@ class AuthTextfield extends StatelessWidget {
   final bool obscureText;
   final TextEditingController controller;
   final String? helperText;
-  final IconData icon;
+  final Widget icon;
   final double? width;
 
   const AuthTextfield({
@@ -75,18 +75,15 @@ class AuthTextfield extends StatelessWidget {
         // Custom leading icon
 
         Positioned(
-          top: -0.5,
-          left: 20,
+          top: -0.7,
+          left: 35,
           bottom: 25,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40),
             child: Container(
-              width: screenWidth * 0.13,
+              width: screenWidth * 0.1,
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: Icon(
-                icon,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              child: icon,
             ),
           ),
         )
