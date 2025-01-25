@@ -51,6 +51,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
 
     return SafeArea(
       child: Scaffold(
+        //resizeToAvoidBottomInset: false,
         backgroundColor: Theme.of(context).colorScheme.primary,
         body: Center(
           child: Column(
@@ -117,86 +118,89 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
               // EXPANDED WIDGET FOR THE REST OF THE SCREEN'S CONTENT
               Expanded(
                 flex: 2,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
+                child: SingleChildScrollView(
+                  child: Container(
+                    height: screenHeight * 0.7,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        children: [
-                          // PROFILE PICTURE
-                          if (selectedImage == null)
-                            // EMPTY PROFILE PICTURE
-                            Stack(
-                              children: [
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainer,
-                                    borderRadius: BorderRadius.circular(50),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Column(
+                          children: [
+                            // PROFILE PICTURE
+                            if (selectedImage == null)
+                              // EMPTY PROFILE PICTURE
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer,
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    child: Image.asset(
+                                      'images/icons/user.png',
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                    ),
                                   ),
-                                  child: Image.asset(
-                                    'images/icons/user.png',
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                  ),
-                                ),
-                                // Edit icon
-                                Positioned(
-                                  bottom: 5,
-                                  child: Ink(
-                                    child: InkWell(
-                                      onTap: _pickImageFromGallery,
-                                      child: Image.asset(
-                                        'images/icons/edit_circle.png',
-                                        height: screenHeight * 0.04,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer,
+                                  // Edit icon
+                                  Positioned(
+                                    bottom: 5,
+                                    child: Ink(
+                                      child: InkWell(
+                                        onTap: _pickImageFromGallery,
+                                        child: Image.asset(
+                                          'images/icons/edit_circle.png',
+                                          height: screenHeight * 0.04,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            )
-                          else
-                            Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainer,
-                                borderRadius: BorderRadius.circular(50),
-                                image: DecorationImage(
-                                  image: FileImage(
-                                      selectedImage!), // IMAGE FROM FILE
-                                  fit: BoxFit.cover,
+                                ],
+                              )
+                            else
+                              Container(
+                                height: 100,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainer,
+                                  borderRadius: BorderRadius.circular(50),
+                                  image: DecorationImage(
+                                    image: FileImage(
+                                        selectedImage!), // IMAGE FROM FILE
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
+                            const SizedBox(height: 50),
+                            LargeTextField(
+                              hintText: 'Enter your bio',
+                              obscureText: false,
+                              controller: widget.bioController,
+                              icon: Image.asset(
+                                'images/icons/edit_circle.png',
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                              ),
                             ),
-                          const SizedBox(height: 50),
-                          LargeTextField(
-                            hintText: 'Enter your bio',
-                            obscureText: false,
-                            controller: widget.bioController,
-                            icon: Image.asset(
-                              'images/icons/edit_circle.png',
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

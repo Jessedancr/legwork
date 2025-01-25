@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/hiring_history_tile.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
-
-import 'package:legwork/Features/auth/presentation/Widgets/work_experience_tile.dart';
-import 'package:legwork/Features/home/presentation/widgets/work_experience_bottom_sheet.dart';
+import 'package:legwork/Features/home/presentation/widgets/hiring_history_bottom_sheet.dart';
 
 // WORK EXPERIENCE LIST
-List workExperienceList = [];
+List hiringHistoryList = [];
 
 class ProfileCompletionScreen4 extends StatefulWidget {
   final TextEditingController professonalTitleController;
-  final TextEditingController titleController;
-  final TextEditingController employerController;
+  final TextEditingController jobTitleController;
   final TextEditingController locationController;
   final TextEditingController dateController;
+  final TextEditingController numOfDancersController;
+  final TextEditingController paymentController;
   final TextEditingController jobDescrController;
-
   const ProfileCompletionScreen4({
     super.key,
-    required this.dateController,
-    required this.employerController,
-    required this.jobDescrController,
-    required this.locationController,
     required this.professonalTitleController,
-    required this.titleController,
+    required this.dateController,
+    required this.jobDescrController,
+    required this.jobTitleController,
+    required this.locationController,
+    required this.numOfDancersController,
+    required this.paymentController,
   });
 
   @override
@@ -35,29 +34,28 @@ class ProfileCompletionScreen4 extends StatefulWidget {
 }
 
 class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
-  // CONTROLLERS
-
-  // BUILD METHOD
   @override
   Widget build(BuildContext context) {
     // METHOD TO SAVE WORK EXPERIENCE AND DISPLAY IT ON SCREEN
     void saveExperience() {
       if (formKey.currentState!.validate()) {
         setState(() {
-          workExperienceList.add([
-            widget.titleController.text,
-            widget.employerController.text,
+          hiringHistoryList.add([
+            widget.jobTitleController.text,
             widget.locationController.text,
             widget.dateController.text,
+            widget.numOfDancersController.text,
+            widget.paymentController.text,
             widget.jobDescrController.text,
           ]);
         });
-        debugPrint(workExperienceList.toString());
+        debugPrint(hiringHistoryList.toString());
         // CLEAR THE CONTROLLERS
-        widget.titleController.clear();
-        widget.employerController.clear();
+        widget.jobTitleController.clear();
         widget.locationController.clear();
         widget.dateController.clear();
+        widget.numOfDancersController.clear();
+        widget.paymentController.clear();
         widget.jobDescrController.clear();
         Navigator.of(context).pop();
       }
@@ -88,13 +86,14 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         context: context,
         builder: (context) {
-          return WorkExperienceBottomSheet(
-            onPressed: saveExperience,
-            employerController: widget.employerController,
-            titleController: widget.titleController,
-            jobDescrController: widget.jobDescrController,
-            locationController: widget.locationController,
+          return HiringHistoryBottomSheet(
             dateController: widget.dateController,
+            jobDescrController: widget.jobDescrController,
+            jobTitleController: widget.jobTitleController,
+            locationController: widget.locationController,
+            numOfDancersController: widget.numOfDancersController,
+            paymentController: widget.paymentController,
+            onPressed: saveExperience,
             showDatePicker: datePicker,
           );
         },
@@ -218,14 +217,17 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                                 width: screenWidth,
                                 child: ListView.builder(
                                   shrinkWrap: true,
-                                  itemCount: workExperienceList.length,
+                                  itemCount: hiringHistoryList.length,
                                   itemBuilder: (context, index) {
-                                    return WorkExperienceTile(
-                                      jobTitle: workExperienceList[index][0],
-                                      employer: workExperienceList[index][1],
-                                      location: workExperienceList[index][2],
-                                      date: workExperienceList[index][3],
-                                      jobDescr: workExperienceList[index][4],
+                                    return HiringHistoryTile(
+                                      jobTitle: hiringHistoryList[index][0],
+                                      location: hiringHistoryList[index][1],
+                                      date: hiringHistoryList[index][2],
+                                      numOfDancersHired:
+                                          hiringHistoryList[index][3],
+                                      paymentOffered: hiringHistoryList[index]
+                                          [4],
+                                      jobDescr: hiringHistoryList[index][5],
                                     );
                                   },
                                 ),

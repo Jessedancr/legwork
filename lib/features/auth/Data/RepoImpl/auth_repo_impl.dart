@@ -28,10 +28,14 @@ class AuthRepoImpl implements AuthRepo {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    Map<String, dynamic>? resume,
-    String? organizationName, // For clients
+    dynamic profilePicture,
+    String? bio,
     List<dynamic>? danceStyles, // for dancers
-    List<String>? jobPrefs,
+    List<String>? jobPrefs, // for dancers
+    Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
+    String? organizationName, // For clients
+    List<dynamic>? danceStylePrefs, // for clients
+    List<dynamic>? jobOfferings, // for clients
   }) async {
     try {
       final result = await _authRemoteDataSource.userSignUp(
@@ -41,11 +45,15 @@ class AuthRepoImpl implements AuthRepo {
         email: email,
         phoneNumber: phoneNumber,
         password: password,
-        danceStyles: danceStyles ?? [],
-        resume: resume,
-        organisationName: organizationName ?? '',
         userType: userType,
-        jobPrefs: jobPrefs
+        bio: bio,
+        profilePicture: profilePicture,
+        danceStyles: danceStyles ?? [], // for dancers
+        jobPrefs: jobPrefs, // for dancers
+        resume: resume, // for dancers => 'hiringHistory' for clients
+        organisationName: organizationName ?? '', // for clients
+        danceStylePrefs: danceStylePrefs, // for clients
+        jobOfferings: jobOfferings, // for clients
       );
 
       // Return either a fail or a dancer or client entity
@@ -79,7 +87,10 @@ class AuthRepoImpl implements AuthRepo {
     String? bio,
     dynamic profilePicture,
     List<String>? danceStyles, // for dancers
-    dynamic resume, // for dancers
+    Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
+    List<dynamic>? danceStylePrefs, // for clients
+    String? organisationName, // for clients
+    List<dynamic>? jobOfferings, // for clients
   }) async {
     try {
       final result = await _authRemoteDataSource.userLogin(
@@ -121,6 +132,10 @@ class AuthRepoImpl implements AuthRepo {
               bio: bio,
               profilePicture: profilePicture,
               userType: UserType.client.name,
+              danceStylePrefs: danceStylePrefs ?? [],
+              organisationName: organisationName ?? '',
+              jobOfferings: jobOfferings ?? [],
+              hiringHistory: resume,
             ),
           ),
         );

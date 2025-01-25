@@ -37,7 +37,8 @@ class BlurEffect extends StatelessWidget {
                 gradient: LinearGradient(
                   colors: [
                     Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    // Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
+                    Colors.black.withOpacity(0.5),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,

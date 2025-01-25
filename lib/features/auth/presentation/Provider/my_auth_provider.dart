@@ -29,9 +29,11 @@ class MyAuthProvider extends ChangeNotifier {
     required String password,
     required UserType userType,
     List<String>? danceStyles, // for dancers
-    Map<String, dynamic>? resume , // for dancers
+    Map<String, dynamic>? resume, // for dancers
+    List<String>? jobPrefs, // for dancers
     String? organisationName, // for clients
-    List<String>? jobPrefs,
+    List<dynamic>? danceStylePrefs, // for clients
+    List<dynamic>? jobOfferings, // for clients
   }) async {
     SignUpBusinessLogic signUpBusinessLogic =
         SignUpBusinessLogic(authRepo: authRepo);
@@ -52,7 +54,7 @@ class MyAuthProvider extends ChangeNotifier {
         danceStyles: danceStyles,
         resume: resume,
         organizationName: organisationName,
-        jobPrefs: jobPrefs
+        jobPrefs: jobPrefs,
       );
 
       isLoading = false;
@@ -87,8 +89,11 @@ class MyAuthProvider extends ChangeNotifier {
               email: email,
               phoneNumber: phoneNumber,
               password: password,
-              organisationName: organisationName,
               userType: userType.name,
+              danceStylePrefs: danceStylePrefs ?? [],
+              organisationName: organisationName,
+              jobOfferings: jobOfferings ?? [],
+              hiringHistory: resume ?? {},
             ),
           );
         }
@@ -121,6 +126,8 @@ class MyAuthProvider extends ChangeNotifier {
     List<String>? danceStyles, // for dancers
     dynamic portfolio, // for dancers,
     String? organisationName, // for clients
+    List<dynamic>? danceStylePrefs, // for clients
+    List<dynamic>? jobOfferings,
   }) async {
     LoginBusinessLogic loginBusinessLogic =
         LoginBusinessLogic(authRepo: authRepo);
@@ -166,6 +173,8 @@ class MyAuthProvider extends ChangeNotifier {
             password: password,
             organisationName: organisationName,
             userType: userType ?? 'client',
+            danceStylePrefs: danceStylePrefs ?? [],
+            jobOfferings: jobOfferings ?? [],
           ),
         );
       });

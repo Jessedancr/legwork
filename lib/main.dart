@@ -104,7 +104,7 @@ class MyApp extends StatelessWidget {
         '/clientProfileCompletionFlow': (context) =>
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
-            ),
+            ), 
         '/dancerHomeScreen': (context) =>  DancerHomeScreen(),
         '/clientHomeScreen': (context) =>  ClientHomeScreen(),
       },

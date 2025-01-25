@@ -21,11 +21,14 @@ class SignUpBusinessLogic {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    Map<String, dynamic>? resume,
-    String? organizationName,
-    List<dynamic>? danceStyles = const [], // default to empty list
-    List<String>? jobPrefs,
-    
+    dynamic profilePicture,
+    String? bio,
+    Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
+    List<dynamic>? danceStyles = const [], // for dancers
+    List<String>? jobPrefs, // for dancers
+    String? organizationName, // for clients
+    List<dynamic>? danceStylePrefs, // for clients
+    List<dynamic>? jobOfferings, // for clients
   }) async {
     // Validating firstname, lastname, username, email and password
     if (firstName.isEmpty ||
@@ -51,11 +54,6 @@ class SignUpBusinessLogic {
       return const Left('Password must be at least 6 characters');
     }
 
-    // if (userType == UserType.client &&
-    //     (organizationName == null || organizationName.isEmpty)) {
-    //   return const Left('Organization name is required for clients');
-    // }
-
     if (userType == UserType.dancer &&
         (danceStyles == null || danceStyles.isEmpty)) {
       return const Left('At least one dance style is required for dancers');
@@ -69,11 +67,15 @@ class SignUpBusinessLogic {
       email: email,
       phoneNumber: phoneNumber,
       password: password,
-      danceStyles: danceStyles,
-      organizationName: organizationName,
       userType: userType,
-      resume: resume,
-      jobPrefs: jobPrefs,
+      bio: bio,
+      profilePicture: profilePicture,
+      danceStyles: danceStyles, // for dancers
+      resume: resume, // for dancers => 'hiringHistory' for clients
+      jobPrefs: jobPrefs, // for dancers
+      organizationName: organizationName, // for clients
+      danceStylePrefs: danceStylePrefs, // for clients
+      jobOfferings: jobOfferings, // for clients
     );
 
     return result.fold(

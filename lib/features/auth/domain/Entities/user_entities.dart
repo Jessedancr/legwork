@@ -61,7 +61,10 @@ class DancerEntity extends UserEntity {
 
 /// CLIENT ENTITY
 class ClientEntity extends UserEntity {
+  final List<dynamic> danceStylePrefs;
+  final List<dynamic> jobOfferings;
   final String? organisationName;
+  final Map<String, dynamic>? hiringHistory;
 
   // Constructor
   ClientEntity({
@@ -71,10 +74,13 @@ class ClientEntity extends UserEntity {
     required super.email,
     required super.phoneNumber,
     required super.password,
+    required super.userType,
+    required this.danceStylePrefs,
+    required this.jobOfferings,
     super.profilePicture,
     super.bio,
     this.organisationName,
-    required super.userType,
+    this.hiringHistory
   });
 
   // @override

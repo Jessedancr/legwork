@@ -29,8 +29,15 @@ class _DancerProfileCompletionFlowState
 
   // CONTROLLERS
   final PageController pageController = PageController();
-  final TextEditingController bioController = TextEditingController();
   final SearchController searchController = SearchController();
+  final TextEditingController bioController = TextEditingController();
+  final TextEditingController professonalTitleController =
+      TextEditingController();
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController employerController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController jobDescrController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
@@ -53,8 +60,21 @@ class _DancerProfileCompletionFlowState
           data: {
             'bio': bioController.text,
             'jobPrefs': selectedSkills,
+            'resume': {
+              'professionalTitle': professonalTitleController.text,
+              'workExperiences': workExperienceList
+                  .map((experience) => {
+                        'jobTitle': experience[0],
+                        'employer': experience[1],
+                        'location': experience[2],
+                        'date': experience[3],
+                        'jobDescription': experience[4],
+                      })
+                  .toList(),
+            }
           },
         );
+
         hideLoadingIndicator(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -87,6 +107,7 @@ class _DancerProfileCompletionFlowState
     // RETURNED SCAFFOLD
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
             // Page view
@@ -111,14 +132,21 @@ class _DancerProfileCompletionFlowState
                     curve: Curves.easeInOut,
                   ),
                 ),
-                const ProfileCompletionScreen4()
+                ProfileCompletionScreen4(
+                  dateController: dateController,
+                  employerController: employerController,
+                  jobDescrController: jobDescrController,
+                  locationController: locationController,
+                  professonalTitleController: professonalTitleController,
+                  titleController: titleController,
+                ),
               ],
             ),
 
             // PAGE INDICATOR
             Positioned(
-              bottom: screenHeight * 0.1,
-              left: screenWidth * 0.45,
+              bottom: screenHeight * 0.04,
+              left: screenWidth * 0.38,
               child: PageIndicator(
                 pageController: pageController,
                 count: 4,
@@ -126,38 +154,36 @@ class _DancerProfileCompletionFlowState
               ),
             ),
 
-            // BUTTONS
+            // PREVIOUS ICON BUTTON
             Positioned(
               bottom: screenHeight * 0.01,
               left: screenWidth * 0.05,
-              child: Row(
-                children: [
-                  // PREVIOUS PAGE BUTTON
-                  IconButton(
-                    onPressed: () {
-                      // back to previous screen
-                      pageController.previousPage(
-                        duration: const Duration(microseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  SizedBox(width: screenWidth * 0.05),
-
-                  // SAVE AND CONTINUE BUTTON
-                  isLastPage
-                      ? LegworkElevatedButton(
-                          buttonText: 'Save and continue',
-                          onPressed: saveAndUpdateProfile,
-                        )
-                      : LegworkElevatedButton(
-                          onPressed: nextPage,
-                          buttonText: 'Next',
-                        ),
-                ],
+              child: IconButton(
+                onPressed: () {
+                  // back to previous screen
+                  pageController.previousPage(
+                    duration: const Duration(microseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                icon: const Icon(Icons.arrow_back),
               ),
             ),
+
+            // SAVE AND CONTINUE BUTTON
+            Positioned(
+              bottom: screenHeight * 0.01,
+              right: screenWidth * 0.05,
+              child: isLastPage
+                  ? LegworkElevatedButton(
+                      buttonText: 'Done',
+                      onPressed: saveAndUpdateProfile,
+                    )
+                  : LegworkElevatedButton(
+                      onPressed: nextPage,
+                      buttonText: 'Next',
+                    ),
+            )
           ],
         ),
       ),

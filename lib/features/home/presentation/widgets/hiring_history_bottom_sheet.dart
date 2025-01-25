@@ -6,32 +6,34 @@ import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart'
 // TEXTFORMFIELD KEY
 final formKey = GlobalKey<FormState>();
 
-class WorkExperienceBottomSheet extends StatefulWidget {
+class HiringHistoryBottomSheet extends StatefulWidget {
   final void Function()? onPressed;
-  final TextEditingController titleController;
-  final TextEditingController employerController;
-  final TextEditingController locationController;
-  final TextEditingController jobDescrController;
-  final TextEditingController dateController;
   final dynamic Function()? showDatePicker;
-  const WorkExperienceBottomSheet({
+  final TextEditingController jobTitleController;
+  final TextEditingController locationController;
+  final TextEditingController dateController;
+  final TextEditingController numOfDancersController;
+  final TextEditingController paymentController;
+  final TextEditingController jobDescrController;
+
+  const HiringHistoryBottomSheet({
     super.key,
-    required this.onPressed,
-    required this.employerController,
-    required this.jobDescrController,
-    required this.locationController,
-    required this.titleController,
     required this.dateController,
+    required this.jobDescrController,
+    required this.jobTitleController,
+    required this.locationController,
+    required this.numOfDancersController,
+    required this.paymentController,
+    required this.onPressed,
     required this.showDatePicker,
   });
 
   @override
-  State<WorkExperienceBottomSheet> createState() =>
-      _WorkExperienceBottomSheetState();
+  State<HiringHistoryBottomSheet> createState() =>
+      _HiringHistoryBottomSheetState();
 }
 
-class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
-  // BUILD METHOD
+class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
   @override
   Widget build(BuildContext context) {
     // SCREEN SIZE
@@ -41,7 +43,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
     // RETURNED WIDGET
     return SingleChildScrollView(
       child: Container(
-        height: screenHeight,
+        height: screenHeight * 1.25,
         decoration: BoxDecoration(
           //color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),
@@ -57,30 +59,14 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
               children: [
                 // Job Title text field
                 AuthTextFormField(
-                  hintText: 'Title',
+                  hintText: 'Title/Type of Job',
                   obscureText: false,
-                  controller: widget.titleController,
+                  controller: widget.jobTitleController,
                   icon: Image.asset('images/icons/title.png'),
-                  helperText: 'Ex: back up dancer',
+                  helperText: 'Ex: TV commercial',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please fill in your job role/title';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
-
-                // Employer text field
-                AuthTextFormField(
-                  hintText: 'Employer',
-                  obscureText: false,
-                  controller: widget.employerController,
-                  icon: Image.asset('images/icons/employer.png'),
-                  helperText: 'Ex: TMG',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please fill in your employer, abi pesin no employ you to do work??';
+                      return 'Please fill in the type of job you offered';
                     }
                     return null;
                   },
@@ -106,6 +92,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                 ),
                 const SizedBox(height: 20),
 
+                // Date textfield
                 AuthTextFormField(
                   hintText: 'date',
                   obscureText: false,
@@ -115,6 +102,40 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                 ),
                 const SizedBox(height: 20),
 
+                // Number of dancers hired
+                AuthTextFormField(
+                  keyboardType: TextInputType.number,
+                  hintText: 'Number of dancers hired',
+                  obscureText: false,
+                  controller: widget.numOfDancersController,
+                  icon: Image.asset('images/icons/employer.png'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please fill in the number of dancers you employed or worked with';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // Payment offered
+                AuthTextFormField(
+                  helperText: 'Ex: 50000',
+                  keyboardType: TextInputType.number,
+                  hintText: 'payment offered on job',
+                  obscureText: false,
+                  controller: widget.paymentController,
+                  icon: Icon(Icons.money),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'How much did you pay the dancers you worked with?';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // Job Description
                 LargeTextField(
                   hintText: 'Job description',
                   obscureText: false,
@@ -122,6 +143,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                   icon: const Icon(Icons.description),
                 ),
 
+                // Save button
                 AuthButton(
                   onPressed: widget.onPressed,
                   buttonText: 'Save',

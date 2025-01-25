@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/job_search_bar.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
@@ -37,115 +38,161 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // RETURNED WIDGET
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        body: Center(
           child: Column(
             children: [
-              // Text container
-              Container(
-                margin: const EdgeInsets.all(20),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'What type of work are you offering?',
-                      style: GoogleFonts.robotoSlab(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                    Text(
-                      'Search for skills you have',
-                      style: GoogleFonts.robotoSlab(),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-
-              // Search bar
-              JobSearchBar(
-                searchController: searchController,
-                suggestionsBuilder: (context, controller) {
-                  // Filter jobs based on the search query
-                  final filteredJobs = jobs.where(
-                    (job) {
-                      // Return empty search controller or the search query converted to lower case
-                      return controller.text.isEmpty ||
-                          job[0]
-                              .toLowerCase()
-                              .contains(controller.text.toLowerCase());
-                    },
-                  ).toList();
-
-                  // Display filtered results in a single listview
-                  return [
-                    SizedBox(
-                      height: 500,
-                      child: ListView.builder(
-                        itemCount: filteredJobs.length,
-                        itemBuilder: (context, index) {
-                          final jobIndex = jobs.indexOf(filteredJobs[index]);
-                          return JobTile(
-                            job: filteredJobs[index][0],
-                            checkedValue: filteredJobs[index][1],
-                            onChanged: (value) => checkBoxTapped(
-                              value!,
-                              jobIndex,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ];
-                },
-              ),
-              const SizedBox(height: 40),
-
-              // SHOW SELECTED SKILLS
+              // EXPANDED WIDGET FOR IMAGE
               Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'Selected Skills:',
-                      style: GoogleFonts.robotoSlab(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('images/depictions/img_depc1.jpg'),
+                      filterQuality: FilterQuality.high,
+                      fit: BoxFit.cover,
                     ),
-                    const SizedBox(height: 20),
-
-                    // Show selected skills
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: selectedSkills.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            child: Text(
-                              '- ${selectedSkills[index]}',
+                  ),
+                  child: Center(
+                    child: BlurEffect(
+                      height: screenHeight * 0.18,
+                      width: screenWidth * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'What type of work are you offering?',
+                              textAlign: TextAlign.center,
                               style: GoogleFonts.robotoSlab(
-                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
                                 color: Colors.white,
                               ),
                             ),
-                          );
-                        },
+                            Text(
+                              'Search for gigs you would be posting',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.robotoSlab(
+                                color: Colors.white,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ],
+                  ),
+                ),
+              ),
+
+              // EXPANDED WIDGET FOR OTHER SCREEN CONTENTS
+              Expanded(
+                flex: 2,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0,
+                      vertical: 15.0,
+                    ),
+                    child: Column(
+                      children: [
+                        // Search bar
+                        JobSearchBar(
+                          searchController: searchController,
+                          suggestionsBuilder: (context, controller) {
+                            // Filter jobs based on the search query
+                            final filteredJobs = jobs.where(
+                              (job) {
+                                // Return empty search controller or the search query converted to lower case
+                                return controller.text.isEmpty ||
+                                    job[0].toLowerCase().contains(
+                                        controller.text.toLowerCase());
+                              },
+                            ).toList();
+
+                            // Display filtered results in a single listview
+                            return [
+                              SizedBox(
+                                height: 500,
+                                child: ListView.builder(
+                                  itemCount: filteredJobs.length,
+                                  itemBuilder: (context, index) {
+                                    final jobIndex =
+                                        jobs.indexOf(filteredJobs[index]);
+                                    return JobTile(
+                                      job: filteredJobs[index][0],
+                                      checkedValue: filteredJobs[index][1],
+                                      onChanged: (value) => checkBoxTapped(
+                                        value!,
+                                        jobIndex,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ];
+                          },
+                        ),
+
+                        // SHOW SELECTED SKILLS
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text(
+                                'Selected Skills:',
+                                style: GoogleFonts.robotoSlab(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Show selected skills
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: selectedSkills.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      padding: const EdgeInsets.all(10),
+                                      margin: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Text(
+                                        '- ${selectedSkills[index]}',
+                                        style: GoogleFonts.robotoSlab(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               )
             ],

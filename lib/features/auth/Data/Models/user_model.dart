@@ -99,6 +99,9 @@ class ClientModel extends ClientEntity {
     required super.phoneNumber,
     required super.username,
     required super.userType,
+    required super.danceStylePrefs,
+    required super.jobOfferings,
+    required super.hiringHistory,
     super.organisationName,
     super.profilePicture,
     super.bio,
@@ -117,6 +120,9 @@ class ClientModel extends ClientEntity {
       profilePicture: doc['profilePicture'],
       userType: doc['userType'] ?? 'client',
       bio: doc['bio'] ?? '',
+      danceStylePrefs: doc['danceStylePrefs'] ?? [],
+      jobOfferings: doc['jobOfferings'] ?? [],
+      hiringHistory: doc['hiringHistory'] ?? {},
     );
   }
 
@@ -129,25 +135,32 @@ class ClientModel extends ClientEntity {
       'email': email,
       'phoneNumber': phoneNumber,
       'password': password,
+      'userType': UserType.client.name, // Include userType
       'organisationName': organisationName,
       'profilePicture': profilePicture,
-      'userType': UserType.client.name, // Include userType
       'bio': bio,
+      'danceStylePrefs': danceStylePrefs,
+      'jobOfferings': jobOfferings,
+      'hiringHistory': hiringHistory,
     };
   }
 
   // Convert user profile to entity for business logic use
   ClientEntity toClientEntity() {
     return ClientEntity(
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password,
-        organisationName: organisationName,
-        profilePicture: profilePicture,
-        userType: userType,
-        bio: bio);
+      firstName: firstName,
+      lastName: lastName,
+      username: username,
+      email: email,
+      phoneNumber: phoneNumber,
+      password: password,
+      organisationName: organisationName,
+      profilePicture: profilePicture,
+      userType: userType,
+      bio: bio,
+      danceStylePrefs: danceStylePrefs,
+      jobOfferings: jobOfferings,
+      hiringHistory: hiringHistory,
+    );
   }
 }

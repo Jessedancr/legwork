@@ -24,6 +24,7 @@ abstract class AuthRemoteDataSource {
     Map<String, dynamic>? resume,
     String? bio,
     List<String>? jobPrefs,
+    List<dynamic>? danceStylePrefs,
   });
 
   /// USER LOGIN METHOD
@@ -51,12 +52,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    List<dynamic>? danceStyles, // for dancers
-    String? organisationName, // for clients
-    Map<String, dynamic>? resume, // For dancers
     dynamic profilePicture,
     String? bio,
-    List<String>? jobPrefs,
+    List<String>? jobPrefs, // for dancers
+    List<dynamic>? danceStyles, // for dancers
+    Map<String, dynamic>? resume, // For dancers => 'hiringHistory' for clients
+    String? organisationName, // for clients
+    List<dynamic>? danceStylePrefs, // for clients
+    List<dynamic>? jobOfferings, // for clients
   }) async {
     try {
       // Sign dancer in
@@ -73,6 +76,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
       final uid = user.uid;
 
+      // if user is client
       if (userType == UserType.client) {
         // Store client data
         final clientData = {
@@ -83,9 +87,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'password': password,
           'email': email,
           'phoneNumber': phoneNumber,
-          'profilePicture': profilePicture,
           'userType': UserType.client.name, // Store the userType
+          'profilePicture': profilePicture,
           'bio': bio ?? '',
+          'danceStylePrefs': danceStylePrefs ?? [],
+          'jobOfferings': jobOfferings ?? [],
+          'hiringHistory': resume ?? {},
         };
 
         await db.collection('clients').doc(uid).set(clientData);
@@ -93,7 +100,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             await db.collection('clients').doc(uid).get();
         final clientModel = ClientModel.fromDocument(userDoc);
         return Right(clientModel);
-      } else if (userType == UserType.dancer) {
+      }
+
+      // If user is dancer
+      else if (userType == UserType.dancer) {
         // Store additional dancer's data to firebase
         final dancerData = {
           'firstName': firstName,
@@ -161,8 +171,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // Check if the document is in the dancers collection and if it has userType field
       if (dancersDoc.exists) {
-        debugPrint('Dancer Document: ${dancersDoc.data()}');
-
         // Extracting the data fronm the dancers doc using the .data() method and converting it to a map
         final dancersData = dancersDoc.data() as Map<String, dynamic>;
         final userType = dancersData['userType'];
@@ -175,8 +183,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // Same check for client
       else if (clientsDoc.exists) {
-        debugPrint('Client Document: ${clientsDoc.data()}');
-
         // Extracting the data fronm the dancers doc using the .data() method and converting it to a map
         final clientsData = clientsDoc.data() as Map<String, dynamic>;
         final userType = clientsData['userType'];
@@ -265,11 +271,14 @@ class UpdateProfile {
     required Map<String, dynamic> data,
   }) async {
     try {
+      // Get current user and check if null
       final user = auth.currentUser;
       if (user == null) {
         debugPrint('User not found');
         return const Left('User not found');
       }
+
+      // Get current user's uid and check both the dancers and clients collections
       final String uid = user.uid;
       final results = await Future.wait([
         db.collection('dancers').doc(uid).get(),
@@ -299,7 +308,7 @@ class UpdateProfile {
         return const Left('User not found');
       }
     } catch (e) {
-      debugPrint('error updating profile to firebase');
+      debugPrint('error updating profile to firebaseeeeeeeee');
       return Left(e.toString());
     }
   }

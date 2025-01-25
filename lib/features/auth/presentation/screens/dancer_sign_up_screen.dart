@@ -52,13 +52,18 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
         showLoadingIndicator(context);
         try {
           final result = await authProvider.userSignUp(
-            firstName: firstNameController.text,
-            lastName: lastNameController.text,
-            username: usernameController.text,
-            email: emailController.text,
-            phoneNumber: int.parse(phoneNumberController.text),
-            password: pwController.text,
-            danceStyles: danceStylesController.text.split(','),
+            firstName: firstNameController.text.trim(),
+            lastName: lastNameController.text.trim(),
+            username: usernameController.text.toLowerCase().trim(),
+            email: emailController.text.toLowerCase().trim(),
+            phoneNumber: int.parse(phoneNumberController.text.trim()),
+            password: pwController.text.trim(),
+            danceStyles: danceStylesController.text
+                .trim()
+                .split(RegExp(r'(\s*,\s)+'))
+                .where((style) => style
+                    .isNotEmpty) // Remove empty entries => entries that meet the condition will stay
+                .toList(),
             userType: UserType.dancer,
           );
 
@@ -187,6 +192,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Dance styles textfield
                   AuthTextFormField(
+                    helperText: 'Separate each dance style with a comma',
                     hintText: 'dance styles',
                     obscureText: false,
                     controller: danceStylesController,

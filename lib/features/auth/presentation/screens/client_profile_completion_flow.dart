@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'ClientProfileCompletion/profile_completion_screen1.dart';
 import 'ClientProfileCompletion/profile_completion_screen2.dart';
 import 'ClientProfileCompletion/profile_completion_screen3.dart';
+import 'ClientProfileCompletion/profile_completion_screen4.dart';
 
 class ClientProfileCompletionFlow extends StatefulWidget {
   final String email;
@@ -29,6 +30,16 @@ class _ClientProfileCompletionFlowState
   // CONTROLLERS
   final PageController pageController = PageController();
   final TextEditingController bioController = TextEditingController();
+  final TextEditingController danceStylePrefsController =
+      TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController jobDescrController = TextEditingController();
+  final TextEditingController jobTitleController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController numOfDancersController = TextEditingController();
+  final TextEditingController professionalTitleController =
+      TextEditingController();
+  final TextEditingController paymentController = TextEditingController();
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
@@ -50,7 +61,25 @@ class _ClientProfileCompletionFlowState
         await updateProfileProvider.updateProfileExecute(
           data: {
             'bio': bioController.text,
-            'jobPrefs': selectedSkills,
+            'danceStylePrefs': danceStylePrefsController.text
+                .trim()
+                .replaceAll(RegExp(r'[,;\s|/]+'), ',')
+                .split(',')
+                .toList(),
+            'jobOfferings': selectedSkills,
+            'hiringHistory': {
+              'professionalTitle': professionalTitleController.text,
+              'hiringHistories': hiringHistoryList
+                  .map((history) => {
+                        'jobTitle': history[0],
+                        'location': history[1],
+                        'date': history[2],
+                        'numOfDancers': history[3],
+                        'paymentOffered': history[4],
+                        'jobDescription': history[5],
+                      })
+                  .toList(),
+            }
           },
         );
         hideLoadingIndicator(context);
@@ -74,8 +103,15 @@ class _ClientProfileCompletionFlowState
       }
     }
 
+    // TODO: Implement conditional navigation if pref dance styles is empty
     // NAVIGATE TO NEXT PAGE
     void nextPage() {
+      // if (formKey.currentState!.validate()) {
+      //   pageController.nextPage(
+      //     duration: const Duration(milliseconds: 500),
+      //     curve: Curves.easeInOut,
+      //   );
+      // }
       pageController.nextPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
@@ -85,6 +121,7 @@ class _ClientProfileCompletionFlowState
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Stack(
           children: [
             // Page view
@@ -93,7 +130,7 @@ class _ClientProfileCompletionFlowState
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (value) {
                 setState(() {
-                  isLastPage = (value == 2);
+                  isLastPage = (value == 3);
                   debugPrint('CLIENT PROFILE COMPLETION LAST PAGE');
                 });
               },
@@ -101,53 +138,68 @@ class _ClientProfileCompletionFlowState
                 ProfileCompletionScreen1(
                   email: auth.currentUser!.email,
                   bioController: bioController,
+                  danceStylePrefsController: danceStylePrefsController,
                 ),
                 ProfileCompletionScreen2(),
-                ProfileCompletionScreen3(),
+                ProfileCompletionScreen3(
+                  onPressed: () => pageController.nextPage(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  ),
+                ),
+                ProfileCompletionScreen4(
+                  dateController: dateController,
+                  jobDescrController: jobDescrController,
+                  jobTitleController: jobTitleController,
+                  locationController: locationController,
+                  numOfDancersController: numOfDancersController,
+                  paymentController: paymentController,
+                  professonalTitleController: professionalTitleController,
+                ),
               ],
             ),
 
             // PAGE INDICATOR
             Positioned(
-              bottom: screenHeight * 0.1,
-              left: screenWidth * 0.45,
+              bottom: screenHeight * 0.04,
+              left: screenWidth * 0.38,
               child: PageIndicator(
                 pageController: pageController,
-                count: 3,
+                count: 4,
+                dotColor: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
 
-            // BUTTONS
+            // PREVIOUS ICON BUTTON
             Positioned(
               bottom: screenHeight * 0.01,
               left: screenWidth * 0.05,
-              child: Row(
-                children: [
-                  // PREVIOUS PAGE BUTTON
-                  IconButton(
-                    onPressed: () {
-                      // back to previous screen
-                      pageController.previousPage(
-                          duration: const Duration(microseconds: 500),
-                          curve: Curves.easeInOut);
-                    },
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  SizedBox(width: screenWidth * 0.05),
-
-                  // SAVE AND CONTINUE BUTTON
-                  isLastPage
-                      ? LegworkElevatedButton(
-                          buttonText: 'Save and continue',
-                          onPressed: saveAndUpdateProfile,
-                        )
-                      : LegworkElevatedButton(
-                          onPressed: nextPage,
-                          buttonText: 'Next',
-                        ),
-                ],
+              child: IconButton(
+                onPressed: () {
+                  // back to previous screen
+                  pageController.previousPage(
+                    duration: const Duration(microseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                icon: const Icon(Icons.arrow_back),
               ),
             ),
+
+            // SAVE AND CONTINUE BUTTON
+            Positioned(
+              bottom: screenHeight * 0.01,
+              right: screenWidth * 0.05,
+              child: isLastPage
+                  ? LegworkElevatedButton(
+                      buttonText: 'Done',
+                      onPressed: saveAndUpdateProfile,
+                    )
+                  : LegworkElevatedButton(
+                      onPressed: nextPage,
+                      buttonText: 'Next',
+                    ),
+            )
           ],
         ),
       ),

@@ -10,18 +10,19 @@ class AuthTextFormField extends StatelessWidget {
   final Widget icon;
   final double? width;
   final String? Function(String?)? validator;
+  final Function()? onTap;
   TextInputType? keyboardType;
-  AuthTextFormField({
-    super.key,
-    required this.hintText,
-    required this.obscureText,
-    required this.controller,
-    this.helperText,
-    required this.icon,
-    this.width,
-    this.validator,
-    this.keyboardType,
-  });
+  AuthTextFormField(
+      {super.key,
+      required this.hintText,
+      required this.obscureText,
+      required this.controller,
+      this.helperText,
+      required this.icon,
+      this.width,
+      this.validator,
+      this.keyboardType,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,7 @@ class AuthTextFormField extends StatelessWidget {
           child: SizedBox(
             width: width,
             child: TextFormField(
+              onTap: onTap,
               keyboardType: keyboardType,
               validator: validator,
               controller: controller,
