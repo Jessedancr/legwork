@@ -1,19 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-
-import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_button.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_home_screen.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/job_applications_screen.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_messages.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_profile.dart';
 import 'package:legwork/Features/home/presentation/widgets/dancers_nav_bar.dart';
 import 'package:legwork/Features/home/presentation/widgets/legwork_drawer.dart';
-
-import 'package:provider/provider.dart';
-
-import 'dancer_settings_screen.dart';
 
 class App extends StatefulWidget {
   const App({super.key});

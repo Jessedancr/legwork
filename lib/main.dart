@@ -10,7 +10,6 @@ import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer
 import 'package:legwork/core/Constants/color_schemes.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/Features/auth/presentation/Screens/account_type_or_register.dart';
 import 'package:legwork/Features/auth/presentation/Screens/account_type_screen.dart';
 import 'package:legwork/Features/auth/presentation/Screens/client_profile_completion_flow.dart';
 import 'package:legwork/Features/onboarding/data/onboarding_repo.dart';
