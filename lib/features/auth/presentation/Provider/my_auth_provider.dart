@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/Features/auth/Domain/BusinessLogic/logout_business_logic.dart';
 import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:legwork/Features/auth/domain/BusinessLogic/login_business_logic.dart';
@@ -143,41 +144,42 @@ class MyAuthProvider extends ChangeNotifier {
       );
 
       return result.fold(
-          // Handle failure
-          (fail) => Left(fail),
+        // Handle failure
+        (fail) => Left(fail),
 
-          // Handle success
-          (userEntity) {
-        if (userType == UserType.dancer.name) {
+        // Handle success
+        (userEntity) {
+          if (userType == UserType.dancer.name) {
+            return Right(
+              DancerEntity(
+                firstName: firstName ?? '',
+                lastName: lastName ?? '',
+                username: username ?? '',
+                email: email,
+                password: password,
+                phoneNumber: phoneNumber ?? 0,
+                danceStyles: danceStyles ?? [],
+                resume: portfolio,
+                userType: userType ?? 'dancer',
+              ),
+            );
+          }
           return Right(
-            DancerEntity(
+            ClientEntity(
               firstName: firstName ?? '',
               lastName: lastName ?? '',
               username: username ?? '',
               email: email,
-              password: password,
               phoneNumber: phoneNumber ?? 0,
-              danceStyles: danceStyles ?? [],
-              resume: portfolio,
-              userType: userType ?? 'dancer',
+              password: password,
+              organisationName: organisationName,
+              userType: userType ?? 'client',
+              danceStylePrefs: danceStylePrefs ?? [],
+              jobOfferings: jobOfferings ?? [],
             ),
           );
-        }
-        return Right(
-          ClientEntity(
-            firstName: firstName ?? '',
-            lastName: lastName ?? '',
-            username: username ?? '',
-            email: email,
-            phoneNumber: phoneNumber ?? 0,
-            password: password,
-            organisationName: organisationName,
-            userType: userType ?? 'client',
-            danceStylePrefs: danceStylePrefs ?? [],
-            jobOfferings: jobOfferings ?? [],
-          ),
-        );
-      });
+        },
+      );
     } catch (e) {
       debugPrint('Caught Unknown exception: $e');
       isLoading = false;
@@ -186,5 +188,20 @@ class MyAuthProvider extends ChangeNotifier {
     }
   }
 
-  /// RESUME UPLOAD METHOD
+  /// USER LOGOUT METHOD
+  Future<Either<String, void>> logout() async {
+    LogoutBusinessLogic logoutBusinessLogic =
+        LogoutBusinessLogic(authRepo: authRepo);
+
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      await logoutBusinessLogic.logoutExecute();
+      return const Right(null);
+    } catch (e) {
+      debugPrint('Error with logout: $e');
+      return Left(e.toString());
+    }
+  }
 }

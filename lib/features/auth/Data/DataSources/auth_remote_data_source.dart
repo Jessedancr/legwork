@@ -7,6 +7,9 @@ import 'package:legwork/Features/auth/Data/Models/user_model.dart';
 
 import '../../../../core/Enums/user_type.dart';
 
+final auth = FirebaseAuth.instance;
+final db = FirebaseFirestore.instance;
+
 /**
  * AUTH ABSTRACT CLASS
  */
@@ -32,6 +35,9 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
   });
+
+  /// USER LOGOUT METHOD
+  Future<Either<String, void>> logout();
 }
 
 /**
@@ -208,6 +214,45 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       debugPrint("An unknown error occurred while logging in");
       return Left(e.toString());
+    }
+  }
+
+  /// USER LOGOUT METHOD
+  @override
+  Future<Either<String, void>> logout() async {
+    try {
+      await auth.signOut();
+      return const Right(null);
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Error logging out: $e');
+      return Left(e.code.toString());
+    } catch (e) {
+      debugPrint('An unknown error occurred while logging out');
+      return Left(e.toString());
+    }
+  }
+
+  /// METHOD TO GET THE USERTYPE FIELD FROM DOCUMENT
+  Future<String> getUserType(uid) async {
+    try {
+      // Query the two collections at the same time
+      final docs = await Future.wait([
+        db.collection('dancers').doc(uid).get(),
+        db.collection('clients').doc(uid).get()
+      ]);
+      final dancersDoc = docs[0];
+      final clientsDoc = docs[1];
+
+      if (dancersDoc.exists && dancersDoc.data() != null) {
+        return dancersDoc.data()!['userType'];
+        //return dancersDoc['userType'] as String;
+      } else if (clientsDoc.exists && clientsDoc.data() != null) {
+        return clientsDoc.data()!['userType'];
+      }
+      return 'no user found';
+    } catch (e) {
+      debugPrint('Error getting user type on app launch: $e');
+      return e.toString();
     }
   }
 }

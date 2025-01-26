@@ -145,4 +145,16 @@ class AuthRepoImpl implements AuthRepo {
       return Left(e.toString());
     }
   }
+
+  // USER LOG OUT
+  @override
+  Future<Either<String, void>> userLogout() async {
+    try {
+      await _authRemoteDataSource.logout();
+      return const Right(null);
+    } catch (e) {
+      debugPrint('Auth repo error logging out: $e');
+      return Left(e.toString());
+    }
+  }
 }

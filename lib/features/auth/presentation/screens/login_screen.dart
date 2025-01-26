@@ -11,8 +11,6 @@ import '../widgets/auth_button.dart';
 
 import '../widgets/auth_loading_indicator.dart';
 
-// TODO: take care of the error that occurs if a user leaves a trailing whitespace in any of the textfields when logging in or signing up
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -52,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
           final result = await authProvider.userlogin(
             email: emailController.text.trim(),
             password: pwController.text.trim(),
-            userType: userTypecontroller.text.toLowerCase(),
+            userType: userTypecontroller.text.trim().toLowerCase(),
           );
 
           if (mounted) hideLoadingIndicator(context);
@@ -74,8 +72,13 @@ class _LoginScreenState extends State<LoginScreen> {
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
                 debugPrint('DANCER BLOCK');
+                // Navigator.of(context).pushNamedAndRemoveUntil(
+                //   '/dancerProfileCompletionFlow',
+                //   (route) => false,
+                // );
+
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/dancerProfileCompletionFlow',
+                  '/dancerHomeScreen',
                   (route) => false,
                 );
               } else if (user.userType == UserType.client.name) {
@@ -163,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Email text field
                   AuthTextFormField(
+                    keyboardType: TextInputType.emailAddress,
                     hintText: 'Email',
                     obscureText: false,
                     controller: emailController,

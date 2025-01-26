@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
+import 'package:legwork/Features/auth/presentation/Screens/auth_status.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_home_screen.dart';
 import 'package:legwork/core/Constants/color_schemes.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
@@ -90,23 +91,23 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: seedScheme,
       home: isOnboardingComplete
-          ? const AccountTypeOrRegister()
+          ?  AuthStatus()
           : Onboarding(
               onboardingStatusCheck: onboardingStatusCheck,
             ),
       routes: {
-        '/acctType': (context) =>  const AccountTypeScreen(),
-        '/loginScreen': (context) =>  LoginScreen(),
-        '/clientSignUpScreen': (context) =>  ClientSignUpScreen(),
-        '/dancerSignUpScreen': (context) =>  DancerSignUpScreen(),
+        '/acctType': (context) => const AccountTypeScreen(),
+        '/loginScreen': (context) => LoginScreen(),
+        '/clientSignUpScreen': (context) => ClientSignUpScreen(),
+        '/dancerSignUpScreen': (context) => DancerSignUpScreen(),
         '/dancerProfileCompletionFlow': (context) =>
             const DancerProfileCompletionFlow(),
         '/clientProfileCompletionFlow': (context) =>
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
-            ), 
-        '/dancerHomeScreen': (context) =>  DancerHomeScreen(),
-        '/clientHomeScreen': (context) =>  ClientHomeScreen(),
+            ),
+        '/dancerHomeScreen': (context) => DancerHomeScreen(),
+        '/clientHomeScreen': (context) => ClientHomeScreen(),
       },
     );
   }
