@@ -83,7 +83,7 @@ class _DancerProfileCompletionFlowState
         );
 
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/dancerHomeScreen',
+          '/dancerApp',
           (route) => false,
         );
       } catch (e) {

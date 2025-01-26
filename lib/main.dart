@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/auth_status.dart';
-import 'package:legwork/Features/home/presentation/screens/dancer_home_screen.dart';
+import 'package:legwork/Features/home/presentation/screens/dancer_screens/app.dart';
+import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
+
 import 'package:legwork/core/Constants/color_schemes.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
@@ -91,7 +93,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: seedScheme,
       home: isOnboardingComplete
-          ?  AuthStatus()
+          ? AuthStatus()
           : Onboarding(
               onboardingStatusCheck: onboardingStatusCheck,
             ),
@@ -106,8 +108,9 @@ class MyApp extends StatelessWidget {
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
             ),
-        '/dancerHomeScreen': (context) => DancerHomeScreen(),
+        '/dancerApp': (context) => App(),
         '/clientHomeScreen': (context) => ClientHomeScreen(),
+        '/dancerSettingsScreen': (context) => DancerSettingsScreen()
       },
     );
   }

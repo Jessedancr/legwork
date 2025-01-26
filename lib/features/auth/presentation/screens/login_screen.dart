@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // );
 
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/dancerHomeScreen',
+                  '/dancerApp',
                   (route) => false,
                 );
               } else if (user.userType == UserType.client.name) {

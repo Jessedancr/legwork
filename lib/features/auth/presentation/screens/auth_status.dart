@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/Features/home/presentation/screens/client_home_screen.dart';
-import 'package:legwork/Features/home/presentation/screens/dancer_home_screen.dart';
+import 'package:legwork/Features/home/presentation/screens/dancer_screens/app.dart';
 
 import 'account_type_screen.dart';
 /**
@@ -43,7 +43,7 @@ class AuthStatus extends StatelessWidget {
                 }
                 final userType = snapshot.data;
                 if (userType == 'dancer') {
-                  return DancerHomeScreen();
+                  return App();
                 } else if (userType == 'client') {
                   return ClientHomeScreen();
                 } else {
