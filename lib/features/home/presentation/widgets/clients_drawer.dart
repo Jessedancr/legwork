@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/home/presentation/widgets/legwork_drawer_tile.dart';
 
-class LegworkDrawer extends StatefulWidget {
-  const LegworkDrawer({super.key});
+import 'legwork_drawer_tile.dart';
+
+class ClientsDrawer extends StatefulWidget {
+  const ClientsDrawer({super.key});
 
   @override
-  State<LegworkDrawer> createState() => _LegworkDrawerState();
+  State<ClientsDrawer> createState() => _ClientsDrawerState();
 }
 
-class _LegworkDrawerState extends State<LegworkDrawer> {
+class _ClientsDrawerState extends State<ClientsDrawer> {
   @override
   Widget build(BuildContext context) {
     //SCREEN SIZE
@@ -51,40 +52,6 @@ class _LegworkDrawerState extends State<LegworkDrawer> {
           ),
           const SizedBox(height: 10),
 
-          // Gig history
-          LegworkDrawerTile(
-            leading: Icon(
-              Icons.history,
-              color: Theme.of(context).colorScheme.surface,
-            ),
-            title: Text(
-              'Gig history',
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            ),
-            onTap: () {},
-          ),
-          const SizedBox(height: 10),
-
-          // Earnings dashboard => A breakdown of how much the user has earned so far
-          LegworkDrawerTile(
-            leading: Icon(
-              Icons.money,
-              color: Theme.of(context).colorScheme.surface,
-            ),
-            title: Text(
-              'Earnings',
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            ),
-            onTap: () {},
-          ),
-          const SizedBox(height: 10),
-
           // Settings
           LegworkDrawerTile(
             leading: Icon(
@@ -102,7 +69,7 @@ class _LegworkDrawerState extends State<LegworkDrawer> {
               // pop drawer menu
               Navigator.of(context).pop();
               // navigate to settings page
-              Navigator.of(context).pushNamed('/dancerSettingsScreen');
+              Navigator.of(context).pushNamed('/clientSettingsScreen');
             },
           ),
         ],

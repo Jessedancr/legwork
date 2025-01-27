@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/auth_status.dart';
-import 'package:legwork/Features/home/presentation/screens/dancer_screens/app.dart';
+import 'package:legwork/Features/home/data/repo_impl/job_repo_impl.dart';
+import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
+import 'package:legwork/Features/home/presentation/screens/client_screens/client_app.dart';
+import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
 
 import 'package:legwork/core/Constants/color_schemes.dart';
@@ -21,7 +24,8 @@ import 'Features/auth/presentation/Screens/client_sign_up_screen.dart';
 import 'Features/auth/presentation/Screens/dancer_sign_up_screen.dart';
 import 'Features/auth/presentation/Screens/dancer_profile_completion_flow.dart';
 import 'Features/auth/presentation/Screens/login_screen.dart';
-import 'Features/home/presentation/screens/client_home_screen.dart';
+import 'Features/home/presentation/screens/client_screens/client_home_screen.dart';
+import 'Features/home/presentation/screens/client_screens/client_settings_screen.dart';
 import 'Features/onboarding/domain/onboarding_status_check.dart';
 import 'Features/onboarding/presentation/screens/onboarding.dart';
 
@@ -53,6 +57,9 @@ void main() async {
   // Instance of Resume repo
   final resumeRepo = ResumeRepoImpl();
 
+  // Instance of Job repo
+  final jobRepo = JobRepoImpl();
+
   // THIS FUNCTION IS CALLED WHEN THE APP IS LAUNCHED
   runApp(
     MultiProvider(
@@ -66,6 +73,8 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => UpdateProfileProvider(),
         ),
+        ChangeNotifierProvider(
+            create: (context) => JobProvider(jobRepo: jobRepo))
       ],
       child: MyApp(
         onboardingStatusCheck: onboardingStatusCheck,
@@ -107,9 +116,11 @@ class MyApp extends StatelessWidget {
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
             ),
-        '/dancerApp': (context) => App(),
+        '/dancerApp': (context) => DancerApp(),
         '/clientHomeScreen': (context) => ClientHomeScreen(),
-        '/dancerSettingsScreen': (context) => DancerSettingsScreen()
+        '/dancerSettingsScreen': (context) => DancerSettingsScreen(),
+        '/clientApp': (context) => ClientApp(),
+        '/clientSettingsScreen': (context) => ClientSettingsScreen(),
       },
     );
   }

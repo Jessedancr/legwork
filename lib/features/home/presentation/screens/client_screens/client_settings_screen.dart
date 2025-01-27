@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/Features/auth/presentation/widgets/auth_button.dart';
 import 'package:provider/provider.dart';
 
-class ClientHomeScreen extends StatefulWidget {
-  const ClientHomeScreen({super.key});
+class ClientSettingsScreen extends StatefulWidget {
+  const ClientSettingsScreen({super.key});
 
   @override
-  State<ClientHomeScreen> createState() => _ClientHomeScreenState();
+  State<ClientSettingsScreen> createState() => _ClientSettingsScreenState();
 }
 
-class _ClientHomeScreenState extends State<ClientHomeScreen> {
+class _ClientSettingsScreenState extends State<ClientSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     // Auth Provider
     var authProvider = Provider.of<MyAuthProvider>(context);
 
-    // Dummy logout method
+    //  Logout method
     void logout() async {
       // show loading indicator
       showLoadingIndicator(context);
@@ -50,28 +50,20 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     }
 
     // RETURNED WIDGET
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(),
-        drawer: const Drawer(),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'CLIENTS HOME SCREEN',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              // Sample Logout button
-              AuthButton(
-                onPressed: logout,
-                buttonText: 'log out',
-              ),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('CLIENTS SETTINGS SCREEN'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AuthButton(
+              onPressed: logout,
+              buttonText: 'Logout',
+            ),
+          ],
         ),
       ),
     );

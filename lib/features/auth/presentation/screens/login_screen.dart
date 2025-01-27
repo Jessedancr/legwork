@@ -82,10 +82,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   (route) => false,
                 );
               } else if (user.userType == UserType.client.name) {
+                // Navigator.of(context).pushNamedAndRemoveUntil(
+                //   '/clientProfileCompletionFlow',
+                //   (route) => false,
+                // ); // This is client's homepage
+
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/clientProfileCompletionFlow',
+                  '/clientApp',
                   (route) => false,
-                ); // This is client's homepage
+                );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

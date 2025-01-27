@@ -52,7 +52,7 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
     // RETURNED WIDGET
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SETTINGS SCREEN'),
+        title: const Text('DANCER SETTINGS SCREEN'),
         centerTitle: true,
       ),
       body: Center(

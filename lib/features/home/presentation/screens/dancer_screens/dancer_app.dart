@@ -4,16 +4,16 @@ import 'package:legwork/Features/home/presentation/screens/dancer_screens/job_ap
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_messages.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_profile.dart';
 import 'package:legwork/Features/home/presentation/widgets/dancers_nav_bar.dart';
-import 'package:legwork/Features/home/presentation/widgets/legwork_drawer.dart';
+import 'package:legwork/Features/home/presentation/widgets/dancers_drawer.dart';
 
-class App extends StatefulWidget {
-  const App({super.key});
+class DancerApp extends StatefulWidget {
+  const DancerApp({super.key});
 
   @override
-  State<App> createState() => _AppState();
+  State<DancerApp> createState() => _DancerAppState();
 }
 
-class _AppState extends State<App> {
+class _DancerAppState extends State<DancerApp> {
   int selectedIndex = 0; // To track the index of the nav bar
 
   // METHOD TO NAVIGATE NAV BAR
@@ -38,7 +38,7 @@ class _AppState extends State<App> {
       child: Scaffold(
         body: screens[selectedIndex],
         appBar: AppBar(),
-        drawer: LegworkDrawer(),
+        drawer: DancersDrawer(),
         bottomNavigationBar: DancersNavBar(
           screens: screens,
           selectedIndex: selectedIndex,

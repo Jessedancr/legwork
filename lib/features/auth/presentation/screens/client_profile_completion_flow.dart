@@ -90,7 +90,7 @@ class _ClientProfileCompletionFlowState
         );
 
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/clientHomeScreen',
+          '/clientApp',
           (route) => false,
         );
       } catch (e) {
