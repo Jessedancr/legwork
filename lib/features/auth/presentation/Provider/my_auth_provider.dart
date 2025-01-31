@@ -30,7 +30,7 @@ class MyAuthProvider extends ChangeNotifier {
     required UserType userType,
     List<String>? danceStyles, // for dancers
     Map<String, dynamic>? resume, // for dancers
-    List<String>? jobPrefs, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients

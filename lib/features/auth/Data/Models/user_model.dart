@@ -45,7 +45,7 @@ class DancerModel extends DancerEntity {
       userType: doc['userType'] ?? 'dancer',
       profilePicture: doc['profilePicture'] ?? '',
       bio: doc['bio'] ?? '',
-      jobPrefs: doc['jobPrefs'] ?? [],
+      jobPrefs: doc['jobPrefs'] ?? {},
     );
   }
 

@@ -29,7 +29,7 @@ abstract class AuthRepo {
       Map<String, dynamic>? resume,
       String? organizationName, // for client
       List<dynamic>? danceStyles, // for dancer
-      List<String>? jobPrefs // for dancer
+      Map<String, dynamic>? jobPrefs // for dancer
       });
 
   /// LOGOUT METHOD

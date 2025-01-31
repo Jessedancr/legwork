@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
 
 import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
@@ -12,12 +13,14 @@ import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart'
 
 class ProfileCompletionScreen1 extends StatefulWidget {
   final TextEditingController bioController;
+  final TextEditingController jobPaycontroller;
   final String? email;
 
   const ProfileCompletionScreen1({
     super.key,
     required this.email,
     required this.bioController,
+    required this.jobPaycontroller,
   });
 
   @override
@@ -188,6 +191,8 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ),
                               ),
                             const SizedBox(height: 50),
+
+                            // BIO TEXT FIELD
                             LargeTextField(
                               hintText: 'Enter your bio',
                               obscureText: false,
@@ -198,6 +203,17 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                     .colorScheme
                                     .onPrimaryContainer,
                               ),
+                            ),
+
+                            // PREFFERED JOB PAY TEXTFIELD
+                            AuthTextFormField(
+                              hintText: 'Preferred pay',
+                              helperText:
+                                  'How much would you like to be paid on a job?',
+                              keyboardType: TextInputType.number,
+                              obscureText: false,
+                              controller: widget.jobPaycontroller,
+                              icon: const Icon(Icons.attach_money_outlined),
                             ),
                           ],
                         ),

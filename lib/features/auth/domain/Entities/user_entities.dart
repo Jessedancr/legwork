@@ -32,7 +32,7 @@ abstract class UserEntity {
 class DancerEntity extends UserEntity {
   final List<dynamic> danceStyles;
   final Map<String, dynamic>? resume;
-  List? jobPrefs;
+  Map<String, dynamic>? jobPrefs;
 
   // Constructor
   DancerEntity({

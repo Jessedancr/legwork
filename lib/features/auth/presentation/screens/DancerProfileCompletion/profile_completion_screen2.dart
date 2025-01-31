@@ -5,6 +5,10 @@ import 'package:legwork/Features/auth/presentation/Widgets/job_search_bar.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
 
+/**
+ * THIS SCREEN PROMPTS THE USER TO INPUT THE TYPE OF JOBS HE IS INTERESTED IN
+ */
+
 // Track selected skills
 final List selectedSkills = [];
 

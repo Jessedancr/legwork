@@ -26,7 +26,7 @@ abstract class AuthRemoteDataSource {
     List<dynamic>? danceStyles,
     Map<String, dynamic>? resume,
     String? bio,
-    List<String>? jobPrefs,
+    Map<String, dynamic>? jobPrefs,
     List<dynamic>? danceStylePrefs,
   });
 
@@ -60,7 +60,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required UserType userType,
     dynamic profilePicture,
     String? bio,
-    List<String>? jobPrefs, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     List<dynamic>? danceStyles, // for dancers
     Map<String, dynamic>? resume, // For dancers => 'hiringHistory' for clients
     String? organisationName, // for clients

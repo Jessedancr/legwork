@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
-import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
 
 class SignUpBusinessLogic {
   // Instance of auth repo
@@ -25,7 +24,7 @@ class SignUpBusinessLogic {
     String? bio,
     Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
     List<dynamic>? danceStyles = const [], // for dancers
-    List<String>? jobPrefs, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     String? organizationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients

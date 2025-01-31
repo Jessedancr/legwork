@@ -31,7 +31,7 @@ class AuthRepoImpl implements AuthRepo {
     dynamic profilePicture,
     String? bio,
     List<dynamic>? danceStyles, // for dancers
-    List<String>? jobPrefs, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
     String? organizationName, // For clients
     List<dynamic>? danceStylePrefs, // for clients

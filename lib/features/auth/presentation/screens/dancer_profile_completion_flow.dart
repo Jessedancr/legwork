@@ -38,6 +38,7 @@ class _DancerProfileCompletionFlowState
   final TextEditingController locationController = TextEditingController();
   final TextEditingController jobDescrController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController jobPaycontroller = TextEditingController();
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
@@ -59,7 +60,11 @@ class _DancerProfileCompletionFlowState
         await updateProfileProvider.updateProfileExecute(
           data: {
             'bio': bioController.text,
-            'jobPrefs': selectedSkills,
+            'jobPrefs': {
+              'prefPay': jobPaycontroller.text,
+              'prefLocation': selectedLocations,
+              'prefJobTypes': selectedSkills,
+            },
             'resume': {
               'professionalTitle': professonalTitleController.text,
               'workExperiences': workExperienceList
@@ -124,6 +129,7 @@ class _DancerProfileCompletionFlowState
                 ProfileCompletionScreen1(
                   email: auth.currentUser!.email,
                   bioController: bioController,
+                  jobPaycontroller: jobPaycontroller,
                 ),
                 const ProfileCompletionScreen2(),
                 ProfileCompletionScreen3(

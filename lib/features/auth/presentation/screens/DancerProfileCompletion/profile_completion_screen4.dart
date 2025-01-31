@@ -129,7 +129,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                           child: Column(
                             children: [
                               Text(
-                                'Got it! Now add a title to your resume',
+                                "You're almost done! Fill out your resume",
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.robotoSlab(
                                   fontWeight: FontWeight.bold,
@@ -143,7 +143,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                                   bottom: 10.0,
                                 ),
                                 child: Text(
-                                  'Describe your expertise in your own words',
+                                  'This increases your chances of getting a job',
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.robotoSlab(
                                     fontWeight: FontWeight.w400,
