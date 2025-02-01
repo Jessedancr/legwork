@@ -32,7 +32,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
-  final TextEditingController danceStylesController = TextEditingController();
+  
 
   final auth = FirebaseAuth.instance;
 
@@ -58,12 +58,6 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             email: emailController.text.toLowerCase().trim(),
             phoneNumber: int.parse(phoneNumberController.text.trim()),
             password: pwController.text.trim(),
-            danceStyles: danceStylesController.text
-                .trim()
-                .split(RegExp(r'(\s*,\s)+'))
-                .where((style) => style
-                    .isNotEmpty) // Remove empty entries => entries that meet the condition will stay
-                .toList(),
             userType: UserType.dancer,
           );
 
@@ -191,26 +185,26 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                   const SizedBox(height: 10),
 
                   // Dance styles textfield
-                  AuthTextFormField(
-                    helperText: 'Separate each dance style with a comma',
-                    hintText: 'dance styles',
-                    obscureText: false,
-                    controller: danceStylesController,
-                    icon: SizedBox(
-                      width: screenWidth * 0.8,
-                      height: screenHeight * 0.8,
-                      child: Image.asset(
-                        'images/icons/dance.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please fill in your dance styles, abi you no wan see job ni';
-                      }
-                      return null;
-                    },
-                  ),
+                  // AuthTextFormField(
+                  //   helperText: 'Separate each dance style with a comma',
+                  //   hintText: 'dance styles',
+                  //   obscureText: false,
+                  //   controller: danceStylesController,
+                  //   icon: SizedBox(
+                  //     width: screenWidth * 0.8,
+                  //     height: screenHeight * 0.8,
+                  //     child: Image.asset(
+                  //       'images/icons/dance.png',
+                  //       fit: BoxFit.contain,
+                  //     ),
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'Please fill in your dance styles, abi you no wan see job ni';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   const SizedBox(height: 10),
 
                   // Email textfield

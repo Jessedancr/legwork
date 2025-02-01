@@ -28,9 +28,8 @@ class MyAuthProvider extends ChangeNotifier {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    List<String>? danceStyles, // for dancers
     Map<String, dynamic>? resume, // for dancers
-    List<String>? jobPrefs, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
@@ -51,10 +50,8 @@ class MyAuthProvider extends ChangeNotifier {
         phoneNumber: phoneNumber,
         password: password,
         userType: userType,
-        danceStyles: danceStyles,
         resume: resume,
         organizationName: organisationName,
-        jobPrefs: jobPrefs,
       );
 
       isLoading = false;
@@ -75,7 +72,7 @@ class MyAuthProvider extends ChangeNotifier {
               email: email,
               password: password,
               phoneNumber: phoneNumber,
-              danceStyles: danceStyles!,
+              jobPrefs: jobPrefs ?? {},
               resume: resume,
               userType: userType.name,
             ),
@@ -123,11 +120,12 @@ class MyAuthProvider extends ChangeNotifier {
     String? lastName,
     String? username,
     int? phoneNumber,
-    List<String>? danceStyles, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     dynamic portfolio, // for dancers,
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings,
+
   }) async {
     LoginBusinessLogic loginBusinessLogic =
         LoginBusinessLogic(authRepo: authRepo);
@@ -157,7 +155,7 @@ class MyAuthProvider extends ChangeNotifier {
                 email: email,
                 password: password,
                 phoneNumber: phoneNumber ?? 0,
-                danceStyles: danceStyles ?? [],
+                jobPrefs: jobPrefs ?? {},
                 resume: portfolio,
                 userType: userType ?? 'dancer',
               ),

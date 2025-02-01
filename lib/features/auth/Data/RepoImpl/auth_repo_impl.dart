@@ -30,9 +30,8 @@ class AuthRepoImpl implements AuthRepo {
     required UserType userType,
     dynamic profilePicture,
     String? bio,
-    List<dynamic>? danceStyles, // for dancers
-    List<String>? jobPrefs, // for dancers
     Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
+    Map<String, dynamic>? jobPrefs, // for dancer
     String? organizationName, // For clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
@@ -48,12 +47,11 @@ class AuthRepoImpl implements AuthRepo {
         userType: userType,
         bio: bio,
         profilePicture: profilePicture,
-        danceStyles: danceStyles ?? [], // for dancers
-        jobPrefs: jobPrefs, // for dancers
         resume: resume, // for dancers => 'hiringHistory' for clients
         organisationName: organizationName ?? '', // for clients
         danceStylePrefs: danceStylePrefs, // for clients
         jobOfferings: jobOfferings, // for clients
+        jobPrefs: jobPrefs ?? {}
       );
 
       // Return either a fail or a dancer or client entity
@@ -86,7 +84,7 @@ class AuthRepoImpl implements AuthRepo {
     int? phoneNumber,
     String? bio,
     dynamic profilePicture,
-    List<String>? danceStyles, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
     List<dynamic>? danceStylePrefs, // for clients
     String? organisationName, // for clients
@@ -110,7 +108,7 @@ class AuthRepoImpl implements AuthRepo {
               email: email,
               password: password,
               phoneNumber: phoneNumber ?? 0,
-              danceStyles: danceStyles ?? [],
+               //jobPrefs: jobPrefs ?? {},
               resume: resume,
               bio: bio,
               profilePicture: profilePicture,

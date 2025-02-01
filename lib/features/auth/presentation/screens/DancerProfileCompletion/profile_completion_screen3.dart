@@ -1,12 +1,15 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
+import 'package:legwork/core/Constants/lagos_locations.dart';
+
+// Track selected skills
+final List selectedLocations = [];
 
 class ProfileCompletionScreen3 extends StatefulWidget {
-  final void Function()? onPressed;
-  const ProfileCompletionScreen3({super.key, required this.onPressed});
+  const ProfileCompletionScreen3({super.key});
 
   @override
   State<ProfileCompletionScreen3> createState() =>
@@ -14,13 +17,26 @@ class ProfileCompletionScreen3 extends StatefulWidget {
 }
 
 class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
-  // FILE PICKER METHOD
-  Future<void> _uploadResume() async {
-    final result = await FilePicker.platform.pickFiles();
-  }
-
   @override
   Widget build(BuildContext context) {
+    // CONTROLLERS
+    final TextEditingController skillTypeController = TextEditingController();
+    final SearchController searchController = SearchController();
+
+    void checkBoxTapped(bool value, int index) {
+      debugPrint('$index, $value');
+      setState(() {
+        lagosLocations[index][1] = value;
+        if (value) {
+          // Add the skill to the selected skills list
+          selectedLocations.add(lagosLocations[index][0]);
+        } else {
+          // Remove the skill from the selected skills list
+          selectedLocations.remove(lagosLocations[index][0]);
+        }
+      });
+    }
+
     //SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -52,7 +68,7 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'How would you like to tell us more about yourself?',
+                              'What are your preferred locations for jobs',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.robotoSlab(
                                 fontWeight: FontWeight.bold,
@@ -61,8 +77,16 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                               ),
                             ),
                             Text(
-                              'You can either upload your resume or manually fill it out.',
+                              'This would help us better recommend jobs to you',
                               textAlign: TextAlign.center,
+                              style: GoogleFonts.robotoSlab(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              'Search for locations in Lagos',
                               style: GoogleFonts.robotoSlab(
                                 color: Colors.white,
                               ),
@@ -75,11 +99,10 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                 ),
               ),
 
-              // EXPANDED WIDGET FOR THE REST OF SCREEN CONTENT
+              // EXPANDED WIDGET FOR OTHER SCREEN CONTENTS
               Expanded(
                 flex: 2,
                 child: Container(
-                  width: screenWidth,
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: const BorderRadius.only(
@@ -87,36 +110,95 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                       topRight: Radius.circular(30),
                     ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Upload resume
-                      LegworkElevatedButton(
-                        icon: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Image.asset(
-                            'images/icons/upload_2.png',
-                            height: 20,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
-                        maximumSize: WidgetStatePropertyAll(
-                          Size(screenWidth * 0.6, screenHeight * 0.1),
-                        ),
-                        onPressed: _uploadResume,
-                        buttonText: 'Upload resume',
-                      ),
-                      const SizedBox(height: 20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0,
+                      vertical: 15.0,
+                    ),
+                    child: Column(
+                      children: [
+                        // Search bar
+                        JobSearchBar(
+                          searchController: searchController,
+                          suggestionsBuilder: (context, controller) {
+                            // Filter locations based on the search query
+                            final filteredLocations = lagosLocations.where(
+                              (job) {
+                                // Return empty search controller or the search query converted to lower case
+                                return controller.text.isEmpty ||
+                                    job[0].toLowerCase().contains(
+                                        controller.text.toLowerCase());
+                              },
+                            ).toList();
 
-                      // Fill out manually
-                      LegworkElevatedButton(
-                        maximumSize: WidgetStatePropertyAll(
-                          Size(screenWidth * 0.6, screenHeight * 0.1),
+                            // Display filtered results in a single listview
+                            return [
+                              SizedBox(
+                                height: 500,
+                                child: ListView.builder(
+                                  itemCount: filteredLocations.length,
+                                  itemBuilder: (context, index) {
+                                    final locationIndex = lagosLocations
+                                        .indexOf(filteredLocations[index]);
+                                    return JobTile(
+                                      job: filteredLocations[index][0],
+                                      checkedValue: filteredLocations[index][1],
+                                      onChanged: (value) => checkBoxTapped(
+                                        value!,
+                                        locationIndex,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ];
+                          },
                         ),
-                        onPressed: widget.onPressed,
-                        buttonText: 'Fill out manually',
-                      ),
-                    ],
+
+                        // SHOW SELECTED SKILLS
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text(
+                                'Selected Locations:',
+                                style: GoogleFonts.robotoSlab(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Show selected skills
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: selectedLocations.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      padding: const EdgeInsets.all(10),
+                                      margin: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Text(
+                                        '- ${selectedLocations[index]}',
+                                        style: GoogleFonts.robotoSlab(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               )

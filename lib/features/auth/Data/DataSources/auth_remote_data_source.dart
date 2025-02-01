@@ -23,10 +23,10 @@ abstract class AuthRemoteDataSource {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    List<dynamic>? danceStyles,
+    // List<dynamic>? danceStyles,
     Map<String, dynamic>? resume,
     String? bio,
-    List<String>? jobPrefs,
+    Map<String, dynamic>? jobPrefs,
     List<dynamic>? danceStylePrefs,
   });
 
@@ -60,8 +60,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required UserType userType,
     dynamic profilePicture,
     String? bio,
-    List<String>? jobPrefs, // for dancers
-    List<dynamic>? danceStyles, // for dancers
+    Map<String, dynamic>? jobPrefs, // for dancers
     Map<String, dynamic>? resume, // For dancers => 'hiringHistory' for clients
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
@@ -117,13 +116,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'username': username,
           'email': email,
           'phoneNumber': phoneNumber,
-          'danceStyles': danceStyles ?? [],
+          'jobPrefs': jobPrefs ?? {},
           'resume': resume ?? {},
           'password': password,
           'profilePicture': profilePicture,
           'bio': bio ?? '',
           'userType': UserType.dancer.name, // Store the userType
-          'jobPrefs': jobPrefs,
         };
 
         await db.collection('dancers').doc(uid).set(dancerData);

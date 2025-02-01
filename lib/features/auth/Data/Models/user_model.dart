@@ -20,7 +20,6 @@ class DancerModel extends DancerEntity {
     required super.firstName,
     required super.lastName,
     required super.resume,
-    required super.danceStyles,
     required super.email,
     required super.password,
     required super.phoneNumber,
@@ -37,7 +36,7 @@ class DancerModel extends DancerEntity {
       firstName: doc['firstName'] ?? '',
       lastName: doc['lastName'] ?? '',
       resume: doc['resume'] ?? {},
-      danceStyles: doc['danceStyles'] ?? [],
+      jobPrefs: doc['jobPrefs'] ?? {},
       email: doc['email'] ?? '',
       password: doc['password'] ?? '',
       phoneNumber: doc['phoneNumber'] ?? 0,
@@ -45,7 +44,6 @@ class DancerModel extends DancerEntity {
       userType: doc['userType'] ?? 'dancer',
       profilePicture: doc['profilePicture'] ?? '',
       bio: doc['bio'] ?? '',
-      jobPrefs: doc['jobPrefs'] ?? [],
     );
   }
 
@@ -58,12 +56,11 @@ class DancerModel extends DancerEntity {
       'firstName': firstName,
       'lastName': lastName,
       'phoneNumber': phoneNumber,
-      'danceStyles': danceStyles,
+      'jobPrefs': jobPrefs,
       'resume': resume,
       'userType': UserType.dancer.name, // Include userType
       'profilePicture': profilePicture,
       'bio': bio,
-      'jobPrefs': jobPrefs
     };
   }
 
@@ -76,12 +73,11 @@ class DancerModel extends DancerEntity {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
-      danceStyles: danceStyles,
+      jobPrefs: jobPrefs,
       resume: resume,
       userType: userType,
       profilePicture: profilePicture,
       bio: bio,
-      jobPrefs: jobPrefs,
     );
   }
 }

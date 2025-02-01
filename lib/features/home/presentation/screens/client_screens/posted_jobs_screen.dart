@@ -22,6 +22,7 @@ class _PostedJobsScreenState extends State<PostedJobsScreen> {
   final TextEditingController jobDurationController = TextEditingController();
   final TextEditingController amtOfDancersController = TextEditingController();
   final TextEditingController jobDescrController = TextEditingController();
+  final SearchController searchController = SearchController();
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +79,7 @@ class _PostedJobsScreenState extends State<PostedJobsScreen> {
             jobDurationController: jobDurationController,
             amtOfDancersController: amtOfDancersController,
             jobDescrController: jobDescrController,
+            searchController: searchController,
           );
         },
       );

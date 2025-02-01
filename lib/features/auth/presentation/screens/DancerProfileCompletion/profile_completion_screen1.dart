@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
 
 import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
@@ -11,6 +12,7 @@ import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart'
 //TODO: IMPLEMENT UPLOADING USER'S PROFILE PICTURE TO FIREBASE STORAGE
 
 class ProfileCompletionScreen1 extends StatefulWidget {
+  final TextEditingController danceStylesController;
   final TextEditingController bioController;
   final String? email;
 
@@ -18,6 +20,7 @@ class ProfileCompletionScreen1 extends StatefulWidget {
     super.key,
     required this.email,
     required this.bioController,
+    required this.danceStylesController,
   });
 
   @override
@@ -188,6 +191,8 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ),
                               ),
                             const SizedBox(height: 50),
+
+                            // BIO TEXT FIELD
                             LargeTextField(
                               hintText: 'Enter your bio',
                               obscureText: false,
@@ -198,6 +203,29 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                     .colorScheme
                                     .onPrimaryContainer,
                               ),
+                            ),
+
+                            // DANCE STYLES TEXT FIELD
+                            AuthTextFormField(
+                              helperText:
+                                  'Separate each dance style with a comma',
+                              hintText: 'dance styles',
+                              obscureText: false,
+                              controller: widget.danceStylesController,
+                              icon: SizedBox(
+                                width: screenWidth * 0.8,
+                                height: screenHeight * 0.8,
+                                child: Image.asset(
+                                  'images/icons/dance.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please fill in your dance styles, abi you no wan see job ni';
+                                }
+                                return null;
+                              },
                             ),
                           ],
                         ),
