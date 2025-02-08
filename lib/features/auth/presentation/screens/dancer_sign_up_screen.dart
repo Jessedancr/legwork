@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/core/Enums/user_type.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/Features/auth/presentation/widgets/auth_loading_indicator.dart';
@@ -35,6 +36,10 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController danceStylesController = TextEditingController();
 
   final auth = FirebaseAuth.instance;
+
+  // Keeps track of the obscure text of the pw textfields
+  bool obscureText = true;
+  bool obscureText2 = true;
 
   @override
   Widget build(BuildContext context) {
@@ -107,6 +112,35 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
       }
     }
 
+    // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS
+    var viewPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText = !obscureText;
+        });
+      },
+      child: obscureText
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
+
+    var viewConfirmPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText2 = !obscureText2;
+        });
+      },
+      child: obscureText2
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
+
     // RETURNED SCAFFOLD
     return SafeArea(
       child: Scaffold(
@@ -116,9 +150,11 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
         ),
         body: Center(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 10.0),
             child: Form(
               key: formKey,
               child: Column(
+               
                 children: [
                   // Icon
                   Image.asset(
@@ -175,10 +211,9 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'username',
                     obscureText: false,
                     controller: usernameController,
-                    icon: Image.asset(
-                      'images/icons/username.png',
-                      width: 0.5,
-                      height: 0.5,
+                    icon: SvgPicture.asset(
+                      'assets/svg/username.svg',
+                      fit: BoxFit.scaleDown,
                     ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
@@ -196,17 +231,13 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'dance styles',
                     obscureText: false,
                     controller: danceStylesController,
-                    icon: SizedBox(
-                      width: screenWidth * 0.8,
-                      height: screenHeight * 0.8,
-                      child: Image.asset(
-                        'images/icons/dance.png',
-                        fit: BoxFit.contain,
-                      ),
+                    icon: SvgPicture.asset(
+                      'assets/svg/dance.svg',
+                      fit: BoxFit.scaleDown,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please fill in your dance styles, abi you no wan see job ni';
+                        return 'You no get style wey you dey do?';
                       }
                       return null;
                     },
@@ -215,6 +246,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Email textfield
                   AuthTextFormField(
+                    helperText: 'Ex: johndoe@gmail.com',
                     hintText: 'email',
                     obscureText: false,
                     controller: emailController,
@@ -247,8 +279,9 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Password textfield
                   AuthTextFormField(
+                    suffixIcon: viewPassword,
                     hintText: 'password',
-                    obscureText: true,
+                    obscureText: obscureText,
                     controller: pwController,
                     icon: const Icon(Icons.lock_open),
                     keyboardType: TextInputType.visiblePassword,
@@ -263,15 +296,16 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Confirm password textfield
                   AuthTextFormField(
+                    suffixIcon: viewConfirmPassword,
                     hintText: 'confirm password',
-                    obscureText: true,
+                    obscureText: obscureText2,
                     controller: pwConfirmController,
                     keyboardType: TextInputType.visiblePassword,
                     icon: const Icon(Icons.lock_outline_rounded),
                     validator: (value) {
                       if (pwController.text != pwConfirmController.text ||
                           value!.length < 6) {
-                        return "Your passwword no match o!, check am well";
+                        return "Your passwword no match o";
                       }
                       return null;
                     },

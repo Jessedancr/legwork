@@ -160,6 +160,7 @@ class MyAuthProvider extends ChangeNotifier {
                 danceStyles: danceStyles ?? [],
                 resume: portfolio,
                 userType: userType ?? 'dancer',
+                
               ),
             );
           }
