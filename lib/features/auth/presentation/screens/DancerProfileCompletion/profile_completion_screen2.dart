@@ -7,6 +7,8 @@ import 'package:legwork/core/Constants/jobs_list.dart';
 
 /**
  * THIS SCREEN PROMPTS THE USER TO INPUT THE TYPE OF JOBS HE IS INTERESTED IN
+ * 
+ * TODO: PROPERLY HANDLE THE STATE OF THE CHECKBOX
  */
 
 // Track selected skills
@@ -21,38 +23,39 @@ class ProfileCompletionScreen2 extends StatefulWidget {
 }
 
 class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
-  // CONTROLLERS
   final TextEditingController skillTypeController = TextEditingController();
   final SearchController searchController = SearchController();
+
+  // Copy jobs list to stateful widget so it can be updated
+  List<List<dynamic>> localJobs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    localJobs = List.from(
+        jobs); // Copy the jobs list to avoid modifying the global list
+  }
 
   void checkBoxTapped(bool value, int index) {
     debugPrint('$index, $value');
     setState(() {
-      jobs[index][1] = value;
+      localJobs[index][1] = value;
       if (value) {
-        // Add the skill to the selected skills list
-        selectedSkills.add(jobs[index][0]);
+        selectedSkills.add(localJobs[index][0]);
       } else {
-        // Remove the skill from the selected skills list
-        selectedSkills.remove(jobs[index][0]);
+        selectedSkills.remove(localJobs[index][0]);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
         body: Center(
           child: Column(
             children: [
-              // EXPANDED WIDGET FOR IMAGE
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -64,8 +67,8 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                   ),
                   child: Center(
                     child: BlurEffect(
-                      height: screenHeight * 0.18,
-                      width: screenWidth * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.18,
+                      width: MediaQuery.of(context).size.width * 0.8,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: Column(
@@ -93,8 +96,6 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                   ),
                 ),
               ),
-
-              // EXPANDED WIDGET FOR OTHER SCREEN CONTENTS
               Expanded(
                 flex: 2,
                 child: Container(
@@ -107,41 +108,36 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 15.0,
-                      vertical: 15.0,
-                    ),
+                        horizontal: 15.0, vertical: 15.0),
                     child: Column(
                       children: [
-                        // Search bar
                         JobSearchBar(
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
-                            // Filter jobs based on the search query
-                            final filteredJobs = jobs.where(
+                            final filteredJobs = localJobs.where(
                               (job) {
-                                // Return empty search controller or the search query converted to lower case
                                 return controller.text.isEmpty ||
                                     job[0].toLowerCase().contains(
                                         controller.text.toLowerCase());
                               },
                             ).toList();
 
-                            // Display filtered results in a single listview
                             return [
                               SizedBox(
                                 height: 500,
                                 child: ListView.builder(
                                   itemCount: filteredJobs.length,
                                   itemBuilder: (context, index) {
-                                    final jobIndex =
-                                        jobs.indexOf(filteredJobs[index]);
+                                    final jobIndex = localJobs.indexWhere(
+                                        (job) =>
+                                            job[0] == filteredJobs[index][0]);
+
+                                    // localJobs.indexOf(filteredJobs[index]);
                                     return JobTile(
                                       job: filteredJobs[index][0],
-                                      checkedValue: filteredJobs[index][1],
-                                      onChanged: (value) => checkBoxTapped(
-                                        value!,
-                                        jobIndex,
-                                      ),
+                                      checkedValue: localJobs[jobIndex][1],
+                                      onChanged: (value) =>
+                                          checkBoxTapped(value!, jobIndex),
                                     );
                                   },
                                 ),
@@ -149,8 +145,6 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                             ];
                           },
                         ),
-
-                        // SHOW SELECTED SKILLS
                         Expanded(
                           child: Column(
                             children: [
@@ -163,8 +157,6 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-
-                              // Show selected skills
                               Expanded(
                                 child: ListView.builder(
                                   itemCount: selectedSkills.length,

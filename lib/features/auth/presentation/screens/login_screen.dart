@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/core/Enums/user_type.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController userTypecontroller = TextEditingController();
 
   final auth = FirebaseAuth.instance;
+
+  bool obscureText = true;
 
   // BUILD METHOD
   @override
@@ -72,15 +75,15 @@ class _LoginScreenState extends State<LoginScreen> {
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
                 debugPrint('DANCER BLOCK');
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/dancerProfileCompletionFlow',
-                //   (route) => false,
-                // );
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/dancerApp',
+                  '/dancerProfileCompletionFlow',
                   (route) => false,
                 );
+
+                // Navigator.of(context).pushNamedAndRemoveUntil(
+                //   '/dancerApp',
+                //   (route) => false,
+                // );
               } else if (user.userType == UserType.client.name) {
                 // Navigator.of(context).pushNamedAndRemoveUntil(
                 //   '/clientProfileCompletionFlow',
@@ -113,6 +116,21 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     }
+
+    // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS
+    var viewPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText = !obscureText;
+        });
+      },
+      child: obscureText
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
 
     // RETURNED SCAFFOLD
     return SafeArea(
@@ -194,8 +212,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   //   icon: Icons.lock,
                   // ),
                   AuthTextFormField(
+                    suffixIcon: viewPassword,
                     hintText: 'Password',
-                    obscureText: true,
+                    obscureText: obscureText,
                     controller: pwController,
                     icon: const Icon(Icons.lock_outlined),
                     validator: (value) {
