@@ -158,6 +158,7 @@ class MyAuthProvider extends ChangeNotifier {
                 jobPrefs: jobPrefs ?? {},
                 resume: portfolio,
                 userType: userType ?? 'dancer',
+                
               ),
             );
           }

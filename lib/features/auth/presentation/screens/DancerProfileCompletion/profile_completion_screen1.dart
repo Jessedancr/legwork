@@ -14,6 +14,7 @@ import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart'
 class ProfileCompletionScreen1 extends StatefulWidget {
   final TextEditingController danceStylesController;
   final TextEditingController bioController;
+  // final TextEditingController jobPaycontroller;
   final String? email;
 
   const ProfileCompletionScreen1({
@@ -175,20 +176,41 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ],
                               )
                             else
-                              Container(
-                                height: 100,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainer,
-                                  borderRadius: BorderRadius.circular(50),
-                                  image: DecorationImage(
-                                    image: FileImage(
-                                        selectedImage!), // IMAGE FROM FILE
-                                    fit: BoxFit.cover,
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer,
+                                      borderRadius: BorderRadius.circular(50),
+                                      image: DecorationImage(
+                                        image: FileImage(
+                                            selectedImage!), // IMAGE FROM FILE
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
-                                ),
+
+                                  // Edit icon
+                                  Positioned(
+                                    bottom: 5,
+                                    child: Ink(
+                                      child: InkWell(
+                                        onTap: _pickImageFromGallery,
+                                        child: Image.asset(
+                                          'images/icons/edit_circle.png',
+                                          height: screenHeight * 0.04,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimaryContainer,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             const SizedBox(height: 50),
 

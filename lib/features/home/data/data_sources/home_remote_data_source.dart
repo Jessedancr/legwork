@@ -58,4 +58,32 @@ class JobService {
       return Left(e.toString());
     }
   }
+
+  // RETRIEVE JOBS FROM FIREBASE
+  Future<List<Map<String, dynamic>>> getJobs() async {
+    try {
+      // Query the database to get jobs
+      final result = await db.collection('jobs').get();
+
+      // Map the fetched jobs to a list of job data
+      List<Map<String, dynamic>> jobs = result.docs.map((doc) {
+        return {
+          'jobTitle': doc['jobTitle'],
+          'jobLocation': doc['jobLocation'],
+          'prefDanceStyles': doc['prefDanceStyles'],
+          'pay': doc['pay'],
+          'jobDescr': doc['jobDescr'],
+        };
+      }).toList();
+      debugPrint("Fetched jobs: $jobs");
+
+      return jobs;
+    } on FirebaseException catch (e) {
+      debugPrint('Error fetching jobs from firestore: ${e.code}');
+      return [];
+    } catch (e) {
+      debugPrint('Unknown error while fetching jobs from firestor: $e');
+      return [];
+    }
+  }
 }

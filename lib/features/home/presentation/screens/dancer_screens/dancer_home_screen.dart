@@ -11,7 +11,7 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text(' Dancer Home screen'),
+      child: Text('DANCER HOME SCREEN'),
     );
   }
 }

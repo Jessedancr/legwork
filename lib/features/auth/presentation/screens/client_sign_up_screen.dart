@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/core/Enums/user_type.dart';
@@ -30,6 +31,10 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
+
+  // Keeps track of the obscure text of the pw textfields
+  bool obscureText = true;
+  bool obscureText2 = true;
 
   // BUILD METHOD
   @override
@@ -104,6 +109,35 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
       }
     }
 
+    // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS
+    var viewPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText = !obscureText;
+        });
+      },
+      child: obscureText
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
+
+    var viewConfirmPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText2 = !obscureText2;
+        });
+      },
+      child: obscureText2
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
+
     // RETURNED SCAFFOLD
     return SafeArea(
       child: Scaffold(
@@ -113,6 +147,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
         ),
         body: Center(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 10.0),
             child: Form(
               key: formKey,
               child: Column(
@@ -172,7 +207,12 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'username',
                     obscureText: false,
                     controller: usernameController,
-                    icon: Image.asset('images/icons/username.png'),
+                    icon: SvgPicture.asset(
+                      'assets/svg/username.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
+
+                    // Image.asset('images/icons/username.png'),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -188,7 +228,12 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Organisation name',
                     obscureText: false,
                     controller: organisationNameController,
-                    icon: Image.asset('images/icons/username.png'),
+                    icon: SvgPicture.asset(
+                      'assets/svg/username.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
+
+                    // Image.asset('images/icons/username.png'),
                     keyboardType: TextInputType.name,
                     helperText: 'Optional',
                   ),
@@ -196,6 +241,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Email textfield
                   AuthTextFormField(
+                    helperText: 'Ex: johndoe@gmail.com',
                     hintText: 'Email Address',
                     obscureText: false,
                     controller: emailController,
@@ -228,8 +274,9 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Password textfield
                   AuthTextFormField(
+                    suffixIcon: viewPassword,
                     hintText: 'password',
-                    obscureText: true,
+                    obscureText: obscureText,
                     controller: pwController,
                     icon: const Icon(Icons.lock_open_sharp),
                     keyboardType: TextInputType.visiblePassword,
@@ -244,8 +291,9 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Confirm password textfield
                   AuthTextFormField(
+                    suffixIcon: viewConfirmPassword,
                     hintText: 'confirm password',
-                    obscureText: true,
+                    obscureText: obscureText2,
                     controller: pwConfirmController,
                     icon: const Icon(Icons.lock_outline_rounded),
                     keyboardType: TextInputType.name,

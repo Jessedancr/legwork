@@ -17,9 +17,9 @@ class OnboardButton extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // RETURNED WIDGET
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
         height: screenHeight * 0.06,
         width: screenWidth * 0.3,
         decoration: BoxDecoration(
@@ -30,14 +30,18 @@ class OnboardButton extends StatelessWidget {
             width: 2.0,
           ),
         ),
-
-        // Button Text
-        child: Center(
-          child: Text(
-            buttonText,
-            style: const TextStyle(
-              color: Color(0xffFFFFF0),
-              fontWeight: FontWeight.bold,
+        child: InkWell(
+          onTap: onPressed,
+          splashColor: Colors.grey,
+          splashFactory: InkSplash.splashFactory,
+          borderRadius: BorderRadius.circular(30),
+          child: Center(
+            child: Text(
+              buttonText,
+              style: const TextStyle(
+                color: Color(0xffFFFFF0),
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),

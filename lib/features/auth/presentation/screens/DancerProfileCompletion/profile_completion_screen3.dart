@@ -41,6 +41,7 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
+
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
