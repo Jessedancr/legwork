@@ -12,15 +12,16 @@ import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart'
 //TODO: IMPLEMENT UPLOADING USER'S PROFILE PICTURE TO FIREBASE STORAGE
 
 class ProfileCompletionScreen1 extends StatefulWidget {
+  final TextEditingController danceStylesController;
   final TextEditingController bioController;
-  final TextEditingController jobPaycontroller;
+  // final TextEditingController jobPaycontroller;
   final String? email;
 
   const ProfileCompletionScreen1({
     super.key,
     required this.email,
     required this.bioController,
-    required this.jobPaycontroller,
+    required this.danceStylesController,
   });
 
   @override
@@ -226,15 +227,27 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                               ),
                             ),
 
-                            // PREFFERED JOB PAY TEXTFIELD
+                            // DANCE STYLES TEXT FIELD
                             AuthTextFormField(
-                              hintText: 'Preferred pay',
                               helperText:
-                                  'How much would you like to be paid on a job?',
-                              keyboardType: TextInputType.number,
+                                  'Separate each dance style with a comma',
+                              hintText: 'dance styles',
                               obscureText: false,
-                              controller: widget.jobPaycontroller,
-                              icon: const Icon(Icons.attach_money_outlined),
+                              controller: widget.danceStylesController,
+                              icon: SizedBox(
+                                width: screenWidth * 0.8,
+                                height: screenHeight * 0.8,
+                                child: Image.asset(
+                                  'images/icons/dance.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please fill in your dance styles, abi you no wan see job ni';
+                                }
+                                return null;
+                              },
                             ),
                           ],
                         ),

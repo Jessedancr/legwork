@@ -30,9 +30,8 @@ abstract class UserEntity {
 
 /// DANCER ENTITY
 class DancerEntity extends UserEntity {
-  final List<dynamic> danceStyles;
+  final Map<String, dynamic>? jobPrefs;
   final Map<String, dynamic>? resume;
-  Map<String, dynamic>? jobPrefs;
 
   // Constructor
   DancerEntity({
@@ -43,11 +42,10 @@ class DancerEntity extends UserEntity {
     required super.password,
     required super.phoneNumber,
     required super.userType,
-    required this.danceStyles,
+    this.jobPrefs,
     super.profilePicture,
     super.bio,
     this.resume,
-    this.jobPrefs,
   });
 
   // @override
@@ -67,21 +65,20 @@ class ClientEntity extends UserEntity {
   final Map<String, dynamic>? hiringHistory;
 
   // Constructor
-  ClientEntity({
-    required super.firstName,
-    required super.lastName,
-    required super.username,
-    required super.email,
-    required super.phoneNumber,
-    required super.password,
-    required super.userType,
-    required this.danceStylePrefs,
-    required this.jobOfferings,
-    super.profilePicture,
-    super.bio,
-    this.organisationName,
-    this.hiringHistory
-  });
+  ClientEntity(
+      {required super.firstName,
+      required super.lastName,
+      required super.username,
+      required super.email,
+      required super.phoneNumber,
+      required super.password,
+      required super.userType,
+      required this.danceStylePrefs,
+      required this.jobOfferings,
+      super.profilePicture,
+      super.bio,
+      this.organisationName,
+      this.hiringHistory});
 
   // @override
   // UserType get userType => UserType.client;

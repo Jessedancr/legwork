@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
 import 'package:legwork/Features/auth/presentation/widgets/auth_button.dart';
+import 'package:legwork/core/Constants/jobs_list.dart';
 
 // TEXTFORMFIELD KEY
 final formKey = GlobalKey<FormState>();
+// Track selected skills
+final List selectedSkills = [];
 
 class PostJobBottomSheet extends StatefulWidget {
   final void Function()? onPressed;
@@ -15,6 +20,7 @@ class PostJobBottomSheet extends StatefulWidget {
   final TextEditingController jobDurationController;
   final TextEditingController amtOfDancersController;
   final TextEditingController jobDescrController;
+  final SearchController searchController;
   const PostJobBottomSheet({
     super.key,
     required this.onPressed,
@@ -25,6 +31,7 @@ class PostJobBottomSheet extends StatefulWidget {
     required this.jobDurationController,
     required this.amtOfDancersController,
     required this.jobDescrController,
+    required this.searchController
   });
 
   @override
@@ -32,9 +39,23 @@ class PostJobBottomSheet extends StatefulWidget {
 }
 
 class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
+  void checkBoxTapped(bool value, int index) {
+    debugPrint('$index, $value');
+    setState(() {
+      jobs[index][1] = value;
+      if (value) {
+        // Add the skill to the selected skills list
+        selectedSkills.add(jobs[index][0]);
+      } else {
+        // Remove the skill from the selected skills list
+        selectedSkills.remove(jobs[index][0]);
+      }
+    });
+  }
+
   // BUILD METHOD
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     // SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -57,9 +78,47 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  // JOB TYPE SEARCH FIELD
+                  JobSearchBar(
+                    searchController: widget.searchController,
+                    suggestionsBuilder: (context, controller) {
+                      // Filter jobs based on the search query
+                      final filteredJobs = jobs.where(
+                        (job) {
+                          // Return empty search controller or the search query converted to lower case
+                          return controller.text.isEmpty ||
+                              job[0]
+                                  .toLowerCase()
+                                  .contains(controller.text.toLowerCase());
+                        },
+                      ).toList();
+                      return [
+                        SizedBox(
+                          height: 500,
+                          child: ListView.builder(
+                            itemCount: filteredJobs.length,
+                            itemBuilder: (context, index) {
+                              final jobIndex =
+                                  jobs.indexOf(filteredJobs[index]);
+                              return JobTile(
+                                job: filteredJobs[index][0],
+                                checkedValue: filteredJobs[index][1],
+                                onChanged: (value) => checkBoxTapped(
+                                  value!,
+                                  jobIndex,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ];
+                    },
+                  ),
+                  const SizedBox(height: 50),
+
                   // JOB TITLE TEXT FIELD
                   AuthTextFormField(
-                    hintText: 'Title/type of job',
+                    hintText: 'Title of job',
                     obscureText: false,
                     controller: widget.titleController,
                     icon: Image.asset('images/icons/title.png'),

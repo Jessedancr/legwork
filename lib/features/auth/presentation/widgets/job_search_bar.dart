@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
-import 'package:legwork/core/Constants/jobs_list.dart';
+
 
 // TODO: COME BACK TO PROPERLY IMPLEMENT THE STATE CHANGE OF THE CHEKBOX
 

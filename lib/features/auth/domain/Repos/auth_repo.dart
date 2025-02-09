@@ -18,19 +18,18 @@ abstract class AuthRepo {
   });
 
   // Sign up method
-  Future<Either<String, UserEntity>> userSignUp(
-      {required String firstName,
-      required String lastName,
-      required String username,
-      required String email,
-      required int phoneNumber,
-      required String password,
-      required UserType userType,
-      Map<String, dynamic>? resume,
-      String? organizationName, // for client
-      List<dynamic>? danceStyles, // for dancer
-      Map<String, dynamic>? jobPrefs // for dancer
-      });
+  Future<Either<String, UserEntity>> userSignUp({
+    required String firstName,
+    required String lastName,
+    required String username,
+    required String email,
+    required int phoneNumber,
+    required String password,
+    required UserType userType,
+    Map<String, dynamic>? resume,
+    Map<String, dynamic>? jobPrefs, // for dancer
+    String? organizationName, // for client
+  });
 
   /// LOGOUT METHOD
   Future<Either<String, void>> userLogout();

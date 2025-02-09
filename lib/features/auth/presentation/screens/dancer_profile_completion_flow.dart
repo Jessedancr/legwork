@@ -2,16 +2,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/Features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/Features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen1.dart';
-import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen4.dart';
+import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen5.dart';
+import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen3.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
 import 'package:provider/provider.dart';
 
 import '../../../onboarding/presentation/widgets/page_indicator.dart';
 import 'DancerProfileCompletion/profile_completion_screen2.dart';
-import 'DancerProfileCompletion/profile_completion_screen3.dart';
+import 'DancerProfileCompletion/profile_completion_screen4.dart';
 
 class DancerProfileCompletionFlow extends StatefulWidget {
   const DancerProfileCompletionFlow({
@@ -26,6 +28,7 @@ class DancerProfileCompletionFlow extends StatefulWidget {
 class _DancerProfileCompletionFlowState
     extends State<DancerProfileCompletionFlow> {
   final auth = FirebaseAuth.instance;
+  // final _authRemoteDataSource = AuthRemoteDataSourceImpl();
 
   // CONTROLLERS
   final PageController pageController = PageController();
@@ -38,7 +41,7 @@ class _DancerProfileCompletionFlowState
   final TextEditingController locationController = TextEditingController();
   final TextEditingController jobDescrController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
-  final TextEditingController jobPaycontroller = TextEditingController();
+  final TextEditingController danceStylesController = TextEditingController();
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
@@ -61,9 +64,13 @@ class _DancerProfileCompletionFlowState
           data: {
             'bio': bioController.text,
             'jobPrefs': {
-              'prefPay': jobPaycontroller.text,
-              'prefLocation': selectedLocations,
-              'prefJobTypes': selectedSkills,
+              'danceStyles': danceStylesController.text
+                  .trim()
+                  .split(RegExp(r'(\s*,\s)+'))
+                  .where((style) => style.isNotEmpty)
+                  .toList(),
+              'jobTypes': selectedSkills,
+              'jobLocations': selectedLocations,
             },
             'resume': {
               'professionalTitle': professonalTitleController.text,
@@ -121,7 +128,7 @@ class _DancerProfileCompletionFlowState
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (value) {
                 setState(() {
-                  isLastPage = (value == 3);
+                  isLastPage = (value == 4);
                   debugPrint('DANCER PROFILE COMPLETION LAST PAGE');
                 });
               },
@@ -129,16 +136,17 @@ class _DancerProfileCompletionFlowState
                 ProfileCompletionScreen1(
                   email: auth.currentUser!.email,
                   bioController: bioController,
-                  jobPaycontroller: jobPaycontroller,
+                  danceStylesController: danceStylesController,
                 ),
                 const ProfileCompletionScreen2(),
-                ProfileCompletionScreen3(
+                const ProfileCompletionScreen3(),
+                ProfileCompletionScreen4(
                   onPressed: () => pageController.nextPage(
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
                   ),
                 ),
-                ProfileCompletionScreen4(
+                ProfileCompletionScreen5(
                   dateController: dateController,
                   employerController: employerController,
                   jobDescrController: jobDescrController,
@@ -155,7 +163,7 @@ class _DancerProfileCompletionFlowState
               left: screenWidth * 0.38,
               child: PageIndicator(
                 pageController: pageController,
-                count: 4,
+                count: 5,
                 dotColor: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),

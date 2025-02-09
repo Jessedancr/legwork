@@ -23,7 +23,6 @@ class SignUpBusinessLogic {
     dynamic profilePicture,
     String? bio,
     Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
-    List<dynamic>? danceStyles = const [], // for dancers
     Map<String, dynamic>? jobPrefs, // for dancers
     String? organizationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
@@ -53,11 +52,6 @@ class SignUpBusinessLogic {
       return const Left('Password must be at least 6 characters');
     }
 
-    if (userType == UserType.dancer &&
-        (danceStyles == null || danceStyles.isEmpty)) {
-      return const Left('At least one dance style is required for dancers');
-    }
-
     // Calling the signUp method from authRepo
     final result = await authRepo.userSignUp(
       firstName: firstName,
@@ -69,12 +63,11 @@ class SignUpBusinessLogic {
       userType: userType,
       bio: bio,
       profilePicture: profilePicture,
-      danceStyles: danceStyles, // for dancers
       resume: resume, // for dancers => 'hiringHistory' for clients
-      jobPrefs: jobPrefs, // for dancers
       organizationName: organizationName, // for clients
       danceStylePrefs: danceStylePrefs, // for clients
       jobOfferings: jobOfferings, // for clients
+      jobPrefs: jobPrefs
     );
 
     return result.fold(

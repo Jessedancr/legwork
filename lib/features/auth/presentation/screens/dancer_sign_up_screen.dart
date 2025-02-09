@@ -33,7 +33,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
-  final TextEditingController danceStylesController = TextEditingController();
+  
 
   final auth = FirebaseAuth.instance;
 
@@ -63,12 +63,6 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             email: emailController.text.toLowerCase().trim(),
             phoneNumber: int.parse(phoneNumberController.text.trim()),
             password: pwController.text.trim(),
-            danceStyles: danceStylesController.text
-                .trim()
-                .split(RegExp(r'(\s*,\s)+'))
-                .where((style) => style
-                    .isNotEmpty) // Remove empty entries => entries that meet the condition will stay
-                .toList(),
             userType: UserType.dancer,
           );
 
@@ -226,23 +220,23 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                   const SizedBox(height: 10),
 
                   // Dance styles textfield
-                  AuthTextFormField(
-                    helperText: 'Separate each dance style with a comma',
-                    hintText: 'dance styles',
-                    obscureText: false,
-                    controller: danceStylesController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/dance.svg',
-                      fit: BoxFit.scaleDown,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'You no get style wey you dey do?';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                  // AuthTextFormField(
+                  //   helperText: 'Separate each dance style with a comma',
+                  //   hintText: 'dance styles',
+                  //   obscureText: false,
+                  //   controller: danceStylesController,
+                  //   icon: SvgPicture.asset(
+                  //     'assets/svg/dance.svg',
+                  //     fit: BoxFit.scaleDown,
+                  //   ),
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'You no get style wey you dey do?';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  // const SizedBox(height: 10),
 
                   // Email textfield
                   AuthTextFormField(

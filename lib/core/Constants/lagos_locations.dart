@@ -1,4 +1,4 @@
-final List locations = [
+final List lagosLocations = [
   ['Agege', false],
   ['Ajeromi-Ifelodun', false],
   ['Alimosho', false],
