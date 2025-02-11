@@ -15,6 +15,7 @@ import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart'
 class ProfileCompletionScreen1 extends StatefulWidget {
   final TextEditingController danceStylesController;
   final TextEditingController bioController;
+  // final TextEditingController jobPaycontroller;
   final String? email;
 
   const ProfileCompletionScreen1({

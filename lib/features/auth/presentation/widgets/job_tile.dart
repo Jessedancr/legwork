@@ -14,6 +14,11 @@ class JobTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // RETURNED WIDGET
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -22,14 +27,16 @@ class JobTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
         ),
         width: double.infinity,
-        height: 50,
+        height: screenHeight * 0.07,
         child: Row(
           children: [
             Checkbox(
               value: checkedValue,
               onChanged: onChanged,
-              fillColor: WidgetStatePropertyAll(Colors.grey[400]),
-              // activeColor: Theme.of(context).colorScheme.secondary,
+              fillColor:
+                  WidgetStatePropertyAll(Theme.of(context).colorScheme.surface),
+              activeColor: Theme.of(context).colorScheme.primary,
+              checkColor: Colors.black,
               shape: const CircleBorder(),
             ),
             Text(

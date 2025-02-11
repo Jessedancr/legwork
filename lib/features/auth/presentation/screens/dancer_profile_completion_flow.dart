@@ -29,7 +29,7 @@ class DancerProfileCompletionFlow extends StatefulWidget {
 class _DancerProfileCompletionFlowState
     extends State<DancerProfileCompletionFlow> {
   final auth = FirebaseAuth.instance;
-  final _authRemoteDataSource = AuthRemoteDataSourceImpl();
+  // final _authRemoteDataSource = AuthRemoteDataSourceImpl();
 
   // CONTROLLERS
   final PageController pageController = PageController();

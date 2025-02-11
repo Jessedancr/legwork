@@ -28,6 +28,7 @@ class LegworkElevatedButton extends StatelessWidget {
           Theme.of(context).colorScheme.primary,
         ),
         elevation: const WidgetStatePropertyAll(0.0),
+        
         splashFactory: InkSplash.splashFactory,
       ),
       onPressed: onPressed,

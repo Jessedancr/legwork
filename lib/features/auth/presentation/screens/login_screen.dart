@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:provider/provider.dart';
 
@@ -149,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
 
+    // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS
     var viewPassword = GestureDetector(
       onTap: () {
         setState(() {

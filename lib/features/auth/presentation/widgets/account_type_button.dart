@@ -26,10 +26,13 @@ class AccountTypeButton extends StatelessWidget {
         color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(30),
       ),
+
       child: InkWell(
-        splashColor: Theme.of(context).colorScheme.onPrimary,
+        splashColor: Colors.grey,
         splashFactory: InkSplash.splashFactory,
+        borderRadius: BorderRadius.circular(30),
         onTap: onTap,
+        
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

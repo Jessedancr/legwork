@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/Features/auth/presentation/widgets/auth_loading_indicator.dart';
@@ -172,6 +173,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             child: Form(
               key: formKey,
               child: Column(
+               
                 children: [
                   // Icon
                   Image.asset(
@@ -321,7 +323,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     validator: (value) {
                       if (pwController.text != pwConfirmController.text ||
                           value!.length < 6) {
-                        return "Your passwword no match o check am well";
+                        return "Your passwword no match o";
                       }
                       return null;
                     },
