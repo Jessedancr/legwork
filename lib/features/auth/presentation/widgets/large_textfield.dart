@@ -46,7 +46,11 @@ class LargeTextField extends StatelessWidget {
               obscureText: obscureText,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                contentPadding: EdgeInsets.only(
+                  left: screenWidth * 0.065,
+                  top: screenHeight * 0.05,
+                  right: screenWidth * 0.05,
+                ),
                 fillColor: Theme.of(context).colorScheme.surfaceContainer,
                 helper: Text(
                   helperText ?? '',
@@ -59,7 +63,8 @@ class LargeTextField extends StatelessWidget {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 2.0,
                   ),
                   borderRadius: BorderRadius.circular(30),
                 ),
@@ -78,9 +83,9 @@ class LargeTextField extends StatelessWidget {
 
         Positioned(
           //top: -0.5,
-          left: 35,
-          height: 30,
-          width: 41,
+          left: screenWidth * 0.06,
+          height: screenHeight * 0.05,
+          width: screenWidth * 0.1,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(50),
             child: Container(

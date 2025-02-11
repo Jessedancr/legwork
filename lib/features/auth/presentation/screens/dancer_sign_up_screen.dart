@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
@@ -32,9 +34,12 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
-  
 
   final auth = FirebaseAuth.instance;
+
+  // Keeps track of the obscure text of the pw textfields
+  bool obscureText = true;
+  bool obscureText2 = true;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +77,19 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               debugPrint(fail.toString());
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(fail),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 5),
+                  content: LegWorkSnackBarContent(
+                    screenHeight: screenHeight,
+                    context: context,
+                    screenWidth: screenWidth,
+                    title: 'Oh Snap!',
+                    subTitle: fail,
+                    contentColor: Theme.of(context).colorScheme.error,
+                    imageColor: Theme.of(context).colorScheme.onError,
+                  ),
                 ),
               );
             },
@@ -92,7 +109,19 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             hideLoadingIndicator(context);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(e.toString()),
+                backgroundColor: Colors.transparent,
+                elevation: 0.0,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 5),
+                content: LegWorkSnackBarContent(
+                  screenHeight: screenHeight,
+                  context: context,
+                  screenWidth: screenWidth,
+                  title: 'Oh Snap!',
+                  subTitle: 'An unknown error occured',
+                  contentColor: Theme.of(context).colorScheme.error,
+                  imageColor: Theme.of(context).colorScheme.onError,
+                ),
               ),
             );
           }
@@ -100,6 +129,35 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
         }
       }
     }
+
+    // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS
+    var viewPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText = !obscureText;
+        });
+      },
+      child: obscureText
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
+
+    var viewConfirmPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText2 = !obscureText2;
+        });
+      },
+      child: obscureText2
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
 
     // RETURNED SCAFFOLD
     return SafeArea(
@@ -110,6 +168,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
         ),
         body: Center(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 10.0),
             child: Form(
               key: formKey,
               child: Column(
@@ -137,7 +196,10 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'First name',
                     obscureText: false,
                     controller: firstNameController,
-                    icon: const Icon(Icons.person_outline),
+                    icon: SvgPicture.asset(
+                      'assets/svg/user.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -153,7 +215,10 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'last name',
                     obscureText: false,
                     controller: lastNameController,
-                    icon: const Icon(Icons.person_outline),
+                    icon: SvgPicture.asset(
+                      'assets/svg/user.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -169,10 +234,9 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'username',
                     obscureText: false,
                     controller: usernameController,
-                    icon: Image.asset(
-                      'images/icons/username.png',
-                      width: 0.5,
-                      height: 0.5,
+                    icon: SvgPicture.asset(
+                      'assets/svg/username.svg',
+                      fit: BoxFit.scaleDown,
                     ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
@@ -184,35 +248,16 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                   ),
                   const SizedBox(height: 10),
 
-                  // Dance styles textfield
-                  // AuthTextFormField(
-                  //   helperText: 'Separate each dance style with a comma',
-                  //   hintText: 'dance styles',
-                  //   obscureText: false,
-                  //   controller: danceStylesController,
-                  //   icon: SizedBox(
-                  //     width: screenWidth * 0.8,
-                  //     height: screenHeight * 0.8,
-                  //     child: Image.asset(
-                  //       'images/icons/dance.png',
-                  //       fit: BoxFit.contain,
-                  //     ),
-                  //   ),
-                  //   validator: (value) {
-                  //     if (value == null || value.isEmpty) {
-                  //       return 'Please fill in your dance styles, abi you no wan see job ni';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-                  const SizedBox(height: 10),
-
                   // Email textfield
                   AuthTextFormField(
+                    helperText: 'Ex: johndoe@gmail.com',
                     hintText: 'email',
                     obscureText: false,
                     controller: emailController,
-                    icon: const Icon(Icons.email_outlined),
+                    icon: SvgPicture.asset(
+                      'assets/svg/mail.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -228,7 +273,10 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                     hintText: 'phone Number',
                     obscureText: false,
                     controller: phoneNumberController,
-                    icon: const Icon(Icons.numbers),
+                    icon: SvgPicture.asset(
+                      'assets/svg/address_book.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -241,10 +289,14 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Password textfield
                   AuthTextFormField(
+                    suffixIcon: viewPassword,
                     hintText: 'password',
-                    obscureText: true,
+                    obscureText: obscureText,
                     controller: pwController,
-                    icon: const Icon(Icons.lock_open),
+                    icon: SvgPicture.asset(
+                      'assets/svg/open_padlock.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.visiblePassword,
                     validator: (value) {
                       if (value!.length < 6) {
@@ -257,15 +309,19 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Confirm password textfield
                   AuthTextFormField(
+                    suffixIcon: viewConfirmPassword,
                     hintText: 'confirm password',
-                    obscureText: true,
+                    obscureText: obscureText2,
                     controller: pwConfirmController,
                     keyboardType: TextInputType.visiblePassword,
-                    icon: const Icon(Icons.lock_outline_rounded),
+                    icon: SvgPicture.asset(
+                      'assets/svg/lock-hashtag.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     validator: (value) {
                       if (pwController.text != pwConfirmController.text ||
                           value!.length < 6) {
-                        return "Your passwword no match o!, check am well";
+                        return "Your passwword no match o check am well";
                       }
                       return null;
                     },

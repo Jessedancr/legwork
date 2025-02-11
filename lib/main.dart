@@ -107,9 +107,9 @@ class MyApp extends StatelessWidget {
             ),
       routes: {
         '/acctType': (context) => const AccountTypeScreen(),
-        '/loginScreen': (context) => LoginScreen(),
-        '/clientSignUpScreen': (context) => ClientSignUpScreen(),
-        '/dancerSignUpScreen': (context) => DancerSignUpScreen(),
+        '/loginScreen': (context) => const LoginScreen(),
+        '/clientSignUpScreen': (context) => const ClientSignUpScreen(),
+        '/dancerSignUpScreen': (context) => const DancerSignUpScreen(),
         '/dancerProfileCompletionFlow': (context) =>
             const DancerProfileCompletionFlow(),
         '/clientProfileCompletionFlow': (context) =>

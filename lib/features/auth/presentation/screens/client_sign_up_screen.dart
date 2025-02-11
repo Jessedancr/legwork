@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:provider/provider.dart';
 
 import '../Provider/my_auth_provider.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_loading_indicator.dart';
-import '../widgets/auth_textfield.dart';
 
 class ClientSignUpScreen extends StatefulWidget {
   const ClientSignUpScreen({super.key});
@@ -30,6 +31,10 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
+
+  // Keeps track of the obscure text of the pw textfields
+  bool obscureText = true;
+  bool obscureText2 = true;
 
   // BUILD METHOD
   @override
@@ -66,8 +71,20 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             // Handle failure
             debugPrint(fail.toString());
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Some unknown error occured'),
+              SnackBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0.0,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 5),
+                content: LegWorkSnackBarContent(
+                  screenHeight: screenHeight,
+                  context: context,
+                  screenWidth: screenWidth,
+                  title: 'Oh Snap!',
+                  subTitle: fail,
+                  contentColor: Theme.of(context).colorScheme.error,
+                  imageColor: Theme.of(context).colorScheme.onError,
+                ),
               ),
             );
           }, (user) {
@@ -86,7 +103,19 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             hideLoadingIndicator(context);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(e.toString()),
+                backgroundColor: Colors.transparent,
+                elevation: 0.0,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 5),
+                content: LegWorkSnackBarContent(
+                  screenHeight: screenHeight,
+                  context: context,
+                  screenWidth: screenWidth,
+                  title: 'Oh Snap!',
+                  subTitle: 'An unknown error occurred',
+                  contentColor: Theme.of(context).colorScheme.error,
+                  imageColor: Theme.of(context).colorScheme.onError,
+                ),
               ),
             );
           }
@@ -96,13 +125,53 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
       if (pwController.text != pwConfirmController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: Theme.of(context).colorScheme.error,
-            content: const Text('Passwords do not match!'),
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 5),
+            content: LegWorkSnackBarContent(
+              screenHeight: screenHeight,
+              context: context,
+              screenWidth: screenWidth,
+              title: 'Oh Snap!',
+              subTitle: 'Your passwords no match o!',
+              contentColor: Theme.of(context).colorScheme.error,
+              imageColor: Theme.of(context).colorScheme.onError,
+            ),
           ),
         );
         return;
       }
     }
+
+    // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS
+    var viewPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText = !obscureText;
+        });
+      },
+      child: obscureText
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
+
+    var viewConfirmPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText2 = !obscureText2;
+        });
+      },
+      child: obscureText2
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
 
     // RETURNED SCAFFOLD
     return SafeArea(
@@ -113,6 +182,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
         ),
         body: Center(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 10.0),
             child: Form(
               key: formKey,
               child: Column(
@@ -140,7 +210,10 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'First name',
                     obscureText: false,
                     controller: firstNameController,
-                    icon: const Icon(Icons.person_outline),
+                    icon: SvgPicture.asset(
+                      'assets/svg/user.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -156,7 +229,10 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Last name',
                     obscureText: false,
                     controller: lastNameController,
-                    icon: const Icon(Icons.person_outline),
+                    icon: SvgPicture.asset(
+                      'assets/svg/user.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -172,7 +248,10 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'username',
                     obscureText: false,
                     controller: usernameController,
-                    icon: Image.asset('images/icons/username.png'),
+                    icon: SvgPicture.asset(
+                      'assets/svg/username.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -188,7 +267,10 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Organisation name',
                     obscureText: false,
                     controller: organisationNameController,
-                    icon: Image.asset('images/icons/username.png'),
+                    icon: SvgPicture.asset(
+                      'assets/svg/username.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.name,
                     helperText: 'Optional',
                   ),
@@ -196,10 +278,14 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Email textfield
                   AuthTextFormField(
+                    helperText: 'Ex: johndoe@gmail.com',
                     hintText: 'Email Address',
                     obscureText: false,
                     controller: emailController,
-                    icon: const Icon(Icons.email_outlined),
+                    icon: SvgPicture.asset(
+                      'assets/svg/mail.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -215,7 +301,10 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                     hintText: 'Phone number',
                     obscureText: false,
                     controller: phoneNumberController,
-                    icon: const Icon(Icons.numbers),
+                    icon: SvgPicture.asset(
+                      'assets/svg/address_book.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -228,10 +317,14 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Password textfield
                   AuthTextFormField(
+                    suffixIcon: viewPassword,
                     hintText: 'password',
-                    obscureText: true,
+                    obscureText: obscureText,
                     controller: pwController,
-                    icon: const Icon(Icons.lock_open_sharp),
+                    icon: SvgPicture.asset(
+                      'assets/svg/open_padlock.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.visiblePassword,
                     validator: (value) {
                       if (value!.length < 6) {
@@ -244,10 +337,14 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Confirm password textfield
                   AuthTextFormField(
+                    suffixIcon: viewConfirmPassword,
                     hintText: 'confirm password',
-                    obscureText: true,
+                    obscureText: obscureText2,
                     controller: pwConfirmController,
-                    icon: const Icon(Icons.lock_outline_rounded),
+                    icon: SvgPicture.asset(
+                      'assets/svg/lock-hashtag.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (pwController.text != pwConfirmController.text ||

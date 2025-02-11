@@ -24,90 +24,100 @@ class WorkExperienceTile extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // RETURNED WIDGET
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.onSurface,
-            width: 2.0,
-          ),
-          image: const DecorationImage(
-            image: AssetImage(
-              'images/logos/dance_icon_purple_cropped.png',
+    return IntrinsicHeight(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(35),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              width: 3.0,
             ),
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.high,
+            image: const DecorationImage(
+              image: AssetImage(
+                'images/logos/nobg_dance_icon.png',
+              ),
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+            ),
           ),
-        ),
-        child: BlurEffect(
-          height: screenHeight * 0.2,
-          width: screenWidth,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10.0, top: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    style: GoogleFonts.robotoSlab(
-                      color: Theme.of(context).colorScheme.onSecondary,
-                      fontSize: 16,
+          child: BlurEffect(
+            sigmaX: 3.5,
+            sigmaY: 3.5,
+            firstGradientColor: Colors.black.withOpacity(0.9),
+            secondGradientColor: Colors.black.withOpacity(0.7),
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            height: null,
+            width: screenWidth,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0, top: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      style: GoogleFonts.robotoSlab(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 16,
+                        letterSpacing: 1.5,
+                      ),
+                      children: [
+                        // Job title
+                        const TextSpan(
+                          text: '- Job Title: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: ' $jobTitle \n'),
+                        const TextSpan(text: ''),
+
+                        // Employer
+                        const TextSpan(
+                          text: '- Employer: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: ' $employer \n'),
+                        const TextSpan(text: ''),
+
+                        // Location
+                        const TextSpan(
+                          text: '- Location: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: ' $location \n'),
+                        const TextSpan(text: ''),
+
+                        // Date
+                        const TextSpan(
+                          text: '- Date: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: ' $date \n'),
+                        const TextSpan(text: ''),
+
+                        // Job Description
+                        const TextSpan(
+                          text: '- Job Description: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(text: ' $jobDescr \n'),
+                      ],
                     ),
-                    children: [
-                      // Job title
-                      const TextSpan(
-                        text: 'Job Title: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(text: ' $jobTitle \n'),
-                      const TextSpan(text: ''),
-
-                      // Employer
-                      const TextSpan(
-                        text: 'Employer: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(text: ' $employer \n'),
-                      const TextSpan(text: ''),
-
-                      // Location
-                      const TextSpan(
-                        text: 'Location: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(text: ' $location \n'),
-                      const TextSpan(text: ''),
-
-                      // Date
-                      const TextSpan(
-                        text: 'Date: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(text: ' $date \n'),
-                      const TextSpan(text: ''),
-
-                      // Job Description
-                      const TextSpan(
-                        text: 'Job Description: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(text: ' $jobDescr \n'),
-                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

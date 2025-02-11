@@ -18,7 +18,7 @@ class JobTile extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
           borderRadius: BorderRadius.circular(30),
         ),
         width: double.infinity,
@@ -29,7 +29,8 @@ class JobTile extends StatelessWidget {
               value: checkedValue,
               onChanged: onChanged,
               fillColor: WidgetStatePropertyAll(Colors.grey[400]),
-              activeColor: Theme.of(context).colorScheme.secondary,
+              // activeColor: Theme.of(context).colorScheme.secondary,
+              shape: const CircleBorder(),
             ),
             Text(
               job,

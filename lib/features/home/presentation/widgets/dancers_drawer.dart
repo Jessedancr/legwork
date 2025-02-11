@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/Features/home/presentation/widgets/legwork_drawer_tile.dart';
 
 class DancersDrawer extends StatefulWidget {
@@ -18,13 +19,21 @@ class _DancersDrawerState extends State<DancersDrawer> {
     // RETRUNED UI
     return Drawer(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      width: screenWidth * 0.6,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(30),
+          bottomRight: Radius.circular(30),
+        ),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          SizedBox(height: screenHeight * 0.05),
           // Person icon => Ideally this should be the profie picture of the user
-          const Icon(
-            Icons.person,
-            size: 60,
+          SvgPicture.asset(
+            'assets/svg/user.svg',
+            height: screenHeight * 0.07,
           ),
           const SizedBox(height: 10),
           Divider(
@@ -36,8 +45,9 @@ class _DancersDrawerState extends State<DancersDrawer> {
           /// DRAWER TILES
           // Alerts/notifications
           LegworkDrawerTile(
-            leading: Icon(
-              Icons.notifications,
+            leading: SvgPicture.asset(
+              'assets/svg/notfications.svg',
+              fit: BoxFit.scaleDown,
               color: Theme.of(context).colorScheme.surface,
             ),
             title: Text(
@@ -70,8 +80,9 @@ class _DancersDrawerState extends State<DancersDrawer> {
 
           // Earnings dashboard => A breakdown of how much the user has earned so far
           LegworkDrawerTile(
-            leading: Icon(
-              Icons.money,
+            leading: SvgPicture.asset(
+              'assets/svg/usd-circle.svg',
+              fit: BoxFit.scaleDown,
               color: Theme.of(context).colorScheme.surface,
             ),
             title: Text(
@@ -87,8 +98,9 @@ class _DancersDrawerState extends State<DancersDrawer> {
 
           // Settings
           LegworkDrawerTile(
-            leading: Icon(
-              Icons.settings,
+            leading: SvgPicture.asset(
+              'assets/svg/settings.svg',
+              fit: BoxFit.scaleDown,
               color: Theme.of(context).colorScheme.surface,
             ),
             title: Text(

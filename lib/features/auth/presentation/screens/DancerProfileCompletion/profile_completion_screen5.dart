@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
@@ -184,7 +185,10 @@ class _ProfileCompletionScreen5State extends State<ProfileCompletionScreen5> {
                               'Ex: Professional dancer and choreographer',
                           obscureText: false,
                           controller: widget.professonalTitleController,
-                          icon: Image.asset('images/icons/title.png'),
+                          icon: SvgPicture.asset(
+                            'assets/svg/brand.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
                         ),
                         SizedBox(height: screenHeight * 0.01),
 

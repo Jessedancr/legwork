@@ -18,13 +18,24 @@ class AuthButton extends StatelessWidget {
 
     // RETURNED WIDGET
     return Ink(
-      height: screenHeight * 0.07,
-      width: screenWidth * 0.4,
+      height: screenHeight * 0.05,
+      width: screenWidth * 0.3,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(40),
-      ),
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(40),
+          border: Border.all(
+            width: 2.0,
+          ),
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 20.0,
+              color: Colors.grey,
+              spreadRadius: 2.0,
+              blurStyle: BlurStyle.solid,
+            )
+          ]),
       child: InkWell(
+        borderRadius: BorderRadius.circular(40),
         onTap: onPressed,
         splashColor: Theme.of(context).colorScheme.onPrimary,
         splashFactory: InkSplash.splashFactory,

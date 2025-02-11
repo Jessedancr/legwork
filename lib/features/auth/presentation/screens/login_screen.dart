@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 
 import 'package:provider/provider.dart';
@@ -28,6 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController userTypecontroller = TextEditingController();
 
   final auth = FirebaseAuth.instance;
+
+  bool obscureText = true;
 
   // BUILD METHOD
   @override
@@ -59,10 +63,22 @@ class _LoginScreenState extends State<LoginScreen> {
             // Handle failed login
             (fail) {
               debugPrint('Login failed: $fail'); // Debug message for failure
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  content: Text(fail),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 5),
+                  content: LegWorkSnackBarContent(
+                    screenHeight: screenHeight,
+                    context: context,
+                    screenWidth: screenWidth,
+                    title: 'Oh snap!',
+                    subTitle: fail,
+                    contentColor: Theme.of(context).colorScheme.error,
+                    imageColor: Theme.of(context).colorScheme.onError,
+                  ),
                 ),
               );
             },
@@ -72,15 +88,15 @@ class _LoginScreenState extends State<LoginScreen> {
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
                 debugPrint('DANCER BLOCK');
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/dancerProfileCompletionFlow',
-                //   (route) => false,
-                // );
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/dancerApp',
+                  '/dancerProfileCompletionFlow',
                   (route) => false,
                 );
+
+                // Navigator.of(context).pushNamedAndRemoveUntil(
+                //   '/dancerApp',
+                //   (route) => false,
+                // );
               } else if (user.userType == UserType.client.name) {
                 // Navigator.of(context).pushNamedAndRemoveUntil(
                 //   '/clientProfileCompletionFlow',
@@ -93,8 +109,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Invalid user type'),
+                  SnackBar(
+                    backgroundColor: Colors.transparent,
+                    elevation: 0.0,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 5),
+                    content: LegWorkSnackBarContent(
+                      screenHeight: screenHeight,
+                      context: context,
+                      screenWidth: screenWidth,
+                      title: 'Oh Snap!',
+                      subTitle: 'Invalid user type',
+                      contentColor: Theme.of(context).colorScheme.error,
+                      imageColor: Theme.of(context).colorScheme.onError,
+                    ),
                   ),
                 );
               }
@@ -105,14 +133,35 @@ class _LoginScreenState extends State<LoginScreen> {
           if (mounted) hideLoadingIndicator(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              content: const Text('Something went wrong. Please try again.'),
+              content: LegWorkSnackBarContent(
+                screenHeight: screenHeight,
+                context: context,
+                screenWidth: screenWidth,
+                title: "Oh Snap!",
+                subTitle: 'An unknown error occured',
+                contentColor: Theme.of(context).colorScheme.error,
+                imageColor: Theme.of(context).colorScheme.onError,
+              ),
             ),
           );
           debugPrint('Error logging in: $e');
         }
       }
     }
+
+    var viewPassword = GestureDetector(
+      onTap: () {
+        setState(() {
+          obscureText = !obscureText;
+        });
+      },
+      child: obscureText
+          ? const Icon(Icons.remove_red_eye_outlined)
+          : SvgPicture.asset(
+              'assets/svg/crossed_eye.svg',
+              fit: BoxFit.scaleDown,
+            ),
+    );
 
     // RETURNED SCAFFOLD
     return SafeArea(
@@ -155,11 +204,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 5),
 
+                  // Dancer or Client
                   AuthTextFormField(
                     hintText: 'Are you a dancer or a client',
                     obscureText: false,
                     controller: userTypecontroller,
-                    icon: const Icon(Icons.person_outline),
+                    icon: SvgPicture.asset(
+                      'assets/svg/user.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Please enter 'dancer' or 'client'";
@@ -175,7 +228,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Email',
                     obscureText: false,
                     controller: emailController,
-                    icon: const Icon(Icons.email_outlined),
+                    icon: SvgPicture.asset(
+                      'assets/svg/mail.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     helperText: 'Ex: johndoe@gmail.com',
                     validator: (value) {
                       if (!value!.contains('@gmail.com') || value.isEmpty) {
@@ -186,18 +242,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Password text field
-                  // AuthTextfield(
-                  //   controller: pwController,
-                  //   hintText: 'Password',
-                  //   obscureText: true,
-                  //   icon: Icons.lock,
-                  // ),
+                  // Password textfield
                   AuthTextFormField(
+                    suffixIcon: viewPassword,
                     hintText: 'Password',
-                    obscureText: true,
+                    obscureText: obscureText,
                     controller: pwController,
-                    icon: const Icon(Icons.lock_outlined),
+                    icon: SvgPicture.asset(
+                      'assets/svg/lock-hashtag.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';

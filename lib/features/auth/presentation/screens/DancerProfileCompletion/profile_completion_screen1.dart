@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
@@ -140,6 +141,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                             if (selectedImage == null)
                               // EMPTY PROFILE PICTURE
                               Stack(
+                                clipBehavior: Clip.none,
                                 children: [
                                   Container(
                                     height: 100,
@@ -158,16 +160,23 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                   ),
                                   // Edit icon
                                   Positioned(
-                                    bottom: 5,
-                                    child: Ink(
-                                      child: InkWell(
-                                        onTap: _pickImageFromGallery,
-                                        child: Image.asset(
-                                          'images/icons/edit_circle.png',
-                                          height: screenHeight * 0.04,
+                                    bottom: -3,
+                                    left: -3,
+                                    child: GestureDetector(
+                                      onTap: _pickImageFromGallery,
+                                      child: Container(
+                                        height: screenHeight * 0.05,
+                                        width: screenWidth * 0.1,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .onPrimaryContainer,
+                                              .primaryContainer,
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/svg/pen_circle.svg',
+                                          fit: BoxFit.scaleDown,
                                         ),
                                       ),
                                     ),
@@ -175,20 +184,51 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ],
                               )
                             else
-                              Container(
-                                height: 100,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainer,
-                                  borderRadius: BorderRadius.circular(50),
-                                  image: DecorationImage(
-                                    image: FileImage(
-                                        selectedImage!), // IMAGE FROM FILE
-                                    fit: BoxFit.cover,
+                            // PFP WITH PICTURE
+                              Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainer,
+                                      borderRadius: BorderRadius.circular(50),
+                                      image: DecorationImage(
+                                        image: FileImage(
+                                          selectedImage!,
+                                        ), // IMAGE FROM FILE
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
-                                ),
+
+                                  // Edit icon
+                                  Positioned(
+                                    bottom: -3,
+                                    left: -3,
+                                    child: GestureDetector(
+                                      onTap: _pickImageFromGallery,
+                                      child: Container(
+                                        height: screenHeight * 0.05,
+                                        width: screenWidth * 0.1,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primaryContainer,
+                                        ),
+                                        child: SvgPicture.asset(
+                                          'assets/svg/pen_circle.svg',
+                                          fit: BoxFit.scaleDown,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             const SizedBox(height: 50),
 
@@ -197,11 +237,9 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                               hintText: 'Enter your bio',
                               obscureText: false,
                               controller: widget.bioController,
-                              icon: Image.asset(
-                                'images/icons/edit_circle.png',
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimaryContainer,
+                              icon: SvgPicture.asset(
+                                'assets/svg/pen_circle.svg',
+                                fit: BoxFit.scaleDown,
                               ),
                             ),
 
@@ -212,13 +250,9 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                               hintText: 'dance styles',
                               obscureText: false,
                               controller: widget.danceStylesController,
-                              icon: SizedBox(
-                                width: screenWidth * 0.8,
-                                height: screenHeight * 0.8,
-                                child: Image.asset(
-                                  'images/icons/dance.png',
-                                  fit: BoxFit.contain,
-                                ),
+                              icon: SvgPicture.asset(
+                                'assets/svg/disco_ball.svg',
+                                fit: BoxFit.scaleDown,
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {

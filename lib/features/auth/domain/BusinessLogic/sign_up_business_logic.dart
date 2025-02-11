@@ -65,10 +65,10 @@ class SignUpBusinessLogic {
       bio: bio,
       profilePicture: profilePicture,
       resume: resume, // for dancers => 'hiringHistory' for clients
+      jobPrefs: jobPrefs, // for dancers
       organizationName: organizationName, // for clients
       danceStylePrefs: danceStylePrefs, // for clients
       jobOfferings: jobOfferings, // for clients
-      jobPrefs: jobPrefs
     );
 
     return result.fold(

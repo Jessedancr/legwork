@@ -9,6 +9,7 @@ import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompleti
 import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen3.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:provider/provider.dart';
 
 import '../../../onboarding/presentation/widgets/page_indicator.dart';
@@ -60,7 +61,7 @@ class _DancerProfileCompletionFlowState
     void saveAndUpdateProfile() async {
       showLoadingIndicator(context);
       try {
-        await updateProfileProvider.updateProfileExecute(
+        final result = await updateProfileProvider.updateProfileExecute(
           data: {
             'bio': bioController.text,
             'jobPrefs': {
@@ -87,17 +88,56 @@ class _DancerProfileCompletionFlowState
           },
         );
 
-        hideLoadingIndicator(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile Updated'),
-          ),
-        );
+        result.fold(
+            // handle failure
+            (fail) {
+          hideLoadingIndicator(context);
+          debugPrint(fail.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 5),
+              content: LegWorkSnackBarContent(
+                screenHeight: screenHeight,
+                context: context,
+                screenWidth: screenWidth,
+                title: 'Oh snap!',
+                subTitle: fail,
+                contentColor: Theme.of(context).colorScheme.error,
+                imageColor: Theme.of(context).colorScheme.onError,
+              ),
+            ),
+          );
+        },
+            // handle success
+            (success) {
+          debugPrint('Profile completion successful');
+          hideLoadingIndicator(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 5),
+              content: LegWorkSnackBarContent(
+                screenHeight: screenHeight,
+                context: context,
+                screenWidth: screenWidth,
+                title: 'Congrats!',
+                subTitle: 'Welcome to LEGWORK!',
+                contentColor: Theme.of(context).colorScheme.primary,
+                imageColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+          );
 
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/dancerApp',
-          (route) => false,
-        );
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/dancerApp',
+            (route) => false,
+          );
+        });
       } catch (e) {
         debugPrint('error updating profile');
         hideLoadingIndicator(context);

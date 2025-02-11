@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
@@ -60,7 +61,12 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                   hintText: 'Title',
                   obscureText: false,
                   controller: widget.titleController,
-                  icon: Image.asset('images/icons/title.png'),
+                  icon: SvgPicture.asset(
+                    'assets/svg/brand.svg',
+                    fit: BoxFit.scaleDown,
+                  ),
+
+                  // Image.asset('images/icons/title.png'),
                   helperText: 'Ex: back up dancer',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -76,7 +82,10 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                   hintText: 'Employer',
                   obscureText: false,
                   controller: widget.employerController,
-                  icon: Image.asset('images/icons/employer.png'),
+                  icon: SvgPicture.asset(
+                    'assets/svg/briefcase.svg',
+                    fit: BoxFit.scaleDown,
+                  ),
                   helperText: 'Ex: TMG',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -92,9 +101,9 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                   hintText: 'Location',
                   obscureText: false,
                   controller: widget.locationController,
-                  icon: Image.asset(
-                    'images/icons/location.png',
-                    //height: 2,
+                  icon: SvgPicture.asset(
+                    'assets/svg/location.svg',
+                    fit: BoxFit.scaleDown,
                   ),
                   helperText: 'Ex: Lekki phase 1',
                   validator: (value) {
@@ -106,20 +115,28 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                 ),
                 const SizedBox(height: 20),
 
+                // Date textfield
                 AuthTextFormField(
                   hintText: 'date',
                   obscureText: false,
                   controller: widget.dateController,
-                  icon: const Icon(Icons.date_range),
+                  icon: SvgPicture.asset(
+                    'assets/svg/calendar.svg',
+                    fit: BoxFit.scaleDown,
+                  ),
                   onTap: widget.showDatePicker,
                 ),
                 const SizedBox(height: 20),
 
+                // Job descr text field
                 LargeTextField(
                   hintText: 'Job description',
                   obscureText: false,
                   controller: widget.jobDescrController,
-                  icon: const Icon(Icons.description),
+                  icon: SvgPicture.asset(
+                    'assets/svg/info.svg',
+                    fit: BoxFit.scaleDown,
+                  ),
                 ),
 
                 AuthButton(

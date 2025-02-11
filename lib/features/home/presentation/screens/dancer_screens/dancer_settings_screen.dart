@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/Features/auth/presentation/widgets/auth_button.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,9 @@ class DancerSettingsScreen extends StatefulWidget {
 class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     // Auth Provider
     var authProvider = Provider.of<MyAuthProvider>(context);
 
@@ -32,8 +36,19 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
           debugPrint('Logout failed: $fail');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              content: Text(fail),
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 5),
+              content: LegWorkSnackBarContent(
+                screenHeight: screenHeight,
+                context: context,
+                screenWidth: screenWidth,
+                title: 'Oh Snap!',
+                subTitle: fail,
+                contentColor: Theme.of(context).colorScheme.error,
+                imageColor: Theme.of(context).colorScheme.onError,
+              ),
             ),
           );
         },

@@ -137,10 +137,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return const Left('Invalid user type');
     } on FirebaseAuthException catch (e) {
       debugPrint("Firebase Signup error: $e");
-      if (e.code == 'network-request-failed') {
+      if (e.code == 'user-not-found') {
+        return const Left('No user found for this email.');
+      } else if (e.code == 'wrong-password') {
+        return const Left('Incorrect password. Please try again.');
+      } else if (e.code == 'invalid-credential') {
+        return const Left('Invalid email or password.');
+      } else if (e.code == 'network-request-failed') {
         return const Left('Check your internet connection and try again');
+      } else if (e.code == 'email-already-in-use') {
+        return const Left('Email already in use by another user');
+      } else {
+        return const Left('An unexpected error occurred.');
       }
-      return Left(e.message ?? 'Unexpected error');
     }
   }
 
@@ -206,6 +215,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return const Left('Incorrect password. Please try again.');
       } else if (e.code == 'invalid-credential') {
         return const Left('Invalid email or password.');
+      } else if (e.code == 'network-request-failed') {
+        return const Left('Check your internet connection and try again');
       } else {
         return const Left('An unexpected error occurred.');
       }

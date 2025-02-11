@@ -3,14 +3,27 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class BlurEffect extends StatelessWidget {
+  final height;
   final Widget child;
   final double width;
-  final double height;
+  final Color? firstGradientColor;
+  final Color? secondGradientColor;
+  final double? sigmaX;
+  final double? sigmaY;
+  final Alignment? begin;
+  final Alignment? end;
+
   const BlurEffect({
     super.key,
     required this.child,
     required this.height,
     required this.width,
+    this.sigmaX,
+    this.sigmaY,
+    this.firstGradientColor,
+    this.secondGradientColor,
+    this.begin,
+    this.end
   });
 
   @override
@@ -25,8 +38,8 @@ class BlurEffect extends StatelessWidget {
             // Blur effect
             BackdropFilter(
               filter: ImageFilter.blur(
-                sigmaX: 3,
-                sigmaY: 3,
+                sigmaX: sigmaX ?? 3,
+                sigmaY: sigmaY ?? 3,
               ),
               child: Container(),
             ),
@@ -36,12 +49,12 @@ class BlurEffect extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                    // Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
-                    Colors.black.withOpacity(0.5),
+                    firstGradientColor ??
+                        Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                    secondGradientColor ?? Colors.black.withOpacity(0.5),
                   ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  begin: begin ?? Alignment.topLeft,
+                  end: end ?? Alignment.bottomRight,
                 ),
               ),
             ),

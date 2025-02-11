@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
 class AuthTextFormField extends StatelessWidget {
@@ -11,6 +13,7 @@ class AuthTextFormField extends StatelessWidget {
   final double? width;
   final String? Function(String?)? validator;
   final Function()? onTap;
+  final Widget? suffixIcon;
   TextInputType? keyboardType;
   AuthTextFormField(
       {super.key,
@@ -22,7 +25,8 @@ class AuthTextFormField extends StatelessWidget {
       this.width,
       this.validator,
       this.keyboardType,
-      this.onTap});
+      this.onTap,
+      this.suffixIcon});
 
   @override
   Widget build(BuildContext context) {
@@ -46,28 +50,36 @@ class AuthTextFormField extends StatelessWidget {
               validator: validator,
               controller: controller,
               obscureText: obscureText,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.left,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: screenHeight * 0.01,
+                  horizontal: screenWidth * 0.083,
+                ),
                 fillColor: Theme.of(context).colorScheme.surfaceContainer,
                 helper: Text(
                   helperText ?? '',
-                  style: TextStyle(color: Colors.grey[500]),
+                  style: GoogleFonts.robotoCondensed(
+                    color: Colors.grey,
+                    fontSize: 12,
+                  ),
                 ),
                 filled: true,
                 hintText: hintText,
-                hintStyle: TextStyle(
-                  color: Colors.grey[500],
+                hintStyle: GoogleFonts.robotoSlab(
+                  color: Colors.grey,
                 ),
+                suffixIcon: suffixIcon,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 2.0,
                   ),
                   borderRadius: borderRadius,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   borderRadius: borderRadius,
                 ),
@@ -77,6 +89,12 @@ class AuthTextFormField extends StatelessWidget {
                   ),
                   borderRadius: borderRadius,
                 ),
+                focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.error,
+                      width: 2.0,
+                    ),
+                    borderRadius: borderRadius),
               ),
             ),
           ),

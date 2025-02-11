@@ -4,11 +4,12 @@ class LegworkDrawerTile extends StatelessWidget {
   final Widget leading;
   final Widget title;
   final void Function()? onTap;
-  const LegworkDrawerTile(
-      {super.key,
-      required this.leading,
-      required this.title,
-      required this.onTap});
+  const LegworkDrawerTile({
+    super.key,
+    required this.leading,
+    required this.title,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +20,10 @@ class LegworkDrawerTile extends StatelessWidget {
       ),
       child: ListTile(
         title: title,
-        tileColor: Theme.of(context).colorScheme.onSurface,
+        tileColor: Theme.of(context).colorScheme.onPrimaryContainer,
         leading: leading,
         onTap: onTap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       ),
     );
   }
