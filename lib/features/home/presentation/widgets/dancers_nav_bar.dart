@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
+class NavBarIcons {
+  static const String _fontFamily = 'LegworkNavBarIcons';
+
+  static const IconData home = IconData(0xe801, fontFamily: _fontFamily);
+  static const IconData briefcase = IconData(0xe800, fontFamily: _fontFamily);
+  static const IconData chat = IconData(0xe802, fontFamily: _fontFamily);
+  static const IconData user = IconData(0xe803, fontFamily: _fontFamily);
+}
+
 class DancersNavBar extends StatefulWidget {
   int selectedIndex;
   final List<Widget> screens;
@@ -51,19 +60,19 @@ class _DancersNavBarState extends State<DancersNavBar> {
           onTabChange: (index) => widget.onTabChange!(index),
           tabs: const [
             GButton(
-              icon: Icons.home_outlined,
+              icon: NavBarIcons.home,
               text: 'Home',
             ),
             GButton(
-              icon: Icons.book_outlined,
-              text: 'Job Apps',
+              icon: NavBarIcons.briefcase,
+              text: 'Applications',
             ),
             GButton(
-              icon: Icons.chat_bubble_outline_rounded,
+              icon: NavBarIcons.chat,
               text: 'Chats',
             ),
             GButton(
-              icon: Icons.person_2_outlined,
+              icon: NavBarIcons.user,
               text: 'Profile',
             ),
           ],

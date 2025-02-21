@@ -37,8 +37,6 @@ class _DancerAppState extends State<DancerApp> {
     return SafeArea(
       child: Scaffold(
         body: screens[selectedIndex],
-        appBar: AppBar(),
-        drawer: DancersDrawer(),
         bottomNavigationBar: DancersNavBar(
           screens: screens,
           selectedIndex: selectedIndex,

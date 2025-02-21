@@ -26,7 +26,8 @@ class LegWorkSnackBarContent extends StatelessWidget {
       children: [
         IntrinsicHeight(
           child: Container(
-            padding: const EdgeInsets.all(16),
+            width: screenWidth,
+            padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
               color: contentColor,
               borderRadius: const BorderRadius.all(
@@ -47,7 +48,6 @@ class LegWorkSnackBarContent extends StatelessWidget {
                           fontSize: 20,
                         ),
                       ),
-                      const SizedBox(height: 10),
 
                       // Subtitle text
                       Text(

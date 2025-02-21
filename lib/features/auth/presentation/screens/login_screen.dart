@@ -89,15 +89,15 @@ class _LoginScreenState extends State<LoginScreen> {
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
                 debugPrint('DANCER BLOCK');
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/dancerProfileCompletionFlow',
-                  (route) => false,
-                );
-
                 // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/dancerApp',
+                //   '/dancerProfileCompletionFlow',
                 //   (route) => false,
                 // );
+
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/dancerApp',
+                  (route) => false,
+                );
               } else if (user.userType == UserType.client.name) {
                 // Navigator.of(context).pushNamedAndRemoveUntil(
                 //   '/clientProfileCompletionFlow',

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/all_jobs.dart';
+import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
+import 'package:legwork/Features/home/presentation/widgets/dancers_drawer.dart';
 
 class DancerHomeScreen extends StatefulWidget {
   const DancerHomeScreen({super.key});
@@ -9,41 +12,40 @@ class DancerHomeScreen extends StatefulWidget {
 }
 
 class _DancerHomeScreenState extends State<DancerHomeScreen> {
-  void showSnackBar() {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 5),
-        content: LegWorkSnackBarContent(
-          screenHeight: screenHeight,
-          context: context,
-          screenWidth: screenWidth,
-          title: 'Oh Snap!',
-          subTitle: "This is supposed to be an error snackbar",
-          contentColor: Theme.of(context).colorScheme.error,
-          imageColor: Theme.of(context).colorScheme.onError,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          const Text(' Dancer Home screen'),
-          ElevatedButton(
-            onPressed: showSnackBar,
-            child: const Text('Press me'),
-          )
-        ],
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        drawer: const DancersDrawer(),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          elevation: 0,
+          centerTitle: true,
+          title: const TabBar(
+            tabs: [
+              Tab(text: 'All Jobs'),
+              Tab(text: 'for you'),
+            ],
+          ),
+          leading: Builder(
+            builder: (context) => IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(
+                Icons.menu,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            AllJobs(),
+            JobsForYou(),
+          ],
+        ),
       ),
     );
   }
