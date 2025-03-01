@@ -6,11 +6,23 @@ import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_butt
 class LegworkJobContainer extends StatelessWidget {
   final void Function()? onJobTap;
   final void Function()? onIconTap;
+  final String jobTitle;
+  final String pay;
+  final String jobDescr;
+  final String amtOfDancers;
+  final String jobDuration;
+  final String jobLocation;
 
   const LegworkJobContainer({
     super.key,
     required this.onJobTap,
     required this.onIconTap,
+    required this.jobTitle,
+    required this.pay,
+    required this.jobDescr,
+    required this.amtOfDancers,
+    required this.jobDuration,
+    required this.jobLocation,
   });
 
   @override
@@ -52,7 +64,7 @@ class LegworkJobContainer extends StatelessWidget {
 
                         // Title of job (Ellipsis applied)
                         Text(
-                          'Music video shoot with Tm Greatness',
+                          jobTitle,
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                           style: GoogleFonts.robotoSlab(
@@ -65,8 +77,20 @@ class LegworkJobContainer extends StatelessWidget {
 
                         // Job payment
                         Text(
-                          'Pay: ₦50000',
+                          'Pay: $pay',
                           style: GoogleFonts.robotoSlab(
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 16,
+                            letterSpacing: 0.6,
+                          ),
+                        ),
+
+                        // Job location
+                        Text(
+                          'Location: $jobLocation',
+                          style: TextStyle(
+                            fontFamily: 'RobotoSlab',
                             fontWeight: FontWeight.w500,
                             color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: 16,
@@ -95,7 +119,7 @@ class LegworkJobContainer extends StatelessWidget {
 
           // Job description (Truncated if needed)
           Text(
-            'Music video shoot and social media campaign.',
+            jobDescr,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.robotoSlab(
@@ -107,7 +131,7 @@ class LegworkJobContainer extends StatelessWidget {
 
           // Job details (Dancers needed & duration)
           Text(
-            'Dancers needed: 20',
+            'Dancers needed: $amtOfDancers',
             style: GoogleFonts.robotoSlab(
               fontSize: 12,
               fontWeight: FontWeight.w300,
@@ -115,7 +139,7 @@ class LegworkJobContainer extends StatelessWidget {
             ),
           ),
           Text(
-            'Job duration: 1 day',
+            'Job duration: $jobDuration',
             style: GoogleFonts.robotoSlab(
               fontSize: 12,
               color: Theme.of(context).colorScheme.onSurface,

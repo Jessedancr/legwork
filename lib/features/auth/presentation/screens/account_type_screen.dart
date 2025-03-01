@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/account_type_button.dart';
 
@@ -30,19 +29,20 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
             ),
 
             // Select Account Type
-            Column(
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Select Account Type',
-                  style: GoogleFonts.robotoSlab(
+                  style: TextStyle(
+                    fontFamily: 'RobotoSlab',
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
                   ),
                 ),
                 Text(
                   'Please Choose Your Profession',
-                  style: GoogleFonts.robotoCondensed(),
+                  style: TextStyle(fontFamily: 'RobotoCondensed'),
                 )
               ],
             ),
@@ -82,9 +82,10 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
                 TextButton(
                   onPressed: () =>
                       Navigator.of(context).pushNamed('/loginScreen'),
-                  child: Text(
+                  child: const Text(
                     'Login',
-                    style: GoogleFonts.robotoCondensed(
+                    style: TextStyle(
+                      fontFamily: 'RobotoCondensed',
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),

@@ -41,7 +41,7 @@ class JobService {
         'jobDuration': jobDuration,
         'jobDescr': jobDescr,
         'jobId': jobId,
-        'userId': uid,
+        'clientId': uid,
         'createdAt': FieldValue.serverTimestamp(), // Timestamp
       };
 
@@ -60,30 +60,24 @@ class JobService {
   }
 
   // RETRIEVE JOBS FROM FIREBASE
-  Future<List<Map<String, dynamic>>> getJobs() async {
+  Future<Either<String, List<JobModel>>> getJobs() async {
     try {
       // Query the database to get jobs
-      final result = await db.collection('jobs').get();
+      final result = await db
+          .collection('jobs')
+          .orderBy('createdAt', descending: true)
+          .get();
 
-      // Map the fetched jobs to a list of job data
-      List<Map<String, dynamic>> jobs = result.docs.map((doc) {
-        return {
-          'jobTitle': doc['jobTitle'],
-          'jobLocation': doc['jobLocation'],
-          'prefDanceStyles': doc['prefDanceStyles'],
-          'pay': doc['pay'],
-          'jobDescr': doc['jobDescr'],
-        };
-      }).toList();
-      debugPrint("Fetched jobs: $jobs");
+      List<JobModel> jobs =
+          result.docs.map((doc) => JobModel.fromDocument(doc)).toList();
 
-      return jobs;
+      return Right(jobs);
     } on FirebaseException catch (e) {
       debugPrint('Error fetching jobs from firestore: ${e.code}');
-      return [];
+      return Left(e.toString());
     } catch (e) {
       debugPrint('Unknown error while fetching jobs from firestor: $e');
-      return [];
+      return Left(e.toString());
     }
   }
 }

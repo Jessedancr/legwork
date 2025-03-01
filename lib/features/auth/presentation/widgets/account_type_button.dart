@@ -26,13 +26,11 @@ class AccountTypeButton extends StatelessWidget {
         color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(30),
       ),
-
       child: InkWell(
         splashColor: Colors.grey,
         splashFactory: InkSplash.splashFactory,
         borderRadius: BorderRadius.circular(30),
         onTap: onTap,
-        
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -41,7 +39,8 @@ class AccountTypeButton extends StatelessWidget {
 
             Text(
               buttonText,
-              style: GoogleFonts.robotoCondensed(
+              style: TextStyle(
+                fontFamily: 'RobotoCondensed',
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,

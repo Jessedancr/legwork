@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/all_jobs.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
 import 'package:legwork/Features/home/presentation/widgets/dancers_drawer.dart';
@@ -17,7 +17,10 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        //* Drawer
         drawer: const DancersDrawer(),
+
+        //* AppBar
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.surface,
           elevation: 0,
@@ -40,6 +43,8 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
             ),
           ),
         ),
+
+        //* Body
         body: const TabBarView(
           children: [
             AllJobs(),

@@ -38,7 +38,7 @@ class PostJobBusinessLogic {
         (jobEntity) => Right(jobEntity),
       );
     } catch (e) {
-      debugPrint('Post Job businedd logic error: $e');
+      debugPrint('Post Job business logic error: $e');
       return Left(e.toString());
     }
   }

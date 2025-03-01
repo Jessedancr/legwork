@@ -9,7 +9,7 @@ import 'package:legwork/Features/home/domain/repos/job_repo.dart';
  */
 
 class JobRepoImpl implements JobRepo {
-  final jobRemoteDataSource = JobService();
+  final jobService = JobService();
 
   @override
   Future<Either<String, JobEntity>> createJob({
@@ -22,7 +22,7 @@ class JobRepoImpl implements JobRepo {
     required String jobDescr,
   }) async {
     try {
-      final result = await jobRemoteDataSource.createJob(
+      final result = await jobService.createJob(
         jobTitle: jobTitle,
         jobLocation: jobLocation,
         prefDanceStyles: prefDanceStyles,
@@ -50,6 +50,37 @@ class JobRepoImpl implements JobRepo {
       );
     } catch (e) {
       debugPrint('Job repo error: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, List<JobEntity>>> getJobs() async {
+    try {
+      final result = await jobService.getJobs();
+      return result.fold(
+        // handle fail
+        (fail) => Left(fail.toString()),
+
+        // handle success
+        (jobs) => Right(
+          jobs
+              .map(
+                (job) => JobEntity(
+                  jobTitle: job.jobTitle,
+                  jobLocation: job.jobLocation,
+                  prefDanceStyles: job.prefDanceStyles,
+                  pay: job.pay,
+                  amtOfDancers: job.amtOfDancers,
+                  jobDuration: job.jobDuration,
+                  jobDescr: job.jobDescr,
+                ),
+              )
+              .toList(),
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error on getJobs method from JobRepoImpl: $e');
       return Left(e.toString());
     }
   }

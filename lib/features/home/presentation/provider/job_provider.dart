@@ -50,4 +50,28 @@ class JobProvider extends ChangeNotifier {
       return Left(e.toString());
     }
   }
+
+  // Local list of jobs
+  List<JobEntity> allJobs = [];
+
+  // GET JOB METHOD
+  Future<Either<String, List<JobEntity>>> getJobs() async {
+    JobRepoImpl jobRepo = JobRepoImpl();
+
+    try {
+      final result = await jobRepo.getJobs();
+      return result.fold(
+          // handle fail
+          (fail) => Left(fail),
+          // Handle success
+          (jobs) {
+        allJobs = jobs;
+        notifyListeners();
+        return Right(allJobs);
+      });
+    } catch (e) {
+      debugPrint('Error with get jobs provider: $e');
+      return Left(e.toString());
+    }
+  }
 }

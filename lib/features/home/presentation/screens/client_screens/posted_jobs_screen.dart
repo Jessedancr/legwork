@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 
 import 'package:legwork/Features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
@@ -26,6 +27,9 @@ class _PostedJobsScreenState extends State<PostedJobsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //SCREEN SIZE
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     // PROVIDER
     final jobProvider = Provider.of<JobProvider>(context);
 
@@ -35,7 +39,7 @@ class _PostedJobsScreenState extends State<PostedJobsScreen> {
       showLoadingIndicator(context);
       // post job to firebase and display a snack bar with a success message
       try {
-        jobProvider.postJob(
+        final result = await jobProvider.postJob(
           jobTitle: titleController.text,
           jobLocation: locationController.text,
           pay: payController.text,
@@ -50,12 +54,61 @@ class _PostedJobsScreenState extends State<PostedJobsScreen> {
               .toList(),
         );
 
+        result.fold(
+            // Handle fail
+            (fail) {
+          debugPrint('Posting job to firebase failed: $fail');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 5),
+              content: LegWorkSnackBarContent(
+                screenHeight: screenHeight,
+                context: context,
+                screenWidth: screenWidth,
+                title: 'Omo!',
+                subTitle: fail,
+                contentColor: Theme.of(context).colorScheme.error,
+                imageColor: Theme.of(context).colorScheme.onError,
+              ),
+            ),
+          );
+        },
+
+            // Handle success
+            (success) {
+          debugPrint('Successfully posted job');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0.0,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 5),
+              content: LegWorkSnackBarContent(
+                screenHeight: screenHeight,
+                context: context,
+                screenWidth: screenWidth,
+                title: 'Nice!',
+                subTitle: 'Job posted successfully',
+                contentColor: Theme.of(context).colorScheme.primary,
+                imageColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
+          );
+          // Clear controllers
+          titleController.clear();
+          locationController.clear();
+          danceStylesController.clear();
+          payController.clear();
+          jobDurationController.clear();
+          amtOfDancersController.clear();
+          jobDescrController.clear();
+          searchController.clear();
+        });
+
         hideLoadingIndicator(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Job posted'),
-          ),
-        );
       } catch (e) {
         debugPrint('Error posting job: $e');
         hideLoadingIndicator(context);

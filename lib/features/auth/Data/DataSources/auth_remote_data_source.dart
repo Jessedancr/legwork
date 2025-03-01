@@ -215,7 +215,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return const Left('Incorrect password. Please try again.');
       } else if (e.code == 'invalid-credential') {
         return const Left('Invalid email or password.');
-      } else if (e.code == 'network-request-failed') {
+      } else if (e.code == 'network-request-failed' ||
+          e.code == 'cloud_firestore/unavailable') {
         return const Left('Check your internet connection and try again');
       } else {
         return const Left('An unexpected error occurred.');

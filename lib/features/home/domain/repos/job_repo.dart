@@ -18,4 +18,7 @@ abstract class JobRepo {
     required String jobDuration,
     required String jobDescr,
   });
+
+  // GET JOBS
+  Future<Either<String, List<JobEntity>>> getJobs();
 }
