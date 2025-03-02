@@ -19,7 +19,9 @@ class JobRepoImpl implements JobRepo {
     required String pay,
     required String amtOfDancers,
     required String jobDuration,
+    required String jobType,
     required String jobDescr,
+    required bool status,
   }) async {
     try {
       final result = await jobService.createJob(
@@ -28,6 +30,7 @@ class JobRepoImpl implements JobRepo {
         prefDanceStyles: prefDanceStyles,
         pay: pay,
         amtOfDancers: amtOfDancers,
+        jobType: jobType,
         jobDuration: jobDuration,
         jobDescr: jobDescr,
       );
@@ -44,7 +47,9 @@ class JobRepoImpl implements JobRepo {
             pay: pay,
             amtOfDancers: amtOfDancers,
             jobDuration: jobDuration,
+            jobType: jobType,
             jobDescr: jobDescr,
+            status: status,
           ),
         ),
       );
@@ -60,7 +65,7 @@ class JobRepoImpl implements JobRepo {
       final result = await jobService.getJobs();
       return result.fold(
         // handle fail
-        (fail) => Left(fail.toString()),
+        (fail) => Left(fail),
 
         // handle success
         (jobs) => Right(
@@ -73,12 +78,30 @@ class JobRepoImpl implements JobRepo {
                   pay: job.pay,
                   amtOfDancers: job.amtOfDancers,
                   jobDuration: job.jobDuration,
+                  jobType: job.jobType,
                   jobDescr: job.jobDescr,
+                  status: job.status,
                 ),
               )
               .toList(),
         ),
       );
+    } catch (e) {
+      debugPrint('Error on getJobs method from JobRepoImpl: $e');
+      return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs() async {
+    try {
+      final result = await jobService.fetchJobs();
+      return result.fold(
+          // handle fail
+          (fail) => left(fail),
+
+          // handle success
+          (jobs) => Right(jobs));
     } catch (e) {
       debugPrint('Error on getJobs method from JobRepoImpl: $e');
       return Left(e.toString());

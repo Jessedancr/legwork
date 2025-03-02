@@ -16,9 +16,14 @@ abstract class JobRepo {
     required String pay,
     required String amtOfDancers,
     required String jobDuration,
+    required String jobType,
     required String jobDescr,
+    required bool status
   });
 
   // GET JOBS
   Future<Either<String, List<JobEntity>>> getJobs();
+
+  // FETCH JOBS
+  Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs();
 }

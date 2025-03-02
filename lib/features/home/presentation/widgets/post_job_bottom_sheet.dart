@@ -21,24 +21,24 @@ class PostJobBottomSheet extends StatefulWidget {
   final TextEditingController amtOfDancersController;
   final TextEditingController jobDescrController;
   final SearchController searchController;
-  const PostJobBottomSheet({
-    super.key,
-    required this.onPressed,
-    required this.titleController,
-    required this.locationController,
-    required this.danceStylesController,
-    required this.payController,
-    required this.jobDurationController,
-    required this.amtOfDancersController,
-    required this.jobDescrController,
-    required this.searchController
-  });
+  const PostJobBottomSheet(
+      {super.key,
+      required this.onPressed,
+      required this.titleController,
+      required this.locationController,
+      required this.danceStylesController,
+      required this.payController,
+      required this.jobDurationController,
+      required this.amtOfDancersController,
+      required this.jobDescrController,
+      required this.searchController});
 
   @override
   State<PostJobBottomSheet> createState() => _PostJobBottomSheetState();
 }
 
 class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
+  String? selectedJobType;
   void checkBoxTapped(bool value, int index) {
     debugPrint('$index, $value');
     setState(() {
@@ -46,16 +46,18 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
       if (value) {
         // Add the skill to the selected skills list
         selectedSkills.add(jobs[index][0]);
+        selectedJobType = jobs[index][0];
       } else {
         // Remove the skill from the selected skills list
         selectedSkills.remove(jobs[index][0]);
+        selectedJobType = null;
       }
     });
   }
 
   // BUILD METHOD
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     // SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -114,7 +116,38 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                       ];
                     },
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 10),
+
+                  // Display Selected Job Type
+                  if (selectedJobType != null)
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.work,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Selected: $selectedJobType",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 20),
 
                   // JOB TITLE TEXT FIELD
                   AuthTextFormField(

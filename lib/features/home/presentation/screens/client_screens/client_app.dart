@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_home_screen.dart';
-import 'package:legwork/Features/home/presentation/screens/client_screens/posted_jobs_screen.dart';
-import 'package:legwork/Features/home/presentation/widgets/clients_drawer.dart';
 import 'package:legwork/Features/home/presentation/widgets/clients_nav_bar.dart';
-import 'package:legwork/Features/home/presentation/widgets/dancers_nav_bar.dart';
-import 'package:legwork/Features/home/presentation/widgets/dancers_drawer.dart';
+
 
 import 'client_messages_screen.dart';
 import 'client_profile_screen.dart';
@@ -26,10 +23,10 @@ class _ClientAppState extends State<ClientApp> {
     });
   }
 
-  // LIST OF SCREENS TO BE SHOW BY NAV BAR
+  // LIST OF SCREENS TO BE SHOWN BY NAV BAR
   final List<Widget> screens = [
-    const ClientHomeScreen(),
-    const PostedJobsScreen(),
+     ClientHomeScreen(),
+    // const PostedJobsScreen(),
     const ClientMessagesScreen(),
     const ClientProfileScreen()
   ];
@@ -40,8 +37,6 @@ class _ClientAppState extends State<ClientApp> {
     return SafeArea(
       child: Scaffold(
         body: screens[selectedIndex],
-        appBar: AppBar(),
-        drawer: ClientsDrawer(),
         bottomNavigationBar: ClientsNavBar(
           screens: screens,
           selectedIndex: selectedIndex,

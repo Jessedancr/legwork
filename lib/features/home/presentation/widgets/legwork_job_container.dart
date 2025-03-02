@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
 
 class LegworkJobContainer extends StatelessWidget {
   final void Function()? onJobTap;
@@ -12,6 +11,7 @@ class LegworkJobContainer extends StatelessWidget {
   final String amtOfDancers;
   final String jobDuration;
   final String jobLocation;
+  final String jobType;
 
   const LegworkJobContainer({
     super.key,
@@ -23,6 +23,7 @@ class LegworkJobContainer extends StatelessWidget {
     required this.amtOfDancers,
     required this.jobDuration,
     required this.jobLocation,
+    required this.jobType,
   });
 
   @override
@@ -156,7 +157,7 @@ class LegworkJobContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(30),
             ),
             child: Text(
-              'Music video feature',
+              jobType,
               style: GoogleFonts.robotoSlab(
                 fontSize: 12,
                 fontWeight: FontWeight.w300,

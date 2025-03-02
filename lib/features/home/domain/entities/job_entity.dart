@@ -10,6 +10,8 @@ class JobEntity {
   final String amtOfDancers;
   final String jobDuration;
   final String jobDescr;
+  final String jobType;
+  final bool status;
 
   // constructor
   JobEntity({
@@ -20,6 +22,8 @@ class JobEntity {
     required this.amtOfDancers,
     required this.jobDuration,
     required this.jobDescr,
+    required this.jobType,
+    required this.status,
   });
 
   @override

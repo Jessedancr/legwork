@@ -40,10 +40,10 @@ class _ClientsNavBarState extends State<ClientsNavBar> {
               icon: Icons.home,
               text: 'Home',
             ),
-            GButton(
-              icon: Icons.book,
-              text: 'Jobs',
-            ),
+            // GButton(
+            //   icon: Icons.book,
+            //   text: 'Jobs',
+            // ),
             GButton(
               icon: Icons.chat,
               text: 'Chats',

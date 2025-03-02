@@ -4,14 +4,14 @@ import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/widgets/legwork_job_container.dart';
 import 'package:provider/provider.dart';
 
-class AllJobs extends StatefulWidget {
-  const AllJobs({super.key});
+class OpenJobs extends StatefulWidget {
+  const OpenJobs({super.key});
 
   @override
-  State<AllJobs> createState() => _AllJobsState();
+  State<OpenJobs> createState() => _OpenJobsState();
 }
 
-class _AllJobsState extends State<AllJobs> {
+class _OpenJobsState extends State<OpenJobs> {
   // PROVIDERS
   late final jobProvider = Provider.of<JobProvider>(context, listen: false);
   late final listeningProvider = Provider.of<JobProvider>(context);
@@ -35,18 +35,12 @@ class _AllJobsState extends State<AllJobs> {
     await jobProvider.fetchJobs();
   }
 
-  // Navigate to job details screen
-  void goToJobDetails() {}
-
-  // Method to apply for job
-  void applyForJob() {}
-
   //* BUILD METHOD
   @override
   Widget build(BuildContext context) {
     final jobs = listeningProvider.allJobs;
 
-    // Handle case where no jobs existS
+    // Handle case where no jobs exists
     if (jobs.isEmpty) {
       debugPrint("Jobs: $jobs");
       return const Center(
@@ -54,10 +48,9 @@ class _AllJobsState extends State<AllJobs> {
       );
     }
 
-    // Extract job lists
-    List<JobEntity> allJobs = jobs["allJobs"] ?? [];
-    debugPrint('All Jobs: $allJobs');
-    return buildJobList(allJobs);
+    List<JobEntity> openJobs = jobs["openJobs"] ?? [];
+    // List<JobEntity> closedJobs = jobs["closedJobs"] ?? [];
+    return buildJobList(openJobs);
   }
 
   // BUILD JOBS LIST
@@ -67,13 +60,13 @@ class _AllJobsState extends State<AllJobs> {
       child: ListView.builder(
         itemCount: jobs.length,
         itemBuilder: (context, index) {
-          // Get each individual post
+          // Get each individual job
           final job = jobs[index];
 
           // Display it in UI
           return LegworkJobContainer(
-            onJobTap: applyForJob,
-            onIconTap: goToJobDetails,
+            onJobTap: () {},
+            onIconTap: () {},
             jobTitle: job.jobTitle,
             pay: job.pay,
             jobDescr: job.jobDescr,

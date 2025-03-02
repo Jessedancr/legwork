@@ -20,7 +20,9 @@ class JobProvider extends ChangeNotifier {
     required String pay,
     required String amtOfDancers,
     required String jobDuration,
+    required String jobType,
     required String jobDescr,
+    required bool status
   }) async {
     PostJobBusinessLogic postJobBusinessLogic =
         PostJobBusinessLogic(jobRepo: jobRepo);
@@ -36,7 +38,9 @@ class JobProvider extends ChangeNotifier {
         pay: pay,
         amtOfDancers: amtOfDancers,
         jobDuration: jobDuration,
+        jobType: jobType,
         jobDescr: jobDescr,
+        status: status
       );
 
       return result.fold(
@@ -52,25 +56,27 @@ class JobProvider extends ChangeNotifier {
   }
 
   // Local list of jobs
-  List<JobEntity> allJobs = [];
+  Map<String, List<JobEntity>> allJobs = {};
 
-  // GET JOB METHOD
-  Future<Either<String, List<JobEntity>>> getJobs() async {
+  // FETCH JOB METHOD
+  Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs() async {
     JobRepoImpl jobRepo = JobRepoImpl();
 
     try {
-      final result = await jobRepo.getJobs();
+      final result = await jobRepo.fetchJobs();
+
       return result.fold(
           // handle fail
           (fail) => Left(fail),
-          // Handle success
+
+          // handle success
           (jobs) {
         allJobs = jobs;
         notifyListeners();
         return Right(allJobs);
       });
     } catch (e) {
-      debugPrint('Error with get jobs provider: $e');
+      debugPrint('Error with fetch jobs provider: $e');
       return Left(e.toString());
     }
   }

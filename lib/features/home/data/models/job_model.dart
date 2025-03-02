@@ -17,6 +17,8 @@ class JobModel extends JobEntity {
     required super.amtOfDancers,
     required super.jobDuration,
     required super.jobDescr,
+    required super.jobType,
+    required super.status,
     required this.jobId,
   });
 
@@ -30,7 +32,9 @@ class JobModel extends JobEntity {
       amtOfDancers: doc['amtOfDancers'] ?? '',
       jobDuration: doc['jobDuration'] ?? '',
       jobDescr: doc['jobDescr'] ?? '',
+      jobType: doc['jobType'],
       jobId: doc['jobId'] ?? '',
+      status: doc['status'] ?? true
     );
   }
 
@@ -44,7 +48,9 @@ class JobModel extends JobEntity {
       'amtOfDancers': amtOfDancers,
       'jobDuration': jobDuration,
       'jobDescr': jobDescr,
+      'jobType': jobType,
       'jobId': jobId,
+      'status': status
     };
   }
 
@@ -57,7 +63,9 @@ class JobModel extends JobEntity {
       pay: pay,
       amtOfDancers: amtOfDancers,
       jobDuration: jobDuration,
+      jobType: jobType,
       jobDescr: jobDescr,
+      status:  status
     );
   }
 }
