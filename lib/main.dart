@@ -9,6 +9,8 @@ import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
+import 'package:legwork/Features/job_application/presentation/screens/apply_for_job_screen.dart';
+import 'package:legwork/Features/job_application/presentation/screens/view_job_applicants_screen.dart';
 
 import 'package:legwork/core/Constants/color_schemes.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
@@ -121,6 +123,22 @@ class MyApp extends StatelessWidget {
         '/dancerSettingsScreen': (context) => DancerSettingsScreen(),
         '/clientApp': (context) => ClientApp(),
         '/clientSettingsScreen': (context) => ClientSettingsScreen(),
+        '/applyForJob': (context) {
+          final args =
+              ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+          return ApplyForJobScreen(
+            jobId: args['jobId']!,
+            clientId: args['clientId']!,
+          );
+        },
+        '/viewJobApplicantsScreen': (context) {
+          final args =
+              ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+          return ViewJobApplicantsScreen(
+            jobId: args['jobId']!,
+            clientId: args['clientId']!,
+          );
+        },
       },
     );
   }

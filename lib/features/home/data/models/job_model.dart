@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
  */
 
 class JobModel extends JobEntity {
-  final String jobId;
   JobModel({
     required super.jobTitle,
     required super.jobLocation,
@@ -19,7 +18,8 @@ class JobModel extends JobEntity {
     required super.jobDescr,
     required super.jobType,
     required super.status,
-    required this.jobId,
+    required super.clientId,
+    required super.jobId,
   });
 
   /// Convert firebase doc to user profile so we can use in the app
@@ -34,7 +34,8 @@ class JobModel extends JobEntity {
       jobDescr: doc['jobDescr'] ?? '',
       jobType: doc['jobType'],
       jobId: doc['jobId'] ?? '',
-      status: doc['status'] ?? true
+      clientId: doc['clientId'] ?? '',
+      status: doc['status'] ?? true,
     );
   }
 
@@ -65,7 +66,9 @@ class JobModel extends JobEntity {
       jobDuration: jobDuration,
       jobType: jobType,
       jobDescr: jobDescr,
-      status:  status
+      jobId: jobId,
+      clientId: clientId,
+      status: status,
     );
   }
 }

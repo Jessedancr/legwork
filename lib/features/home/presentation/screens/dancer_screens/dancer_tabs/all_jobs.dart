@@ -16,10 +16,17 @@ class _AllJobsState extends State<AllJobs> {
   late final jobProvider = Provider.of<JobProvider>(context, listen: false);
   late final listeningProvider = Provider.of<JobProvider>(context);
 
+  bool isLoading = true;
+
   // PULL TO REFRESH FUNCTION
-  Future<void> _refresh() {
-    jobProvider.fetchJobs();
-    return Future.delayed(const Duration(seconds: 3));
+  Future<void> _refresh() async {
+    setState(() {
+      isLoading = true;
+    });
+    await jobProvider.fetchJobs();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // ON STARTUP
@@ -33,30 +40,61 @@ class _AllJobsState extends State<AllJobs> {
   // Load all posts
   Future<void> loadAllJobs() async {
     await jobProvider.fetchJobs();
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  // Navigate to job details screen
-  void goToJobDetails() {}
-
   // Method to apply for job
-  void applyForJob() {}
+  void applyForJob({required String jobId, required String clientId}) {
+    Navigator.pushNamed(
+      context,
+      '/applyForJob',
+      arguments: {'jobId': jobId, 'clientId': clientId},
+    );
+  }
 
   //* BUILD METHOD
   @override
   Widget build(BuildContext context) {
     final jobs = listeningProvider.allJobs;
 
-    // Handle case where no jobs existS
-    if (jobs.isEmpty) {
-      debugPrint("Jobs: $jobs");
+    if (isLoading) {
       return const Center(
-        child: Text('Nothing here...YET'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 10),
+            Text(
+              'Fetching Jobs...',
+              style: TextStyle(
+                fontFamily: 'RobotoSlab',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
-    // Extract job lists
+    // Handle case where no jobs exists
+    if (jobs.isEmpty) {
+      debugPrint("Jobs: $jobs");
+      return const Center(
+        child: Text(
+          'Nothing here...YET',
+          style: TextStyle(
+            fontFamily: 'RobotoSlab',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+    }
+
     List<JobEntity> allJobs = jobs["allJobs"] ?? [];
-    debugPrint('All Jobs: $allJobs');
     return buildJobList(allJobs);
   }
 
@@ -67,13 +105,15 @@ class _AllJobsState extends State<AllJobs> {
       child: ListView.builder(
         itemCount: jobs.length,
         itemBuilder: (context, index) {
-          // Get each individual post
+          // Get each individual job
           final job = jobs[index];
 
           // Display it in UI
           return LegworkJobContainer(
-            onJobTap: applyForJob,
-            onIconTap: goToJobDetails,
+            onJobTap: () => applyForJob(
+              clientId: job.clientId,
+              jobId: job.jobId,
+            ),
             jobTitle: job.jobTitle,
             pay: job.pay,
             jobDescr: job.jobDescr,

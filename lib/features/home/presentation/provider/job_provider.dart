@@ -7,9 +7,11 @@ import 'package:legwork/Features/home/domain/entities/job_entity.dart';
 class JobProvider extends ChangeNotifier {
   // Instance of job repo
   final JobRepoImpl jobRepo;
-  bool isLoading = false;
 
-  // constructor
+  bool isLoading = false;
+  Map<String, List<JobEntity>> allJobs = {}; // Cached jobs
+
+  // Constructor
   JobProvider({required this.jobRepo});
 
   // POST JOB METHOD
@@ -22,7 +24,9 @@ class JobProvider extends ChangeNotifier {
     required String jobDuration,
     required String jobType,
     required String jobDescr,
-    required bool status
+    required String jobId,
+    required String clientId,
+    required bool status,
   }) async {
     PostJobBusinessLogic postJobBusinessLogic =
         PostJobBusinessLogic(jobRepo: jobRepo);
@@ -40,42 +44,54 @@ class JobProvider extends ChangeNotifier {
         jobDuration: jobDuration,
         jobType: jobType,
         jobDescr: jobDescr,
-        status: status
+        jobId: jobId,
+        clientId: clientId,
+        status: status,
       );
 
+      isLoading = false;
+      notifyListeners();
+
       return result.fold(
-        // handle fail
         (fail) => Left(fail),
-        // handle success
         (jobEntity) => Right(jobEntity),
       );
     } catch (e) {
-      debugPrint('error with job provider: $e');
+      isLoading = false;
+      notifyListeners();
+      debugPrint('Error with job provider: $e');
       return Left(e.toString());
     }
   }
 
-  // Local list of jobs
-  Map<String, List<JobEntity>> allJobs = {};
-
   // FETCH JOB METHOD
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs() async {
-    JobRepoImpl jobRepo = JobRepoImpl();
+    if (allJobs.isNotEmpty) {
+      debugPrint('Jobs already loaded, skipping fetch.');
+      return Right(allJobs); // Prevents unnecessary re-fetching
+    }
+
+    isLoading = true;
 
     try {
       final result = await jobRepo.fetchJobs();
 
       return result.fold(
-          // handle fail
-          (fail) => Left(fail),
-
-          // handle success
-          (jobs) {
-        allJobs = jobs;
-        notifyListeners();
-        return Right(allJobs);
-      });
+        (fail) {
+          isLoading = false;
+          notifyListeners();
+          return Left(fail);
+        },
+        (jobs) {
+          allJobs = jobs;
+          isLoading = false;
+          notifyListeners();
+          return Right(allJobs);
+        },
+      );
     } catch (e) {
+      isLoading = false;
+      notifyListeners();
       debugPrint('Error with fetch jobs provider: $e');
       return Left(e.toString());
     }

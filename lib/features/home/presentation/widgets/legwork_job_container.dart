@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LegworkJobContainer extends StatelessWidget {
   final void Function()? onJobTap;
-  final void Function()? onIconTap;
   final String jobTitle;
   final String pay;
   final String jobDescr;
@@ -16,7 +14,6 @@ class LegworkJobContainer extends StatelessWidget {
   const LegworkJobContainer({
     super.key,
     required this.onJobTap,
-    required this.onIconTap,
     required this.jobTitle,
     required this.pay,
     required this.jobDescr,
@@ -104,16 +101,7 @@ class LegworkJobContainer extends StatelessWidget {
                 ),
               ),
 
-              // Apply button (Fixed width)
-              const SizedBox(width: 10),
-              IconButton.filledTonal(
-                color: Theme.of(context).colorScheme.primary,
-                onPressed: onIconTap,
-                icon: SvgPicture.asset(
-                  'assets/svg/info.svg',
-                  fit: BoxFit.scaleDown,
-                ),
-              ),
+             
             ],
           ),
           const SizedBox(height: 8),

@@ -18,7 +18,9 @@ class PostJobBusinessLogic {
     required String jobDuration,
     required String jobType,
     required String jobDescr,
-    required bool status
+    required String jobId,
+    required String clientId,
+    required bool status,
   }) async {
     // TODO: Add some validations for posted jobs
 
@@ -32,7 +34,9 @@ class PostJobBusinessLogic {
         jobDuration: jobDuration,
         jobType: jobType,
         jobDescr: jobDescr,
-        status: status
+        status: status,
+        clientId: clientId,
+        jobId: jobId,
       );
 
       return result.fold(

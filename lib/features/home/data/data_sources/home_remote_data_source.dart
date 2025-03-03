@@ -22,14 +22,15 @@ class JobService {
     try {
       // Get currently logged in user
       final user = auth.currentUser;
+
+      // Check if user is logged in
       if (user == null) {
         debugPrint('User not found');
         return const Left('User not found');
       }
-
       final String uid = user.uid;
 
-      // generate uique job ID
+      // generate unique job ID
       final String jobId = db.collection('jobs').doc().id;
 
       // store job date in firebase
@@ -58,28 +59,6 @@ class JobService {
       return left(e.code);
     } catch (e) {
       debugPrint('An unknown error occurred while posting job to firebase: $e');
-      return Left(e.toString());
-    }
-  }
-
-  // RETRIEVE JOBS FROM FIREBASE
-  Future<Either<String, List<JobModel>>> getJobs() async {
-    try {
-      // Query the database to get jobs
-      final result = await db
-          .collection('jobs')
-          .orderBy('createdAt', descending: true)
-          .get();
-
-      List<JobModel> jobs =
-          result.docs.map((doc) => JobModel.fromDocument(doc)).toList();
-
-      return Right(jobs);
-    } on FirebaseAuthException catch (e) {
-      debugPrint('Error fetching jobs from firestore: ${e.code}');
-      return Left(e.toString());
-    } catch (e) {
-      debugPrint('Unknown error while fetching jobs from firestor: $e');
       return Left(e.toString());
     }
   }

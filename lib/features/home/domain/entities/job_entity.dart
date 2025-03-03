@@ -11,6 +11,8 @@ class JobEntity {
   final String jobDuration;
   final String jobDescr;
   final String jobType;
+  final String jobId; // Unique Job ID
+  final String clientId; // ID of the client who posted the job
   final bool status;
 
   // constructor
@@ -23,6 +25,8 @@ class JobEntity {
     required this.jobDuration,
     required this.jobDescr,
     required this.jobType,
+    required this.jobId, // Unique Job ID
+    required this.clientId, // ID of the client who posted the job
     required this.status,
   });
 

@@ -16,10 +16,17 @@ class _OpenJobsState extends State<OpenJobs> {
   late final jobProvider = Provider.of<JobProvider>(context, listen: false);
   late final listeningProvider = Provider.of<JobProvider>(context);
 
+  bool isLoading = true;
+
   // PULL TO REFRESH FUNCTION
-  Future<void> _refresh() {
-    jobProvider.fetchJobs();
-    return Future.delayed(const Duration(seconds: 3));
+  Future<void> _refresh() async {
+    setState(() {
+      isLoading = true;
+    });
+    await jobProvider.fetchJobs();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // ON STARTUP
@@ -33,6 +40,17 @@ class _OpenJobsState extends State<OpenJobs> {
   // Load all posts
   Future<void> loadAllJobs() async {
     await jobProvider.fetchJobs();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void viewJobApplicants({required String jobId, required String clientId}) {
+    Navigator.pushNamed(
+      context,
+      '/viewJobApplicantsScreen',
+      arguments: {'jobId': jobId, 'clientId': clientId},
+    );
   }
 
   //* BUILD METHOD
@@ -40,11 +58,38 @@ class _OpenJobsState extends State<OpenJobs> {
   Widget build(BuildContext context) {
     final jobs = listeningProvider.allJobs;
 
+    if (isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 10),
+            Text(
+              'Fetching Jobs...',
+              style: TextStyle(
+                fontFamily: 'RobotoSlab',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     // Handle case where no jobs exists
     if (jobs.isEmpty) {
       debugPrint("Jobs: $jobs");
       return const Center(
-        child: Text('Nothing here...YET'),
+        child: Text(
+          'Nothing here...YET',
+          style: TextStyle(
+            fontFamily: 'RobotoSlab',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       );
     }
 
@@ -65,8 +110,10 @@ class _OpenJobsState extends State<OpenJobs> {
 
           // Display it in UI
           return LegworkJobContainer(
-            onJobTap: () {},
-            onIconTap: () {},
+            onJobTap: () => viewJobApplicants(
+              clientId: job.clientId,
+              jobId: job.jobId,
+            ),
             jobTitle: job.jobTitle,
             pay: job.pay,
             jobDescr: job.jobDescr,
