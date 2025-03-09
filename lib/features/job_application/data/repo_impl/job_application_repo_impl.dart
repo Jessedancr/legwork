@@ -5,10 +5,10 @@ import '../data_sources/job_application_remote_data_source.dart';
 import '../models/job_application_model.dart';
 
 class JobApplicationRepoImpl implements JobApplicationRepo {
-  final JobApplicationRemoteDataSource remoteDataSource;
+  // Instance of remote data source
+  final remoteDataSource = JobApplicationRemoteDataSource();
 
-  JobApplicationRepoImpl({required this.remoteDataSource});
-
+  // Function to apply for job
   @override
   Future<Either<String, void>> applyForJob(
       JobApplicationEntity application) async {

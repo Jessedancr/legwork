@@ -9,6 +9,8 @@ import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
+import 'package:legwork/Features/job_application/data/repo_impl/job_application_repo_impl.dart';
+import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/Features/job_application/presentation/screens/apply_for_job_screen.dart';
 import 'package:legwork/Features/job_application/presentation/screens/view_job_applicants_screen.dart';
 
@@ -62,6 +64,9 @@ void main() async {
   // Instance of Job repo
   final jobRepo = JobRepoImpl();
 
+  // Instance of job application repo
+  final jobApplicationRepo = JobApplicationRepoImpl();
+
   // THIS FUNCTION IS CALLED WHEN THE APP IS LAUNCHED
   runApp(
     MultiProvider(
@@ -76,7 +81,11 @@ void main() async {
           create: (context) => UpdateProfileProvider(),
         ),
         ChangeNotifierProvider(
-            create: (context) => JobProvider(jobRepo: jobRepo))
+          create: (context) => JobProvider(jobRepo: jobRepo),
+        ),
+        ChangeNotifierProvider(
+            create: (context) =>
+                JobApplicationProvider(jobApplicationRepo: jobApplicationRepo))
       ],
       child: MyApp(
         onboardingStatusCheck: onboardingStatusCheck,

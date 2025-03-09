@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_home_screen.dart';
 import 'package:legwork/Features/home/presentation/widgets/clients_nav_bar.dart';
 
-
 import 'client_messages_screen.dart';
 import 'client_profile_screen.dart';
 
@@ -25,7 +24,7 @@ class _ClientAppState extends State<ClientApp> {
 
   // LIST OF SCREENS TO BE SHOWN BY NAV BAR
   final List<Widget> screens = [
-     ClientHomeScreen(),
+    ClientHomeScreen(),
     // const PostedJobsScreen(),
     const ClientMessagesScreen(),
     const ClientProfileScreen()

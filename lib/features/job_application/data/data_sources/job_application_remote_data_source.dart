@@ -13,30 +13,42 @@ class JobApplicationRemoteDataSource {
     JobApplicationModel application,
   ) async {
     try {
-      // Get the currently logged-in user
       final user = auth.currentUser;
       if (user == null) {
         debugPrint('User not found');
         return const Left('User not found');
       }
 
-      final uid = user.uid; // The dancer applying for the job
+      final uid = user.uid;
 
-      // Retrieve the job details to get the clientId
-      DocumentSnapshot jobSnapshot =
+      // Fetch job details
+      final jobSnapshot =
           await db.collection('jobs').doc(application.jobId).get();
+      if (!jobSnapshot.exists) return const Left('Job not found');
 
-      if (!jobSnapshot.exists) {
-        return const Left('Job not found');
+      final String clientId = jobSnapshot['clientId'];
+
+      // ✅ Check for duplicate application
+      final duplicateCheck = await db
+          .collection('jobApplications')
+          .where('jobId', isEqualTo: application.jobId)
+          .where('dancerId', isEqualTo: uid)
+          .limit(1)
+          .get();
+
+      if (duplicateCheck.docs.isNotEmpty) {
+        return const Left('You have already applied for this job');
       }
 
-      final String clientId = jobSnapshot['clientId']; // Get the client ID
+      // ✅ Prepare updated application with correct IDs
+      final updatedApplication = application.copyWith(
+        dancerId: uid,
+        clientId: clientId,
+      );
 
-      // Create a new application document
-      final applicationData = application.toMap();
-      applicationData['clientId'] = clientId; // Attach client ID
+      final applicationData = updatedApplication.toMap();
 
-      // Add application to Firestore
+      // Save application
       await db.collection('jobApplications').add(applicationData);
 
       return const Right(null);

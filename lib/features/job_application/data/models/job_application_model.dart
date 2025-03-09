@@ -3,9 +3,9 @@ import '../../domain/entities/job_application_entity.dart';
 
 class JobApplicationModel extends JobApplicationEntity {
   JobApplicationModel({
-    required super.jobId,
-    required super.dancerId,
-    required super.clientId,
+    required super.jobId, // Foreign key
+    required super.dancerId, // Foreign key
+    required super.clientId, // Foreign key
     required super.applicationStatus,
     required super.proposal,
     required super.appliedAt,
@@ -33,6 +33,21 @@ class JobApplicationModel extends JobApplicationEntity {
       'proposal': proposal,
       'appliedAt': FieldValue.serverTimestamp(),
     };
+  }
+
+  ///? CopyWith() function given to me by chat
+  JobApplicationModel copyWith({
+    String? dancerId,
+    String? clientId,
+  }) {
+    return JobApplicationModel(
+      jobId: jobId,
+      dancerId: dancerId ?? this.dancerId,
+      clientId: clientId ?? this.clientId,
+      applicationStatus: applicationStatus,
+      proposal: proposal,
+      appliedAt: appliedAt,
+    );
   }
 
   /// Convert job application to entity for business logic use

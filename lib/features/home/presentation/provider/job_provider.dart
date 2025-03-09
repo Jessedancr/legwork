@@ -54,7 +54,10 @@ class JobProvider extends ChangeNotifier {
 
       return result.fold(
         (fail) => Left(fail),
-        (jobEntity) => Right(jobEntity),
+        (jobEntity) {
+          clearCachedJobs(); // Clear cached jobs when a new job is posted
+          return Right(jobEntity);
+        },
       );
     } catch (e) {
       isLoading = false;
@@ -64,14 +67,16 @@ class JobProvider extends ChangeNotifier {
     }
   }
 
+  // Method to clear cached jobs
+  void clearCachedJobs() {
+    allJobs.clear();
+    notifyListeners();
+  }
+
   // FETCH JOB METHOD
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs() async {
-    if (allJobs.isNotEmpty) {
-      debugPrint('Jobs already loaded, skipping fetch.');
-      return Right(allJobs); // Prevents unnecessary re-fetching
-    }
-
     isLoading = true;
+    // notifyListeners();
 
     try {
       final result = await jobRepo.fetchJobs();
