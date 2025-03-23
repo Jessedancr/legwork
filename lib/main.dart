@@ -154,8 +154,7 @@ class MyApp extends StatelessWidget {
             clientId: args['clientId']!,
           );
         },
-        '/job_application_detail': (context) =>
-            const JobApplicationDetailScreen(),
+        '/job_application_detail': (context) => JobApplicationDetailScreen(),
       },
     );
   }

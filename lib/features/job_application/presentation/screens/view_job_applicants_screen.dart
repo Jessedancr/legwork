@@ -92,42 +92,6 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
           );
         },
       ),
-
-      // StreamBuilder<QuerySnapshot>(
-      //   stream: FirebaseFirestore.instance
-      //       .collection('jobApplications')
-      //       .where('jobId', isEqualTo: jobId)
-      //       .snapshots(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return const CircularProgressIndicator();
-      //     }
-      //     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-      //       return const Center(child: Text("No applicants yet."));
-      //     }
-
-      //     final applications = snapshot.data!.docs;
-
-      //     return ListView.builder(
-      //       itemCount: applications.length,
-      //       itemBuilder: (context, index) {
-      //         final app = applications[index];
-      //         return ListTile(
-
-      //           title: Text("Proposal by ${app['dancerId']}"),
-      //           subtitle: Text(app['proposal']),
-      //           onTap: () {
-      //             Navigator.pushNamed(
-      //               context,
-      //               '/job_application_detail',
-      //               arguments: app,
-      //             );
-      //           },
-      //         );
-      //       },
-      //     );
-      //   },
-      // ),
     );
   }
 }
