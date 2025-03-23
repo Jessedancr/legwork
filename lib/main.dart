@@ -10,8 +10,10 @@ import 'package:legwork/Features/home/presentation/screens/client_screens/client
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
 import 'package:legwork/Features/job_application/data/repo_impl/job_application_repo_impl.dart';
+import 'package:legwork/Features/job_application/domain/business_logic/get_job_applicants_business_logic.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/Features/job_application/presentation/screens/apply_for_job_screen.dart';
+import 'package:legwork/Features/job_application/presentation/screens/job_application_details_screen.dart';
 import 'package:legwork/Features/job_application/presentation/screens/view_job_applicants_screen.dart';
 
 import 'package:legwork/core/Constants/color_schemes.dart';
@@ -84,8 +86,12 @@ void main() async {
           create: (context) => JobProvider(jobRepo: jobRepo),
         ),
         ChangeNotifierProvider(
-            create: (context) =>
-                JobApplicationProvider(jobApplicationRepo: jobApplicationRepo))
+          create: (context) => JobApplicationProvider(
+            jobApplicationRepo: jobApplicationRepo,
+            getJobApplicantsBusinessLogic: GetJobApplicantsBusinessLogic(
+                jobApplicationRepo: jobApplicationRepo),
+          ),
+        )
       ],
       child: MyApp(
         onboardingStatusCheck: onboardingStatusCheck,
@@ -148,6 +154,8 @@ class MyApp extends StatelessWidget {
             clientId: args['clientId']!,
           );
         },
+        '/job_application_detail': (context) =>
+            const JobApplicationDetailScreen(),
       },
     );
   }

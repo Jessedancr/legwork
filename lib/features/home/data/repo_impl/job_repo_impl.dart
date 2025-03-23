@@ -63,41 +63,6 @@ class JobRepoImpl implements JobRepo {
     }
   }
 
-  // @override
-  // Future<Either<String, List<JobEntity>>> getJobs() async {
-  //   try {
-  //     final result = await jobService.getJobs();
-  //     return result.fold(
-  //       // handle fail
-  //       (fail) => Left(fail),
-
-  //       // handle success
-  //       (jobs) => Right(
-  //         jobs
-  //             .map(
-  //               (job) => JobEntity(
-  //                 jobTitle: job.jobTitle,
-  //                 jobLocation: job.jobLocation,
-  //                 prefDanceStyles: job.prefDanceStyles,
-  //                 pay: job.pay,
-  //                 amtOfDancers: job.amtOfDancers,
-  //                 jobDuration: job.jobDuration,
-  //                 jobType: job.jobType,
-  //                 jobDescr: job.jobDescr,
-  //                 status: job.status,
-  //                 jobId: job.jobId,
-  //                 clientId: job.clientId,
-  //               ),
-  //             )
-  //             .toList(),
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     debugPrint('Error on getJobs method from JobRepoImpl: $e');
-  //     return Left(e.toString());
-  //   }
-  // }
-
   @override
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs() async {
     try {

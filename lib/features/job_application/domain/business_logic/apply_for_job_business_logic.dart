@@ -5,7 +5,7 @@ import '../entities/job_application_entity.dart';
 class ApplyForJobBusinessLogic {
   final JobApplicationRepo jobApplicationRepo;
 
-  ApplyForJobBusinessLogic({ required this.jobApplicationRepo});
+  ApplyForJobBusinessLogic({required this.jobApplicationRepo});
 
   Future<Either<String, void>> applyForJobExecute(
     JobApplicationEntity application,
@@ -13,4 +13,6 @@ class ApplyForJobBusinessLogic {
     // todo: implement some business logic and validation rules here
     return jobApplicationRepo.applyForJob(application);
   }
+
+
 }

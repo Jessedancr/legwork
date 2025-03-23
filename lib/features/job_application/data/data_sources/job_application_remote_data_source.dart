@@ -24,8 +24,11 @@ class JobApplicationRemoteDataSource {
       // Fetch job details
       final jobSnapshot =
           await db.collection('jobs').doc(application.jobId).get();
+
+      // If job does not exist
       if (!jobSnapshot.exists) return const Left('Job not found');
 
+      // Gwt the client ID from the job document
       final String clientId = jobSnapshot['clientId'];
 
       // ✅ Check for duplicate application
@@ -40,20 +43,48 @@ class JobApplicationRemoteDataSource {
         return const Left('You have already applied for this job');
       }
 
-      // ✅ Prepare updated application with correct IDs
+      // generate unique job ID
+      final String applicationId = db.collection('jobApplications').doc().id;
+
+      // Prepare updated application with correct IDs
       final updatedApplication = application.copyWith(
         dancerId: uid,
         clientId: clientId,
+        applicationId: applicationId,
       );
 
       final applicationData = updatedApplication.toMap();
 
-      // Save application
-      await db.collection('jobApplications').add(applicationData);
+      // Save application with explicit applicationId field
+      await db
+          .collection('jobApplications')
+          .doc(applicationId)
+          .set(applicationData);
 
       return const Right(null);
     } catch (e) {
       return Left("Failed to apply for job: $e");
+    }
+  }
+
+  // FETCH ALL JOB APPLICATIONS FOR A SPECIFIC JOB
+  Future<Either<String, List<JobApplicationModel>>> getJobApplications(
+    String jobId,
+  ) async {
+    try {
+      // This query fetches all applications for a specific job
+      final snapshot = await db
+          .collection('jobApplications')
+          .where('jobId', isEqualTo: jobId)
+          .get();
+
+      final applications = snapshot.docs
+          .map((doc) => JobApplicationModel.fromDocument(doc))
+          .toList();
+
+      return Right(applications);
+    } catch (e) {
+      return Left("Failed to fetch job applications: $e");
     }
   }
 }

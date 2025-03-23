@@ -49,6 +49,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           applicationStatus: "pending",
           proposal: proposalController.text,
           appliedAt: DateTime.now(),
+          applicationId: '',
         );
         final result = await jobApplicationProvider.applyForJob(application);
 
@@ -68,7 +69,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                   context: context,
                   screenWidth: screenWidth,
                   title: 'Oops!',
-                  subTitle: 'Error applying for job. Please try again.',
+                  subTitle: fail,
                   contentColor: Theme.of(context).colorScheme.error,
                   imageColor: Theme.of(context).colorScheme.onError,
                 ),
