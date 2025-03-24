@@ -23,9 +23,6 @@ abstract class JobRepo {
     required bool status,
   });
 
-  // // GET JOBS
-  // Future<Either<String, List<JobEntity>>> getJobs();
-
   // FETCH JOBS
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs();
 }

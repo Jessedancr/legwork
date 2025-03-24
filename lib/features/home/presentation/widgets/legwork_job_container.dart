@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class LegworkJobContainer extends StatelessWidget {
   final void Function()? onJobTap;
@@ -10,6 +11,7 @@ class LegworkJobContainer extends StatelessWidget {
   final String jobDuration;
   final String jobLocation;
   final String jobType;
+  final DateTime createdAt;
 
   const LegworkJobContainer({
     super.key,
@@ -21,10 +23,16 @@ class LegworkJobContainer extends StatelessWidget {
     required this.jobDuration,
     required this.jobLocation,
     required this.jobType,
+    required this.createdAt,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Formatted createdAt
+    String formattedCreatedAt =
+        DateFormat('dd-MM-yyyy | hh:mma').format(createdAt);
+
+    // Returned widget
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -52,7 +60,7 @@ class LegworkJobContainer extends StatelessWidget {
                       children: [
                         // Time job was posted
                         Text(
-                          'Posted yesterday',
+                          'Posted: $formattedCreatedAt',
                           style: GoogleFonts.robotoCondensed(
                             fontSize: 12,
                             color: Theme.of(context).colorScheme.onPrimary,
@@ -100,8 +108,6 @@ class LegworkJobContainer extends StatelessWidget {
                   ),
                 ),
               ),
-
-             
             ],
           ),
           const SizedBox(height: 8),

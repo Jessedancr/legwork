@@ -129,6 +129,7 @@ class _OpenJobsState extends State<OpenJobs> {
             jobDuration: job.jobDuration,
             jobLocation: job.jobLocation,
             jobType: job.jobType,
+            createdAt: job.createdAt!,
           );
         },
       ),

@@ -69,7 +69,6 @@ class JobService {
    * * If client fetch only jobs the client posted
    */
   Future<Either<String, Map<String, List<JobModel>>>> fetchJobs() async {
-    // RETRIVE JOBS FROM
     try {
       // Get logged-in user ID
       final user = auth.currentUser;

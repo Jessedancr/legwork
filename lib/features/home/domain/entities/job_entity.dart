@@ -13,6 +13,7 @@ class JobEntity {
   final String jobType;
   final String jobId; // Unique Job ID
   final String clientId; // ID of the client who posted the job
+  final DateTime? createdAt; // Date and time when the job was created
   final bool status;
 
   // constructor
@@ -28,6 +29,7 @@ class JobEntity {
     required this.jobId, // Unique Job ID
     required this.clientId, // ID of the client who posted the job
     required this.status,
+    this.createdAt,
   });
 
   @override

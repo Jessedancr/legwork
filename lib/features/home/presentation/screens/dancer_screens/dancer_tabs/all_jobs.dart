@@ -116,6 +116,7 @@ class _AllJobsState extends State<AllJobs> {
             jobDuration: job.jobDuration,
             jobLocation: job.jobLocation,
             jobType: job.jobType,
+            createdAt: job.createdAt!,
           );
         },
       ),
