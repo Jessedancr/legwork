@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 class OnboardButton extends StatelessWidget {
   final String buttonText;
   final void Function()? onPressed;
+  final Color? buttonColor;
+  final Color? borderColor;
   const OnboardButton({
     super.key,
     required this.buttonText,
     required this.onPressed,
+    this.buttonColor,
+    this.borderColor,
   });
 
   @override
@@ -23,10 +27,10 @@ class OnboardButton extends StatelessWidget {
         height: screenHeight * 0.06,
         width: screenWidth * 0.3,
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: buttonColor ?? Colors.black,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
+            color: borderColor ?? Theme.of(context).colorScheme.primary,
             width: 2.0,
           ),
         ),

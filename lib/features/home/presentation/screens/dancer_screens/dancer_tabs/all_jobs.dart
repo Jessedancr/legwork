@@ -46,11 +46,15 @@ class _AllJobsState extends State<AllJobs> {
   }
 
   // Method to apply for job
-  void applyForJob({required String jobId, required String clientId}) {
+  void applyForJob({
+    required String jobId,
+    required String clientId,
+    required String jobDescr,
+  }) {
     Navigator.pushNamed(
       context,
       '/applyForJob',
-      arguments: {'jobId': jobId, 'clientId': clientId},
+      arguments: {'jobId': jobId, 'clientId': clientId, 'jobDescr': jobDescr},
     );
   }
 
@@ -108,6 +112,7 @@ class _AllJobsState extends State<AllJobs> {
             onJobTap: () => applyForJob(
               clientId: job.clientId,
               jobId: job.jobId,
+              jobDescr: job.jobDescr,
             ),
             jobTitle: job.jobTitle,
             pay: job.pay,

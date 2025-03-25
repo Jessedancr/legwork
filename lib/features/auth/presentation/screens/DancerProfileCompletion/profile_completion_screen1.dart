@@ -185,7 +185,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ],
                               )
                             else
-                            // PFP WITH PICTURE
+                              // PFP WITH PICTURE
                               Stack(
                                 clipBehavior: Clip.none,
                                 children: [

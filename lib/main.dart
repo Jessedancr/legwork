@@ -142,8 +142,11 @@ class MyApp extends StatelessWidget {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, String>;
           return ApplyForJobScreen(
-            jobId: args['jobId']!,
-            clientId: args['clientId']!,
+            jobId: args['jobId'] ?? '',
+            clientId: args['clientId'] ?? '',
+            jobDescr: args['jobDescr'] ?? '',
+            clientName: 'Beat N feet',
+            clientImageUrl: '',
           );
         },
         '/viewJobApplicantsScreen': (context) {

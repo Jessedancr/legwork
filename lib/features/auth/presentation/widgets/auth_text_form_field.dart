@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -90,11 +89,12 @@ class AuthTextFormField extends StatelessWidget {
                   borderRadius: borderRadius,
                 ),
                 focusedErrorBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.error,
-                      width: 2.0,
-                    ),
-                    borderRadius: borderRadius),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.error,
+                    width: 2.0,
+                  ),
+                  borderRadius: borderRadius,
+                ),
               ),
             ),
           ),
