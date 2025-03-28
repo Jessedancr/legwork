@@ -1,16 +1,52 @@
+// ignore_for_file: annotate_overrides
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/job_application_entity.dart';
+import 'package:hive/hive.dart';
+
+part 'job_application_model.g.dart'; // This file will be generated
+
+@HiveType(typeId: 0) // Unique typeId for Hive
 
 class JobApplicationModel extends JobApplicationEntity {
+  @HiveField(0)
+  final String applicationId;
+
+  @HiveField(1)
+  final String jobId;
+
+  @HiveField(2)
+  final String dancerId;
+
+  @HiveField(3)
+  final String clientId;
+
+  @HiveField(4)
+  final String applicationStatus;
+
+  @HiveField(5)
+  final String proposal;
+
+  @HiveField(6)
+  final DateTime appliedAt;
+
   JobApplicationModel({
-    required super.applicationId, // Primary key
-    required super.jobId, // Foreign key
-    required super.dancerId, // Foreign key
-    required super.clientId, // Foreign key
-    required super.applicationStatus,
-    required super.proposal,
-    required super.appliedAt,
-  });
+    required this.applicationId, // Primary key
+    required this.jobId, // Foreign key
+    required this.dancerId, // Foreign key
+    required this.clientId, // Foreign key
+    required this.applicationStatus,
+    required this.proposal,
+    required this.appliedAt,
+  }) : super(
+          applicationId: applicationId,
+          jobId: jobId,
+          dancerId: dancerId,
+          clientId: clientId,
+          applicationStatus: applicationStatus,
+          proposal: proposal,
+          appliedAt: appliedAt,
+        );
 
   /// Convert firebase doc to job application so we can use in the app
   factory JobApplicationModel.fromDocument(DocumentSnapshot doc) {

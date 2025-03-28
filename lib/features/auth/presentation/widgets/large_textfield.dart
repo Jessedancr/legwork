@@ -69,7 +69,7 @@ class LargeTextField extends StatelessWidget {
               textAlign: TextAlign.center,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(
-                  left: screenWidth * 0.065,
+                  left: screenWidth * 0.081,
                   top: screenHeight * 0.05,
                   right: screenWidth * 0.05,
                 ),

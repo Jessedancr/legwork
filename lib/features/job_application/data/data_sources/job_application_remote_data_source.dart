@@ -105,7 +105,7 @@ class JobApplicationRemoteDataSource {
       await docRef.update({'applicationStatus': 'accepted'});
 
       // Delete the application after accepting
-      // await docRef.delete();
+      await docRef.delete();
 
       debugPrint('Application accepted and deleted successfully');
       return const Right(null);

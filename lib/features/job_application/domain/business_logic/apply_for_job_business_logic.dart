@@ -14,5 +14,8 @@ class ApplyForJobBusinessLogic {
     return jobApplicationRepo.applyForJob(application);
   }
 
-
+  //* Delete accpeted applicatio from local storage (If the user chooses)
+  Future<void> deleteAcceptedApplication(String applicationId) async {
+    await jobApplicationRepo.deleteAcceptedApplication(applicationId);
+  }
 }

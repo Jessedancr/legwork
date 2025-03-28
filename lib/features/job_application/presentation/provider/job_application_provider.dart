@@ -72,4 +72,9 @@ class JobApplicationProvider extends ChangeNotifier {
       return const Left('Error with getJobApplications provider');
     }
   }
+
+  /// DELETE ACCEPTED JOB APPLICATION FROM LOCAL STORAGE (IF THE USER CHOOSES)
+  Future<void> deleteAcceptedApplication(String applicationId) async {
+    await applyForJobBusinessLogic.deleteAcceptedApplication(applicationId);
+  }
 }

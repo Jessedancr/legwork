@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/auth_status.dart';
@@ -9,6 +10,7 @@ import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
+import 'package:legwork/Features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/Features/job_application/data/repo_impl/job_application_repo_impl.dart';
 import 'package:legwork/Features/job_application/domain/business_logic/get_job_applicants_business_logic.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
@@ -40,6 +42,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
   // This is required in order to use async in main
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize hive
+  await Hive.initFlutter();
+
+  // Register the adapter
+  Hive.registerAdapter(JobApplicationModelAdapter());
+
+  // Open Hive box
+  await Hive.openBox<JobApplicationModel>('job_applications_box');
 
   // Load .env file
   await dotenv.load(fileName: ".env");
