@@ -156,7 +156,6 @@ class MyApp extends StatelessWidget {
             jobId: args['jobId'] ?? '',
             clientId: args['clientId'] ?? '',
             jobDescr: args['jobDescr'] ?? '',
-            clientName: 'Beat N feet',
             clientImageUrl: '',
           );
         },

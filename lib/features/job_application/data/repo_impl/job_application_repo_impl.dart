@@ -52,7 +52,8 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
           return const Left('No applications found in hive');
         },
       );
-      final remoteApplications = await remoteDataSource.getJobApplications(jobId);
+      final remoteApplications =
+          await remoteDataSource.getJobApplications(jobId);
 
       return remoteApplications.fold(
         // handle fail
@@ -74,5 +75,25 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
   @override
   Future<void> deleteAcceptedApplication(String applicationId) async {
     await localDataSource.deleteJobApplication(applicationId);
+  }
+
+  // Function to fetch client details using client ID
+  Future<Either<String, Map<String, dynamic>>> getClientDetails(
+    String clientId,
+  ) async {
+    try {
+      final clientDetails = await remoteDataSource.getClientDetails(clientId);
+      return clientDetails.fold(
+          // Handle fail
+          (fail) => Left(fail),
+
+          // Handle success
+          (clientDetails) {
+        return Right(clientDetails);
+      });
+    } catch (e) {
+      debugPrint('An unknown error occured while fetching client details: $e');
+      return Left('An unknown error occured while fetching client details: $e');
+    }
   }
 }

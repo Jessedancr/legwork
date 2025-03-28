@@ -135,4 +135,20 @@ class JobApplicationRemoteDataSource {
       return Left("Failed to reject application: $e");
     }
   }
+
+  // GET CLIENT DETAILS WITH CLIENT ID
+  Future<Either<String, Map<String, dynamic>>> getClientDetails(
+    String clientId,
+  ) async {
+    try {
+      final clientDoc = await db.collection('clients').doc(clientId).get();
+
+      if (!clientDoc.exists) return const Left('Client not found');
+
+      return Right(clientDoc.data()!);
+    } catch (e) {
+      debugPrint('Failed to fetch client details: $e');
+      return Left("Failed to fetch client details: $e");
+    }
+  }
 }
