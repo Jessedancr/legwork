@@ -28,12 +28,18 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   // Local list of job applications
+  // Used by client when viewing all applications to his job
   List<JobApplicationEntity> allApplications = [];
 
-  bool isLoading = false;
+  // Local list of pending applications
+  // Used by dancer when viewing all the jobs he has applied to
+  List<JobApplicationEntity> pendingApplications = [];
 
   // Client details
   Map<String, dynamic>? clientDetails;
+
+  // Boolean flag to track loading state
+  bool isLoading = false;
 
   /// APPLY FOR JOB
   Future<Either<String, void>> applyForJob(
@@ -45,18 +51,15 @@ class JobApplicationProvider extends ChangeNotifier {
     return result;
   }
 
-  /// FETCH JOB APPLICATIONS
+  /// FETCH JOB APPLICATIONS FROM BOTH LOCAL AND REMOTE DB
   Future<Either<String, List<JobApplicationEntity>>> getJobApplications(
     String jobId,
   ) async {
     try {
       isLoading = true;
-      // notifyListeners();
 
       final result =
           await getJobApplicantsBusinessLogic.getJobApplicationsExecute(jobId);
-      // isLoading = false;
-      // notifyListeners();
 
       return result.fold(
         // handle failure
@@ -109,6 +112,42 @@ class JobApplicationProvider extends ChangeNotifier {
       debugPrint('An unknown error occured with getClientDetails provider: $e');
       return Left(
           'An unknown error occured with getClientDetails provider: $e');
+    }
+  }
+
+  /// FETCH PENDING APPLICATIONS FROM HIVE
+  Future<Either<String, List<JobApplicationEntity>>>
+      getPendingApplications() async {
+    try {
+      isLoading = true;
+
+      final pending = await jobApplicationRepo.getPendingApplications();
+
+      return pending.fold(
+        // Handle fail
+        (fail) {
+          isLoading = false;
+          notifyListeners();
+          return Left(
+            'Error with getPendingApplications provider: $fail',
+          );
+        },
+
+        // Handle success
+        (pending) {
+          pendingApplications = pending;
+          debugPrint(pendingApplications.toString());
+          isLoading = false;
+          notifyListeners();
+
+          return Right(pendingApplications);
+        },
+      );
+    } catch (e) {
+      debugPrint(
+          'An unknown Error occured with getPendingApplications provider: $e');
+      return const Left(
+          'An unknown Error occured with getPendingApplications provider');
     }
   }
 }

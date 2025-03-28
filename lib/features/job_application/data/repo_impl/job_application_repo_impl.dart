@@ -77,7 +77,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
     await localDataSource.deleteJobApplication(applicationId);
   }
 
-  // Function to fetch client details using client ID
+  // Function to get client details using client ID
   Future<Either<String, Map<String, dynamic>>> getClientDetails(
     String clientId,
   ) async {
@@ -94,6 +94,30 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
     } catch (e) {
       debugPrint('An unknown error occured while fetching client details: $e');
       return Left('An unknown error occured while fetching client details: $e');
+    }
+  }
+
+  // Function to get pending applications from hive
+  Future<Either<String, List<JobApplicationEntity>>>
+      getPendingApplications() async {
+    try {
+      final pendingApplications =
+          await localDataSource.getPendingApplications();
+
+      return pendingApplications.fold(
+        // Handle fail
+        (fail) => Left(fail),
+
+        // Handle success
+        (pending) {
+          return Right(pending);
+        },
+      );
+    } catch (e) {
+      debugPrint(
+        'Error with getPendingJobApplications method from job appl repo imp: $e',
+      );
+      return Left(e.toString());
     }
   }
 }

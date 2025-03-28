@@ -52,4 +52,24 @@ class JobApplicationLocalDataSource {
           'An unknown error occured while deleting job application from hive: $e');
     }
   }
+
+  // * Get pending applications from hive
+  Future<Either<String, List<JobApplicationModel>>>
+      getPendingApplications() async {
+    try {
+      final box = Hive.box<JobApplicationModel>(boxName);
+      List<JobApplicationModel> pendingApplications = box.values
+          .where((app) => app.applicationStatus == 'pending')
+          .toList();
+
+      return Right(pendingApplications);
+    } catch (e) {
+      debugPrint('Error fetching pending applications from hive: $e');
+      return Left('Erro fetching pending applications from hive: $e');
+    }
+  }
+
+  // * On Accept
+  // In this method, we'll change the status of the application to 'accepted'
+  // So we can display it in the app
 }
