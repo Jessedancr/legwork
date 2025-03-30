@@ -36,7 +36,10 @@ class _DancerAppState extends State<DancerApp> {
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
-        body: screens[selectedIndex],
+        body: IndexedStack(
+          index: selectedIndex,
+          children: screens,
+        ),
         bottomNavigationBar: DancersNavBar(
           screens: screens,
           selectedIndex: selectedIndex,

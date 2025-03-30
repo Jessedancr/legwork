@@ -19,8 +19,10 @@ class _PendingApplicationsState extends State<PendingApplications> {
   Future<void> _loadData() async {
     final provider =
         Provider.of<JobApplicationProvider>(context, listen: false);
-    await provider
-        .getPendingApplicationsWithJobs(); // Fetch pending applications
+    // Only fetch data if it's not already loaded
+    if (provider.pendingAppsWithJobs.isEmpty && !provider.isLoading) {
+      await provider.getPendingApplicationsWithJobs();
+    }
   }
 
   @override

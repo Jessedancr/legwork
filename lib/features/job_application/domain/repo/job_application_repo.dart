@@ -9,9 +9,6 @@ abstract class JobApplicationRepo {
   Future<Either<String, List<JobApplicationEntity>>> getJobApplications(
       String jobId);
 
-  //* Delete accepted job application from local storage (If the user chooses)
-  Future<void> deleteAcceptedApplication(String applicationId);
-
   // //* Fetch details of a specific job application
   // Future<Either<String, JobApplicationEntity>> getJobApplicationDetails(String applicationId);
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dartz/dartz.dart';
 import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/job_application/data/data_sources/job_application_local_datasource.dart';
+
 import 'package:legwork/Features/job_application/data/repo_impl/job_application_repo_impl.dart';
 import 'package:legwork/Features/job_application/domain/business_logic/apply_for_job_business_logic.dart';
 import 'package:legwork/Features/job_application/domain/business_logic/get_client_details_business_logic.dart';
@@ -18,13 +18,10 @@ class JobApplicationProvider extends ChangeNotifier {
 
   late GetClientDetailsBusinessLogic getClientDetailsBusinessLogic;
 
-  late JobApplicationLocalDataSource jobApplicationLocalDataSource;
-
   // Pass it to constructor
   JobApplicationProvider({
     required this.jobApplicationRepo,
     required this.getJobApplicantsBusinessLogic,
-    // required this.jobApplicationLocalDataSource,
   }) {
     applyForJobBusinessLogic =
         ApplyForJobBusinessLogic(jobApplicationRepo: jobApplicationRepo);
@@ -92,11 +89,6 @@ class JobApplicationProvider extends ChangeNotifier {
     }
   }
 
-  /// DELETE ACCEPTED JOB APPLICATION FROM LOCAL STORAGE (IF THE USER CHOOSES)
-  // Future<void> deleteAcceptedApplication(String applicationId) async {
-  //   await applyForJobBusinessLogic.deleteAcceptedApplication(applicationId);
-  // }
-
   /// FETCH CLIENT DETAILS
   Future<Either<String, Map<String, dynamic>>> getClientDetails(
     String clientId,
@@ -120,74 +112,6 @@ class JobApplicationProvider extends ChangeNotifier {
       debugPrint('An unknown error occured with getClientDetails provider: $e');
       return Left(
           'An unknown error occured with getClientDetails provider: $e');
-    }
-  }
-
-  /// FETCH PENDING APPLICATIONS FROM HIVE
-  Future<Either<String, List<JobApplicationEntity>>>
-      getPendingApplications() async {
-    try {
-      isLoading = true;
-
-      final pending = await jobApplicationRepo.getPendingApplications();
-
-      return pending.fold(
-        // Handle fail
-        (fail) {
-          isLoading = false;
-          notifyListeners();
-          return Left(
-            'Error with getPendingApplications provider: $fail',
-          );
-        },
-
-        // Handle success
-        (pending) async {
-          pendingApplications = pending;
-          debugPrint(pendingApplications.toString());
-          isLoading = false;
-          notifyListeners();
-
-          return Right(pendingApplications);
-        },
-      );
-    } catch (e) {
-      debugPrint(
-          'An unknown Error occured with getPendingApplications provider: $e');
-      return const Left(
-          'An unknown Error occured with getPendingApplications provider');
-    }
-  }
-
-  /// FETCH PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS FROM HIVE
-  Future<Either<String, Map<JobApplicationEntity, JobEntity>>>
-      getPendingAppsWithJobs() async {
-    try {
-      isLoading = true;
-      // notifyListeners();
-
-      final result = await jobApplicationRepo.getPendingAppsWithJobs();
-
-      return result.fold(
-        // Handle failure
-        (fail) {
-          isLoading = false;
-          notifyListeners();
-          return Left(fail);
-        },
-        // Handle success
-        (appsWithJobs) {
-          pendingAppsWithJobs = appsWithJobs;
-          isLoading = false;
-          notifyListeners();
-          return Right(pendingAppsWithJobs);
-        },
-      );
-    } catch (e) {
-      debugPrint('Error with getPendingAppsWithJobs provider: $e');
-      isLoading = false;
-      notifyListeners();
-      return Left('Error with getPendingAppsWithJobs provider: $e');
     }
   }
 

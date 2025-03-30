@@ -11,7 +11,7 @@ class AllJobs extends StatefulWidget {
   State<AllJobs> createState() => _AllJobsState();
 }
 
-class _AllJobsState extends State<AllJobs> {
+class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
   // PROVIDERS
   late final jobProvider = Provider.of<JobProvider>(context, listen: false);
   late final listeningProvider = Provider.of<JobProvider>(context);
@@ -121,10 +121,13 @@ class _AllJobsState extends State<AllJobs> {
             jobDuration: job.jobDuration,
             jobLocation: job.jobLocation,
             jobType: job.jobType,
-            createdAt: job.createdAt!,
+            createdAt: job.createdAt,
           );
         },
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
