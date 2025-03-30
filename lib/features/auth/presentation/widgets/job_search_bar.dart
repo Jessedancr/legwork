@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 // TODO: COME BACK TO PROPERLY IMPLEMENT THE STATE CHANGE OF THE CHEKBOX
 
 class JobSearchBar extends StatefulWidget {

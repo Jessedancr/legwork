@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+
+// TODO: PROPERLY STYLE THIS BUTTON
+
 class LegworkElevatedButton extends StatelessWidget {
   final void Function()? onPressed;
   final String buttonText;

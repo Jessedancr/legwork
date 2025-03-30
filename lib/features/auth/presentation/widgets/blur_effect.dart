@@ -3,27 +3,29 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class BlurEffect extends StatelessWidget {
-  final height;
+  final double? height;
   final Widget child;
-  final double width;
+  final double? width;
   final Color? firstGradientColor;
   final Color? secondGradientColor;
   final double? sigmaX;
   final double? sigmaY;
   final Alignment? begin;
   final Alignment? end;
+  final EdgeInsetsGeometry? padding;
 
   const BlurEffect({
     super.key,
     required this.child,
-    required this.height,
-    required this.width,
+    this.height,
+    this.width,
     this.sigmaX,
     this.sigmaY,
     this.firstGradientColor,
     this.secondGradientColor,
     this.begin,
-    this.end
+    this.end,
+    this.padding,
   });
 
   @override
@@ -46,6 +48,7 @@ class BlurEffect extends StatelessWidget {
 
             // gradient efect
             Container(
+              padding: padding,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [

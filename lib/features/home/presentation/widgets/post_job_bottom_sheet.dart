@@ -65,7 +65,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
     // RETURNED WIDGET
     return SingleChildScrollView(
       child: Container(
-        height: screenHeight,
+        height: screenHeight * 1.5,
         decoration: BoxDecoration(
           //color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),

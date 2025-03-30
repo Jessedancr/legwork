@@ -29,53 +29,60 @@ class DancersNavBar extends StatefulWidget {
 class _DancersNavBarState extends State<DancersNavBar> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.onSurface,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15.0,
-          vertical: 10,
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onSurface,
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: GNav(
-          gap: 8,
-          backgroundColor: Theme.of(context).colorScheme.onSurface,
-          color: Theme.of(context).colorScheme.surface,
-          activeColor: Theme.of(context).colorScheme.surface,
-          tabBackgroundColor: Theme.of(context).colorScheme.secondary,
-          rippleColor: Theme.of(context).colorScheme.primaryFixedDim,
-          tabBackgroundGradient: LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.onPrimaryContainer,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8.0,
+            vertical: 5.0,
           ),
-          textStyle: GoogleFonts.robotoSlab(
+          child: GNav(
+            tabMargin: const EdgeInsets.only(top: 10, bottom: 10),
+            gap: 8,
+            backgroundColor: Theme.of(context).colorScheme.onSurface,
             color: Theme.of(context).colorScheme.surface,
-            fontWeight: FontWeight.w600,
+            activeColor: Theme.of(context).colorScheme.surface,
+            tabBackgroundColor: Theme.of(context).colorScheme.secondary,
+            rippleColor: Theme.of(context).colorScheme.primaryFixedDim,
+            tabBackgroundGradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.onPrimaryContainer,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            textStyle: GoogleFonts.robotoSlab(
+              color: Theme.of(context).colorScheme.surface,
+              fontWeight: FontWeight.w600,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            selectedIndex: widget.selectedIndex,
+            onTabChange: (index) => widget.onTabChange!(index),
+            tabs: const [
+              GButton(
+                icon: NavBarIcons.home,
+                text: 'Home',
+              ),
+              GButton(
+                icon: NavBarIcons.briefcase,
+                text: 'Applications',
+              ),
+              GButton(
+                icon: NavBarIcons.chat,
+                text: 'Chats',
+              ),
+              GButton(
+                icon: NavBarIcons.user,
+                text: 'Profile',
+              ),
+            ],
           ),
-          padding: const EdgeInsets.all(16),
-          selectedIndex: widget.selectedIndex,
-          onTabChange: (index) => widget.onTabChange!(index),
-          tabs: const [
-            GButton(
-              icon: NavBarIcons.home,
-              text: 'Home',
-            ),
-            GButton(
-              icon: NavBarIcons.briefcase,
-              text: 'Applications',
-            ),
-            GButton(
-              icon: NavBarIcons.chat,
-              text: 'Chats',
-            ),
-            GButton(
-              icon: NavBarIcons.user,
-              text: 'Profile',
-            ),
-          ],
         ),
       ),
     );

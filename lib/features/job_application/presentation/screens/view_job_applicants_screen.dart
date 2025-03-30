@@ -1,16 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
+import 'package:provider/provider.dart';
 
-class ViewJobApplicantsScreen extends StatelessWidget {
+class ViewJobApplicantsScreen extends StatefulWidget {
   final String jobId;
   final String clientId;
 
-  ViewJobApplicantsScreen({
+  const ViewJobApplicantsScreen({
     super.key,
     required this.jobId,
     required this.clientId,
   });
 
+  @override
+  State<ViewJobApplicantsScreen> createState() =>
+      _ViewJobApplicantsScreenState();
+}
+
+class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
   final TextEditingController proposalController = TextEditingController();
+
+  // Init state to fetch all job applications when the screen loads
+  @override
+  void initState() {
+    super.initState();
+    final provider =
+        Provider.of<JobApplicationProvider>(context, listen: false);
+    provider.getJobApplications(widget.jobId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +51,46 @@ class ViewJobApplicantsScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Center(
-        child: Text("Applying for Job ID: $jobId\nClient ID: $clientId"),
+      body: Consumer<JobApplicationProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (provider.allApplications.isEmpty) {
+            debugPrint(
+              "Job applications: ${provider.allApplications.toString()}",
+            );
+            return const Center(
+              child: Text(
+                "No applicants yet.",
+                style: TextStyle(
+                  fontFamily: 'RobotoSlab',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: provider.allApplications.length,
+            itemBuilder: (context, index) {
+              final app = provider.allApplications[index];
+              return ListTile(
+                title: Text("Proposal by ${app.dancerId}"),
+                subtitle: Text(app.proposal),
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/job_application_detail',
+                    arguments: app,
+                  );
+                },
+              );
+            },
+          );
+        },
       ),
     );
   }

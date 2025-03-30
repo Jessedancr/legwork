@@ -16,17 +16,18 @@ class JobProvider extends ChangeNotifier {
 
   // POST JOB METHOD
   Future<Either<String, JobEntity>> postJob({
-    required String jobTitle,
-    required String jobLocation,
-    required List prefDanceStyles,
-    required String pay,
-    required String amtOfDancers,
-    required String jobDuration,
-    required String jobType,
-    required String jobDescr,
-    required String jobId,
-    required String clientId,
-    required bool status,
+    // required String jobTitle,
+    // required String jobLocation,
+    // required List prefDanceStyles,
+    // required String pay,
+    // required String amtOfDancers,
+    // required String jobDuration,
+    // required String jobType,
+    // required String jobDescr,
+    // required String jobId,
+    // required String clientId,
+    // required bool status,
+    required JobEntity job,
   }) async {
     PostJobBusinessLogic postJobBusinessLogic =
         PostJobBusinessLogic(jobRepo: jobRepo);
@@ -36,25 +37,30 @@ class JobProvider extends ChangeNotifier {
 
     try {
       final result = await postJobBusinessLogic.postJobExecute(
-        jobTitle: jobTitle,
-        jobLocation: jobLocation,
-        prefDanceStyles: prefDanceStyles,
-        pay: pay,
-        amtOfDancers: amtOfDancers,
-        jobDuration: jobDuration,
-        jobType: jobType,
-        jobDescr: jobDescr,
-        jobId: jobId,
-        clientId: clientId,
-        status: status,
-      );
+          job: JobEntity(
+        jobTitle: job.jobTitle,
+        jobLocation: job.jobLocation,
+        prefDanceStyles: job.prefDanceStyles,
+        pay: job.pay,
+        amtOfDancers: job.amtOfDancers,
+        jobDuration: job.jobDuration,
+        jobDescr: job.jobDescr,
+        jobType: job.jobType,
+        jobId: job.jobId,
+        clientId: job.clientId,
+        status: job.status,
+        createdAt: job.createdAt,
+      ));
 
       isLoading = false;
       notifyListeners();
 
       return result.fold(
         (fail) => Left(fail),
-        (jobEntity) => Right(jobEntity),
+        (jobEntity) {
+          clearCachedJobs(); // Clear cached jobs when a new job is posted
+          return Right(jobEntity);
+        },
       );
     } catch (e) {
       isLoading = false;
@@ -64,14 +70,16 @@ class JobProvider extends ChangeNotifier {
     }
   }
 
+  // Method to clear cached jobs
+  void clearCachedJobs() {
+    allJobs.clear();
+    notifyListeners();
+  }
+
   // FETCH JOB METHOD
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs() async {
-    if (allJobs.isNotEmpty) {
-      debugPrint('Jobs already loaded, skipping fetch.');
-      return Right(allJobs); // Prevents unnecessary re-fetching
-    }
-
     isLoading = true;
+    // notifyListeners();
 
     try {
       final result = await jobRepo.fetchJobs();

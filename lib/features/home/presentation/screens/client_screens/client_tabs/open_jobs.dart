@@ -17,13 +17,14 @@ class _OpenJobsState extends State<OpenJobs> {
   late final listeningProvider = Provider.of<JobProvider>(context);
 
   bool isLoading = true;
+  late Future<void> _fetchJobsFuture;
 
   // PULL TO REFRESH FUNCTION
   Future<void> _refresh() async {
     setState(() {
       isLoading = true;
     });
-    await jobProvider.fetchJobs();
+    await loadAllJobs();
     setState(() {
       isLoading = false;
     });
@@ -33,8 +34,7 @@ class _OpenJobsState extends State<OpenJobs> {
   @override
   void initState() {
     super.initState();
-
-    loadAllJobs();
+    _fetchJobsFuture = loadAllJobs();
   }
 
   // Load all posts
@@ -56,46 +56,54 @@ class _OpenJobsState extends State<OpenJobs> {
   //* BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    final jobs = listeningProvider.allJobs;
+    return FutureBuilder(
+      future: _fetchJobsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 10),
+                Text(
+                  'Fetching jobs please wait...',
+                  style: TextStyle(
+                    fontFamily: 'RobotoSlab',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
 
-    if (isLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 10),
-            Text(
-              'Fetching Jobs...',
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        }
+
+        final jobs = listeningProvider.allJobs;
+
+        if (jobs.isEmpty) {
+          return const Center(
+            child: Text(
+              'Nothing here...YET',
               style: TextStyle(
                 fontFamily: 'RobotoSlab',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ],
-        ),
-      );
-    }
+          );
+        }
 
-    // Handle case where no jobs exists
-    if (jobs.isEmpty) {
-      debugPrint("Jobs: $jobs");
-      return const Center(
-        child: Text(
-          'Nothing here...YET',
-          style: TextStyle(
-            fontFamily: 'RobotoSlab',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      );
-    }
-
-    List<JobEntity> openJobs = jobs["openJobs"] ?? [];
-    // List<JobEntity> closedJobs = jobs["closedJobs"] ?? [];
-    return buildJobList(openJobs);
+        List<JobEntity> openJobs = jobs["openJobs"] ?? [];
+        return buildJobList(openJobs);
+      },
+    );
   }
 
   // BUILD JOBS LIST
@@ -121,6 +129,7 @@ class _OpenJobsState extends State<OpenJobs> {
             jobDuration: job.jobDuration,
             jobLocation: job.jobLocation,
             jobType: job.jobType,
+            createdAt: job.createdAt,
           );
         },
       ),

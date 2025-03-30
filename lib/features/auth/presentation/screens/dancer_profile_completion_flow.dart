@@ -1,8 +1,6 @@
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/Features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen1.dart';
 import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen5.dart';

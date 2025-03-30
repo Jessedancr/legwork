@@ -11,19 +11,20 @@ class AllJobs extends StatefulWidget {
   State<AllJobs> createState() => _AllJobsState();
 }
 
-class _AllJobsState extends State<AllJobs> {
+class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
   // PROVIDERS
   late final jobProvider = Provider.of<JobProvider>(context, listen: false);
   late final listeningProvider = Provider.of<JobProvider>(context);
 
   bool isLoading = true;
+  late Future<void> _fetchJobsFuture;
 
   // PULL TO REFRESH FUNCTION
   Future<void> _refresh() async {
     setState(() {
       isLoading = true;
     });
-    await jobProvider.fetchJobs();
+    await loadAllJobs();
     setState(() {
       isLoading = false;
     });
@@ -33,8 +34,7 @@ class _AllJobsState extends State<AllJobs> {
   @override
   void initState() {
     super.initState();
-
-    loadAllJobs();
+    _fetchJobsFuture = loadAllJobs();
   }
 
   // Load all posts
@@ -46,56 +46,56 @@ class _AllJobsState extends State<AllJobs> {
   }
 
   // Method to apply for job
-  void applyForJob({required String jobId, required String clientId}) {
+  void applyForJob({
+    required String jobId,
+    required String clientId,
+    required String jobDescr,
+  }) {
     Navigator.pushNamed(
       context,
       '/applyForJob',
-      arguments: {'jobId': jobId, 'clientId': clientId},
+      arguments: {'jobId': jobId, 'clientId': clientId, 'jobDescr': jobDescr},
     );
   }
 
   //* BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    final jobs = listeningProvider.allJobs;
+    super.build(context);
+    return FutureBuilder(
+      future: _fetchJobsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-    if (isLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 10),
-            Text(
-              'Fetching Jobs...',
+        if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        }
+
+        final jobs = listeningProvider.allJobs;
+
+        if (jobs.isEmpty) {
+          return const Center(
+            child: Text(
+              'Nothing here...YET',
               style: TextStyle(
                 fontFamily: 'RobotoSlab',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ],
-        ),
-      );
-    }
+          );
+        }
 
-    // Handle case where no jobs exists
-    if (jobs.isEmpty) {
-      debugPrint("Jobs: $jobs");
-      return const Center(
-        child: Text(
-          'Nothing here...YET',
-          style: TextStyle(
-            fontFamily: 'RobotoSlab',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      );
-    }
-
-    List<JobEntity> allJobs = jobs["allJobs"] ?? [];
-    return buildJobList(allJobs);
+        List<JobEntity> allJobs = jobs["allJobs"] ?? [];
+        return buildJobList(allJobs);
+      },
+    );
   }
 
   // BUILD JOBS LIST
@@ -113,6 +113,7 @@ class _AllJobsState extends State<AllJobs> {
             onJobTap: () => applyForJob(
               clientId: job.clientId,
               jobId: job.jobId,
+              jobDescr: job.jobDescr,
             ),
             jobTitle: job.jobTitle,
             pay: job.pay,
@@ -121,9 +122,13 @@ class _AllJobsState extends State<AllJobs> {
             jobDuration: job.jobDuration,
             jobLocation: job.jobLocation,
             jobType: job.jobType,
+            createdAt: job.createdAt,
           );
         },
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
-import 'package:legwork/Features/home/data/data_sources/home_remote_data_source.dart';
+import 'package:legwork/Features/home/domain/entities/job_entity.dart';
 import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_tabs/open_jobs.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
@@ -27,6 +28,19 @@ class ClientHomeScreen extends StatefulWidget {
 }
 
 class _ClientHomeScreenState extends State<ClientHomeScreen> {
+  late Future<void> _fetchJobsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchJobsFuture = loadAllJobs();
+  }
+
+  Future<void> loadAllJobs() async {
+    final jobProvider = Provider.of<JobProvider>(context, listen: false);
+    await jobProvider.fetchJobs();
+  }
+
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
@@ -36,21 +50,22 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     // PROVIDER
     final jobProvider = Provider.of<JobProvider>(context);
     // METHOD TO POST JOB TO FIREBASE
-    void postJob(String jobId, String clientId) async {
+    void postJob({required String jobId, required String clientId}) async {
       Navigator.of(context).pop();
       showLoadingIndicator(context);
       // post job to firebase and display a snack bar with a success message
       try {
         final result = await jobProvider.postJob(
-          jobId: jobId,
-          clientId: clientId,
+            job: JobEntity(
           jobTitle: widget.titleController.text,
           jobLocation: widget.locationController.text,
           pay: widget.payController.text,
           amtOfDancers: widget.amtOfDancersController.text,
           jobDuration: widget.jobDurationController.text,
-          jobType: widget.searchController.text,
           jobDescr: widget.jobDescrController.text,
+          jobType: widget.searchController.text,
+          jobId: jobId,
+          clientId: clientId,
           status: true,
           prefDanceStyles: widget.danceStylesController.text
               .trim()
@@ -58,7 +73,8 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               .where((style) => style
                   .isNotEmpty) // Remove empty entries => entries that meet the condition will stay
               .toList(),
-        );
+          createdAt: DateTime.now(),
+        ));
 
         result.fold(
             // Handle fail
@@ -84,7 +100,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         },
 
             // Handle success
-            (success) {
+            (success) async {
           debugPrint('Successfully posted job');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -112,6 +128,9 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           widget.amtOfDancersController.clear();
           widget.jobDescrController.clear();
           widget.searchController.clear();
+
+          // Refresh job list
+          await jobProvider.fetchJobs();
         });
 
         hideLoadingIndicator(context);
@@ -130,8 +149,22 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         context: context,
         builder: (context) {
           return PostJobBottomSheet(
-            onPressed: () =>
-                postJob('', ''),
+            onPressed: () async {
+              // Generate jobId and get clientId
+              final String jobId =
+                  Provider.of<JobProvider>(context, listen: false)
+                      .jobRepo
+                      .jobService
+                      .db
+                      .collection('jobs')
+                      .doc()
+                      .id;
+              final String clientId =
+                  FirebaseAuth.instance.currentUser?.uid ?? '';
+
+              // Call postJob with jobId and clientId
+              postJob(jobId: jobId, clientId: clientId);
+            },
             titleController: widget.titleController,
             locationController: widget.locationController,
             danceStylesController: widget.danceStylesController,
@@ -182,11 +215,28 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         ),
 
         //* Body
-        body: const TabBarView(
-          children: [
-            OpenJobs(),
-            JobsForYou(),
-          ],
+        body: FutureBuilder(
+          future: _fetchJobsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('Error: ${snapshot.error}'),
+              );
+            }
+
+            return const TabBarView(
+              children: [
+                OpenJobs(),
+                JobsForYou(),
+              ],
+            );
+          },
         ),
       ),
     );
