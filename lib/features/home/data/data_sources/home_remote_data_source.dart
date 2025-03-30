@@ -10,14 +10,15 @@ class JobService {
 
   // POST JOBS
   Future<Either<String, JobModel>> createJob({
-    required String jobTitle,
-    required String jobLocation,
-    required List prefDanceStyles,
-    required String pay,
-    required String amtOfDancers,
-    required String jobDuration,
-    required String jobDescr,
-    required String jobType,
+    // required String jobTitle,
+    // required String jobLocation,
+    // required List prefDanceStyles,
+    // required String pay,
+    // required String amtOfDancers,
+    // required String jobDuration,
+    // required String jobDescr,
+    // required String jobType,
+    required JobModel job,
   }) async {
     try {
       // Get currently logged in user
@@ -35,16 +36,16 @@ class JobService {
 
       // store job date in firebase
       final jobData = {
-        'jobTitle': jobTitle,
-        'jobLocation': jobLocation,
-        'prefDanceStyles': prefDanceStyles,
-        'pay': pay,
-        'amtOfDancers': amtOfDancers,
-        'jobDuration': jobDuration,
-        'jobDescr': jobDescr,
+        'jobTitle': job.jobTitle,
+        'jobLocation': job.jobLocation,
+        'prefDanceStyles': job.prefDanceStyles,
+        'pay': job.pay,
+        'amtOfDancers': job.amtOfDancers,
+        'jobDuration': job.jobDuration,
+        'jobDescr': job.jobDescr,
         'jobId': jobId,
         'clientId': uid,
-        'jobType': jobType,
+        'jobType': job.jobType,
         'createdAt': FieldValue.serverTimestamp(), // Timestamp
         'status': true,
       };

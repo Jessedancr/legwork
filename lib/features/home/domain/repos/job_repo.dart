@@ -9,19 +9,7 @@ import 'package:legwork/Features/home/domain/entities/job_entity.dart';
 
 abstract class JobRepo {
   // POST JOBS
-  Future<Either<String, JobEntity>> createJob({
-    required String jobTitle,
-    required String jobLocation,
-    required List prefDanceStyles,
-    required String pay,
-    required String amtOfDancers,
-    required String jobDuration,
-    required String jobType,
-    required String jobDescr,
-    required String jobId,
-    required String clientId,
-    required bool status,
-  });
+  Future<Either<String, JobEntity>> createJob({required JobEntity job});
 
   // FETCH JOBS
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs();

@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/auth_status.dart';
+import 'package:legwork/Features/home/data/models/job_model.dart';
 import 'package:legwork/Features/home/data/repo_impl/job_repo_impl.dart';
 import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_app.dart';
@@ -46,11 +47,17 @@ void main() async {
   // Initialize hive
   await Hive.initFlutter();
 
-  // Register the adapter
+  // Register JobApplicationModel adapter
   Hive.registerAdapter(JobApplicationModelAdapter());
 
-  // Open Hive box
+  // Register JobModel adapter
+  Hive.registerAdapter(JobModelAdapter());
+
+  // Open job applications Hive box
   await Hive.openBox<JobApplicationModel>('job_applications_box');
+
+  // Open jobs hive box
+  await Hive.openBox<JobModel>('jobs_box');
 
   // Load .env file
   await dotenv.load(fileName: ".env");
@@ -100,7 +107,9 @@ void main() async {
           create: (context) => JobApplicationProvider(
             jobApplicationRepo: jobApplicationRepo,
             getJobApplicantsBusinessLogic: GetJobApplicantsBusinessLogic(
-                jobApplicationRepo: jobApplicationRepo),
+              jobApplicationRepo: jobApplicationRepo,
+            ),
+            
           ),
         )
       ],

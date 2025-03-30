@@ -16,17 +16,18 @@ class JobProvider extends ChangeNotifier {
 
   // POST JOB METHOD
   Future<Either<String, JobEntity>> postJob({
-    required String jobTitle,
-    required String jobLocation,
-    required List prefDanceStyles,
-    required String pay,
-    required String amtOfDancers,
-    required String jobDuration,
-    required String jobType,
-    required String jobDescr,
-    required String jobId,
-    required String clientId,
-    required bool status,
+    // required String jobTitle,
+    // required String jobLocation,
+    // required List prefDanceStyles,
+    // required String pay,
+    // required String amtOfDancers,
+    // required String jobDuration,
+    // required String jobType,
+    // required String jobDescr,
+    // required String jobId,
+    // required String clientId,
+    // required bool status,
+    required JobEntity job,
   }) async {
     PostJobBusinessLogic postJobBusinessLogic =
         PostJobBusinessLogic(jobRepo: jobRepo);
@@ -36,18 +37,20 @@ class JobProvider extends ChangeNotifier {
 
     try {
       final result = await postJobBusinessLogic.postJobExecute(
-        jobTitle: jobTitle,
-        jobLocation: jobLocation,
-        prefDanceStyles: prefDanceStyles,
-        pay: pay,
-        amtOfDancers: amtOfDancers,
-        jobDuration: jobDuration,
-        jobType: jobType,
-        jobDescr: jobDescr,
-        jobId: jobId,
-        clientId: clientId,
-        status: status,
-      );
+          job: JobEntity(
+        jobTitle: job.jobTitle,
+        jobLocation: job.jobLocation,
+        prefDanceStyles: job.prefDanceStyles,
+        pay: job.pay,
+        amtOfDancers: job.amtOfDancers,
+        jobDuration: job.jobDuration,
+        jobDescr: job.jobDescr,
+        jobType: job.jobType,
+        jobId: job.jobId,
+        clientId: job.clientId,
+        status: job.status,
+        createdAt: job.createdAt,
+      ));
 
       isLoading = false;
       notifyListeners();

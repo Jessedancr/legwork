@@ -151,4 +151,114 @@ class JobApplicationRemoteDataSource {
       return Left("Failed to fetch client details: $e");
     }
   }
+
+  // GET PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS
+  Future<Either<String, List<Map<String, dynamic>>>>
+      getPendingApplicationsWithJobs() async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        debugPrint('User not found');
+        return const Left('User not found');
+      }
+
+      final snapshot = await db
+          .collection('jobApplications')
+          .where('dancerId', isEqualTo: user.uid)
+          .where('applicationStatus', isEqualTo: 'pending')
+          .get();
+
+      final applicationsWithJobs =
+          await Future.wait(snapshot.docs.map((doc) async {
+        final jobDoc = await db.collection('jobs').doc(doc['jobId']).get();
+
+        // Skip if any required field is missing
+        if (!doc.exists || !jobDoc.exists) {
+          debugPrint('Missing required fields in Firestore document');
+          return null;
+        }
+
+        return {
+          'application': {
+            ...doc.data(),
+            'appliedAt': (doc['appliedAt'] as Timestamp).toDate(),
+          },
+          'job': {
+            ...jobDoc.data()!,
+            'createdAt': (jobDoc['createdAt'] as Timestamp).toDate(),
+          },
+        };
+      }).toList());
+
+      // Filter out null entries
+      final validApplicationsWithJobs =
+          applicationsWithJobs.where((item) => item != null).toList();
+
+      return Right(validApplicationsWithJobs.cast<Map<String, dynamic>>());
+    } catch (e) {
+      return Left("Failed to fetch pending applications: $e");
+    }
+  }
+
+  // GET REJECTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
+  Future<Either<String, List<Map<String, dynamic>>>>
+      getRejectedApplicationsWithJobs() async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        debugPrint('User not found');
+        return const Left('User not found');
+      }
+
+      final snapshot = await db
+          .collection('jobApplications')
+          .where('dancerId', isEqualTo: user.uid)
+          .where('applicationStatus', isEqualTo: 'rejected')
+          .get();
+
+      final applicationsWithJobs =
+          await Future.wait(snapshot.docs.map((doc) async {
+        final jobDoc = await db.collection('jobs').doc(doc['jobId']).get();
+        return {
+          'application': doc.data(),
+          'job': jobDoc.exists ? jobDoc.data() : null,
+        };
+      }).toList());
+
+      return Right(applicationsWithJobs);
+    } catch (e) {
+      return Left("Failed to fetch rejected applications: $e");
+    }
+  }
+
+  // GET ACCEPTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
+  Future<Either<String, List<Map<String, dynamic>>>>
+      getAcceptedApplicationsWithJobs() async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        debugPrint('User not found');
+        return const Left('User not found');
+      }
+
+      final snapshot = await db
+          .collection('jobApplications')
+          .where('dancerId', isEqualTo: user.uid)
+          .where('applicationStatus', isEqualTo: 'accepted')
+          .get();
+
+      final applicationsWithJobs =
+          await Future.wait(snapshot.docs.map((doc) async {
+        final jobDoc = await db.collection('jobs').doc(doc['jobId']).get();
+        return {
+          'application': doc.data(),
+          'job': jobDoc.exists ? jobDoc.data() : null,
+        };
+      }).toList());
+
+      return Right(applicationsWithJobs);
+    } catch (e) {
+      return Left("Failed to fetch accepted applications: $e");
+    }
+  }
 }
