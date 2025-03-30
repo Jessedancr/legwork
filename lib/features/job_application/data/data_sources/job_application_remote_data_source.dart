@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/job_application/data/models/job_application_model.dart';
 
+
 class JobApplicationRemoteDataSource {
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;

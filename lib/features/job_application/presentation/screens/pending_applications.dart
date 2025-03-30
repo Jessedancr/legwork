@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
+import 'package:legwork/Features/home/domain/entities/job_entity.dart';
+import 'package:legwork/Features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
+import 'package:legwork/Features/job_application/presentation/widgets/show_applications_card.dart';
 import 'package:provider/provider.dart';
 
 class PendingApplications extends StatefulWidget {
@@ -10,6 +15,7 @@ class PendingApplications extends StatefulWidget {
 }
 
 class _PendingApplicationsState extends State<PendingApplications> {
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -23,6 +29,14 @@ class _PendingApplicationsState extends State<PendingApplications> {
     if (provider.pendingAppsWithJobs.isEmpty && !provider.isLoading) {
       await provider.getPendingApplicationsWithJobs();
     }
+  }
+
+  // PULL TO REFRESH FUNC
+  Future<void> _refresh() async {
+    final provider =
+        Provider.of<JobApplicationProvider>(context, listen: false);
+    await provider.getPendingApplicationsWithJobs();
+    // provider.notifyListeners();
   }
 
   @override
@@ -48,30 +62,29 @@ class _PendingApplicationsState extends State<PendingApplications> {
   }
 
   Widget _buildPendingApplicationsWithJobs(JobApplicationProvider provider) {
-    return ListView.builder(
-      itemCount: provider.pendingAppsWithJobs.length,
-      itemBuilder: (context, index) {
-        final application = provider.pendingAppsWithJobs.keys.elementAt(index);
-        final job = provider.pendingAppsWithJobs.values.elementAt(index);
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: ListView.builder(
+        itemCount: provider.pendingAppsWithJobs.length,
+        itemBuilder: (context, index) {
+          final application =
+              provider.pendingAppsWithJobs.keys.elementAt(index);
+          final job = provider.pendingAppsWithJobs.values.elementAt(index);
 
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: ListTile(
-            title: Text(job.jobTitle),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(job.jobDescr),
-                const SizedBox(height: 4),
-                Text('Applied on: ${application.appliedAt}'),
-                Text('Status: ${application.applicationStatus}'),
-              ],
-            ),
-            trailing: const Icon(Icons.chevron_right),
-          ),
-        );
-      },
+          String formattedCreatedAt =
+              DateFormat('dd-MM-yyyy | hh:mma').format(application.appliedAt);
+
+          return ShowApplicationsCard(
+            job: job,
+            formattedCreatedAt: formattedCreatedAt,
+            application: application,
+            icon: Icons.access_time_outlined,
+            iconColor: Colors.orange.shade400,
+            statusTagBorderColor: Colors.orange.shade400,
+            statusTextColor: Colors.orange.shade400,
+          );
+        },
+      ),
     );
   }
 }

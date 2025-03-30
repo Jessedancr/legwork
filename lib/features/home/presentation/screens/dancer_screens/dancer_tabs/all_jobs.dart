@@ -61,6 +61,7 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
   //* BUILD METHOD
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return FutureBuilder(
       future: _fetchJobsFuture,
       builder: (context, snapshot) {
