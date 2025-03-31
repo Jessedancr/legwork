@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dartz/dartz.dart';
 import 'package:legwork/Features/home/domain/entities/job_entity.dart';
+import 'package:legwork/Features/job_application/data/data_sources/job_application_remote_data_source.dart';
 
 import 'package:legwork/Features/job_application/data/repo_impl/job_application_repo_impl.dart';
 import 'package:legwork/Features/job_application/domain/business_logic/apply_for_job_business_logic.dart';
@@ -17,6 +18,8 @@ class JobApplicationProvider extends ChangeNotifier {
   late GetJobApplicantsBusinessLogic getJobApplicantsBusinessLogic;
 
   late GetClientDetailsBusinessLogic getClientDetailsBusinessLogic;
+
+  final remoteDataSource = JobApplicationRemoteDataSource();
 
   // Pass it to constructor
   JobApplicationProvider({
@@ -43,17 +46,38 @@ class JobApplicationProvider extends ChangeNotifier {
   // Client details
   Map<String, dynamic>? clientDetails;
 
+  // Dancer details
+  Map<String, dynamic>? dancerDetails;
+
   // Boolean flag to track loading state
   bool isLoading = false;
 
+  // GET CURRENT USER ID
+  Future<Either<String, String>> getUserId() async {
+    try {
+      final userId = await remoteDataSource.getUserId();
+
+      return userId;
+    } catch (e) {
+      debugPrint('Error with getUserId provider: ${e.toString()}');
+      return Left('Error with getUserId provider: ${e.toString()}');
+    }
+  }
+
   /// APPLY FOR JOB
-  Future<Either<String, void>> applyForJob(
+  Future<Either<String, String>> applyForJob(
     JobApplicationEntity application,
   ) async {
     // Instance of job application business logic
     final result =
         await applyForJobBusinessLogic.applyForJobExecute(application);
-    return result;
+    return result.fold(
+      // handle fail
+      (fail) => Left(fail),
+
+      // handle success
+      (applicationId) => Right(applicationId),
+    );
   }
 
   /// FETCH JOB APPLICATIONS FROM BOTH LOCAL AND REMOTE DB
@@ -75,12 +99,29 @@ class JobApplicationProvider extends ChangeNotifier {
         },
 
         // hancle success
-        (applications) {
+        (applications) async {
           allApplications = applications;
 
           isLoading = false;
           notifyListeners();
           return Right(allApplications);
+
+          // Fetch dancer details for each application
+          // for (var app in applications)  {
+          //   final dancerResult = await getDancerDetails(dancerId: app.dancerId);
+          //   dancerResult.fold(
+          //     (error) => debugPrint('Failed to fetch dancer details: $error'),
+          //     (dancerData) {
+          //       app. = dancerData['firstName'] ?? 'Unknown Dancer';
+          //     },
+          //   );
+          // }
+
+          // allApplications = applications;
+
+          // isLoading = false;
+          // notifyListeners();
+          // return Right(allApplications);
         },
       );
     } catch (e) {
@@ -112,6 +153,33 @@ class JobApplicationProvider extends ChangeNotifier {
       debugPrint('An unknown error occured with getClientDetails provider: $e');
       return Left(
           'An unknown error occured with getClientDetails provider: $e');
+    }
+  }
+
+  /// GET DANCER DETAILS
+  Future<Either<String, Map<String, dynamic>>> getDancerDetails({
+    required String dancerId,
+  }) async {
+    try {
+      final result =
+          await jobApplicationRepo.getDancerDetails(dancerId: dancerId);
+
+      return result.fold(
+        // Handle fail
+        (fail) => Left(fail),
+
+        // handle success
+        (data) {
+          dancerDetails = data;
+          debugPrint("Dancer data: ${data.toString()}");
+          notifyListeners();
+          return Right(data);
+        },
+      );
+    } catch (e) {
+      debugPrint('An unknown error occured with getDancerDetails provider: $e');
+      return Left(
+          'An unknown error occured with getDancerDetails provider: $e');
     }
   }
 

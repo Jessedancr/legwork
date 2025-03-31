@@ -109,7 +109,6 @@ void main() async {
             getJobApplicantsBusinessLogic: GetJobApplicantsBusinessLogic(
               jobApplicationRepo: jobApplicationRepo,
             ),
-            
           ),
         )
       ],
@@ -171,9 +170,14 @@ class MyApp extends StatelessWidget {
         '/viewJobApplicantsScreen': (context) {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+
+          // Provide default values if arguments are null or incomplete
+          final jobId = args['jobId'] ?? '';
+          final clientId = args['clientId'] ?? '';
+
           return ViewJobApplicantsScreen(
-            jobId: args['jobId']!,
-            clientId: args['clientId']!,
+            jobId: jobId,
+            clientId: clientId,
           );
         },
         '/job_application_detail': (context) => JobApplicationDetailScreen(),

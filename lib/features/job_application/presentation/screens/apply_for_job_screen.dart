@@ -187,7 +187,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
 
                                     // * Client name
                                     Text(
-                                      organisationName,
+                                      organisationName ?? clientName,
                                       style:
                                           theme.textTheme.bodyLarge?.copyWith(
                                         color: theme.colorScheme.onSurface,
@@ -268,7 +268,9 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                   color: theme.colorScheme.primary,
                                 ),
                                 label: Text(
-                                  'Message $clientName',
+                                  organisationName != null
+                                      ? 'Message $organisationName'
+                                      : 'Message $clientName',
                                   style: theme.textTheme.bodyLarge?.copyWith(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.w500,
@@ -355,10 +357,33 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
 
     showLoadingIndicator(context);
     try {
+      // fetch the currently logged in dancer's ID
+      final dancerIdResult =
+          await Provider.of<JobApplicationProvider>(context, listen: false)
+              .getUserId();
+
+      // Handle the Either result
+      final dancerId = dancerIdResult.fold(
+        (failure) {
+          hideLoadingIndicator(context);
+          debugPrint('Failed to fetch dancer ID: $failure');
+          LegworkSnackbar(
+            title: 'Error',
+            subTitle: 'Failed to fetch your ID: $failure',
+            imageColor: Theme.of(context).colorScheme.onError,
+            contentColor: Theme.of(context).colorScheme.error,
+          ).show(context);
+          return null; // Return null to stop further execution
+        },
+        (id) => id,
+      );
+
+      if (dancerId == null) return; // Stop execution if dancerId is null
+
       // Dancer's application
       final application = JobApplicationEntity(
         jobId: widget.jobId,
-        dancerId: '',
+        dancerId: dancerId,
         clientId: widget.clientId,
         applicationStatus: "pending",
         proposal: proposalController.text,
@@ -384,8 +409,9 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
         },
 
         // Handle success
-        (success) async {
+        (applicationId) async {
           hideLoadingIndicator(context);
+          debugPrint('Application Successful. Application ID: $applicationId');
           debugPrint('Application Successful');
           LegworkSnackbar(
             title: 'Application Successful',

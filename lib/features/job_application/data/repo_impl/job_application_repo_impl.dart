@@ -11,7 +11,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
 
   // APPLY FOR JOB
   @override
-  Future<Either<String, void>> applyForJob(
+  Future<Either<String, String>> applyForJob(
     JobApplicationEntity application,
   ) async {
     final applicationModel = JobApplicationModel(
@@ -71,6 +71,28 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
     } catch (e) {
       debugPrint('An unknown error occured while fetching client details: $e');
       return Left('An unknown error occured while fetching client details: $e');
+    }
+  }
+
+  // FUNCTION TO GET DANCER'S DETAILS USING DANCERID IN APPL
+  // THIS FUNC IS USED TO DISPLAY THE DANCERS NAME, EMAIL AND PHONE NUM ON THE JOB APPL DETAILS SCREEN
+  Future<Either<String, Map<String, dynamic>>> getDancerDetails({
+    required String dancerId,
+  }) async {
+    try {
+      final dancerDetails =
+          await remoteDataSource.getDancerDetails(dancerId: dancerId);
+
+      return dancerDetails.fold(
+        // handle fail
+        (fail) => Left(fail),
+
+        // Handle success
+        (dancerDetails) => Right(dancerDetails),
+      );
+    } catch (e) {
+      debugPrint('An unknown error occured while fetching dancer details: $e');
+      return Left('An unknown error occured while fetching dancer details: $e');
     }
   }
 

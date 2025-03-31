@@ -4,13 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/job_application/data/models/job_application_model.dart';
 
-
 class JobApplicationRemoteDataSource {
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
+  // GET CURRENTLY LOGGED IN USER
+  Future<Either<String, String>> getUserId() async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        return const Left('user not found');
+      }
+      user.uid;
+      return Right(user.uid);
+    } catch (e) {
+      debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
+      return Left('failed to get logged in user\'s ID: ${e.toString()}');
+    }
+  }
+
   // APPLY FOR JOB
-  Future<Either<String, void>> applyForJob(
+  Future<Either<String, String>> applyForJob(
     JobApplicationModel application,
   ) async {
     try {
@@ -62,7 +76,7 @@ class JobApplicationRemoteDataSource {
           .doc(applicationId)
           .set(applicationData);
 
-      return const Right(null);
+      return Right(applicationId);
     } catch (e) {
       return Left("Failed to apply for job: $e");
     }
@@ -106,7 +120,7 @@ class JobApplicationRemoteDataSource {
       await docRef.update({'applicationStatus': 'accepted'});
 
       // Delete the application after accepting
-      await docRef.delete();
+      // await docRef.delete();
 
       debugPrint('Application accepted and deleted successfully');
       return const Right(null);
@@ -260,6 +274,22 @@ class JobApplicationRemoteDataSource {
       return Right(applicationsWithJobs);
     } catch (e) {
       return Left("Failed to fetch accepted applications: $e");
+    }
+  }
+
+  // GET DANCER'S DETAILS WITH DANCERID
+  Future<Either<String, Map<String, dynamic>>> getDancerDetails({
+    required String dancerId,
+  }) async {
+    try {
+      final dancerDoc = await db.collection('dancers').doc(dancerId).get();
+
+      if (!dancerDoc.exists) return const Left('Dancer not found');
+
+      return Right(dancerDoc.data()!);
+    } catch (e) {
+      debugPrint('Failed to fetch dancers details: $e');
+      return Left("Failed to fetch dancers details: $e");
     }
   }
 }

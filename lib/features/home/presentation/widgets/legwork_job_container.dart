@@ -54,7 +54,7 @@ class LegworkJobContainer extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     onTap: onJobTap,
                     splashColor: Theme.of(context).colorScheme.onPrimary,
-                    splashFactory: InkSplash.splashFactory,
+                    splashFactory: InkRipple.splashFactory,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

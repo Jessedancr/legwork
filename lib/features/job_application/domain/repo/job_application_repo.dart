@@ -3,7 +3,7 @@ import '../entities/job_application_entity.dart';
 
 abstract class JobApplicationRepo {
   //* Save a new job application to firebase
-  Future<Either<String, void>> applyForJob(JobApplicationEntity application);
+  Future<Either<String, String>> applyForJob(JobApplicationEntity application);
 
   //* Fetch all job applications for a specific job
   Future<Either<String, List<JobApplicationEntity>>> getJobApplications(
