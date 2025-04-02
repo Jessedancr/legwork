@@ -1,9 +1,14 @@
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:googleapis_auth/auth_io.dart';
+
+import 'dart:io' as io;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 abstract class NotificationRemoteDataSource {
   Future<String?> getDeviceToken();
@@ -86,20 +91,36 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
           'android': {
             'notification': {
               'channel_id': 'high_importance_channel',
-              'priority': 'high',
+              'notification_priority': 'PRIORITY_MAX',
+              'visibility': 'PUBLIC',
               'default_sound': true,
               'default_vibrate_timings': true,
-            }
+              'icon': '@mipmap/ic_launcher',
+              'color': '#FF0000',
+              'sound': 'default'
+            },
+            'priority': 'HIGH'
           },
           'apns': {
+            'headers': {'apns-priority': '10', 'apns-push-type': 'alert'},
             'payload': {
-              'aps': {'sound': 'default', 'badge': 1}
+              'aps': {
+                'alert': {
+                  'title': title,
+                  'body': body,
+                },
+                'badge': 1,
+                'sound': 'default',
+                'content-available': 1,
+                'mutable-content': 1
+              }
             }
           },
           'data': {
             'click_action': 'FLUTTER_NOTIFICATION_CLICK',
             'id': '1',
-            'status': 'done'
+            'status': 'done',
+            'notification_count': '1'
           }
         }
       };
@@ -122,4 +143,86 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       debugPrint('Error sending notification(NRDS): $e');
     }
   }
+
+  // SET UP FLUTTER NOTIFICATION
+  Future<void> setupFlutterNotifications() async {
+    final messaging = FirebaseMessaging.instance;
+
+    await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: false,
+      sound: true,
+    );
+
+    if (!kIsWeb && io.Platform.isAndroid) {
+      const AndroidNotificationChannel channel = AndroidNotificationChannel(
+        'high_importance_channel',
+        'High Importance Notifications',
+        description: 'This channel is used for important notifications.',
+        importance: Importance.max,
+        enableLights: true,
+        ledColor: Colors.deepPurple,
+        enableVibration: true,
+        playSound: true,
+        showBadge: true,
+      );
+
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          FlutterLocalNotificationsPlugin();
+
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(channel);
+
+      // Listen to foreground messages
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
+
+        if (notification != null && android != null) {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channelDescription: channel.description,
+                icon: android.smallIcon ?? '@mipmap/ic_launcher',
+                importance: Importance.max,
+                priority: Priority.high,
+                number: int.parse(message.data['notification_count'] ??
+                    '1'), // Set badge number
+                showWhen: true,
+                enableLights: true,
+                color: const Color.fromARGB(255, 255, 0, 0),
+                visibility: NotificationVisibility.public,
+                playSound: true,
+                enableVibration: true,
+              ),
+            ),
+          );
+        }
+      });
+    }
+
+    // Set badge number when app is in background
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+}
+
+// Add this outside the class
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Initialize Firebase if needed
+  await Firebase.initializeApp();
+
+  // Handle background messages
+  debugPrint('Handling background message: ${message.messageId}');
 }
