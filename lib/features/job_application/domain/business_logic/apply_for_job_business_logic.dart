@@ -7,7 +7,7 @@ class ApplyForJobBusinessLogic {
 
   ApplyForJobBusinessLogic({required this.jobApplicationRepo});
 
-  Future<Either<String, void>> applyForJobExecute(
+  Future<Either<String, String>> applyForJobExecute(
     JobApplicationEntity application,
   ) {
     // todo: implement some business logic and validation rules here

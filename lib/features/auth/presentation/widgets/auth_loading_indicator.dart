@@ -9,9 +9,9 @@ void showLoadingIndicator(BuildContext context) {
         backgroundColor: Colors.transparent,
         content: Center(
           child: CircularProgressIndicator(
-            color: Theme.of(context).colorScheme.inversePrimary,
+            color: Theme.of(context).colorScheme.primary,
             strokeWidth: 3.0,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           ),
         ),
       );

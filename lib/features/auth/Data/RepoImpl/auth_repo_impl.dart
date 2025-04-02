@@ -88,11 +88,13 @@ class AuthRepoImpl implements AuthRepo {
     List<dynamic>? danceStylePrefs, // for clients
     String? organisationName, // for clients
     List<dynamic>? jobOfferings, // for clients
+    required String deviceToken, // Add deviceToken
   }) async {
     try {
       final result = await _authRemoteDataSource.userLogin(
         email: email,
         password: password,
+        deviceToken: deviceToken
       );
 
       // User type check

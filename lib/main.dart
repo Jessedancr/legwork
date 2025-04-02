@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
@@ -18,6 +20,7 @@ import 'package:legwork/Features/job_application/presentation/provider/job_appli
 import 'package:legwork/Features/job_application/presentation/screens/apply_for_job_screen.dart';
 import 'package:legwork/Features/job_application/presentation/screens/job_application_details_screen.dart';
 import 'package:legwork/Features/job_application/presentation/screens/view_job_applicants_screen.dart';
+import 'package:legwork/Features/notifications/data/data_sources/notification_remote_data_source.dart';
 
 import 'package:legwork/core/Constants/color_schemes.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
@@ -65,6 +68,13 @@ void main() async {
   // Firebase setup
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // Instane of Notification remote data source
+  final notificationRemoteDataSource = NotificationRemoteDataSourceImpl(
+    firebaseMessaging: FirebaseMessaging.instance,
+  );
+
+  await notificationRemoteDataSource.setupFlutterNotifications();
+
   // Instance of onboarding repo
   final onboardingRepo = OnboardingRepoImpl();
 
@@ -109,7 +119,6 @@ void main() async {
             getJobApplicantsBusinessLogic: GetJobApplicantsBusinessLogic(
               jobApplicationRepo: jobApplicationRepo,
             ),
-            
           ),
         )
       ],
@@ -171,9 +180,14 @@ class MyApp extends StatelessWidget {
         '/viewJobApplicantsScreen': (context) {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+
+          // Provide default values if arguments are null or incomplete
+          final jobId = args['jobId'] ?? '';
+          final clientId = args['clientId'] ?? '';
+
           return ViewJobApplicantsScreen(
-            jobId: args['jobId']!,
-            clientId: args['clientId']!,
+            jobId: jobId,
+            clientId: clientId,
           );
         },
         '/job_application_detail': (context) => JobApplicationDetailScreen(),

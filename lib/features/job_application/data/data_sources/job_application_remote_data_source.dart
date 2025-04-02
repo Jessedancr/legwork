@@ -1,16 +1,55 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/job_application/data/models/job_application_model.dart';
-
+import 'package:legwork/Features/notifications/data/data_sources/notification_remote_data_source.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class JobApplicationRemoteDataSource {
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  late final NotificationRemoteDataSource notificationRemoteDataSource;
+
+  JobApplicationRemoteDataSource() {
+    notificationRemoteDataSource =
+        NotificationRemoteDataSourceImpl(firebaseMessaging: firebaseMessaging);
+  }
+
+  // GET DANCER DEVICE TOKEN
+  Future<String?> getDancerDeviceToken(String dancerId) async {
+    try {
+      final dancerDoc = await db.collection('dancers').doc(dancerId).get();
+      if (dancerDoc.exists) {
+        return dancerDoc.data()?['deviceToken'];
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching dancer device token: $e');
+      return null;
+    }
+  }
+
+  // GET CURRENTLY LOGGED IN USER
+  Future<Either<String, String>> getUserId() async {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        return const Left('user not found');
+      }
+      user.uid;
+      return Right(user.uid);
+    } catch (e) {
+      debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
+      return Left('failed to get logged in user\'s ID: ${e.toString()}');
+    }
+  }
 
   // APPLY FOR JOB
-  Future<Either<String, void>> applyForJob(
+  Future<Either<String, String>> applyForJob(
     JobApplicationModel application,
   ) async {
     try {
@@ -62,7 +101,7 @@ class JobApplicationRemoteDataSource {
           .doc(applicationId)
           .set(applicationData);
 
-      return const Right(null);
+      return Right(applicationId);
     } catch (e) {
       return Left("Failed to apply for job: $e");
     }
@@ -77,7 +116,7 @@ class JobApplicationRemoteDataSource {
       final snapshot = await db
           .collection('jobApplications')
           .where('jobId', isEqualTo: jobId)
-          .where('applicationStatus', isEqualTo: 'pending')
+          // .where('applicationStatus', isEqualTo: 'pending')
           .get();
 
       final applications = snapshot.docs
@@ -106,9 +145,25 @@ class JobApplicationRemoteDataSource {
       await docRef.update({'applicationStatus': 'accepted'});
 
       // Delete the application after accepting
-      await docRef.delete();
+      // await docRef.delete();
 
-      debugPrint('Application accepted and deleted successfully');
+      // Fetch dancer ID and device token
+      final application = await docRef.get();
+      final dancerId = application.data()?['dancerId'];
+      final deviceToken = await getDancerDeviceToken(dancerId);
+
+      // Send notification
+      if (deviceToken != null) {
+        await notificationRemoteDataSource.sendNotification(
+          deviceToken: deviceToken,
+          title: 'Application Accepted',
+          body: 'Congratulations! Your application has been accepted.',
+        );
+      } else {
+        debugPrint('Device token is null, notification not sent');
+      }
+
+      debugPrint('Application accepted  successfully');
       return const Right(null);
     } catch (e) {
       return Left("Failed to accept application: $e");
@@ -125,12 +180,27 @@ class JobApplicationRemoteDataSource {
       }
 
       // Update the application status to 'rejected'
-      await db
-          .collection('jobApplications')
-          .doc(applicationId)
-          .update({'applicationStatus': 'rejected'});
-
+      final docRef = db.collection('jobApplications').doc(applicationId);
+      await docRef.update({'applicationStatus': 'rejected'});
       debugPrint('Application rejected successfully');
+
+      // Fetch dancer ID and device token
+      final application = await docRef.get();
+      final dancerId = application.data()?['dancerId'];
+      final deviceToken = await getDancerDeviceToken(dancerId);
+
+      // Send notification
+      if (deviceToken != null) {
+        await notificationRemoteDataSource.sendNotification(
+          deviceToken: deviceToken,
+          title: 'Application Rejected',
+          body: 'Unfortunately, your application has been rejected.',
+        );
+      } else {
+        debugPrint('Device token is null, notification not sent');
+      }
+      debugPrint('Application rejected  successfully');
+
       return const Right(null);
     } catch (e) {
       return Left("Failed to reject application: $e");
@@ -260,6 +330,22 @@ class JobApplicationRemoteDataSource {
       return Right(applicationsWithJobs);
     } catch (e) {
       return Left("Failed to fetch accepted applications: $e");
+    }
+  }
+
+  // GET DANCER'S DETAILS WITH DANCERID
+  Future<Either<String, Map<String, dynamic>>> getDancerDetails({
+    required String dancerId,
+  }) async {
+    try {
+      final dancerDoc = await db.collection('dancers').doc(dancerId).get();
+
+      if (!dancerDoc.exists) return const Left('Dancer not found');
+
+      return Right(dancerDoc.data()!);
+    } catch (e) {
+      debugPrint('Failed to fetch dancers details: $e');
+      return Left("Failed to fetch dancers details: $e");
     }
   }
 }

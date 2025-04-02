@@ -22,7 +22,7 @@ class JobApplicationModel extends JobApplicationEntity {
   final String clientId;
 
   @HiveField(4)
-  final String applicationStatus;
+  String applicationStatus;
 
   @HiveField(5)
   final String proposal;
