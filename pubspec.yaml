@@ -54,6 +54,10 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.1
   build_runner: ^2.4.13
+  firebase_messaging: ^15.2.5
+  flutter_local_notifications: ^19.0.0
+  http: ^1.3.0
+  googleapis_auth: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +88,7 @@ flutter:
     - images/depictions/
     - assets/svg/
     - .env
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

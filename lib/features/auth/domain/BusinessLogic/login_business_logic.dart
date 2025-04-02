@@ -14,6 +14,7 @@ class LoginBusinessLogic {
     required String email,
     required String password,
     required String userType,
+    required String deviceToken, // Add deviceToken
   }) async {
     // VALIDATIONS
     if (!email.contains('@')) {
@@ -28,6 +29,7 @@ class LoginBusinessLogic {
         email: email,
         password: password,
         userType: userType,
+        deviceToken: deviceToken,
       );
 
       return result.fold(

@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
@@ -64,6 +68,8 @@ void main() async {
 
   // Firebase setup
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await setupFlutterNotifications();
 
   // Instance of onboarding repo
   final onboardingRepo = OnboardingRepoImpl();
@@ -183,5 +189,69 @@ class MyApp extends StatelessWidget {
         '/job_application_detail': (context) => JobApplicationDetailScreen(),
       },
     );
+  }
+}
+
+Future<void> setupFlutterNotifications() async {
+  // Request permission
+  final messaging = FirebaseMessaging.instance;
+  await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  // Set up notification channels for Android
+  if (Platform.isAndroid) {
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    // Initialize local notifications
+    await flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: DarwinInitializationSettings(),
+      ),
+    );
+
+    // Handle foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      // If notification and Android notification are not null, show local notification
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              icon: android.smallIcon ?? '@mipmap/ic_launcher',
+            ),
+          ),
+        );
+      }
+    });
   }
 }

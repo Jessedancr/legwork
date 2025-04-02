@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/Features/notifications/data/data_sources/notification_remote_data_source.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -22,6 +24,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // final _notificationRemoteDataSourceImpl =
+  //     NotificationRemoteDataSourceImpl(firebaseMessaging: fir);
   // TEXTFORMFIELD KEY
   final formKey = GlobalKey<FormState>();
 
@@ -52,10 +56,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // Attempt login
         try {
+          // Retrieve the device token
+          final deviceToken = await FirebaseMessaging.instance.getToken();
           final result = await authProvider.userlogin(
             email: emailController.text.trim(),
             password: pwController.text.trim(),
             userType: userTypecontroller.text.trim().toLowerCase(),
+            deviceToken: deviceToken!,
           );
 
           if (mounted) hideLoadingIndicator(context);

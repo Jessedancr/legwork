@@ -15,6 +15,7 @@ abstract class AuthRepo {
     required String email,
     required String password,
     String userType,
+    required String deviceToken, // Add deviceToken
   });
 
   // Sign up method

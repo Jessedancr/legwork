@@ -34,6 +34,7 @@ abstract class AuthRemoteDataSource {
   Future<Either<String, dynamic>> userLogin({
     required String email,
     required String password,
+    required String deviceToken, // Add deviceToken
   });
 
   /// USER LOGOUT METHOD
@@ -65,6 +66,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
+    String? deviceToken, // Add deviceToken
   }) async {
     try {
       // Sign dancer in
@@ -98,6 +100,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'danceStylePrefs': danceStylePrefs ?? [],
           'jobOfferings': jobOfferings ?? [],
           'hiringHistory': resume ?? {},
+          'deviceToken': deviceToken, // Save device token
         };
 
         await db.collection('clients').doc(uid).set(clientData);
@@ -122,6 +125,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'profilePicture': profilePicture,
           'bio': bio ?? '',
           'userType': UserType.dancer.name, // Store the userType
+          'deviceToken': deviceToken, // Save device token
         };
 
         await db.collection('dancers').doc(uid).set(dancerData);
@@ -158,6 +162,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<Either<String, dynamic>> userLogin({
     required String email,
     required String password,
+    required String deviceToken, // Add deviceToken
   }) async {
     try {
       // sign User in using the sign in method in firebase auth
@@ -188,6 +193,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         final dancersData = dancersDoc.data() as Map<String, dynamic>;
         final userType = dancersData['userType'];
         if (userType == UserType.dancer.name) {
+          await db
+              .collection('dancers')
+              .doc(uid)
+              .update({'deviceToken': deviceToken});
+          debugPrint('FCM Token: $deviceToken');
           // convert firebase doc to user profile so we can use in the app
           final dancerModel = DancerModel.fromDocument(dancersDoc);
           return Right(dancerModel);
@@ -200,6 +210,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         final clientsData = clientsDoc.data() as Map<String, dynamic>;
         final userType = clientsData['userType'];
         if (userType == UserType.client.name) {
+          await db
+              .collection('clients')
+              .doc(uid)
+              .update({'deviceToken': deviceToken});
+          debugPrint('FCM Token: $deviceToken');
           // convert firebase doc to user profile so we can use in the app
           final clientModel = ClientModel.fromDocument(clientsDoc);
           return Right(clientModel);

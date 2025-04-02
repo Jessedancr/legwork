@@ -125,7 +125,7 @@ class MyAuthProvider extends ChangeNotifier {
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings,
-
+    required String deviceToken, // Add deviceToken
   }) async {
     LoginBusinessLogic loginBusinessLogic =
         LoginBusinessLogic(authRepo: authRepo);
@@ -138,6 +138,7 @@ class MyAuthProvider extends ChangeNotifier {
         email: email,
         password: password,
         userType: userType ?? 'dancer',
+        deviceToken: deviceToken,
       );
 
       return result.fold(
@@ -158,7 +159,6 @@ class MyAuthProvider extends ChangeNotifier {
                 jobPrefs: jobPrefs ?? {},
                 resume: portfolio,
                 userType: userType ?? 'dancer',
-                
               ),
             );
           }

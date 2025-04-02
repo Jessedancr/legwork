@@ -45,3 +45,4 @@ app.*.map.json
 .env
 
 lib/firebase_options.dart
+assets/service-account.json
