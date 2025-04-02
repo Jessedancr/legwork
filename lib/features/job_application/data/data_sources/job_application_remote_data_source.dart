@@ -196,7 +196,11 @@ class JobApplicationRemoteDataSource {
           title: 'Application Rejected',
           body: 'Unfortunately, your application has been rejected.',
         );
+      } else {
+        debugPrint('Device token is null, notification not sent');
       }
+      debugPrint('Application rejected  successfully');
+
       return const Right(null);
     } catch (e) {
       return Left("Failed to reject application: $e");

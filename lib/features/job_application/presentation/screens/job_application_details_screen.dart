@@ -188,6 +188,7 @@ class _JobApplicationDetailScreenState
         final result = await _dataSource.rejectApplication(applicationId);
 
         result.fold(
+          // handle fail
           (error) {
             Navigator.pop(context); // Close loading indicator
             LegworkSnackbar(
@@ -198,6 +199,8 @@ class _JobApplicationDetailScreenState
             ).show(context);
             return Left(error);
           },
+
+          // handle success
           (_) {
             Navigator.pop(context); // Close loading indicator
             LegworkSnackbar(
