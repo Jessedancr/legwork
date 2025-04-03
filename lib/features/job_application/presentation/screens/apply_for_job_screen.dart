@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/Features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/Features/onboarding/presentation/widgets/onboard_button.dart';
@@ -46,6 +49,9 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   void _navigateToClientChat(BuildContext context) {
     // TODO: Implement navigation to chat screen with client
     // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(clientId: widget.clientId)));
+    // Get the dancer and client IDs
+    final dancerId = FirebaseAuth.instance.currentUser!.uid;
+    // final clientId = jobDetails.clientId;
   }
 
   void _navToClientProfile(BuildContext context) {
@@ -285,7 +291,54 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                onPressed: () => _navigateToClientChat(context),
+                                onPressed: () {
+                                  final clientId = widget.clientId;
+                                  final dancerId =
+                                      FirebaseAuth.instance.currentUser!.uid;
+
+                                  // Create a conversation ID
+                                  context
+                                      .read<ChatProvider>()
+                                      .createConversation(
+                                    participants: [dancerId, clientId],
+                                  ).then((result) {
+                                    result.fold(
+                                        // handle fail
+                                        (fail) => LegworkSnackbar(
+                                              title: 'Error',
+                                              subTitle: fail,
+                                              imageColor:
+                                                  theme.colorScheme.onError,
+                                              contentColor:
+                                                  theme.colorScheme.error,
+                                            ).show(context),
+
+                                        // handle success
+                                        (conversation) {
+                                      // Send an initial message
+                                      context
+                                          .read<ChatProvider>()
+                                          .sendMessage(
+                                            conversationId: conversation.id,
+                                            senderId: dancerId,
+                                            receiverId: clientId,
+                                            content:
+                                                "Hi, I'm interested in discussing this job opportunity.",
+                                          )
+                                          .then((_) {
+                                        // Now navigate to chat detail screen
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/chatDetailScreen',
+                                          arguments: {
+                                            'conversationId': conversation.id,
+                                            'otherParticipantId': clientId,
+                                          },
+                                        );
+                                      });
+                                    });
+                                  });
+                                },
                               ),
                               const SizedBox(height: 16),
 

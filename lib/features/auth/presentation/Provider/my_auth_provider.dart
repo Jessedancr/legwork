@@ -19,6 +19,14 @@ class MyAuthProvider extends ChangeNotifier {
     required this.authRepo,
   });
 
+  // Add a private field to store the current user
+  UserEntity? _currentUser;
+
+  // Getter to retrieve the currently logged in user
+  UserEntity? get currentUser => _currentUser;
+
+  String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
+
   /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
     required String firstName,
@@ -62,6 +70,7 @@ class MyAuthProvider extends ChangeNotifier {
         debugPrint(fail);
         return Left(fail);
       }, (userEntity) {
+        _currentUser = userEntity; // Store the user
         debugPrint('user created: $userEntity');
         if (userType == UserType.dancer) {
           return Right(
@@ -147,6 +156,7 @@ class MyAuthProvider extends ChangeNotifier {
 
         // Handle success
         (userEntity) {
+          _currentUser = userEntity; // Store the user
           if (userType == UserType.dancer.name) {
             return Right(
               DancerEntity(

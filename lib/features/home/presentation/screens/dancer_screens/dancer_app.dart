@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_home_screen.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/job_applications_screen.dart';
-import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_messages.dart';
+import 'package:legwork/Features/chat/presentation/screens/dancer_messages.dart';
 import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_profile.dart';
 import 'package:legwork/Features/home/presentation/widgets/dancers_nav_bar.dart';
 import 'package:legwork/Features/home/presentation/widgets/dancers_drawer.dart';
