@@ -1,5 +1,7 @@
+import 'package:dartz/dartz.dart' hide State;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/Features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
@@ -24,6 +26,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
   late ChatProvider _chatProvider;
   late MyAuthProvider _authProvider;
+  // Instance of auth repo
+  final _authRepo = AuthRepoImpl();
 
   @override
   void initState() {
@@ -84,7 +88,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.otherParticipantId), // Ideally show the name here
+        title: FutureBuilder<Either<String, String>>(
+          future: _authRepo.getUsername(userId: widget.otherParticipantId),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Text(
+                snapshot.data!.fold(
+                  (error) => error,
+                  (success) => success,
+                ),
+              );
+            }
+            return const Text('Loading...');
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -118,10 +135,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
                     // Mark message as read if it's not from the current user
                     if (!isMe && !message.isRead) {
-                      // Message ID should now be in the format of conversationId/messageId
                       _chatProvider
                           .markMessageAsRead(messageId: message.id)
-                          .catchError((error) {
+                          .then((_) {
+                        debugPrint('Successfully marked message as read');
+                      }).catchError((error) {
                         debugPrint('Error marking message as read: $error');
                       });
                     }

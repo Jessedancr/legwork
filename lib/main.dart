@@ -167,9 +167,9 @@ class MyApp extends StatelessWidget {
             ),
         '/dancerApp': (context) => DancerApp(),
         '/clientHomeScreen': (context) => ClientHomeScreen(),
-        '/dancerSettingsScreen': (context) => DancerSettingsScreen(),
+        '/dancerSettingsScreen': (context) => const DancerSettingsScreen(),
         '/clientApp': (context) => ClientApp(),
-        '/clientSettingsScreen': (context) => ClientSettingsScreen(),
+        '/clientSettingsScreen': (context) => const ClientSettingsScreen(),
         '/applyForJob': (context) {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, String>;

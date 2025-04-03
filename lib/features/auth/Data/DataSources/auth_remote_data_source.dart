@@ -39,6 +39,9 @@ abstract class AuthRemoteDataSource {
 
   /// USER LOGOUT METHOD
   Future<Either<String, void>> logout();
+
+  /// METHOD TO GET THE USERNAME FROM DOCUMENT
+  Future<Either<String, String>> getUsername({required String userId});
 }
 
 /**
@@ -278,6 +281,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       debugPrint('Error getting user type on app launch: $e');
       return e.toString();
+    }
+  }
+
+  @override
+  Future<Either<String, String>> getUsername({required String userId}) async {
+    try {
+      // the Future.wait method checks both collections at the same time
+      final results = await Future.wait([
+        db.collection('dancers').doc(userId).get(),
+        db.collection('clients').doc(userId).get()
+      ]);
+      final dancersDoc = results[0];
+      final clientsDoc = results[1];
+
+      if (dancersDoc.exists) {
+        return Right(dancersDoc.data()?['username'] ?? 'Unknown dancer');
+      } else if (clientsDoc.exists) {
+        return Right(clientsDoc.data()?['username'] ?? 'Unknown client');
+      }
+      return const Left('User not found');
+    } catch (e) {
+      debugPrint('Error getting username: $e');
+      return const Left('Error getting username');
     }
   }
 }

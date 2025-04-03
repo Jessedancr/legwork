@@ -34,4 +34,7 @@ abstract class AuthRepo {
 
   /// LOGOUT METHOD
   Future<Either<String, void>> userLogout();
+
+  /// METHOD TO GET THE USERNAME FROM DOCUMENT
+  Future<Either<String, String>> getUsername({required String userId});
 }

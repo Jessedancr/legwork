@@ -36,10 +36,15 @@ class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
   Widget build(BuildContext context) {
     // Also update in build
     final userId = _authProvider.currentUserId ?? '';
+
+    // final userUsername = _authProvider.currentUserUsername;
+
     // This implementation is identical to DancerMessages for now
     // You can customize it later based on specific client needs
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         title: const Text('Messages'),
       ),
       body: Consumer<ChatProvider>(
@@ -80,6 +85,7 @@ class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
                   return ConversationListItem(
                     conversation: conversation,
                     currentUserId: userId,
+                    // currentUserUsername: userUsername,
                     onTap: () {
                       Navigator.push(
                         context,

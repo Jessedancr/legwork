@@ -8,6 +8,7 @@ import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_cont
 import 'package:legwork/Features/notifications/data/data_sources/notification_remote_data_source.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
 
 import 'package:provider/provider.dart';
 
@@ -139,19 +140,12 @@ class _LoginScreenState extends State<LoginScreen> {
         } catch (e) {
           // CATCH ANY OTHER ERROR THAT MAY OCCUR
           if (mounted) hideLoadingIndicator(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: LegWorkSnackBarContent(
-                screenHeight: screenHeight,
-                context: context,
-                screenWidth: screenWidth,
-                title: "Oh Snap!",
-                subTitle: 'An unknown error occured',
-                contentColor: Theme.of(context).colorScheme.error,
-                imageColor: Theme.of(context).colorScheme.onError,
-              ),
-            ),
-          );
+          LegworkSnackbar(
+            title: 'Oops!',
+            subTitle: 'An unknown error occurred',
+            imageColor: Theme.of(context).colorScheme.onError,
+            contentColor: Theme.of(context).colorScheme.error,
+          ).show(context);
           debugPrint('Error logging in: $e');
         }
       }

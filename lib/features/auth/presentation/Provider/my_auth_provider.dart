@@ -24,6 +24,7 @@ class MyAuthProvider extends ChangeNotifier {
 
   // Getter to retrieve the currently logged in user
   UserEntity? get currentUser => _currentUser;
+  String? get currentUserUsername => _currentUser?.username;
 
   String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
 

@@ -137,6 +137,9 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       final parts = messageId.split('/');
       final conversationId = parts[0];
       final msgId = parts[1];
+      debugPrint(
+        'Marking message as read - ConversationId: $conversationId, MessageId: $msgId',
+      );
       // MessageId is the actual document ID of the message
       await db
           .collection('conversations')
@@ -144,6 +147,24 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           .collection('messages')
           .doc(msgId)
           .update({'isRead': true});
+
+      // Also update the conversation's hasUnreadMessages if needed
+      final conversationRef =
+          db.collection('conversations').doc(conversationId);
+      final conversationDoc = await conversationRef.get();
+
+      if (conversationDoc.exists) {
+        final messages = await db
+            .collection('conversations')
+            .doc(conversationId)
+            .collection('messages')
+            .where('isRead', isEqualTo: false)
+            .get();
+
+        if (messages.docs.isEmpty) {
+          await conversationRef.update({'hasUnreadMessages': false});
+        }
+      }
 
       return const Right(null);
     } catch (e) {

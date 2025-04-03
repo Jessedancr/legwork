@@ -176,6 +176,15 @@ class ChatProvider extends ChangeNotifier {
 
   // MARK MESSAGE AS READ
   Future<void> markMessageAsRead({required String messageId}) async {
-    await chatRepo.markMessageAsRead(messageId: messageId);
+    try {
+      debugPrint('Chat provider: Marking message as read: $messageId');
+      final result = await chatRepo.markMessageAsRead(messageId: messageId);
+      result.fold(
+        (fail) => debugPrint('Error with markMessageAsRead Provider: $fail'),
+        (success) => debugPrint('Successfully marked message as read'),
+      );
+    } catch (e) {
+      debugPrint('Error with markMessageAsRead Provider: $e');
+    }
   }
 }

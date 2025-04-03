@@ -38,6 +38,8 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
     final userId = _authProvider.currentUserId ?? '';
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         title: const Text('Messages'),
       ),
       body: Consumer<ChatProvider>(
@@ -49,8 +51,6 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
           if (chatProvider.error != null) {
             return Center(child: Text('Error: ${chatProvider.error}'));
           }
-
-          // final userId = _authProvider.currentUser?.email ?? '';
 
           return StreamBuilder<List<ConversationEntity>>(
             stream: chatProvider.listenToConversations(userId: userId),
