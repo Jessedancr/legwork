@@ -103,7 +103,6 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     try {
       // Get conversation ID directly from the parameter
       String conversationId = message.id;
-      debugPrint('Sending message to conversation: $conversationId');
 
       // Create a new message doc without specifiying an ID
       final messageRef = await db
@@ -134,12 +133,16 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     required String messageId,
   }) async {
     try {
+      // Extract conversation ID and message ID from the message path
+      final parts = messageId.split('/');
+      final conversationId = parts[0];
+      final msgId = parts[1];
       // MessageId is the actual document ID of the message
       await db
           .collection('conversations')
-          .doc(messageId.split('/')[0]) // Get conversation ID from path
+          .doc(conversationId) // Get conversation ID from path
           .collection('messages')
-          .doc(messageId)
+          .doc(msgId)
           .update({'isRead': true});
 
       return const Right(null);

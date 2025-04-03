@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/Features/chat/presentation/widgets/conversation_list_item.dart';
 import 'package:provider/provider.dart';
-import 'chat_detail_screen.dart';
 import '../../../../../Features/auth/presentation/Provider/my_auth_provider.dart';
 
-class DancerMessages extends StatefulWidget {
-  const DancerMessages({super.key});
+class ClientMessagesScreen extends StatefulWidget {
+  const ClientMessagesScreen({super.key});
 
   @override
-  State<DancerMessages> createState() => _DancerMessagesState();
+  State<ClientMessagesScreen> createState() => _ClientMessagesScreenState();
 }
 
-class _DancerMessagesState extends State<DancerMessages> {
+class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
   late ChatProvider _chatProvider;
   late MyAuthProvider _authProvider;
 
@@ -36,6 +36,8 @@ class _DancerMessagesState extends State<DancerMessages> {
   Widget build(BuildContext context) {
     // Also update in build
     final userId = _authProvider.currentUserId ?? '';
+    // This implementation is identical to DancerMessages for now
+    // You can customize it later based on specific client needs
     return Scaffold(
       appBar: AppBar(
         title: const Text('Messages'),

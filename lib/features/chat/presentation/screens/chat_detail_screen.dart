@@ -74,7 +74,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     result.fold(
       (fail) => debugPrint('Failed to send message: $fail'),
-      (message) => debugPrint('Message sent: $message'),
+      (message) => debugPrint('Message sent: ${message.content}'),
     );
   }
 
@@ -118,7 +118,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
                     // Mark message as read if it's not from the current user
                     if (!isMe && !message.isRead) {
-                      _chatProvider.markMessageAsRead(messageId: message.id);
+                      // Message ID should now be in the format of conversationId/messageId
+                      _chatProvider
+                          .markMessageAsRead(messageId: message.id)
+                          .catchError((error) {
+                        debugPrint('Error marking message as read: $error');
+                      });
                     }
 
                     return MessageBubble(

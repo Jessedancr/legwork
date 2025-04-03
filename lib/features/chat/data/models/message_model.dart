@@ -19,7 +19,7 @@ class MessageModel extends MessageEntity {
     final data = doc.data() as Map<String, dynamic>;
 
     return MessageModel(
-      id: doc.id,
+      id: '${doc.reference.parent.parent?.id}/${doc.id}', // Include both conversation and message IDs
       senderId: data['senderId'] ?? '',
       receiverId: data['receiverId'] ?? '',
       content: data['content'] ?? '',

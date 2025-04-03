@@ -1,6 +1,9 @@
 import 'package:dartz/dartz.dart' hide State;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/Features/job_application/data/data_sources/job_application_remote_data_source.dart';
 import 'package:legwork/Features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
@@ -396,6 +399,44 @@ class _JobApplicationDetailScreenState
                                 ),
                               ],
                             ),
+
+                            // * BUTTON TO CHAT WITH DANCER
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                // Get the client and dancer IDs
+                                final clientId =
+                                    FirebaseAuth.instance.currentUser!.uid;
+                                // final dancerId = applicantDetails.dancerId;
+
+                                // Create a conversation ID (or fetch existing)
+                                context.read<ChatProvider>().createConversation(
+                                  participants: [clientId, dancerId],
+                                ).then((result) {
+                                  result.fold(
+                                      (error) => ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Error starting chat: $error',
+                                              ),
+                                            ),
+                                          ), (conversation) {
+                                    // Navigate to chat screen
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatDetailScreen(
+                                          conversationId: conversation.id,
+                                          otherParticipantId: dancerId,
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                });
+                              },
+                              icon: const Icon(Icons.chat),
+                              label: const Text('Message Dancer'),
+                            )
                           ],
                         )
                       : Center(

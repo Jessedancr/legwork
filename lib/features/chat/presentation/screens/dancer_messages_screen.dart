@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
-import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/Features/chat/presentation/widgets/conversation_list_item.dart';
 import 'package:provider/provider.dart';
-import '../../../../../Features/auth/presentation/Provider/my_auth_provider.dart';
+import 'chat_detail_screen.dart';
 
-class ClientMessages extends StatefulWidget {
-  const ClientMessages({super.key});
+class DancerMessagesScreen extends StatefulWidget {
+  const DancerMessagesScreen({super.key});
 
   @override
-  State<ClientMessages> createState() => _ClientMessagesState();
+  State<DancerMessagesScreen> createState() => _DancerMessagesScreenState();
 }
 
-class _ClientMessagesState extends State<ClientMessages> {
+class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
   late ChatProvider _chatProvider;
   late MyAuthProvider _authProvider;
-  
+
   @override
   void initState() {
     super.initState();
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
     _authProvider = Provider.of<MyAuthProvider>(context, listen: false);
-    
+
     // Load conversations when the screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final userId = _authProvider.currentUserId ?? '';
@@ -35,9 +35,7 @@ class _ClientMessagesState extends State<ClientMessages> {
   @override
   Widget build(BuildContext context) {
     // Also update in build
-final userId = _authProvider.currentUserId ?? '';
-    // This implementation is identical to DancerMessages for now
-    // You can customize it later based on specific client needs
+    final userId = _authProvider.currentUserId ?? '';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Messages'),
@@ -47,30 +45,31 @@ final userId = _authProvider.currentUserId ?? '';
           if (chatProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          
+
           if (chatProvider.error != null) {
             return Center(child: Text('Error: ${chatProvider.error}'));
           }
-          
+
           // final userId = _authProvider.currentUser?.email ?? '';
-          
+
           return StreamBuilder<List<ConversationEntity>>(
             stream: chatProvider.listenToConversations(userId: userId),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+              if (snapshot.connectionState == ConnectionState.waiting &&
+                  !snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-              
+
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               }
-              
+
               final conversations = snapshot.data ?? [];
-              
+
               if (conversations.isEmpty) {
                 return const Center(child: Text('No conversations yet'));
               }
-              
+
               return ListView.separated(
                 itemCount: conversations.length,
                 separatorBuilder: (context, index) => const Divider(),

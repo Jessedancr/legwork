@@ -129,7 +129,6 @@ class ChatProvider extends ChangeNotifier {
         // handle success
         (message) {
           notifyListeners(); // no need to manually add the message, the stream would handle it
-          debugPrint('Message sent: $message');
         },
       );
       return result;

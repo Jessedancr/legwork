@@ -46,18 +46,51 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   }
 
   // METHOD TO NAVIGATE TO CHAT
-  void _navigateToClientChat(BuildContext context) {
-    // TODO: Implement navigation to chat screen with client
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(clientId: widget.clientId)));
-    // Get the dancer and client IDs
+  void chatWithClient() {
+    final theme = Theme.of(context);
+    final clientId = widget.clientId;
     final dancerId = FirebaseAuth.instance.currentUser!.uid;
-    // final clientId = jobDetails.clientId;
+
+    // Create a conversation ID
+    context.read<ChatProvider>().createConversation(
+      participants: [dancerId, clientId],
+    ).then((result) {
+      result.fold(
+          // handle fail
+          (fail) => LegworkSnackbar(
+                title: 'Error',
+                subTitle: fail,
+                imageColor: theme.colorScheme.onError,
+                contentColor: theme.colorScheme.error,
+              ).show(context),
+
+          // handle success
+          (conversation) {
+        // Send an initial message
+        context
+            .read<ChatProvider>()
+            .sendMessage(
+              conversationId: conversation.id,
+              senderId: dancerId,
+              receiverId: clientId,
+              content: "Hi, I'm interested in discussing this job opportunity.",
+            )
+            .then((_) {
+          // Now navigate to chat detail screen
+          Navigator.pushNamed(
+            context,
+            '/chatDetailScreen',
+            arguments: {
+              'conversationId': conversation.id,
+              'otherParticipantId': clientId,
+            },
+          );
+        });
+      });
+    });
   }
 
-  void _navToClientProfile(BuildContext context) {
-    // TODO: IMPLEMENT NAVIGATION TO CLIENT'S PROFILE
-    debugPrint("Navigate to client's profile");
-  }
+  void _navToClientProfile(BuildContext context) {}
 
   @override
   Widget build(BuildContext context) {
@@ -291,54 +324,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                onPressed: () {
-                                  final clientId = widget.clientId;
-                                  final dancerId =
-                                      FirebaseAuth.instance.currentUser!.uid;
-
-                                  // Create a conversation ID
-                                  context
-                                      .read<ChatProvider>()
-                                      .createConversation(
-                                    participants: [dancerId, clientId],
-                                  ).then((result) {
-                                    result.fold(
-                                        // handle fail
-                                        (fail) => LegworkSnackbar(
-                                              title: 'Error',
-                                              subTitle: fail,
-                                              imageColor:
-                                                  theme.colorScheme.onError,
-                                              contentColor:
-                                                  theme.colorScheme.error,
-                                            ).show(context),
-
-                                        // handle success
-                                        (conversation) {
-                                      // Send an initial message
-                                      context
-                                          .read<ChatProvider>()
-                                          .sendMessage(
-                                            conversationId: conversation.id,
-                                            senderId: dancerId,
-                                            receiverId: clientId,
-                                            content:
-                                                "Hi, I'm interested in discussing this job opportunity.",
-                                          )
-                                          .then((_) {
-                                        // Now navigate to chat detail screen
-                                        Navigator.pushNamed(
-                                          context,
-                                          '/chatDetailScreen',
-                                          arguments: {
-                                            'conversationId': conversation.id,
-                                            'otherParticipantId': clientId,
-                                          },
-                                        );
-                                      });
-                                    });
-                                  });
-                                },
+                                onPressed: chatWithClient,
                               ),
                               const SizedBox(height: 16),
 
