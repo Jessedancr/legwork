@@ -1,14 +1,15 @@
 import 'package:dartz/dartz.dart' hide State;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/Features/job_application/data/data_sources/job_application_remote_data_source.dart';
 import 'package:legwork/Features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
-import 'package:legwork/Features/job_application/presentation/widgets/status_tag.dart';
-import 'package:legwork/Features/notifications/data/data_sources/notification_remote_data_source.dart';
+import 'package:legwork/Features/job_application/presentation/widgets/applicant_info_card.dart';
+import 'package:legwork/Features/job_application/presentation/widgets/job_application_button.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -30,19 +31,10 @@ class _JobApplicationDetailScreenState
   // * INSTANCE OF FIREBASE MESSAGING
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  // * INSTANCE OF NOTIFICATION DATA SOURCE
-  late final NotificationRemoteDataSource _notificationRemoteDataSource;
-
   String? dancerUserName;
   String? dancerProfileImage;
   bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _notificationRemoteDataSource =
-        NotificationRemoteDataSourceImpl(firebaseMessaging: firebaseMessaging);
-  }
+  bool _isChatLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -112,6 +104,70 @@ class _JobApplicationDetailScreenState
         statusIcon = Icons.question_mark;
     }
 
+    // CHAT WITH JOB APPLICANT(DANCER)
+    void chatWithDancer() async {
+      final theme = Theme.of(context);
+      try {
+        setState(() {
+          _isChatLoading = true;
+        });
+
+        // Get the client and dancer IDs
+        final clientId = FirebaseAuth.instance.currentUser!.uid;
+        // final dancerId = applicantDetails.dancerId;
+
+        // Create a conversation ID (or fetch existing)
+        final result = await context.read<ChatProvider>().createConversation(
+          participants: [clientId, dancerId],
+        );
+
+        result.fold(
+            // Handle fail
+            (error) {
+          setState(() {
+            _isChatLoading = false;
+          });
+          LegworkSnackbar(
+            title: 'Oops',
+            subTitle: error,
+            imageColor: theme.colorScheme.onError,
+            contentColor: theme.colorScheme.error,
+          ).show(context);
+        },
+
+            // Handle success
+            (conversation) {
+          // Navigate to chat screen
+          setState(() {
+            _isChatLoading = false;
+          });
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatDetailScreen(
+                conversationId: conversation.id,
+                otherParticipantId: dancerId,
+              ),
+            ),
+          );
+        });
+      } catch (e) {
+        // Handle any unexpected errors
+        setState(() {
+          _isChatLoading = false;
+        });
+
+        if (!mounted) return;
+        LegworkSnackbar(
+          title: 'Error',
+          subTitle: 'An unexpected error occurred. Please try again.',
+          imageColor: theme.colorScheme.onError,
+          contentColor: theme.colorScheme.error,
+        ).show(context);
+      }
+    }
+
+    // ACCEPT JOB APPLICATION
     Future<void> onAcceptApplication(String applicationId) async {
       showLoadingIndicator(context);
       try {
@@ -158,6 +214,7 @@ class _JobApplicationDetailScreenState
       }
     }
 
+    // REJECT JOB APPLICATION
     Future<void> onRejectApplication(String applicationId) async {
       // Show a confirmation dialog first
       final confirm = await showDialog<bool>(
@@ -263,53 +320,11 @@ class _JobApplicationDetailScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //* APPLICANT CARD INFO
-                  Card(
-                    color: colorScheme.surfaceContainer,
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          //* Profile image or placeholder
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundColor: Colors.grey[200],
-                            backgroundImage: dancerProfileImage != null
-                                ? NetworkImage(dancerProfileImage!)
-                                : const AssetImage(
-                                    'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                                  ),
-                            // child: dancerProfileImage == null
-                            //     ? const Icon(
-                            //         Icons.person,
-                            //         size: 32,
-                            //         color: Colors.grey,
-                            //       )
-                            //     : null,
-                          ),
-                          const SizedBox(width: 16),
-
-                          // * username and status tag
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                dancerUserName ?? 'Unknown Dancer',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              StatusTag(status: status),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                  ApplicantInfoCard(
+                    colorScheme: colorScheme,
+                    dancerProfileImage: dancerProfileImage,
+                    dancerUserName: dancerUserName,
+                    status: status,
                   ),
 
                   const SizedBox(height: 24),
@@ -359,113 +374,106 @@ class _JobApplicationDetailScreenState
                               ),
                             ),
                             const SizedBox(height: 16),
+
+                            // * BUTTON TO CHAT WITH DANCER
+                            JobApplicationButton(
+                              isLoading: _isChatLoading,
+                              colorScheme: colorScheme,
+                              textTheme: textTheme,
+                              onPressed: chatWithDancer,
+                              backgroundColor: colorScheme.primaryContainer,
+                              buttonText: 'Message Dancer',
+                              buttonTextColor: colorScheme.onPrimaryContainer,
+                              svgIconPath: '/assets/svg/chat_icon.svg',
+                            ),
+                            const SizedBox(height: 16),
+
                             Row(
                               children: [
+                                // * ACCEPT BUTTON
                                 Expanded(
-                                  child: ElevatedButton.icon(
-                                    icon: const Icon(Icons.check),
-                                    label: const Text("Accept"),
+                                  child: JobApplicationButton(
+                                    isLoading: isLoading,
+                                    colorScheme: colorScheme,
+                                    textTheme: textTheme,
                                     onPressed: () =>
                                         onAcceptApplication(applicationId),
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: Colors.green,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
+                                    backgroundColor: colorScheme.primary,
+                                    buttonText: 'Accept',
+                                    buttonTextColor: colorScheme.onPrimary,
+                                    normalIcon: Icons.check,
+                                    iconColor: colorScheme.onPrimary,
                                   ),
                                 ),
                                 const SizedBox(width: 12),
+
+                                // * REJECT BUTTON
                                 Expanded(
-                                  child: ElevatedButton.icon(
-                                    icon: const Icon(Icons.close),
-                                    label: const Text("Reject"),
+                                  child: JobApplicationButton(
+                                    isLoading: isLoading,
+                                    colorScheme: colorScheme,
+                                    textTheme: textTheme,
                                     onPressed: () =>
                                         onRejectApplication(applicationId),
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: Colors.red,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
+                                    backgroundColor: colorScheme.error,
+                                    buttonText: 'Reject',
+                                    buttonTextColor: colorScheme.onError,
+                                    normalIcon: Icons.close,
+                                    iconColor: colorScheme.onError,
                                   ),
                                 ),
                               ],
                             ),
-
-                            // * BUTTON TO CHAT WITH DANCER
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                // Get the client and dancer IDs
-                                final clientId =
-                                    FirebaseAuth.instance.currentUser!.uid;
-                                // final dancerId = applicantDetails.dancerId;
-
-                                // Create a conversation ID (or fetch existing)
-                                context.read<ChatProvider>().createConversation(
-                                  participants: [clientId, dancerId],
-                                ).then((result) {
-                                  result.fold(
-                                      (error) => ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Error starting chat: $error',
-                                              ),
-                                            ),
-                                          ), (conversation) {
-                                    // Navigate to chat screen
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ChatDetailScreen(
-                                          conversationId: conversation.id,
-                                          otherParticipantId: dancerId,
-                                        ),
-                                      ),
-                                    );
-                                  });
-                                });
-                              },
-                              icon: const Icon(Icons.chat),
-                              label: const Text('Message Dancer'),
-                            )
                           ],
                         )
+
+                      // * SHOW THIS GUY IF STATUS IS ACCEPTED OR REJECTED
                       : Center(
-                          child: Card(
-                            color: statusColor.withOpacity(0.1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // * BUTTON TO CHAT WITH DANCER
+                              JobApplicationButton(
+                                isLoading: _isChatLoading,
+                                colorScheme: colorScheme,
+                                textTheme: textTheme,
+                                onPressed: chatWithDancer,
+                                backgroundColor: colorScheme.primaryContainer,
+                                buttonText: 'Message Dancer',
+                                buttonTextColor: colorScheme.onPrimaryContainer,
+                                svgIconPath: '/assets/svg/chat_icon.svg',
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(statusIcon, color: statusColor),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    "Application is $status",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: statusColor,
-                                    ),
+                              const SizedBox(height: 32),
+
+                              // * STATUS CARD
+                              Card(
+                                color: statusColor.withOpacity(0.1),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
                                   ),
-                                ],
+                                  child: Row(
+                                    // mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(statusIcon, color: statusColor),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        "Application is $status",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: statusColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                 ],

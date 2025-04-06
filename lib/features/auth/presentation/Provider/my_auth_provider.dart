@@ -26,7 +26,7 @@ class MyAuthProvider extends ChangeNotifier {
   UserEntity? get currentUser => _currentUser;
   String? get currentUserUsername => _currentUser?.username;
 
-  String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
+  // String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
 
   /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
@@ -212,5 +212,11 @@ class MyAuthProvider extends ChangeNotifier {
       debugPrint('Error with logout: $e');
       return Left(e.toString());
     }
+  }
+
+  /// GET USER UID
+  String getUserId() {
+    final result = authRepo.getUserId();
+    return result;
   }
 }

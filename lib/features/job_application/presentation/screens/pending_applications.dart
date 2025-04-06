@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+
 import 'package:intl/intl.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/job_application/domain/entities/job_application_entity.dart';
+
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/Features/job_application/presentation/widgets/show_applications_card.dart';
 import 'package:provider/provider.dart';

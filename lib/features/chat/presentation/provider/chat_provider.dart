@@ -36,7 +36,7 @@ class ChatProvider extends ChangeNotifier {
   }) async {
     isLoading = true;
     error = null;
-    notifyListeners();
+    // notifyListeners();
 
     final result = await getConversationsBusinessLogic.execute(userId: userId);
 

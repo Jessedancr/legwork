@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
+
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
-import 'package:legwork/Features/chat/presentation/widgets/conversation_list_item.dart';
+import 'package:legwork/Features/chat/presentation/widgets/conversation_card.dart';
 import 'package:provider/provider.dart';
-import 'chat_detail_screen.dart';
 
 class DancerMessagesScreen extends StatefulWidget {
   const DancerMessagesScreen({super.key});
@@ -14,86 +13,111 @@ class DancerMessagesScreen extends StatefulWidget {
 }
 
 class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
-  late ChatProvider _chatProvider;
-  late MyAuthProvider _authProvider;
-
   @override
   void initState() {
     super.initState();
-    _chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    _authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    _loadConversations();
+  }
 
-    // Load conversations when the screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userId = _authProvider.currentUserId ?? '';
-      if (userId.isNotEmpty) {
-        _chatProvider.loadConversation(userId: userId);
-      }
-    });
+  Future<void> _loadConversations() async {
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    final userId = authProvider.getUserId();
+
+    // Only fetch conversations if they are not already loaded
+    if (chatProvider.conversations.isEmpty &&
+        !chatProvider.isLoading &&
+        userId.isNotEmpty) {
+      await chatProvider.loadConversation(userId: userId);
+    }
+  }
+
+  Future<void> _refreshConversations() async {
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    final userId = authProvider.getUserId();
+
+    if (userId.isNotEmpty) {
+      await chatProvider.loadConversation(userId: userId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Also update in build
-    final userId = _authProvider.currentUserId ?? '';
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        centerTitle: true,
-        title: const Text('Messages'),
+        centerTitle: false,
+        title: Text(
+          'Messages',
+          style: textTheme.headlineSmall?.copyWith(
+            color: colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevation: 0,
+        backgroundColor: colorScheme.surface,
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: colorScheme.primary,
+            ),
+            onPressed: _refreshConversations,
+          ),
+        ],
       ),
       body: Consumer<ChatProvider>(
         builder: (context, chatProvider, child) {
           if (chatProvider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           if (chatProvider.error != null) {
-            return Center(child: Text('Error: ${chatProvider.error}'));
+            return Center(
+              child: Text('Error: ${chatProvider.error}'),
+            );
           }
 
-          return StreamBuilder<List<ConversationEntity>>(
-            stream: chatProvider.listenToConversations(userId: userId),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting &&
-                  !snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+          final conversations = chatProvider.conversations;
 
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
+          if (conversations.isEmpty) {
+            return const Center(
+              child: Text('No conversations yet'),
+            );
+          }
 
-              final conversations = snapshot.data ?? [];
+          return RefreshIndicator(
+            onRefresh: _refreshConversations,
+            child: ListView.builder(
+              itemCount: conversations.length,
+              itemBuilder: (context, index) {
+                final conversation = conversations[index];
+                final userId =
+                    Provider.of<MyAuthProvider>(context, listen: false)
+                        .getUserId();
 
-              if (conversations.isEmpty) {
-                return const Center(child: Text('No conversations yet'));
-              }
-
-              return ListView.separated(
-                itemCount: conversations.length,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final conversation = conversations[index];
-                  return ConversationListItem(
-                    conversation: conversation,
-                    currentUserId: userId,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailScreen(
-                            conversationId: conversation.id,
-                            otherParticipantId: conversation.participants
-                                .firstWhere((id) => id != userId),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              );
-            },
+                return ConversationCard(
+                  conversation: conversation,
+                  currentUserId: userId,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/chatDetailScreen',
+                        arguments: {
+                          'conversationId': conversation.id,
+                          'otherParticipantId':
+                              conversation.participants.firstWhere(
+                            (id) => id != userId,
+                          )
+                        });
+                  },
+                );
+              },
+            ),
           );
         },
       ),
