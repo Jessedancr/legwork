@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/Features/chat/presentation/screens/client_messages_screen.dart';
 import 'package:legwork/Features/home/presentation/screens/client_screens/client_home_screen.dart';
 import 'package:legwork/Features/home/presentation/widgets/clients_nav_bar.dart';
 
-import 'client_messages_screen.dart';
 import 'client_profile_screen.dart';
 
 class ClientApp extends StatefulWidget {
@@ -26,6 +26,7 @@ class _ClientAppState extends State<ClientApp> {
   final List<Widget> screens = [
     ClientHomeScreen(),
     // const PostedJobsScreen(),
+    // const ClientMessagesScreen(),
     const ClientMessagesScreen(),
     const ClientProfileScreen()
   ];

@@ -7,6 +7,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/Features/auth/presentation/Screens/auth_status.dart';
+import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/Features/home/data/models/job_model.dart';
 import 'package:legwork/Features/home/data/repo_impl/job_repo_impl.dart';
 import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
@@ -120,7 +122,8 @@ void main() async {
               jobApplicationRepo: jobApplicationRepo,
             ),
           ),
-        )
+        ),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: MyApp(
         onboardingStatusCheck: onboardingStatusCheck,
@@ -162,11 +165,11 @@ class MyApp extends StatelessWidget {
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
             ),
-        '/dancerApp': (context) => DancerApp(),
+        '/dancerApp': (context) => const DancerApp(),
         '/clientHomeScreen': (context) => ClientHomeScreen(),
-        '/dancerSettingsScreen': (context) => DancerSettingsScreen(),
-        '/clientApp': (context) => ClientApp(),
-        '/clientSettingsScreen': (context) => ClientSettingsScreen(),
+        '/dancerSettingsScreen': (context) => const DancerSettingsScreen(),
+        '/clientApp': (context) => const ClientApp(),
+        '/clientSettingsScreen': (context) => const ClientSettingsScreen(),
         '/applyForJob': (context) {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, String>;
@@ -190,7 +193,19 @@ class MyApp extends StatelessWidget {
             clientId: clientId,
           );
         },
-        '/job_application_detail': (context) => JobApplicationDetailScreen(),
+        '/job_application_detail': (context) =>
+            const JobApplicationDetailScreen(),
+        '/chatDetailScreen': (context) {
+          final args =
+              ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+          final conversationId = args['conversationId'] ?? '';
+          final otherParticipantId = args['otherParticipantId'] ?? '';
+
+          return ChatDetailScreen(
+            conversationId: conversationId,
+            otherParticipantId: otherParticipantId,
+          );
+        }
       },
     );
   }

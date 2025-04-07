@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/Features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/Features/onboarding/presentation/widgets/onboard_button.dart';
@@ -32,6 +34,8 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   final TextEditingController proposalController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool _isChatLoading = false;
+
   // INIT STATE TO FETCH CLIENT DETAILS WHEN THE SCREEN LOADS
   @override
   void initState() {
@@ -43,15 +47,78 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   }
 
   // METHOD TO NAVIGATE TO CHAT
-  void _navigateToClientChat(BuildContext context) {
-    // TODO: Implement navigation to chat screen with client
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(clientId: widget.clientId)));
+  void chatWithClient() async {
+    final theme = Theme.of(context);
+    final clientId = widget.clientId;
+    final dancerId = FirebaseAuth.instance.currentUser!.uid;
+
+    try {
+      setState(() {
+        _isChatLoading = true;
+      });
+
+      // Create a conversation ID
+      final result = await context.read<ChatProvider>().createConversation(
+        participants: [dancerId, clientId],
+      );
+
+      result.fold(
+          // handle fail
+          (fail) {
+        setState(() {
+          _isChatLoading = false;
+        });
+        LegworkSnackbar(
+          title: 'Error',
+          subTitle: fail,
+          imageColor: theme.colorScheme.onError,
+          contentColor: theme.colorScheme.error,
+        ).show(context);
+      },
+
+          // handle success
+          (conversation) async {
+        // Send an initial message
+        await context.read<ChatProvider>().sendMessage(
+              conversationId: conversation.id,
+              senderId: dancerId,
+              receiverId: clientId,
+              content: "Hi, I'm interested in discussing this job opportunity.",
+            );
+
+        // Reset loading state
+        setState(() {
+          _isChatLoading = false;
+        });
+
+        // Navigate to chat screen
+        if (!mounted) return;
+        Navigator.pushNamed(
+          context,
+          '/chatDetailScreen',
+          arguments: {
+            'conversationId': conversation.id,
+            'otherParticipantId': clientId,
+          },
+        );
+      });
+    } catch (e) {
+      // Handle any unexpected errors
+      setState(() {
+        _isChatLoading = false;
+      });
+
+      if (!mounted) return;
+      LegworkSnackbar(
+        title: 'Error',
+        subTitle: 'An unexpected error occurred. Please try again.',
+        imageColor: theme.colorScheme.onError,
+        contentColor: theme.colorScheme.error,
+      ).show(context);
+    }
   }
 
-  void _navToClientProfile(BuildContext context) {
-    // TODO: IMPLEMENT NAVIGATION TO CLIENT'S PROFILE
-    debugPrint("Navigate to client's profile");
-  }
+  void _navToClientProfile(BuildContext context) {}
 
   @override
   Widget build(BuildContext context) {
@@ -267,25 +334,39 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                   Icons.message_outlined,
                                   color: theme.colorScheme.primary,
                                 ),
-                                label: Text(
-                                  organisationName != null
-                                      ? 'Message $organisationName'
-                                      : 'Message $clientName',
-                                  style: theme.textTheme.bodyLarge?.copyWith(
-                                    color: theme.colorScheme.primary,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                                label: _isChatLoading
+                                    ? SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            theme.colorScheme.onSurface,
+                                          ),
+                                        ),
+                                      )
+                                    : Text(
+                                        organisationName != null
+                                            ? 'Message $organisationName'
+                                            : 'Message $clientName',
+                                        style:
+                                            theme.textTheme.bodyLarge?.copyWith(
+                                          color: theme.colorScheme.primary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                 style: OutlinedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 16),
                                   side: BorderSide(
-                                      color: theme.colorScheme.primary),
+                                    color: theme.colorScheme.primary,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                onPressed: () => _navigateToClientChat(context),
+                                onPressed: chatWithClient,
                               ),
                               const SizedBox(height: 16),
 
