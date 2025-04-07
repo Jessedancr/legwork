@@ -165,10 +165,10 @@ class MyApp extends StatelessWidget {
             ClientProfileCompletionFlow(
               email: auth.currentUser!.email ?? '',
             ),
-        '/dancerApp': (context) => DancerApp(),
+        '/dancerApp': (context) => const DancerApp(),
         '/clientHomeScreen': (context) => ClientHomeScreen(),
         '/dancerSettingsScreen': (context) => const DancerSettingsScreen(),
-        '/clientApp': (context) => ClientApp(),
+        '/clientApp': (context) => const ClientApp(),
         '/clientSettingsScreen': (context) => const ClientSettingsScreen(),
         '/applyForJob': (context) {
           final args =
@@ -193,14 +193,18 @@ class MyApp extends StatelessWidget {
             clientId: clientId,
           );
         },
-        '/job_application_detail': (context) => JobApplicationDetailScreen(),
+        '/job_application_detail': (context) =>
+            const JobApplicationDetailScreen(),
         '/chatDetailScreen': (context) {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, String>;
           final conversationId = args['conversationId'] ?? '';
           final otherParticipantId = args['otherParticipantId'] ?? '';
 
-          return ChatDetailScreen(conversationId: conversationId, otherParticipantId: otherParticipantId,);
+          return ChatDetailScreen(
+            conversationId: conversationId,
+            otherParticipantId: otherParticipantId,
+          );
         }
       },
     );

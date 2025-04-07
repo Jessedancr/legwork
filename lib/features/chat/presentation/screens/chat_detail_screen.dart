@@ -1,11 +1,12 @@
-import 'package:dartz/dartz.dart' hide State;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/Features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
-import 'package:legwork/Features/chat/presentation/widgets/message_bubble.dart';
+import 'package:legwork/Features/chat/presentation/widgets/chat_app_bar.dart';
+import 'package:legwork/Features/chat/presentation/widgets/date_header.dart';
+import 'package:legwork/Features/chat/presentation/widgets/message_input.dart';
+import 'package:legwork/Features/chat/presentation/widgets/messages_list.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -22,32 +23,90 @@ class ChatDetailScreen extends StatefulWidget {
   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
+/**
+ * STATE CLASS
+ */
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   late ChatProvider _chatProvider;
   late MyAuthProvider _authProvider;
-  // Instance of auth repo
   final _authRepo = AuthRepoImpl();
+  bool _isTyping = false;
+  bool _showScrollButton = false;
+  String _otherUsername = '';
+  bool _isLoading = true;
 
+  // THIS METHOD RUNS WHEN THE SCREEN IS FIRST CREATED
   @override
   void initState() {
     super.initState();
     _chatProvider = Provider.of<ChatProvider>(context, listen: false);
     _authProvider = Provider.of<MyAuthProvider>(context, listen: false);
 
+    _scrollController.addListener(_scrollPosition);
+
     // Load messages when the screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final currentUserId = _authProvider.getUserId();
       _chatProvider.loadMessages(conversationId: widget.conversationId);
-      final userId = _authProvider.currentUserId ?? '';
+      final userId = currentUserId;
       if (userId.isNotEmpty) {
         _chatProvider.loadConversation(userId: userId);
       }
+
+      // Fetch the other participant's username
+      final result =
+          await _authRepo.getUsername(userId: widget.otherParticipantId);
+      result.fold(
+        (error) => setState(() {
+          _otherUsername = "User";
+          _isLoading = false;
+        }),
+        (username) => setState(() {
+          _otherUsername = username;
+          _isLoading = false;
+        }),
+      );
+    });
+
+    // Listen for typing status changes
+    _messageController.addListener(() {
+      setState(() {
+        _isTyping = _messageController.text.isNotEmpty;
+      });
     });
   }
 
+  // THIS METHOD TRACKS THE SCROLL POSITION OF THE USER
+  void _scrollPosition() {
+    if (_scrollController.position.pixels > 500 && !_showScrollButton) {
+      setState(() {
+        _showScrollButton = true;
+      });
+    } else if (_scrollController.position.pixels <= 500 && _showScrollButton) {
+      setState(() {
+        _showScrollButton = false;
+      });
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  // THIS METHOD RUNS WHEN THE WIDGET IS DESTROYED(WHEN THE USER LEAVES THE SCREEN)
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.removeListener(_scrollPosition);
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -60,14 +119,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     final content = _messageController.text.trim();
     _messageController.clear();
 
-    // Use Firebase UID instead of email
-    final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
-
-    debugPrint(
-        'Attempting to send message to conversation: ${widget.conversationId}');
-    debugPrint(
-        'Sender: $currentUserId, Receiver: ${widget.otherParticipantId}');
-    debugPrint('Content: $content');
+    final currentUserId = _authProvider.getUserId();
 
     final result = await _chatProvider.sendMessage(
       conversationId: widget.conversationId,
@@ -77,127 +129,57 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
 
     result.fold(
-      (fail) => debugPrint('Failed to send message: $fail'),
-      (message) => debugPrint('Message sent: ${message.content}'),
+      (fail) {
+        LegworkSnackbar(
+          title: 'Oopes',
+          subTitle: fail,
+          imageColor: Theme.of(context).colorScheme.onError,
+          contentColor: Theme.of(context).colorScheme.error,
+        ).show(context);
+      },
+      (message) {
+        _scrollToBottom();
+      },
     );
   }
 
+  /// ** BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: FutureBuilder<Either<String, String>>(
-          future: _authRepo.getUsername(userId: widget.otherParticipantId),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Text(
-                snapshot.data!.fold(
-                  (error) => error,
-                  (success) => success,
-                ),
-              );
-            }
-            return const Text('Loading...');
-          },
-        ),
+      backgroundColor: colorScheme.surface,
+
+      // * Appbar
+      appBar: ChatAppBar(
+        theme: theme,
+        isLoading: _isLoading,
+        colorScheme: colorScheme,
+        otherUsername: _otherUsername,
+        chatProvider: _chatProvider,
+        widget: widget,
       ),
+
+      // * Body
       body: Column(
         children: [
+          // Date header
+          DateHeader(theme: theme),
+
           // Messages list
           Expanded(
-            child: StreamBuilder<List<MessageEntity>>(
-              stream: _chatProvider.listenToMessages(
-                  conversationId: widget.conversationId),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting &&
-                    !snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-
-                final messages = snapshot.data ?? [];
-
-                if (messages.isEmpty) {
-                  return const Center(child: Text('No messages yet'));
-                }
-
-                return ListView.builder(
-                  reverse: true,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    final isMe = message.senderId == currentUserId;
-
-                    // Mark message as read if it's not from the current user
-                    if (!isMe && !message.isRead) {
-                      _chatProvider
-                          .markMessageAsRead(messageId: message.id)
-                          .then((_) {
-                        debugPrint('Successfully marked message as read');
-                      }).catchError((error) {
-                        debugPrint('Error marking message as read: $error');
-                      });
-                    }
-
-                    return MessageBubble(
-                      message: message,
-                      isMe: isMe,
-                    );
-                  },
-                );
-              },
+            child: MessageList(
+              conversationId: widget.conversationId,
+              otherParticipantId: widget.otherParticipantId,
             ),
           ),
 
-          // Message input
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                // Attachment button
-                IconButton(
-                  icon: const Icon(Icons.attach_file),
-                  onPressed: () {
-                    // Implement attachment functionality
-                  },
-                ),
-
-                // Text input
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message',
-                      border: InputBorder.none,
-                    ),
-                    minLines: 1,
-                    maxLines: 5,
-                  ),
-                ),
-
-                // Send button
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  color: Theme.of(context).primaryColor,
-                  onPressed: _sendMessage,
-                ),
-              ],
-            ),
+          MessageInput(
+            messageController: _messageController,
+            isTyping: _isTyping,
+            onSendMessage: _sendMessage,
           ),
         ],
       ),

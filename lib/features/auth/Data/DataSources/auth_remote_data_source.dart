@@ -306,6 +306,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return const Left('Error getting username');
     }
   }
+
+  // GET CURRENTLY LOGGED IN USER
+  String getUserId() {
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        return 'user not logged in';
+      }
+      return user.uid;
+    } catch (e) {
+      debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
+      return 'failed to get users uid';
+    }
+  }
 }
 
 /**

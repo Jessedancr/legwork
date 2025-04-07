@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
-import 'package:legwork/Features/auth/Domain/Repos/auth_repo.dart';
 import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
 
 class ConversationListItem extends StatelessWidget {
@@ -35,10 +34,6 @@ class ConversationListItem extends StatelessWidget {
     final isLastMessageFromMe =
         conversation.lastMessageSenderId == currentUserId;
 
-    // Get the username of the other participant
-    // final otherParticipantUsername =
-    //     _authRepo.getUsername(userId: otherParticipantId);
-
     return FutureBuilder<Either<String, String>>(
       future: _authRepo.getUsername(userId: otherParticipantId),
       builder: (context, snapshot) {
@@ -55,12 +50,18 @@ class ConversationListItem extends StatelessWidget {
         }
 
         return ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.tertiary,
+            backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
             child: Text(
               username != 'Loading...' && username.isNotEmpty
                   ? username[0].toUpperCase()
                   : '?',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.surface,
+              ),
             ),
           ),
           title: Text(username),

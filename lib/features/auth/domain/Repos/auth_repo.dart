@@ -37,4 +37,7 @@ abstract class AuthRepo {
 
   /// METHOD TO GET THE USERNAME FROM DOCUMENT
   Future<Either<String, String>> getUsername({required String userId});
+
+  // GET UID
+  String getUserId();
 }

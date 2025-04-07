@@ -166,4 +166,15 @@ class AuthRepoImpl implements AuthRepo {
       return Left(e.toString());
     }
   }
+
+  // GET UID
+  @override
+  String getUserId() {
+    try {
+      final result = _authRemoteDataSource.getUserId();
+      return result;
+    } catch (e) {
+      return 'error getting user id';
+    }
+  }
 }
