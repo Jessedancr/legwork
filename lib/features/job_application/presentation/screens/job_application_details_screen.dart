@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart' hide State;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';

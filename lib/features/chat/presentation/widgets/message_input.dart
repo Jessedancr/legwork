@@ -24,23 +24,6 @@ class MessageInput extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Attachment button
-          Container(
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.attach_file),
-              color: colorScheme.primary,
-              onPressed: () {
-                // Implement the desired functionality for the attachment button here
-                print('Attachment button pressed');
-              },
-            ),
-          ),
-          const SizedBox(width: 8),
-
           // Text input
           Expanded(
             child: Container(

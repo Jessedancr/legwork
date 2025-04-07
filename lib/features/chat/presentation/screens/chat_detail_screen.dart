@@ -48,7 +48,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     // Load messages when the screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final currentUserId = await _authProvider.getUserId();
+      final currentUserId = _authProvider.getUserId();
       _chatProvider.loadMessages(conversationId: widget.conversationId);
       final userId = currentUserId;
       if (userId.isNotEmpty) {
@@ -146,13 +146,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   /// ** BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    // final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    // final textTheme = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: colorScheme.surface,
 
       // * Appbar
       appBar: ChatAppBar(

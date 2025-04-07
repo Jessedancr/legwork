@@ -14,20 +14,20 @@ class JobApplicationButton extends StatelessWidget {
   final Color? iconColor; // Optional icon color
   final Color? svgIconColor;
 
-  const JobApplicationButton(
-      {super.key,
-      required bool isLoading,
-      required this.colorScheme,
-      required this.textTheme,
-      required this.onPressed,
-      required this.backgroundColor,
-      required this.buttonText,
-      required this.buttonTextColor,
-      this.svgIconPath, // Optional SVG icon
-      this.normalIcon, // Optional normal icon
-      this.iconColor,
-      this.svgIconColor})
-      : _isLoading = isLoading;
+  const JobApplicationButton({
+    super.key,
+    required bool isLoading,
+    required this.colorScheme,
+    required this.textTheme,
+    required this.onPressed,
+    required this.backgroundColor,
+    required this.buttonText,
+    required this.buttonTextColor,
+    this.svgIconPath, // Optional SVG icon
+    this.normalIcon, // Optional normal icon
+    this.iconColor,
+    this.svgIconColor,
+  }) : _isLoading = isLoading;
 
   @override
   Widget build(BuildContext context) {
