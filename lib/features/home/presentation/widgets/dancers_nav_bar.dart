@@ -60,9 +60,10 @@ class _DancersNavBarState extends State<DancersNavBar> {
                 end: Alignment.bottomCenter,
               ),
               textStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.surface,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12),
+                color: Theme.of(context).colorScheme.surface,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
               selectedIndex: widget.selectedIndex,
               onTabChange: (index) => widget.onTabChange!(index),

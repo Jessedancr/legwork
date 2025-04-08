@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/Features/home/domain/entities/job_entity.dart';
 import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/widgets/legwork_job_container.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 
 class OpenJobs extends StatefulWidget {
@@ -11,7 +12,8 @@ class OpenJobs extends StatefulWidget {
   State<OpenJobs> createState() => _OpenJobsState();
 }
 
-class _OpenJobsState extends State<OpenJobs> {
+class _OpenJobsState extends State<OpenJobs>
+    with AutomaticKeepAliveClientMixin {
   // PROVIDERS
   late final jobProvider = Provider.of<JobProvider>(context, listen: false);
   late final listeningProvider = Provider.of<JobProvider>(context);
@@ -56,6 +58,8 @@ class _OpenJobsState extends State<OpenJobs> {
   //* BUILD METHOD
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return FutureBuilder(
       future: _fetchJobsFuture,
       builder: (context, snapshot) {
@@ -69,7 +73,6 @@ class _OpenJobsState extends State<OpenJobs> {
                 Text(
                   'Fetching jobs please wait...',
                   style: TextStyle(
-                    fontFamily: 'RobotoSlab',
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
@@ -92,7 +95,6 @@ class _OpenJobsState extends State<OpenJobs> {
             child: Text(
               'Nothing here...YET',
               style: TextStyle(
-                fontFamily: 'RobotoSlab',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -108,8 +110,13 @@ class _OpenJobsState extends State<OpenJobs> {
 
   // BUILD JOBS LIST
   Widget buildJobList(List<JobEntity> jobs) {
-    return RefreshIndicator(
+    final colorScheme = Theme.of(context).colorScheme;
+    return LiquidPullToRefresh(
       onRefresh: _refresh,
+      color: colorScheme.primary,
+      backgroundColor: colorScheme.surface,
+      animSpeedFactor: 3.0,
+      showChildOpacityTransition: false,
       child: ListView.builder(
         itemCount: jobs.length,
         itemBuilder: (context, index) {
@@ -135,4 +142,7 @@ class _OpenJobsState extends State<OpenJobs> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

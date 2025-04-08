@@ -34,7 +34,7 @@ class LegworkOutlineButton extends StatelessWidget {
               style: textTheme.labelLarge?.copyWith(
                 color: colorScheme.primary,
                 fontSize: 16,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w400,
               ),
             ),
       style: OutlinedButton.styleFrom(

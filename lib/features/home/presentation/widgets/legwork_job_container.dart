@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:legwork/Features/job_application/presentation/widgets/job_application_button.dart';
 import 'package:legwork/Features/job_application/presentation/widgets/legwork_outline_button.dart';
 
 class LegworkJobContainer extends StatelessWidget {
@@ -45,7 +44,7 @@ class LegworkJobContainer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header section with gradient background
+            // * HEADER SECTION WITH GRADIENT BACKGROUND
             InkWell(
               onTap: onJobTap,
               child: Container(
@@ -77,7 +76,7 @@ class LegworkJobContainer extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Posted: $formattedDate',
+                              formattedDate,
                               style: TextStyle(
                                 fontSize: 10,
                                 color: colorScheme.onPrimary.withOpacity(0.9),
@@ -108,7 +107,6 @@ class LegworkJobContainer extends StatelessWidget {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 12),
 
                     // Job title
@@ -122,54 +120,52 @@ class LegworkJobContainer extends StatelessWidget {
                         fontSize: 18,
                       ),
                     ),
-
                     const SizedBox(height: 12),
 
                     // Pay + location section
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/svg/usd-circle.svg',
-                                color: colorScheme.onPrimary.withOpacity(0.8),
-                                height: 18,
+                        // Pay with icon
+                        Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/svg/naira_icon.svg',
+                              color: colorScheme.onPrimary.withOpacity(0.8),
+                              height: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              pay,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.onPrimary,
+                                fontSize: 16,
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                pay,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: colorScheme.onPrimary,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              SvgPicture.asset(
-                                'assets/svg/location.svg',
-                                color: colorScheme.onPrimary.withOpacity(0.8),
-                                height: 18,
+
+                        // Location with icon
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/svg/location.svg',
+                              color: colorScheme.onPrimary.withOpacity(0.8),
+                              height: 18,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              jobLocation,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.onPrimary,
+                                fontSize: 16,
                               ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  jobLocation,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: colorScheme.onPrimary,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -178,7 +174,7 @@ class LegworkJobContainer extends StatelessWidget {
               ),
             ),
 
-            // Content section
+            // * CONTENCT SECTION
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -194,7 +190,6 @@ class LegworkJobContainer extends StatelessWidget {
                       color: colorScheme.onSurface,
                     ),
                   ),
-
                   const SizedBox(height: 16),
 
                   // Job details grid

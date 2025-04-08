@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/job_search_bar.dart';
 import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
@@ -21,17 +22,18 @@ class PostJobBottomSheet extends StatefulWidget {
   final TextEditingController amtOfDancersController;
   final TextEditingController jobDescrController;
   final SearchController searchController;
-  const PostJobBottomSheet(
-      {super.key,
-      required this.onPressed,
-      required this.titleController,
-      required this.locationController,
-      required this.danceStylesController,
-      required this.payController,
-      required this.jobDurationController,
-      required this.amtOfDancersController,
-      required this.jobDescrController,
-      required this.searchController});
+  const PostJobBottomSheet({
+    super.key,
+    required this.onPressed,
+    required this.titleController,
+    required this.locationController,
+    required this.danceStylesController,
+    required this.payController,
+    required this.jobDurationController,
+    required this.amtOfDancersController,
+    required this.jobDescrController,
+    required this.searchController,
+  });
 
   @override
   State<PostJobBottomSheet> createState() => _PostJobBottomSheetState();
@@ -60,14 +62,12 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
   Widget build(BuildContext context) {
     // SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     // RETURNED WIDGET
     return SingleChildScrollView(
       child: Container(
         height: screenHeight * 1.5,
         decoration: BoxDecoration(
-          //color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
@@ -154,7 +154,10 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                     hintText: 'Title of job',
                     obscureText: false,
                     controller: widget.titleController,
-                    icon: Image.asset('images/icons/title.png'),
+                    icon: SvgPicture.asset(
+                      'assets/svg/brand.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                     helperText: 'Ex: Dancers for TV commercial',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -170,9 +173,9 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                     hintText: 'Location',
                     obscureText: false,
                     controller: widget.locationController,
-                    icon: Image.asset(
-                      'images/icons/location.png',
-                      //height: 2,
+                    icon: SvgPicture.asset(
+                      'assets/svg/location.svg',
+                      fit: BoxFit.scaleDown,
                     ),
                     helperText: 'Ex: Lekki phase 1',
                     validator: (value) {
@@ -184,21 +187,15 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                   ),
                   const SizedBox(height: 20),
 
-                  // AuthTextFormField(
-                  //   hintText: 'date',
-                  //   obscureText: false,
-                  //   controller: widget.dateController,
-                  //   icon: const Icon(Icons.date_range),
-                  //   onTap: widget.showDatePicker,
-                  // ),
-                  // const SizedBox(height: 20),
-
                   // DANCE STYLES TEXT FIELD
                   AuthTextFormField(
                     hintText: 'dance styles needed',
                     obscureText: false,
                     controller: widget.danceStylesController,
-                    icon: const Icon(Icons.person),
+                    icon: SvgPicture.asset(
+                      'assets/svg/disco_ball.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -208,18 +205,23 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                     hintText: 'Amount of dancers needed',
                     obscureText: false,
                     controller: widget.amtOfDancersController,
-                    icon: const Icon(Icons.numbers),
+                    icon: SvgPicture.asset(
+                      'assets/svg/hashtag_icon.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
                   // REMUNERATION
                   AuthTextFormField(
                     keyboardType: TextInputType.number,
-                    helperText: "How much are you going to pay the dancers?",
                     hintText: 'Dancers pay/remuneration',
                     obscureText: false,
                     controller: widget.payController,
-                    icon: const Icon(Icons.attach_money),
+                    icon: SvgPicture.asset(
+                      'assets/svg/naira_icon.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -229,7 +231,10 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                     helperText: 'How long is the job going to last',
                     obscureText: false,
                     controller: widget.jobDurationController,
-                    icon: const Icon(Icons.timer_outlined),
+                    icon: SvgPicture.asset(
+                      'assets/svg/clock_icon.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                   ),
                   const SizedBox(height: 20),
 
@@ -237,7 +242,10 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                     hintText: 'Job description',
                     obscureText: false,
                     controller: widget.jobDescrController,
-                    icon: const Icon(Icons.description),
+                    icon: SvgPicture.asset(
+                      'assets/svg/description_icon.svg',
+                      fit: BoxFit.scaleDown,
+                    ),
                   ),
 
                   AuthButton(

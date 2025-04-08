@@ -189,29 +189,31 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Job Description',
-                                    style:
-                                        theme.textTheme.headlineSmall?.copyWith(
-                                      color: theme.colorScheme.surface,
-                                      fontWeight: FontWeight.bold,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Job Description',
+                                      style: theme.textTheme.headlineSmall
+                                          ?.copyWith(
+                                        color: theme.colorScheme.surface,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    widget.jobDescr,
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: theme.colorScheme.surface
-                                          .withOpacity(0.9),
-                                      height: 1.5,
-                                      letterSpacing: 0,
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      widget.jobDescr,
+                                      style:
+                                          theme.textTheme.bodyLarge?.copyWith(
+                                        color: theme.colorScheme.surface
+                                            .withOpacity(0.9),
+                                        height: 1.5,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -332,8 +334,9 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                               //* Message Client Button
                               LegworkOutlineButton(
                                 onPressed: chatWithClient,
-                                icon: Icon(
-                                  Icons.message_outlined,
+                                icon: SvgPicture.asset(
+                                  'assets/svg/chat_icon.svg',
+                                  fit: BoxFit.scaleDown,
                                   color: theme.colorScheme.primary,
                                 ),
                                 isLoading: _isChatLoading,

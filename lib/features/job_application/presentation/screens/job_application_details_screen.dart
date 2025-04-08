@@ -113,7 +113,6 @@ class _JobApplicationDetailScreenState
 
         // Get the client and dancer IDs
         final clientId = FirebaseAuth.instance.currentUser!.uid;
-        // final dancerId = applicantDetails.dancerId;
 
         // Create a conversation ID (or fetch existing)
         final result = await context.read<ChatProvider>().createConversation(
@@ -383,7 +382,7 @@ class _JobApplicationDetailScreenState
                               backgroundColor: colorScheme.primaryContainer,
                               buttonText: 'Message Dancer',
                               buttonTextColor: colorScheme.onPrimaryContainer,
-                              svgIconPath: '/assets/svg/chat_icon.svg',
+                              svgIconPath: 'assets/svg/chat_icon.svg',
                             ),
                             const SizedBox(height: 16),
 
@@ -440,7 +439,7 @@ class _JobApplicationDetailScreenState
                                 backgroundColor: colorScheme.primaryContainer,
                                 buttonText: 'Message Dancer',
                                 buttonTextColor: colorScheme.onPrimaryContainer,
-                                svgIconPath: '/assets/svg/chat_icon.svg',
+                                svgIconPath: 'assets/svg/chat_icon.svg',
                               ),
                               const SizedBox(height: 32),
 

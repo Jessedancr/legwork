@@ -187,6 +187,8 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         //* Floating action button
         floatingActionButton: FloatingActionButton(
           onPressed: openJobModalSheet,
+          backgroundColor:
+              Theme.of(context).colorScheme.secondary.withOpacity(0.8),
           child: const Icon(Icons.add),
         ),
 
