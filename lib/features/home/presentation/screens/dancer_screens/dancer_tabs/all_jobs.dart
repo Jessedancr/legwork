@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/Features/home/domain/entities/job_entity.dart';
 import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/Features/home/presentation/widgets/legwork_job_container.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 
 class AllJobs extends StatefulWidget {
@@ -84,7 +85,6 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
             child: Text(
               'Nothing here...YET',
               style: TextStyle(
-                fontFamily: 'RobotoSlab',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -100,8 +100,13 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
 
   // BUILD JOBS LIST
   Widget buildJobList(List<JobEntity> jobs) {
-    return RefreshIndicator(
+    final colorScheme = Theme.of(context).colorScheme;
+    return LiquidPullToRefresh(
       onRefresh: _refresh,
+      color: colorScheme.primary,
+      backgroundColor: colorScheme.surface,
+      animSpeedFactor: 3.0,
+      showChildOpacityTransition: false,
       child: ListView.builder(
         itemCount: jobs.length,
         itemBuilder: (context, index) {

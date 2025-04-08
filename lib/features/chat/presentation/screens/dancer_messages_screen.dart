@@ -4,6 +4,7 @@ import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dar
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/Features/chat/presentation/widgets/conversation_card.dart';
 import 'package:provider/provider.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 class DancerMessagesScreen extends StatefulWidget {
   const DancerMessagesScreen({super.key});
@@ -92,8 +93,12 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
             );
           }
 
-          return RefreshIndicator(
+          return LiquidPullToRefresh(
             onRefresh: _refreshConversations,
+            color: colorScheme.primary,
+            backgroundColor: colorScheme.surface,
+            animSpeedFactor: 3.0,
+            showChildOpacityTransition: false,
             child: ListView.builder(
               itemCount: conversations.length,
               itemBuilder: (context, index) {

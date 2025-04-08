@@ -32,6 +32,7 @@ class AuthTextFormField extends StatelessWidget {
     //SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Stack(
       children: [
@@ -55,42 +56,45 @@ class AuthTextFormField extends StatelessWidget {
                   vertical: screenHeight * 0.01,
                   horizontal: screenWidth * 0.083,
                 ),
-                fillColor: Theme.of(context).colorScheme.surfaceContainer,
+                fillColor: colorScheme.surfaceContainer,
                 helper: Text(
                   helperText ?? '',
-                  style: GoogleFonts.robotoCondensed(
-                    color: Colors.grey,
-                    fontSize: 12,
+                  style: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.5),
+                    fontSize: 10,
                   ),
                 ),
                 filled: true,
                 hintText: hintText,
-                hintStyle: GoogleFonts.robotoSlab(
-                  color: Colors.grey,
+                hintStyle: TextStyle(
+                  color: colorScheme.onSurface.withOpacity(0.3),
                 ),
                 suffixIcon: suffixIcon,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: colorScheme.primary,
                     width: 2.0,
                   ),
                   borderRadius: borderRadius,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: colorScheme.secondary,
                   ),
                   borderRadius: borderRadius,
                 ),
                 errorBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
+                    color: colorScheme.error,
                   ),
                   borderRadius: borderRadius,
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
+                    color: colorScheme.error,
                     width: 2.0,
                   ),
                   borderRadius: borderRadius,
@@ -103,14 +107,13 @@ class AuthTextFormField extends StatelessWidget {
         // Custom leading icon
 
         Positioned(
-          top: -0.9,
           left: 20,
-          bottom: 25,
+          bottom: 20,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40),
             child: Container(
-              width: screenWidth * 0.12,
-              color: Theme.of(context).colorScheme.primaryContainer,
+              padding: const EdgeInsets.all(8),
+              color: colorScheme.primaryContainer,
               child: icon,
             ),
           ),

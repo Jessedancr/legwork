@@ -7,6 +7,7 @@ import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart'
 import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/Features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
+import 'package:legwork/Features/job_application/presentation/widgets/legwork_outline_button.dart';
 import 'package:legwork/Features/onboarding/presentation/widgets/onboard_button.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:provider/provider.dart';
@@ -188,29 +189,31 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Job Description',
-                                    style:
-                                        theme.textTheme.headlineSmall?.copyWith(
-                                      color: theme.colorScheme.surface,
-                                      fontWeight: FontWeight.bold,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Job Description',
+                                      style: theme.textTheme.headlineSmall
+                                          ?.copyWith(
+                                        color: theme.colorScheme.surface,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    widget.jobDescr,
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: theme.colorScheme.surface
-                                          .withOpacity(0.9),
-                                      height: 1.5,
-                                      letterSpacing: 0,
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      widget.jobDescr,
+                                      style:
+                                          theme.textTheme.bodyLarge?.copyWith(
+                                        color: theme.colorScheme.surface
+                                            .withOpacity(0.9),
+                                        height: 1.5,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -329,44 +332,17 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                               const SizedBox(height: 32),
 
                               //* Message Client Button
-                              OutlinedButton.icon(
-                                icon: Icon(
-                                  Icons.message_outlined,
+                              LegworkOutlineButton(
+                                onPressed: chatWithClient,
+                                icon: SvgPicture.asset(
+                                  'assets/svg/chat_icon.svg',
+                                  fit: BoxFit.scaleDown,
                                   color: theme.colorScheme.primary,
                                 ),
-                                label: _isChatLoading
-                                    ? SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                            theme.colorScheme.onSurface,
-                                          ),
-                                        ),
-                                      )
-                                    : Text(
-                                        organisationName != null
-                                            ? 'Message $organisationName'
-                                            : 'Message $clientName',
-                                        style:
-                                            theme.textTheme.bodyLarge?.copyWith(
-                                          color: theme.colorScheme.primary,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                style: OutlinedButton.styleFrom(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  side: BorderSide(
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                onPressed: chatWithClient,
+                                isLoading: _isChatLoading,
+                                buttonText: organisationName != null
+                                    ? 'Message $organisationName'
+                                    : 'Message $clientName',
                               ),
                               const SizedBox(height: 16),
 

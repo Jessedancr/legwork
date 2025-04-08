@@ -25,8 +25,6 @@ class _ClientAppState extends State<ClientApp> {
   // LIST OF SCREENS TO BE SHOWN BY NAV BAR
   final List<Widget> screens = [
     ClientHomeScreen(),
-    // const PostedJobsScreen(),
-    // const ClientMessagesScreen(),
     const ClientMessagesScreen(),
     const ClientProfileScreen()
   ];
@@ -36,7 +34,10 @@ class _ClientAppState extends State<ClientApp> {
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
-        body: screens[selectedIndex],
+        body: IndexedStack(
+          index: selectedIndex,
+          children: screens,
+        ),
         bottomNavigationBar: ClientsNavBar(
           screens: screens,
           selectedIndex: selectedIndex,

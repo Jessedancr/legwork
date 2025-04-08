@@ -13,10 +13,6 @@ class ShowApplicationsCard extends StatelessWidget {
   final JobEntity job;
   final String formattedCreatedAt;
   final JobApplicationEntity application;
-  final Color statusTagBorderColor;
-  final Color iconColor;
-  final Color statusTextColor;
-  final IconData icon;
 
   // Constructor
   const ShowApplicationsCard({
@@ -24,10 +20,6 @@ class ShowApplicationsCard extends StatelessWidget {
     required this.job,
     required this.formattedCreatedAt,
     required this.application,
-    required this.statusTagBorderColor,
-    required this.iconColor,
-    required this.statusTextColor,
-    required this.icon,
   });
 
   @override

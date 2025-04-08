@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AuthButton extends StatelessWidget {
   final void Function()? onPressed;
@@ -21,19 +20,9 @@ class AuthButton extends StatelessWidget {
       height: screenHeight * 0.05,
       width: screenWidth * 0.3,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(40),
-          border: Border.all(
-            width: 2.0,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 20.0,
-              color: Colors.grey,
-              spreadRadius: 2.0,
-              blurStyle: BlurStyle.solid,
-            )
-          ]),
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: BorderRadius.circular(40),
+      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(40),
         onTap: onPressed,
@@ -42,9 +31,9 @@ class AuthButton extends StatelessWidget {
         child: Center(
           child: Text(
             buttonText,
-            style: GoogleFonts.robotoCondensed(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 16,
+              fontSize: 14,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),

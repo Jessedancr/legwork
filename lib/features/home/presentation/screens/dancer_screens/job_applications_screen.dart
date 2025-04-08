@@ -94,7 +94,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
         controller: _tabController,
         children: const [
           PendingApplications(),
-          AccpetedApplications(),
+          AcceptedApplications(),
           RejectedApplications(),
         ],
       ),
