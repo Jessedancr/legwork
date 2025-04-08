@@ -42,6 +42,8 @@ class JobApplicationProvider extends ChangeNotifier {
 
   // Add this to your provider's properties
   Map<JobApplicationEntity, JobEntity> pendingAppsWithJobs = {};
+  Map<JobApplicationEntity, JobEntity> acceptedAppsWithJobs = {};
+  Map<JobApplicationEntity, JobEntity> rejectedAppsWithJobs = {};
 
   // Client details
   Map<String, dynamic>? clientDetails;
@@ -105,23 +107,6 @@ class JobApplicationProvider extends ChangeNotifier {
           isLoading = false;
           notifyListeners();
           return Right(allApplications);
-
-          // Fetch dancer details for each application
-          // for (var app in applications)  {
-          //   final dancerResult = await getDancerDetails(dancerId: app.dancerId);
-          //   dancerResult.fold(
-          //     (error) => debugPrint('Failed to fetch dancer details: $error'),
-          //     (dancerData) {
-          //       app. = dancerData['firstName'] ?? 'Unknown Dancer';
-          //     },
-          //   );
-          // }
-
-          // allApplications = applications;
-
-          // isLoading = false;
-          // notifyListeners();
-          // return Right(allApplications);
         },
       );
     } catch (e) {
@@ -226,7 +211,6 @@ class JobApplicationProvider extends ChangeNotifier {
       getRejectedApplicationsWithJobs() async {
     try {
       isLoading = true;
-      notifyListeners();
 
       final result = await jobApplicationRepo.getRejectedApplicationsWithJobs();
 
@@ -238,10 +222,16 @@ class JobApplicationProvider extends ChangeNotifier {
           return Left(fail);
         },
         // Handle success
-        (rejectedAppsWithJobs) {
+        (rejectedAppsWithJobsList) {
+          // update the map with fetched data
+          rejectedAppsWithJobs = {
+            for (var item in rejectedAppsWithJobsList)
+              JobApplicationEntity.fromMap(item['application']):
+                  JobEntity.fromMap(item['job']),
+          };
           isLoading = false;
           notifyListeners();
-          return Right(rejectedAppsWithJobs);
+          return Right(rejectedAppsWithJobsList);
         },
       );
     } catch (e) {
@@ -257,7 +247,7 @@ class JobApplicationProvider extends ChangeNotifier {
       getAcceptedApplicationsWithJobs() async {
     try {
       isLoading = true;
-      notifyListeners();
+      // notifyListeners();
 
       final result = await jobApplicationRepo.getAcceptedApplicationsWithJobs();
 
@@ -269,10 +259,16 @@ class JobApplicationProvider extends ChangeNotifier {
           return Left(fail);
         },
         // Handle success
-        (acceptedAppsWithJobs) {
+        (acceptedAppsWithJobsList) {
+          // update the map with fetched data
+          acceptedAppsWithJobs = {
+            for (var item in acceptedAppsWithJobsList)
+              JobApplicationEntity.fromMap(item['application']):
+                  JobEntity.fromMap(item['job']),
+          };
           isLoading = false;
           notifyListeners();
-          return Right(acceptedAppsWithJobs);
+          return Right(acceptedAppsWithJobsList);
         },
       );
     } catch (e) {

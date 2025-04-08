@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:legwork/Features/job_application/presentation/widgets/job_application_button.dart';
+import 'package:legwork/Features/job_application/presentation/widgets/legwork_outline_button.dart';
 
 class LegworkJobContainer extends StatelessWidget {
   final void Function()? onJobTap;
@@ -28,141 +30,239 @@ class LegworkJobContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Formatted createdAt
-    String formattedCreatedAt =
-        DateFormat('dd-MM-yyyy | hh:mma').format(createdAt);
+    // Format the created date
+    String formattedDate = DateFormat('MMM dd, yyyy • h:mma').format(createdAt);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    // Returned widget
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Job Details Column (Expanded to avoid overflow)
-              Expanded(
-                child: Ink(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: onJobTap,
-                    splashColor: Theme.of(context).colorScheme.onPrimary,
-                    splashFactory: InkRipple.splashFactory,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Time job was posted
-                        Text(
-                          'Posted: $formattedCreatedAt',
-                          style: GoogleFonts.robotoCondensed(
-                            fontSize: 12,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-
-                        // Title of job (Ellipsis applied)
-                        Text(
-                          jobTitle,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: true,
-                          style: GoogleFonts.robotoSlab(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 18,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-
-                        // Job payment
-                        Text(
-                          'Pay: $pay',
-                          style: GoogleFonts.robotoSlab(
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 16,
-                            letterSpacing: 0.6,
-                          ),
-                        ),
-
-                        // Job location
-                        Text(
-                          'Location: $jobLocation',
-                          style: TextStyle(
-                            fontFamily: 'RobotoSlab',
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 16,
-                            letterSpacing: 0.6,
-                          ),
-                        )
-                      ],
-                    ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header section with gradient background
+            InkWell(
+              onTap: onJobTap,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
                 ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Date posted + Job type
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Posted date with icon
+                        Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/svg/calendar.svg',
+                              color: colorScheme.onPrimary.withOpacity(0.9),
+                              height: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Posted: $formattedDate',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: colorScheme.onPrimary.withOpacity(0.9),
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Job type tag
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.onPrimary.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            jobType,
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Job title
+                    Text(
+                      jobTitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onPrimary,
+                        fontSize: 18,
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Pay + location section
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svg/usd-circle.svg',
+                                color: colorScheme.onPrimary.withOpacity(0.8),
+                                height: 18,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                pay,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: colorScheme.onPrimary,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svg/location.svg',
+                                color: colorScheme.onPrimary.withOpacity(0.8),
+                                height: 18,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  jobLocation,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: colorScheme.onPrimary,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
+            ),
 
-          // Job description (Truncated if needed)
-          Text(
-            jobDescr,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.robotoSlab(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 10),
+            // Content section
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Job description
+                  Text(
+                    jobDescr,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
 
-          // Job details (Dancers needed & duration)
-          Text(
-            'Dancers needed: $amtOfDancers',
-            style: GoogleFonts.robotoSlab(
-              fontSize: 12,
-              fontWeight: FontWeight.w300,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          Text(
-            'Job duration: $jobDuration',
-            style: GoogleFonts.robotoSlab(
-              fontSize: 12,
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-          const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
-          // Job type (Wrapped inside a Flexible container)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Text(
-              jobType,
-              style: GoogleFonts.robotoSlab(
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
-                color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  // Job details grid
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/svg/user.svg',
+                              color: colorScheme.onSurface,
+                              height: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '$amtOfDancers dancers needed',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              size: 16,
+                              color: colorScheme.onSurface,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              jobDuration,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const SizedBox(height: 16),
+
+                  // View Details button
+                  SizedBox(
+                    width: double.infinity,
+                    child: LegworkOutlineButton(
+                      onPressed: onJobTap,
+                      icon: SvgPicture.asset(
+                        'assets/svg/briefcase.svg',
+                        color: colorScheme.onSurface,
+                        height: 20,
+                      ),
+                      buttonText: 'View Details',
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-
-          const SizedBox(height: 10),
-          const Divider(indent: 20.0, endIndent: 20.0),
-        ],
+          ],
+        ),
       ),
     );
   }

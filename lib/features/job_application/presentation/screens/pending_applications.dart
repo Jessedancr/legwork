@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/Features/job_application/presentation/widgets/show_applications_card.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 
 class PendingApplications extends StatefulWidget {
@@ -61,8 +62,12 @@ class _PendingApplicationsState extends State<PendingApplications> {
   }
 
   Widget _buildPendingApplicationsWithJobs(JobApplicationProvider provider) {
-    return RefreshIndicator(
+    return LiquidPullToRefresh(
       onRefresh: _refresh,
+      color: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      animSpeedFactor: 3.0,
+      showChildOpacityTransition: false,
       child: ListView.builder(
         itemCount: provider.pendingAppsWithJobs.length,
         itemBuilder: (context, index) {
@@ -77,10 +82,6 @@ class _PendingApplicationsState extends State<PendingApplications> {
             job: job,
             formattedCreatedAt: formattedCreatedAt,
             application: application,
-            icon: Icons.access_time_outlined,
-            iconColor: Colors.orange.shade400,
-            statusTagBorderColor: Colors.orange.shade400,
-            statusTextColor: Colors.orange.shade400,
           );
         },
       ),

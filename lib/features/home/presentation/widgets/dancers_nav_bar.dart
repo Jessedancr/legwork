@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class NavBarIcons {
@@ -11,6 +10,7 @@ class NavBarIcons {
   static const IconData user = IconData(0xe803, fontFamily: _fontFamily);
 }
 
+// ignore: must_be_immutable
 class DancersNavBar extends StatefulWidget {
   int selectedIndex;
   final List<Widget> screens;
@@ -31,57 +31,60 @@ class _DancersNavBarState extends State<DancersNavBar> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 12.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onSurface,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 8.0,
-            vertical: 5.0,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(40),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onSurface,
+            borderRadius: BorderRadius.circular(40),
           ),
-          child: GNav(
-            tabMargin: const EdgeInsets.only(top: 10, bottom: 10),
-            gap: 8,
-            backgroundColor: Theme.of(context).colorScheme.onSurface,
-            color: Theme.of(context).colorScheme.surface,
-            activeColor: Theme.of(context).colorScheme.surface,
-            tabBackgroundColor: Theme.of(context).colorScheme.secondary,
-            rippleColor: Theme.of(context).colorScheme.primaryFixedDim,
-            tabBackgroundGradient: LinearGradient(
-              colors: [
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.onPrimaryContainer,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8.0,
+              vertical: 5.0,
             ),
-            textStyle: GoogleFonts.robotoSlab(
+            child: GNav(
+              tabMargin: const EdgeInsets.only(top: 10, bottom: 10),
+              gap: 8,
+              backgroundColor: Theme.of(context).colorScheme.onSurface,
               color: Theme.of(context).colorScheme.surface,
-              fontWeight: FontWeight.w600,
+              activeColor: Theme.of(context).colorScheme.surface,
+              tabBackgroundColor: Theme.of(context).colorScheme.secondary,
+              rippleColor: Theme.of(context).colorScheme.primaryFixedDim,
+              tabBackgroundGradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.onPrimaryContainer,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              textStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.surface,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12),
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+              selectedIndex: widget.selectedIndex,
+              onTabChange: (index) => widget.onTabChange!(index),
+              tabs: const [
+                GButton(
+                  icon: NavBarIcons.home,
+                  text: 'Home',
+                ),
+                GButton(
+                  icon: NavBarIcons.briefcase,
+                  text: 'Applications',
+                ),
+                GButton(
+                  icon: NavBarIcons.chat,
+                  text: 'Chats',
+                ),
+                GButton(
+                  icon: NavBarIcons.user,
+                  text: 'Profile',
+                ),
+              ],
             ),
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            selectedIndex: widget.selectedIndex,
-            onTabChange: (index) => widget.onTabChange!(index),
-            tabs: const [
-              GButton(
-                icon: NavBarIcons.home,
-                text: 'Home',
-              ),
-              GButton(
-                icon: NavBarIcons.briefcase,
-                text: 'Applications',
-              ),
-              GButton(
-                icon: NavBarIcons.chat,
-                text: 'Chats',
-              ),
-              GButton(
-                icon: NavBarIcons.user,
-                text: 'Profile',
-              ),
-            ],
           ),
         ),
       ),
