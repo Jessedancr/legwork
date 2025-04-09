@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/home/domain/repos/job_repo.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/domain/repos/job_repo.dart';
 
 class PostJobBusinessLogic {
   final JobRepo jobRepo;

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 
-import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 
 //TODO: IMPLEMENT UPLOADING USER'S PROFILE PICTURE TO FIREBASE STORAGE
 

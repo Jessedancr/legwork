@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/hiring_history_tile.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
-import 'package:legwork/Features/home/presentation/widgets/hiring_history_bottom_sheet.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
+import 'package:legwork/features/auth/presentation/Widgets/hiring_history_tile.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/features/home/presentation/widgets/hiring_history_bottom_sheet.dart';
 
 // WORK EXPERIENCE LIST
 List hiringHistoryList = [];

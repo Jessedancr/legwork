@@ -1,10 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
-import 'package:legwork/Features/auth/Domain/BusinessLogic/resume_business_logic.dart';
-import 'package:legwork/Features/auth/Domain/Entities/resume_entity.dart';
-import 'package:legwork/Features/auth/Domain/Repos/resume_repo.dart';
-
-
+import 'package:legwork/features/auth/Domain/BusinessLogic/resume_business_logic.dart';
+import 'package:legwork/features/auth/Domain/Entities/resume_entity.dart';
+import 'package:legwork/features/auth/Domain/Repos/resume_repo.dart';
 
 class ResumeProvider extends ChangeNotifier {
   // Instance of resume repo

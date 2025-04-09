@@ -2,13 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/Features/auth/presentation/widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
 
 import 'package:provider/provider.dart';
 
@@ -173,7 +173,6 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             child: Form(
               key: formKey,
               child: Column(
-               
                 children: [
                   // Icon
                   Image.asset(

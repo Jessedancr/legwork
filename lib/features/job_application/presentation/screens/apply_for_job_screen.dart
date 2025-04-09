@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
-import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
-import 'package:legwork/Features/job_application/domain/entities/job_application_entity.dart';
-import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
-import 'package:legwork/Features/job_application/presentation/widgets/legwork_outline_button.dart';
-import 'package:legwork/Features/onboarding/presentation/widgets/onboard_button.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
+import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
+import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
+import 'package:legwork/features/job_application/presentation/widgets/legwork_outline_button.dart';
+import 'package:legwork/features/onboarding/presentation/widgets/onboard_button.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:provider/provider.dart';
 

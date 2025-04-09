@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:legwork/Features/home/presentation/widgets/legwork_drawer_tile.dart';
+import 'package:legwork/features/home/presentation/widgets/legwork_drawer_tile.dart';
 
 class DancersDrawer extends StatefulWidget {
   const DancersDrawer({super.key});

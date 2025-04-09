@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/Data/DataSources/auth_remote_data_source.dart';
+import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 
 class UpdateProfileProvider extends ChangeNotifier {
   final UpdateProfile updateProfile = UpdateProfile();

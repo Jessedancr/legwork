@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 
 class LogoutBusinessLogic {
   // Instance of auth repo

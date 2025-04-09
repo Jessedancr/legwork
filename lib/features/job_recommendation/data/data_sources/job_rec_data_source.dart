@@ -3,7 +3,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/material.dart';
-// import 'package:legwork/Features/home/data/data_sources/home_remote_data_source.dart';
+// import 'package:legwork/features/home/data/data_sources/home_remote_data_source.dart';
 // import 'package:tflite/tflite.dart';
 
 // class JobRecService {
@@ -34,7 +34,7 @@
 //   }
 
 //   /**
-//    * THE FOLLOWING MAPPING FUNCTIONS CONVERT JOB FEATURES INTO NUMERICAL VALUES
+//    * THE FOLLOWING MAPPING FUNCTIONS CONVERT JOB features INTO NUMERICAL VALUES
 //    */
 //   Map<String, int> styleMapping = {
 //     'hiphop': 0,
@@ -83,8 +83,8 @@
 //     'Lekki': 28,
 //   };
 
-//   /// CONVERT JOBS TO NUMERICAL FEATURES
-//   List<int> convertJobToFeatures(Map<String, dynamic> job) {
+//   /// CONVERT JOBS TO NUMERICAL features
+//   List<int> convertJobTofeatures(Map<String, dynamic> job) {
 //     // Convert Job features to numerical value, default to -1 if not found
 //     return [
 //       styleMapping[job['danceStyle']] ?? -1, // danceStyle
@@ -94,11 +94,11 @@
 //   }
 
 //   /// USE THE MAPPING FUNCTIONS TO CONVERT THE PREPARED DATA INTO A NUMERICAL FORMAT
-//   List<List<int>> preparedJobFeatures(List<Map<String, dynamic>> jobs) {
-//     return jobs.map((job) => convertJobToFeatures(job)).toList();
+//   List<List<int>> preparedJobfeatures(List<Map<String, dynamic>> jobs) {
+//     return jobs.map((job) => convertJobTofeatures(job)).toList();
 //   }
 
-//   /// CONVERT INPUT FEATURES TO BINARY FORMAT FOR TFLITE
+//   /// CONVERT INPUT features TO BINARY FORMAT FOR TFLITE
 //   Uint8List convertToBinary(List<double> input) {
 //     // Flatten the input and normalize values if needed (depends on model requirements)
 //     // Assuming no normalization is needed here; adjust as required
@@ -160,10 +160,10 @@
 //       final dancerPrefs = await getDancerPrefs();
 
 //       // 2: convert jobs to numerical features
-//       List<List<int>> jobFeatures = preparedJobFeatures(jobs);
+//       List<List<int>> jobfeatures = preparedJobfeatures(jobs);
 
 //       // 3: Pass to the ML model
-//       List<dynamic> predictions = await runModel(jobFeatures);
+//       List<dynamic> predictions = await runModel(jobfeatures);
 
 //       // 4: Filter recommendedjobs based on predictions
 //       Future<List<Map<String, dynamic>>> recommendedJobs =
@@ -182,9 +182,9 @@
 //     }
 //   }
 
-//   /// THE BELOW METHOD PROCESSES THE JOB FEATURES DATA,
+//   /// THE BELOW METHOD PROCESSES THE JOB features DATA,
 //   /// PASSES IT TO THE TFLITE MODEL AND RETURNS PREDICTIONS
-//   Future<List<dynamic>> runModel(List<List<int>> jobFeatures) async {
+//   Future<List<dynamic>> runModel(List<List<int>> jobfeatures) async {
 //     // 1: Load the TFlite model
 //     await Tflite.loadModel(
 //       model: 'assets/model.tflite', // path to model
@@ -194,7 +194,7 @@
 //     List<dynamic> predictions = [];
 
 //     // 2: process each job feature set
-//     for (var features in jobFeatures) {
+//     for (var features in jobfeatures) {
 //       // Convert the features into a format suitable for the model
 //       var input = features
 //           .map((e) => e.toDouble())

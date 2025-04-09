@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
-import 'package:legwork/Features/chat/domain/repo/chat_repo.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/repo/chat_repo.dart';
 
 class GetConversationsBusinessLogic {
   final ChatRepo chatRepo;

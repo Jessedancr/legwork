@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/home/data/repo_impl/job_repo_impl.dart';
-import 'package:legwork/Features/home/domain/business_logic/post_job_business_logic.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/data/repo_impl/job_repo_impl.dart';
+import 'package:legwork/features/home/domain/business_logic/post_job_business_logic.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
 
 class JobProvider extends ChangeNotifier {
   // Instance of job repo

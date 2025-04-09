@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
+import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 
 class WorkExperienceTile extends StatelessWidget {
   final String jobTitle;

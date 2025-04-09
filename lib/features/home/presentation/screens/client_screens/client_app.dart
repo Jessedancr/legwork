@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/chat/presentation/screens/client_messages_screen.dart';
-import 'package:legwork/Features/home/presentation/screens/client_screens/client_home_screen.dart';
-import 'package:legwork/Features/home/presentation/widgets/clients_nav_bar.dart';
+import 'package:legwork/features/chat/presentation/screens/client_messages_screen.dart';
+import 'package:legwork/features/home/presentation/screens/client_screens/client_home_screen.dart';
+import 'package:legwork/features/home/presentation/widgets/clients_nav_bar.dart';
 
 import 'client_profile_screen.dart';
 

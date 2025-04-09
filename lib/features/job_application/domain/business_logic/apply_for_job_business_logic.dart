@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:legwork/Features/job_application/domain/repo/job_application_repo.dart';
+import 'package:legwork/features/job_application/domain/repo/job_application_repo.dart';
 import '../entities/job_application_entity.dart';
 
 class ApplyForJobBusinessLogic {
@@ -13,6 +13,4 @@ class ApplyForJobBusinessLogic {
     // todo: implement some business logic and validation rules here
     return jobApplicationRepo.applyForJob(application);
   }
-
- 
 }

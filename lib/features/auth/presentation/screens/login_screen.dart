@@ -3,8 +3,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 
 import 'package:legwork/core/Enums/user_type.dart';
 

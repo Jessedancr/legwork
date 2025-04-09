@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/job_application/domain/entities/job_application_entity.dart';
-import 'package:legwork/Features/job_application/presentation/widgets/status_tag.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
+import 'package:legwork/features/job_application/presentation/widgets/status_tag.dart';
 
 /**
  * THIS WIDGET IS USED TO SHOW ALL THE DANCER'S APPLICATIONS

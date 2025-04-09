@@ -1,8 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
 
 class ProfileCompletionScreen4 extends StatefulWidget {
   final void Function()? onPressed;

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Provider/update_profile_provider.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
-import 'package:legwork/Features/onboarding/presentation/widgets/page_indicator.dart';
+import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/features/onboarding/presentation/widgets/page_indicator.dart';
 import 'package:provider/provider.dart';
 
 import 'ClientProfileCompletion/profile_completion_screen1.dart';

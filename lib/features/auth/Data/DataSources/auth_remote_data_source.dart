@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/Data/Models/resume_model.dart';
-import 'package:legwork/Features/auth/Data/Models/user_model.dart';
+import 'package:legwork/features/auth/Data/Models/resume_model.dart';
+import 'package:legwork/features/auth/Data/Models/user_model.dart';
 
 import '../../../../core/Enums/user_type.dart';
 

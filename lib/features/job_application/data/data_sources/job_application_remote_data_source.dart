@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/job_application/data/models/job_application_model.dart';
-import 'package:legwork/Features/notifications/data/data_sources/notification_remote_data_source.dart';
+import 'package:legwork/features/job_application/data/models/job_application_model.dart';
+import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class JobApplicationRemoteDataSource {

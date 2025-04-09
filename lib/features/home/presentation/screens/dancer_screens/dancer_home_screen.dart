@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/all_jobs.dart';
-import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
-import 'package:legwork/Features/home/presentation/widgets/dancers_drawer.dart';
+import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/all_jobs.dart';
+import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
+import 'package:legwork/features/home/presentation/widgets/dancers_drawer.dart';
 
 class DancerHomeScreen extends StatefulWidget {
   const DancerHomeScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:legwork/Features/job_application/presentation/widgets/legwork_outline_button.dart';
+import 'package:legwork/features/job_application/presentation/widgets/legwork_outline_button.dart';
 
 class LegworkJobContainer extends StatelessWidget {
   final void Function()? onJobTap;

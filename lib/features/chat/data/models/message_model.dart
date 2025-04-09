@@ -1,4 +1,4 @@
-import 'package:legwork/Features/chat/domain/entites/message_entity.dart';
+import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageModel extends MessageEntity {

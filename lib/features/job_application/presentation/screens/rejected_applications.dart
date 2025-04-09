@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
-import 'package:legwork/Features/job_application/presentation/provider/job_application_provider.dart';
-import 'package:legwork/Features/job_application/presentation/widgets/show_applications_card.dart';
+import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
+import 'package:legwork/features/job_application/presentation/widgets/show_applications_card.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 

@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/core/Enums/user_type.dart';
-import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 class SignUpBusinessLogic {
   // Instance of auth repo

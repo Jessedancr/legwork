@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 import '../../../../core/Enums/user_type.dart';
 

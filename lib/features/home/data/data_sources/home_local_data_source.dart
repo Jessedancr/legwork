@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:legwork/Features/home/data/models/job_model.dart';
+import 'package:legwork/features/home/data/models/job_model.dart';
 
 class LocalJobService {
   static const String boxName = 'jobs_box';

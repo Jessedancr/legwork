@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:dartz/dartz.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/job_application/data/data_sources/job_application_remote_data_source.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/job_application/data/data_sources/job_application_remote_data_source.dart';
 
-import 'package:legwork/Features/job_application/data/repo_impl/job_application_repo_impl.dart';
-import 'package:legwork/Features/job_application/domain/business_logic/apply_for_job_business_logic.dart';
-import 'package:legwork/Features/job_application/domain/business_logic/get_client_details_business_logic.dart';
-import 'package:legwork/Features/job_application/domain/business_logic/get_job_applicants_business_logic.dart';
+import 'package:legwork/features/job_application/data/repo_impl/job_application_repo_impl.dart';
+import 'package:legwork/features/job_application/domain/business_logic/apply_for_job_business_logic.dart';
+import 'package:legwork/features/job_application/domain/business_logic/get_client_details_business_logic.dart';
+import 'package:legwork/features/job_application/domain/business_logic/get_job_applicants_business_logic.dart';
 import '../../domain/entities/job_application_entity.dart';
 
 class JobApplicationProvider extends ChangeNotifier {

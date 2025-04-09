@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/chat/domain/entites/message_entity.dart';
-import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
-import 'package:legwork/Features/chat/presentation/widgets/message_bubble.dart';
+import 'package:legwork/features/chat/domain/entites/message_entity.dart';
+import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/features/chat/presentation/widgets/message_bubble.dart';
 import 'package:provider/provider.dart';
 
 class MessageList extends StatelessWidget {
@@ -25,7 +25,8 @@ class MessageList extends StatelessWidget {
     return StreamBuilder<List<MessageEntity>>(
       stream: chatProvider.listenToMessages(conversationId: conversationId),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            !snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -34,7 +35,8 @@ class MessageList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
+                Icon(Icons.error_outline,
+                    size: 48, color: theme.colorScheme.error),
                 const SizedBox(height: 16),
                 Text(
                   'Error loading messages',
@@ -56,7 +58,8 @@ class MessageList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.chat_bubble_outline, size: 64, color: colorScheme.inverseSurface),
+                Icon(Icons.chat_bubble_outline,
+                    size: 64, color: colorScheme.inverseSurface),
                 const SizedBox(height: 16),
                 Text(
                   'No messages yet',
@@ -68,7 +71,8 @@ class MessageList extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Send a message to start the conversation',
-                  style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurface),
+                  style: textTheme.labelLarge
+                      ?.copyWith(color: colorScheme.onSurface),
                 ),
               ],
             ),
@@ -81,9 +85,14 @@ class MessageList extends StatelessWidget {
           itemCount: messages.length,
           itemBuilder: (context, index) {
             final message = messages[index];
-            final isMe = message.senderId == FirebaseAuth.instance.currentUser?.uid;
+            final isMe =
+                message.senderId == FirebaseAuth.instance.currentUser?.uid;
             final showTimestamp = index == 0 ||
-                messages[index].timeStamp.difference(messages[index - 1].timeStamp).inHours >= 12;
+                messages[index]
+                        .timeStamp
+                        .difference(messages[index - 1].timeStamp)
+                        .inHours >=
+                    12;
 
             return Column(
               children: [
@@ -92,7 +101,8 @@ class MessageList extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       _formatTime(message.timeStamp),
-                      style: textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                      style: textTheme.labelSmall
+                          ?.copyWith(color: colorScheme.onSurfaceVariant),
                     ),
                   ),
                 MessageBubble(message: message, isMe: isMe),
@@ -108,7 +118,8 @@ class MessageList extends StatelessWidget {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
-    final dateToCheck = DateTime(timestamp.year, timestamp.month, timestamp.day);
+    final dateToCheck =
+        DateTime(timestamp.year, timestamp.month, timestamp.day);
 
     if (dateToCheck == today) {
       return 'Today at ${_formatTimeOnly(timestamp)}';

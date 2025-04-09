@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 
-import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
-import 'package:legwork/Features/chat/presentation/widgets/conversation_card.dart';
+import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/features/chat/presentation/widgets/conversation_card.dart';
 import 'package:provider/provider.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 

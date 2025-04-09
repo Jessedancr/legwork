@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'conversation_list_item.dart';
 
 class ConversationCard extends StatelessWidget {
@@ -11,7 +11,8 @@ class ConversationCard extends StatelessWidget {
     super.key,
     required this.conversation,
     required this.currentUserId,
-    required this.onTap, String? highlightText,
+    required this.onTap,
+    String? highlightText,
   });
 
   @override

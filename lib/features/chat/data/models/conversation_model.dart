@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 
 class ConversationModel extends ConversationEntity {
   // Constructor

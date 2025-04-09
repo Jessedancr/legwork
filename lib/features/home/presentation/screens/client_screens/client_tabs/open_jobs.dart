@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
-import 'package:legwork/Features/home/presentation/widgets/legwork_job_container.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/presentation/provider/job_provider.dart';
+import 'package:legwork/features/home/presentation/widgets/legwork_job_container.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:provider/provider.dart';
 

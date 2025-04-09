@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/job_application/domain/repo/job_application_repo.dart';
+import 'package:legwork/features/job_application/domain/repo/job_application_repo.dart';
 import '../../domain/entities/job_application_entity.dart';
 import '../data_sources/job_application_remote_data_source.dart';
 import '../models/job_application_model.dart';

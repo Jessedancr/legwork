@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/job_search_bar.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
+import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
+import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/Widgets/job_tile.dart';
 import 'package:legwork/core/Constants/lagos_locations.dart';
 
 // Track selected skills
@@ -40,7 +40,6 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
     //SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-
 
     // RETURNED WIDGET
     return SafeArea(

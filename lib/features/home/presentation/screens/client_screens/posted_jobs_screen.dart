@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_button.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_button.dart';
 
 class PostedJobsScreen extends StatefulWidget {
   const PostedJobsScreen({super.key});

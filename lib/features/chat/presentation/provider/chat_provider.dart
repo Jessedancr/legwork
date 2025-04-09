@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/chat/data/repo_impl/chat_repo_impl.dart';
-import 'package:legwork/Features/chat/domain/business_logic/get_conversations_business_logic.dart';
-import 'package:legwork/Features/chat/domain/business_logic/get_messages_business_logic.dart';
-import 'package:legwork/Features/chat/domain/business_logic/send_message_business_logic.dart';
-import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
-import 'package:legwork/Features/chat/domain/entites/message_entity.dart';
+import 'package:legwork/features/chat/data/repo_impl/chat_repo_impl.dart';
+import 'package:legwork/features/chat/domain/business_logic/get_conversations_business_logic.dart';
+import 'package:legwork/features/chat/domain/business_logic/get_messages_business_logic.dart';
+import 'package:legwork/features/chat/domain/business_logic/send_message_business_logic.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 
 class ChatProvider extends ChangeNotifier {
   // INSTANCE OF CHAT REPO IMPL

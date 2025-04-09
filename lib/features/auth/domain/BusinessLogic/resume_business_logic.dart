@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:legwork/Features/auth/Domain/Entities/resume_entity.dart';
-import 'package:legwork/Features/auth/Domain/Repos/resume_repo.dart';
+import 'package:legwork/features/auth/Domain/Entities/resume_entity.dart';
+import 'package:legwork/features/auth/Domain/Repos/resume_repo.dart';
 
 class ResumeBusinessLogic {
   // Instance of resume repo

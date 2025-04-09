@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/job_search_bar.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/job_tile.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
-import 'package:legwork/Features/auth/presentation/widgets/auth_button.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/Widgets/job_tile.dart';
+import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
 
 // TEXTFORMFIELD KEY

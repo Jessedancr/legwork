@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
 
 /**
  * THIS CLASS INTERFACES BETWEEN THE DATA LAYER AND THE APP'S BUSINESS LOGIC

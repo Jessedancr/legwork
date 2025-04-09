@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:legwork/Features/auth/Data/RepoImpl/auth_repo_impl.dart';
-import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 
 class ConversationListItem extends StatelessWidget {
   final ConversationEntity conversation;

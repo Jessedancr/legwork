@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_button.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_button.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
+import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 
 // TEXTFORMFIELD KEY
 final formKey = GlobalKey<FormState>();

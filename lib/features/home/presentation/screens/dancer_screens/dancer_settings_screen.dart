@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
-import 'package:legwork/Features/auth/presentation/widgets/auth_button.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:provider/provider.dart';
 
 class DancerSettingsScreen extends StatefulWidget {

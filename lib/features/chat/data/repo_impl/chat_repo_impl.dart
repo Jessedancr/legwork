@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
-import 'package:legwork/Features/chat/data/data_sources/chat_remote_data_source.dart';
-import 'package:legwork/Features/chat/data/models/message_model.dart';
-import 'package:legwork/Features/chat/domain/entites/conversation_entity.dart';
-import 'package:legwork/Features/chat/domain/entites/message_entity.dart';
-import 'package:legwork/Features/chat/domain/repo/chat_repo.dart';
+import 'package:legwork/features/chat/data/data_sources/chat_remote_data_source.dart';
+import 'package:legwork/features/chat/data/models/message_model.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/message_entity.dart';
+import 'package:legwork/features/chat/domain/repo/chat_repo.dart';
 
 class ChatRepoImpl implements ChatRepo {
   // INSTANCE OF CHAT REMOTE DATA SOURCE

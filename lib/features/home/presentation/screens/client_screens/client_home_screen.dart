@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/home/presentation/provider/job_provider.dart';
-import 'package:legwork/Features/home/presentation/screens/client_screens/client_tabs/open_jobs.dart';
-import 'package:legwork/Features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
-import 'package:legwork/Features/home/presentation/widgets/clients_drawer.dart';
-import 'package:legwork/Features/home/presentation/widgets/post_job_bottom_sheet.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/presentation/provider/job_provider.dart';
+import 'package:legwork/features/home/presentation/screens/client_screens/client_tabs/open_jobs.dart';
+import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
+import 'package:legwork/features/home/presentation/widgets/clients_drawer.dart';
+import 'package:legwork/features/home/presentation/widgets/post_job_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 class ClientHomeScreen extends StatefulWidget {

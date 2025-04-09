@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/chat/data/models/conversation_model.dart';
-import 'package:legwork/Features/chat/data/models/message_model.dart';
+import 'package:legwork/features/chat/data/models/conversation_model.dart';
+import 'package:legwork/features/chat/data/models/message_model.dart';
 
 /**
  * THIS ABSTRACY CLASS DEFINES WHAT OPERATIONS IT'S IMPLEMENTATION CAN CARRY OUT

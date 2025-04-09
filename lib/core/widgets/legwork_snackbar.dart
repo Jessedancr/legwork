@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 
 class LegworkSnackbar extends StatelessWidget {
   final String title;

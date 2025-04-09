@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/chat/domain/entites/message_entity.dart';
-import 'package:legwork/Features/chat/presentation/provider/chat_provider.dart';
-import 'package:legwork/Features/chat/presentation/screens/chat_detail_screen.dart';
+import 'package:legwork/features/chat/domain/entites/message_entity.dart';
+import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ThemeData theme;

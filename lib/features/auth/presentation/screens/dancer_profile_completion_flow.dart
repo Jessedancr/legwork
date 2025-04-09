@@ -1,13 +1,13 @@
 //import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/presentation/Provider/update_profile_provider.dart';
-import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen1.dart';
-import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen5.dart';
-import 'package:legwork/Features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen3.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/auth_loading_indicator.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_elevated_button.dart';
-import 'package:legwork/Features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
+import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen1.dart';
+import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen5.dart';
+import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen3.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:provider/provider.dart';
 
 import '../../../onboarding/presentation/widgets/page_indicator.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/onboarding/domain/onboarding_status_check.dart';
+import 'package:legwork/features/onboarding/domain/onboarding_status_check.dart';
 
 import '../widgets/onboard_button.dart';
 import '../widgets/page_indicator.dart';

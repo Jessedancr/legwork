@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
+import 'package:legwork/features/auth/domain/Repos/auth_repo.dart';
 
 class LoginBusinessLogic {
   // Instance of auth repo

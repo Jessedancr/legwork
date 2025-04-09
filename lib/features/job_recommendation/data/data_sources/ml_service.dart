@@ -18,14 +18,14 @@
 //   }
 
 //   /// Run the model on job features and get predictions
-//   Future<List<double>> runModel(List<double> inputFeatures) async {
+//   Future<List<double>> runModel(List<double> inputfeatures) async {
 //     if (_interpreter == null) {
 //       debugPrint("Model not loaded!");
 //       return [];
 //     }
 
 //     // Convert input to the required format
-//     var input = [inputFeatures];  // Model expects a batch (2D array)
+//     var input = [inputfeatures];  // Model expects a batch (2D array)
 //     var output = List.filled(1, List.filled(1, 0.0));  // Adjust based on model output shape
 
 //     // Run inference

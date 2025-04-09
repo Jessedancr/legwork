@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/auth/domain/Repos/auth_repo.dart';
+import 'package:legwork/features/auth/domain/Repos/auth_repo.dart';
 import 'package:legwork/core/Enums/user_type.dart';
-import 'package:legwork/Features/auth/Data/Models/user_model.dart';
-import 'package:legwork/Features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/Data/Models/user_model.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 import '../DataSources/auth_remote_data_source.dart';
 

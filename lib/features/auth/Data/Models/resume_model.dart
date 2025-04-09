@@ -1,4 +1,4 @@
-import 'package:legwork/Features/auth/Domain/Entities/resume_entity.dart';
+import 'package:legwork/features/auth/Domain/Entities/resume_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ResumeModel extends ResumeEntity {

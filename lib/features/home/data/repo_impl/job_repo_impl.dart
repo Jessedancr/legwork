@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/home/data/data_sources/home_local_data_source.dart';
-import 'package:legwork/Features/home/data/data_sources/home_remote_data_source.dart';
-import 'package:legwork/Features/home/data/models/job_model.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
-import 'package:legwork/Features/home/domain/repos/job_repo.dart';
+import 'package:legwork/features/home/data/data_sources/home_local_data_source.dart';
+import 'package:legwork/features/home/data/data_sources/home_remote_data_source.dart';
+import 'package:legwork/features/home/data/models/job_model.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/domain/repos/job_repo.dart';
 
 /**
  * THIS CLASS IMPLEMENTS THE JOB REPO CLASS

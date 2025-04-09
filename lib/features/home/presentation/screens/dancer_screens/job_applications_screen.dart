@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/job_application/presentation/screens/accpeted_applications.dart';
-import 'package:legwork/Features/job_application/presentation/screens/pending_applications.dart';
-import 'package:legwork/Features/job_application/presentation/screens/rejected_applications.dart';
+import 'package:legwork/features/job_application/presentation/screens/accpeted_applications.dart';
+import 'package:legwork/features/job_application/presentation/screens/pending_applications.dart';
+import 'package:legwork/features/job_application/presentation/screens/rejected_applications.dart';
 
 class JobApplicationsScreen extends StatefulWidget {
   const JobApplicationsScreen({super.key});

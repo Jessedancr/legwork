@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/Features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 
