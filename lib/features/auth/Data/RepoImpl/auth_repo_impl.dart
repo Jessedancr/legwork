@@ -177,4 +177,13 @@ class AuthRepoImpl implements AuthRepo {
       return 'error getting user id';
     }
   }
+
+  String getUserEmail() {
+    try {
+      final result = _authRemoteDataSource.getUserEmail();
+      return result;
+    } catch (e) {
+      return 'error getting user email';
+    }
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart' hide State;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
@@ -75,6 +77,10 @@ class _JobApplicationDetailScreenState
 
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    final clientId = authProvider.getUserId();
+    final clientEmail = authProvider.getUserEmail();
 
     final String dancerId = app.dancerId;
     final String proposal = app.proposal;
@@ -287,6 +293,19 @@ class _JobApplicationDetailScreenState
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/paymentScreen', arguments: {
+            'dancerId': dancerId,
+            'clientId': clientId,
+            // 'applicationId': applicationId,
+            'amount': 100.0,
+            'email': clientEmail
+          });
+        },
+        child: const Icon(Icons.payment),
+      ),
 
       // * APPBAR
       appBar: AppBar(

@@ -47,84 +47,86 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        title: Text(
-          'Messages',
-          style: textTheme.headlineSmall?.copyWith(
-            color: colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0,
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: colorScheme.surface,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.refresh,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: false,
+          title: Text(
+            'Messages',
+            style: textTheme.headlineSmall?.copyWith(
               color: colorScheme.primary,
+              fontWeight: FontWeight.bold,
             ),
-            onPressed: _refreshConversations,
           ),
-        ],
-      ),
-      body: Consumer<ChatProvider>(
-        builder: (context, chatProvider, child) {
-          if (chatProvider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (chatProvider.error != null) {
-            return Center(
-              child: Text('Error: ${chatProvider.error}'),
-            );
-          }
-
-          final conversations = chatProvider.conversations;
-
-          if (conversations.isEmpty) {
-            return const Center(
-              child: Text('No conversations yet'),
-            );
-          }
-
-          return LiquidPullToRefresh(
-            onRefresh: _refreshConversations,
-            color: colorScheme.primary,
-            backgroundColor: colorScheme.surface,
-            animSpeedFactor: 3.0,
-            showChildOpacityTransition: false,
-            child: ListView.builder(
-              itemCount: conversations.length,
-              itemBuilder: (context, index) {
-                final conversation = conversations[index];
-                final userId =
-                    Provider.of<MyAuthProvider>(context, listen: false)
-                        .getUserId();
-
-                return ConversationCard(
-                  conversation: conversation,
-                  currentUserId: userId,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/chatDetailScreen',
-                        arguments: {
-                          'conversationId': conversation.id,
-                          'otherParticipantId':
-                              conversation.participants.firstWhere(
-                            (id) => id != userId,
-                          )
-                        });
-                  },
-                );
-              },
+          elevation: 0,
+          backgroundColor: colorScheme.surface,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.refresh,
+                color: colorScheme.primary,
+              ),
+              onPressed: _refreshConversations,
             ),
-          );
-        },
+          ],
+        ),
+        body: Consumer<ChatProvider>(
+          builder: (context, chatProvider, child) {
+            if (chatProvider.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+      
+            if (chatProvider.error != null) {
+              return Center(
+                child: Text('Error: ${chatProvider.error}'),
+              );
+            }
+      
+            final conversations = chatProvider.conversations;
+      
+            if (conversations.isEmpty) {
+              return const Center(
+                child: Text('No conversations yet'),
+              );
+            }
+      
+            return LiquidPullToRefresh(
+              onRefresh: _refreshConversations,
+              color: colorScheme.primary,
+              backgroundColor: colorScheme.surface,
+              animSpeedFactor: 3.0,
+              showChildOpacityTransition: false,
+              child: ListView.builder(
+                itemCount: conversations.length,
+                itemBuilder: (context, index) {
+                  final conversation = conversations[index];
+                  final userId =
+                      Provider.of<MyAuthProvider>(context, listen: false)
+                          .getUserId();
+      
+                  return ConversationCard(
+                    conversation: conversation,
+                    currentUserId: userId,
+                    onTap: () {
+                      Navigator.pushNamed(context, '/chatDetailScreen',
+                          arguments: {
+                            'conversationId': conversation.id,
+                            'otherParticipantId':
+                                conversation.participants.firstWhere(
+                              (id) => id != userId,
+                            )
+                          });
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -219,4 +219,10 @@ class MyAuthProvider extends ChangeNotifier {
     final result = authRepo.getUserId();
     return result;
   }
+
+  /// GET USER EMAIL
+  String getUserEmail() {
+    final result = authRepo.getUserEmail();
+    return result;
+  }
 }

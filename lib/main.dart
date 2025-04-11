@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:legwork/core/network/online_payment_info.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/features/auth/presentation/Screens/auth_status.dart';
@@ -30,6 +31,12 @@ import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dar
 import 'package:legwork/features/auth/presentation/Screens/account_type_screen.dart';
 import 'package:legwork/features/auth/presentation/Screens/client_profile_completion_flow.dart';
 import 'package:legwork/features/onboarding/data/onboarding_repo.dart';
+import 'package:legwork/features/payment/data/data_sources/payment_remote_data_source.dart';
+import 'package:legwork/features/payment/data/repo_impl/payment_repo_impl.dart';
+import 'package:legwork/features/payment/domain/business_logic/initialize_transaction_business_logic.dart';
+import 'package:legwork/features/payment/domain/business_logic/verify_transaction_business_logic.dart';
+import 'package:legwork/features/payment/presentation/provider/payment_provider.dart';
+import 'package:legwork/features/payment/presentation/screens/payment_screen.dart';
 import 'package:legwork/firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -99,6 +106,21 @@ void main() async {
   // Instance of job application repo
   final jobApplicationRepo = JobApplicationRepoImpl();
 
+  final onlinePaymentInfo = OnlinePaymentInfo(
+    baseUrl: dotenv.env['PAYSTACK_API_BASE_URL']!,
+    secretKey: dotenv.env['PAYSTACK_TEST_SECRET_KEY']!,
+  );
+
+  // INSTANCE OF PAYMENT REMOTE DATA SOURCE
+  final paymentRemoteDataSource = PaymentRemoteDataSource(
+    onlinePaymentInfo: onlinePaymentInfo,
+  );
+
+  // INSTANCE OF PAYMENT REPO
+  final paymentRepo = PaymentRepoImpl(
+    paymentRemoteDataSource: paymentRemoteDataSource,
+  );
+
   // THIS FUNCTION IS CALLED WHEN THE APP IS LAUNCHED
   runApp(
     MultiProvider(
@@ -124,6 +146,14 @@ void main() async {
           ),
         ),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(
+          create: (_) => PaymentProvider(
+            initTransactionBusinessLogic:
+                InitTransactionBusinessLogic(repo: paymentRepo),
+            verifyTransactionBusinessLogic:
+                VerifyTransactionBusinessLogic(repo: paymentRepo),
+          ),
+        ),
       ],
       child: MyApp(
         onboardingStatusCheck: onboardingStatusCheck,
@@ -205,7 +235,21 @@ class MyApp extends StatelessWidget {
             conversationId: conversationId,
             otherParticipantId: otherParticipantId,
           );
-        }
+        },
+        '/paymentScreen': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
+          final amt = args['amount'] ?? 0.0;
+          final email = args['email'] ?? '';
+          final dancerId = args['dancerId'] ?? '';
+          final clientId = args['clientId'] ?? '';
+          return PaymentScreen(
+            amount: amt,
+            email: email,
+            dancerId: dancerId,
+            clientId: clientId,
+          );
+        },
       },
     );
   }

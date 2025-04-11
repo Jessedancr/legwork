@@ -320,6 +320,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return 'failed to get users uid';
     }
   }
+
+  String getUserEmail(){
+    try {
+      final user = auth.currentUser;
+      if (user == null) {
+        return 'user not logged in';
+      }
+      return user.email!;
+    } catch (e) {
+      debugPrint('failed to get logged in user\'s email: ${e.toString()}');
+      return 'failed to get users email';
+    }
+  }
 }
 
 /**
