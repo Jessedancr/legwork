@@ -5,10 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 
 import 'package:provider/provider.dart';
 
@@ -37,6 +37,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController usernameController = TextEditingController();
 
   final auth = FirebaseAuth.instance;
+  final _notificationRepoImpl = NottificationRepoImpl();
 
   // Keeps track of the obscure text of the pw textfields
   bool obscureText = true;
@@ -57,6 +58,8 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
         // show loading indicator
         showLoadingIndicator(context);
         try {
+          // Retrieve the device token
+          final deviceToken = await _notificationRepoImpl.getDeviceToken();
           final result = await authProvider.userSignUp(
             firstName: firstNameController.text.trim(),
             lastName: lastNameController.text.trim(),
@@ -65,6 +68,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             phoneNumber: int.parse(phoneNumberController.text.trim()),
             password: pwController.text.trim(),
             userType: UserType.dancer,
+            deviceToken: deviceToken!,
           );
 
           if (mounted) {

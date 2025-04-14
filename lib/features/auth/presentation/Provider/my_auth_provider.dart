@@ -26,8 +26,6 @@ class MyAuthProvider extends ChangeNotifier {
   UserEntity? get currentUser => _currentUser;
   String? get currentUserUsername => _currentUser?.username;
 
-  // String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
-
   /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
     required String firstName,
@@ -42,6 +40,7 @@ class MyAuthProvider extends ChangeNotifier {
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
+    required String deviceToken, // Add deviceToken
   }) async {
     SignUpBusinessLogic signUpBusinessLogic =
         SignUpBusinessLogic(authRepo: authRepo);
@@ -52,16 +51,16 @@ class MyAuthProvider extends ChangeNotifier {
     try {
       // Call the signUpExecute Func from the SignUpBusinessLogic class
       final result = await signUpBusinessLogic.signUpExecute(
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password,
-        userType: userType,
-        resume: resume,
-        organizationName: organisationName,
-      );
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          email: email,
+          phoneNumber: phoneNumber,
+          password: password,
+          userType: userType,
+          resume: resume,
+          organizationName: organisationName,
+          deviceToken: deviceToken);
 
       isLoading = false;
       notifyListeners();

@@ -27,6 +27,8 @@ class PaymentRemoteDataSource {
         }
       });
 
+      debugPrint('Init payment response: ${response.body}');
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data['data'] == null || data['data']['reference'] == null) {

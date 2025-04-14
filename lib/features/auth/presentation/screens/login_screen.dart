@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +7,7 @@ import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_cont
 import 'package:legwork/core/Enums/user_type.dart';
 
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 
 import 'package:provider/provider.dart';
 
@@ -25,8 +24,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // final _notificationRemoteDataSourceImpl =
-  //     NotificationRemoteDataSourceImpl(firebaseMessaging: fir);
   // TEXTFORMFIELD KEY
   final formKey = GlobalKey<FormState>();
 
@@ -35,9 +32,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController userTypecontroller = TextEditingController();
 
-  final auth = FirebaseAuth.instance;
-
   bool obscureText = true;
+
+  final _notificationRepoImpl = NottificationRepoImpl();
 
   // BUILD METHOD
   @override
@@ -58,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Attempt login
         try {
           // Retrieve the device token
-          final deviceToken = await FirebaseMessaging.instance.getToken();
+          final deviceToken = await _notificationRepoImpl.getDeviceToken();
           final result = await authProvider.userlogin(
             email: emailController.text.trim(),
             password: pwController.text.trim(),

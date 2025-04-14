@@ -294,18 +294,19 @@ class _JobApplicationDetailScreenState
     return Scaffold(
       backgroundColor: colorScheme.surface,
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed('/paymentScreen', arguments: {
-            'dancerId': dancerId,
-            'clientId': clientId,
-            // 'applicationId': applicationId,
-            'amount': 100.0,
-            'email': clientEmail
-          });
-        },
-        child: const Icon(Icons.payment),
-      ),
+      floatingActionButton: status.toLowerCase() == 'accepted'
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/paymentScreen', arguments: {
+                  'dancerId': dancerId,
+                  'clientId': clientId,
+                  'amount': 100.0,
+                  'email': clientEmail
+                });
+              },
+              child: const Icon(Icons.payment),
+            )
+          : null,
 
       // * APPBAR
       appBar: AppBar(

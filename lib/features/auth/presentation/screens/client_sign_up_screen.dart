@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/Enums/user_type.dart';
+import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 import 'package:provider/provider.dart';
 
 import '../Provider/my_auth_provider.dart';
@@ -32,6 +33,8 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
 
+  final _notificationRepo = NottificationRepoImpl();
+
   // Keeps track of the obscure text of the pw textfields
   bool obscureText = true;
   bool obscureText2 = true;
@@ -51,6 +54,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
         // show loading indicator
         showLoadingIndicator(context);
         try {
+          final deviceToken = await _notificationRepo.getDeviceToken();
           final result = await authProvider.userSignUp(
             firstName: firstNameController.text,
             lastName: lastNameController.text,
@@ -60,6 +64,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             phoneNumber: int.parse(phoneNumberController.text),
             password: pwController.text,
             userType: UserType.client,
+            deviceToken: deviceToken!,
           );
 
           // hide loading indicator if mounted

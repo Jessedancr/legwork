@@ -30,6 +30,7 @@ abstract class AuthRepo {
     Map<String, dynamic>? resume,
     Map<String, dynamic>? jobPrefs, // for dancer
     String? organizationName, // for client
+    required String deviceToken, // Add deviceToken
   });
 
   /// LOGOUT METHOD

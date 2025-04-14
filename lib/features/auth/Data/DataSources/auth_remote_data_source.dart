@@ -23,7 +23,6 @@ abstract class AuthRemoteDataSource {
     required int phoneNumber,
     required String password,
     required UserType userType,
-    // List<dynamic>? danceStyles,
     Map<String, dynamic>? resume,
     String? bio,
     Map<String, dynamic>? jobPrefs,
@@ -321,7 +320,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  String getUserEmail(){
+  String getUserEmail() {
     try {
       final user = auth.currentUser;
       if (user == null) {

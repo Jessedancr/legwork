@@ -34,23 +34,26 @@ class AuthRepoImpl implements AuthRepo {
     String? organizationName, // For clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
+    required String deviceToken, // Add deviceToken
   }) async {
     try {
       final result = await _authRemoteDataSource.userSignUp(
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          email: email,
-          phoneNumber: phoneNumber,
-          password: password,
-          userType: userType,
-          bio: bio,
-          profilePicture: profilePicture,
-          resume: resume, // for dancers => 'hiringHistory' for clients
-          organisationName: organizationName ?? '', // for clients
-          danceStylePrefs: danceStylePrefs, // for clients
-          jobOfferings: jobOfferings, // for clients
-          jobPrefs: jobPrefs ?? {});
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        userType: userType,
+        bio: bio,
+        profilePicture: profilePicture,
+        resume: resume, // for dancers => 'hiringHistory' for clients
+        organisationName: organizationName ?? '', // for clients
+        danceStylePrefs: danceStylePrefs, // for clients
+        jobOfferings: jobOfferings, // for clients
+        jobPrefs: jobPrefs ?? {},
+        deviceToken: deviceToken,
+      );
 
       // Return either a fail or a dancer or client entity
       return result.fold(
@@ -91,7 +94,10 @@ class AuthRepoImpl implements AuthRepo {
   }) async {
     try {
       final result = await _authRemoteDataSource.userLogin(
-          email: email, password: password, deviceToken: deviceToken);
+        email: email,
+        password: password,
+        deviceToken: deviceToken,
+      );
 
       // User type check
       if (userType == UserType.dancer.name) {
@@ -105,7 +111,6 @@ class AuthRepoImpl implements AuthRepo {
               email: email,
               password: password,
               phoneNumber: phoneNumber ?? 0,
-              //jobPrefs: jobPrefs ?? {},
               resume: resume,
               bio: bio,
               profilePicture: profilePicture,

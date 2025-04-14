@@ -21,9 +21,7 @@ abstract class NotificationRemoteDataSource {
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
-  final FirebaseMessaging firebaseMessaging;
-
-  NotificationRemoteDataSourceImpl({required this.firebaseMessaging});
+  final firebaseMessaging = FirebaseMessaging.instance;
 
   // GET THE DEVICE TOKEN
   @override
