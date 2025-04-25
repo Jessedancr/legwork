@@ -37,7 +37,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController usernameController = TextEditingController();
 
   final auth = FirebaseAuth.instance;
-  final _notificationRepoImpl = NottificationRepoImpl();
+  final _notificationRepoImpl = NotificationRepoImpl();
 
   // Keeps track of the obscure text of the pw textfields
   bool obscureText = true;

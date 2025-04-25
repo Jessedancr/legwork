@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dartz/dartz.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +136,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       if (response.statusCode != 200) {
         debugPrint('Failed to send notification: ${response.body}');
       } else {
-        debugPrint('Notification sent successfully');
+        debugPrint('Notification sent successfully: ${response.body}');
       }
     } catch (e) {
       debugPrint('Error sending notification(NRDS): $e');

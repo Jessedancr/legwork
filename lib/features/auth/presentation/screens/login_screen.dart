@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool obscureText = true;
 
-  final _notificationRepoImpl = NottificationRepoImpl();
+  final _notificationRepoImpl = NotificationRepoImpl();
 
   // BUILD METHOD
   @override

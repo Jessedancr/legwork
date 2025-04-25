@@ -51,25 +51,30 @@ class MyAuthProvider extends ChangeNotifier {
     try {
       // Call the signUpExecute Func from the SignUpBusinessLogic class
       final result = await signUpBusinessLogic.signUpExecute(
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          email: email,
-          phoneNumber: phoneNumber,
-          password: password,
-          userType: userType,
-          resume: resume,
-          organizationName: organisationName,
-          deviceToken: deviceToken);
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        userType: userType,
+        resume: resume,
+        organizationName: organisationName,
+        deviceToken: deviceToken,
+      );
 
       isLoading = false;
       notifyListeners();
 
       // signUpExecute returns an Either object so this takes care of both scenarios
-      return result.fold((fail) {
+      return result.fold(
+          // Handle failure
+          (fail) {
         debugPrint(fail);
         return Left(fail);
-      }, (userEntity) {
+      },
+          // Handle success
+          (userEntity) {
         _currentUser = userEntity; // Store the user
         debugPrint('user created: $userEntity');
         if (userType == UserType.dancer) {

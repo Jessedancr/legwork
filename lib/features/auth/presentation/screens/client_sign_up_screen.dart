@@ -33,7 +33,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController pwConfirmController = TextEditingController();
 
-  final _notificationRepo = NottificationRepoImpl();
+  final _notificationRepo = NotificationRepoImpl();
 
   // Keeps track of the obscure text of the pw textfields
   bool obscureText = true;

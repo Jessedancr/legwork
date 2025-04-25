@@ -332,6 +332,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return 'failed to get users email';
     }
   }
+
+  Future<String> getDeviceToken({required String userId}) async {
+    try {
+      final results = await Future.wait([
+        db.collection('dancers').doc(userId).get(),
+        db.collection('clients').doc(userId).get()
+      ]);
+      final dancersDoc = results[0];
+      final clientsDoc = results[1];
+
+      if (dancersDoc.exists) {
+        return dancersDoc['deviceToken'];
+      } else {
+        return clientsDoc['deviceToken'];
+      }
+    } catch (e) {
+      debugPrint('Failed to get deviceToken: ${e.toString()}');
+      return 'Failed to get device token: ${e.toString()}';
+    }
+  }
 }
 
 /**

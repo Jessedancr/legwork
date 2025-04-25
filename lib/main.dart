@@ -77,11 +77,6 @@ void main() async {
   // Firebase setup
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Instane of Notification remote data source
-  // final notificationRemoteDataSource = NotificationRemoteDataSourceImpl(
-  //   firebaseMessaging: FirebaseMessaging.instance,
-  // );
-
   final notificationRemoteDataSource = NotificationRemoteDataSourceImpl();
 
   await notificationRemoteDataSource.setupFlutterNotifications();

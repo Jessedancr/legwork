@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/features/chat/data/models/conversation_model.dart';
 import 'package:legwork/features/chat/data/models/message_model.dart';
+import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 
 /**
  * THIS ABSTRACY CLASS DEFINES WHAT OPERATIONS IT'S IMPLEMENTATION CAN CARRY OUT
@@ -20,8 +21,9 @@ abstract class ChatRemoteDataSource {
   });
 
   // SEND MESSAGE
-  Future<Either<String, MessageModel>> sendMessage(
-      {required MessageModel message});
+  Future<Either<String, MessageModel>> sendMessage({
+    required MessageModel message,
+  });
 
   // MARK MESSAGE AS READ
   Future<Either<String, void>> markMessageAsRead({
@@ -99,6 +101,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<Either<String, MessageModel>> sendMessage({
     required MessageModel message,
+    // required String deviceToken,
   }) async {
     try {
       // Get conversation ID directly from the parameter

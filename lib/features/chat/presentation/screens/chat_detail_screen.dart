@@ -7,6 +7,7 @@ import 'package:legwork/features/chat/presentation/widgets/date_header.dart';
 import 'package:legwork/features/chat/presentation/widgets/message_input.dart';
 import 'package:legwork/features/chat/presentation/widgets/messages_list.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 import 'package:provider/provider.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -36,6 +37,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   bool _showScrollButton = false;
   String _otherUsername = '';
   bool _isLoading = true;
+  final _notificationRepo = NotificationRepoImpl();
 
   // THIS METHOD RUNS WHEN THE SCREEN IS FIRST CREATED
   @override

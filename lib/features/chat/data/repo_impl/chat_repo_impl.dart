@@ -9,9 +9,6 @@ class ChatRepoImpl implements ChatRepo {
   // INSTANCE OF CHAT REMOTE DATA SOURCE
   final ChatRemoteDataSource remoteDataSource = ChatRemoteDataSourceImpl();
 
-  // CONSTRUCTOR
-  // ChatRepoImpl({required this.remoteDataSource});
-
   @override
   Future<Either<String, List<ConversationEntity>>> getConversations({
     required String userId,
