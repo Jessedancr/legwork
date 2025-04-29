@@ -54,7 +54,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         throw Exception('Invalid transaction reference from Paystack');
       }
 
-      _setupWebView(provider.payment!.reference);
+      _setupWebView(provider.payment!.authorizationUrl!);
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -64,13 +64,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
   }
 
-  void _setupWebView(String reference) {
-    final paymentUrl = 'https://checkout.paystack.com/$reference';
+  void _setupWebView(String authorizationUrl) {
+    final paymentUrl = authorizationUrl;
     debugPrint('Loading Paystack URL: $paymentUrl');
 
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.white)
+      ..setBackgroundColor(Theme.of(context).colorScheme.background)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {

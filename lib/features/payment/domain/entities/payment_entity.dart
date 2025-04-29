@@ -6,6 +6,7 @@ class PaymentEntity {
   final String clientId;
   final DateTime? createdAt;
   final String? status;
+  final String? authorizationUrl;
 
   PaymentEntity({
     required this.reference,
@@ -15,5 +16,6 @@ class PaymentEntity {
     required this.clientId,
     this.createdAt,
     this.status,
+    this.authorizationUrl,
   });
 }

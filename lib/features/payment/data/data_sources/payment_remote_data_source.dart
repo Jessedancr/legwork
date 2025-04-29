@@ -41,6 +41,8 @@ class PaymentRemoteDataSource {
           email: email,
           dancerId: dancerId,
           clientId: clientId,
+          authorizationUrl: data['data']['authorization_url'],
+          
         );
       } else {
         throw Exception('Failed to initialize transaction');
