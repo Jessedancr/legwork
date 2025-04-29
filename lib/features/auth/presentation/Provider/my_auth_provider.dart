@@ -229,4 +229,15 @@ class MyAuthProvider extends ChangeNotifier {
     final result = authRepo.getUserEmail();
     return result;
   }
+
+  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+    try {
+      final result = authRepo.getUserDetails(uid: uid);
+
+      return result;
+    } catch (e) {
+      debugPrint('Provider Error: error with getUserDetails: ${e.toString()}');
+      return Left(e.toString());
+    }
+  }
 }

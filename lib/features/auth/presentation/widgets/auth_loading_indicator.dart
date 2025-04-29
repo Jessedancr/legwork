@@ -5,22 +5,23 @@ void showLoadingIndicator(BuildContext context) {
   showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
+      return Dialog(
         elevation: 0.0,
+        insetPadding: EdgeInsets.zero,
         backgroundColor: Colors.transparent,
-        content: Center(
-          child: Lottie.asset(
-            'assets/lottie/loading.json',
-            width: 150,
-            height: 150,
-            fit: BoxFit.fill,
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black.withOpacity(0.6),
+          child: Center(
+            child: Lottie.asset(
+              'assets/lottie/loading2.json',
+              width: 300,
+              height: 300,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+            ),
           ),
-
-          // CircularProgressIndicator(
-          //   color: Theme.of(context).colorScheme.primary,
-          //   strokeWidth: 3.0,
-          //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          // ),
         ),
       );
     },

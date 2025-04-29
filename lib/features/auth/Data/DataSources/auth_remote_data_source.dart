@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Data/Models/resume_model.dart';
 import 'package:legwork/features/auth/Data/Models/user_model.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 import '../../../../core/Enums/user_type.dart';
 
@@ -240,7 +241,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
     } catch (e) {
       debugPrint("An unknown error occurred while logging in");
-      return Left(e.toString());
+      return Future.value(Left<String, UserEntity>(e.toString()));
     }
   }
 
@@ -350,6 +351,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       debugPrint('Failed to get deviceToken: ${e.toString()}');
       return 'Failed to get device token: ${e.toString()}';
+    }
+  }
+
+  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+    try {
+      // Query the two collections at the same time
+      final docs = await Future.wait([
+        db.collection('dancers').doc(uid).get(),
+        db.collection('clients').doc(uid).get()
+      ]);
+      final dancersDoc = docs[0];
+      final clientsDoc = docs[1];
+
+      if (dancersDoc.exists && dancersDoc.data() != null) {
+        return Right(DancerModel.fromDocument(dancersDoc));
+      } else if (clientsDoc.exists && clientsDoc.data() != null) {
+        return Right(ClientModel.fromDocument(clientsDoc));
+      } else {
+        return const Left('No user found');
+      }
+    } catch (e) {
+      debugPrint('Error getting all of users details: ${e.toString()}');
+      return Left(e.toString());
     }
   }
 }
