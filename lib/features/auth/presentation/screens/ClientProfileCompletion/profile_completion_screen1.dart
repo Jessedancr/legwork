@@ -208,7 +208,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
 
                               // TEXTFIELD FOR PREFERRED DANCE STYLES
                               AuthTextFormField(
-                                hintText: 'preferred dance styles',
+                                labelText: 'preferred dance styles',
                                 obscureText: false,
                                 controller: widget.danceStylePrefsController,
                                 icon: const Icon(Icons.person),

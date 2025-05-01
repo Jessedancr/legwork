@@ -67,7 +67,7 @@ class _OnboardingState extends State<Onboarding> {
                 // GET STARTED OR NEXT button
                 isLastPage
                     ? OnboardButton(
-                        buttonText: 'GET STARTED!',
+                        buttonText: 'Get Started!',
                         onPressed: () async {
                           await _completeOnboarding();
 

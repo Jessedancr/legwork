@@ -58,7 +58,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
               children: [
                 // Job Title text field
                 AuthTextFormField(
-                  hintText: 'Title',
+                  labelText: 'Title',
                   obscureText: false,
                   controller: widget.titleController,
                   icon: SvgPicture.asset(
@@ -79,7 +79,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
 
                 // Employer text field
                 AuthTextFormField(
-                  hintText: 'Employer',
+                  labelText: 'Employer',
                   obscureText: false,
                   controller: widget.employerController,
                   icon: SvgPicture.asset(
@@ -98,7 +98,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
 
                 // Location textfield
                 AuthTextFormField(
-                  hintText: 'Location',
+                  labelText: 'Location',
                   obscureText: false,
                   controller: widget.locationController,
                   icon: SvgPicture.asset(
@@ -117,7 +117,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
 
                 // Date textfield
                 AuthTextFormField(
-                  hintText: 'date',
+                  labelText: 'date',
                   obscureText: false,
                   controller: widget.dateController,
                   icon: SvgPicture.asset(

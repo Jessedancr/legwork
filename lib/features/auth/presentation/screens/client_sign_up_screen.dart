@@ -212,7 +212,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // First name text field
                   AuthTextFormField(
-                    hintText: 'First name',
+                    labelText: 'First name',
                     obscureText: false,
                     controller: firstNameController,
                     icon: SvgPicture.asset(
@@ -231,7 +231,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Last name text field
                   AuthTextFormField(
-                    hintText: 'Last name',
+                    labelText: 'Last name',
                     obscureText: false,
                     controller: lastNameController,
                     icon: SvgPicture.asset(
@@ -250,7 +250,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Username textfield
                   AuthTextFormField(
-                    hintText: 'username',
+                    labelText: 'username',
                     obscureText: false,
                     controller: usernameController,
                     icon: SvgPicture.asset(
@@ -269,7 +269,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Organisation name textfield
                   AuthTextFormField(
-                    hintText: 'Organisation name',
+                    labelText: 'Organisation name',
                     obscureText: false,
                     controller: organisationNameController,
                     icon: SvgPicture.asset(
@@ -284,7 +284,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                   // Email textfield
                   AuthTextFormField(
                     helperText: 'Ex: johndoe@gmail.com',
-                    hintText: 'Email Address',
+                    labelText: 'Email Address',
                     obscureText: false,
                     controller: emailController,
                     icon: SvgPicture.asset(
@@ -303,7 +303,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
                   // Phone number textfield
                   AuthTextFormField(
-                    hintText: 'Phone number',
+                    labelText: 'Phone number',
                     obscureText: false,
                     controller: phoneNumberController,
                     icon: SvgPicture.asset(
@@ -323,7 +323,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                   // Password textfield
                   AuthTextFormField(
                     suffixIcon: viewPassword,
-                    hintText: 'password',
+                    labelText: 'password',
                     obscureText: obscureText,
                     controller: pwController,
                     icon: SvgPicture.asset(
@@ -343,7 +343,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                   // Confirm password textfield
                   AuthTextFormField(
                     suffixIcon: viewConfirmPassword,
-                    hintText: 'confirm password',
+                    labelText: 'confirm password',
                     obscureText: obscureText2,
                     controller: pwConfirmController,
                     icon: SvgPicture.asset(

@@ -59,7 +59,7 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
               children: [
                 // Job Title text field
                 AuthTextFormField(
-                  hintText: 'Title/Type of Job',
+                  labelText: 'Title/Type of Job',
                   obscureText: false,
                   controller: widget.jobTitleController,
                   icon: Image.asset('images/icons/title.png'),
@@ -75,7 +75,7 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
 
                 // Location textfield
                 AuthTextFormField(
-                  hintText: 'Location',
+                  labelText: 'Location',
                   obscureText: false,
                   controller: widget.locationController,
                   icon: Image.asset(
@@ -94,7 +94,7 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
 
                 // Date textfield
                 AuthTextFormField(
-                  hintText: 'date',
+                  labelText: 'date',
                   obscureText: false,
                   controller: widget.dateController,
                   icon: const Icon(Icons.date_range),
@@ -105,7 +105,7 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                 // Number of dancers hired
                 AuthTextFormField(
                   keyboardType: TextInputType.number,
-                  hintText: 'Number of dancers hired',
+                  labelText: 'Number of dancers hired',
                   obscureText: false,
                   controller: widget.numOfDancersController,
                   icon: Image.asset('images/icons/employer.png'),
@@ -122,7 +122,7 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                 AuthTextFormField(
                   helperText: 'Ex: 50000',
                   keyboardType: TextInputType.number,
-                  hintText: 'payment offered on job',
+                  labelText: 'payment offered on job',
                   obscureText: false,
                   controller: widget.paymentController,
                   icon: Icon(Icons.money),

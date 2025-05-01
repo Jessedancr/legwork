@@ -151,7 +151,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
 
                   // JOB TITLE TEXT FIELD
                   AuthTextFormField(
-                    hintText: 'Title of job',
+                    labelText: 'Title of job',
                     obscureText: false,
                     controller: widget.titleController,
                     icon: SvgPicture.asset(
@@ -170,7 +170,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
 
                   // LOCATION TEXTFIELD
                   AuthTextFormField(
-                    hintText: 'Location',
+                    labelText: 'Location',
                     obscureText: false,
                     controller: widget.locationController,
                     icon: SvgPicture.asset(
@@ -189,7 +189,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
 
                   // DANCE STYLES TEXT FIELD
                   AuthTextFormField(
-                    hintText: 'dance styles needed',
+                    labelText: 'dance styles needed',
                     obscureText: false,
                     controller: widget.danceStylesController,
                     icon: SvgPicture.asset(
@@ -202,7 +202,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                   // AMT OF DANCERS NEEDED
                   AuthTextFormField(
                     helperText: "How many dancers do you need for this job?",
-                    hintText: 'Amount of dancers needed',
+                    labelText: 'Amount of dancers needed',
                     obscureText: false,
                     controller: widget.amtOfDancersController,
                     icon: SvgPicture.asset(
@@ -215,7 +215,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                   // REMUNERATION
                   AuthTextFormField(
                     keyboardType: TextInputType.number,
-                    hintText: 'Dancers pay/remuneration',
+                    labelText: 'Dancers pay/remuneration',
                     obscureText: false,
                     controller: widget.payController,
                     icon: SvgPicture.asset(
@@ -227,7 +227,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
 
                   // JOB DURATION TEXT FIELD
                   AuthTextFormField(
-                    hintText: 'Job duration',
+                    labelText: 'Job duration',
                     helperText: 'How long is the job going to last',
                     obscureText: false,
                     controller: widget.jobDurationController,

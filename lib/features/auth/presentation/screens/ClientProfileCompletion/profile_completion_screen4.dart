@@ -178,7 +178,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                       children: [
                         // Professional title Text field
                         AuthTextFormField(
-                          hintText: 'Professional title',
+                          labelText: 'Professional title',
                           helperText:
                               'Ex: Professional dancer and choreographer',
                           obscureText: false,

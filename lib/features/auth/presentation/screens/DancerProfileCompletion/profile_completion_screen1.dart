@@ -248,7 +248,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                             AuthTextFormField(
                               helperText:
                                   'Separate each dance style with a comma',
-                              hintText: 'dance styles',
+                              labelText: 'dance styles',
                               obscureText: false,
                               controller: widget.danceStylesController,
                               icon: SvgPicture.asset(

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/core/network/online_payment_info.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/resume_repo_impl.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/resume_provider.dart';
 import 'package:legwork/features/auth/presentation/Screens/auth_status.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
@@ -16,6 +17,7 @@ import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
+import 'package:legwork/features/home/presentation/screens/dancer_screens/edit_profile_screen.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/features/job_application/data/repo_impl/job_application_repo_impl.dart';
 import 'package:legwork/features/job_application/domain/business_logic/get_job_applicants_business_logic.dart';
@@ -247,6 +249,12 @@ class MyApp extends StatelessWidget {
             clientId: clientId,
           );
         },
+        '/editProfileScreen': (context) {
+          final dancerDetails =
+              ModalRoute.of(context)!.settings.arguments as DancerEntity;
+
+          return EditProfileScreen(dancerDetails: dancerDetails);
+        }
       },
     );
   }

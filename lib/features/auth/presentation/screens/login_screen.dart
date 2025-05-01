@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Dancer or Client
                   AuthTextFormField(
-                    hintText: 'Are you a dancer or a client',
+                    labelText: 'Are you a dancer or a client',
                     obscureText: false,
                     controller: userTypecontroller,
                     icon: SvgPicture.asset(
@@ -225,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Email text field
                   AuthTextFormField(
                     keyboardType: TextInputType.emailAddress,
-                    hintText: 'Email',
+                    labelText: 'Email',
                     obscureText: false,
                     controller: emailController,
                     icon: SvgPicture.asset(
@@ -244,8 +244,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Password textfield
                   AuthTextFormField(
+                    
                     suffixIcon: viewPassword,
-                    hintText: 'Password',
+                    labelText: 'Password',
                     obscureText: obscureText,
                     controller: pwController,
                     icon: SvgPicture.asset(

@@ -198,7 +198,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // First name textfield
                   AuthTextFormField(
-                    hintText: 'First name',
+                    labelText: 'First name',
                     obscureText: false,
                     controller: firstNameController,
                     icon: SvgPicture.asset(
@@ -217,7 +217,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Last name text field
                   AuthTextFormField(
-                    hintText: 'last name',
+                    labelText: 'last name',
                     obscureText: false,
                     controller: lastNameController,
                     icon: SvgPicture.asset(
@@ -236,7 +236,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Username textfield
                   AuthTextFormField(
-                    hintText: 'username',
+                    labelText: 'username',
                     obscureText: false,
                     controller: usernameController,
                     icon: SvgPicture.asset(
@@ -256,7 +256,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                   // Email textfield
                   AuthTextFormField(
                     helperText: 'Ex: johndoe@gmail.com',
-                    hintText: 'email',
+                    labelText: 'email',
                     obscureText: false,
                     controller: emailController,
                     icon: SvgPicture.asset(
@@ -275,7 +275,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
                   // Phone number textfield
                   AuthTextFormField(
-                    hintText: 'phone Number',
+                    labelText: 'phone Number',
                     obscureText: false,
                     controller: phoneNumberController,
                     icon: SvgPicture.asset(
@@ -295,7 +295,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                   // Password textfield
                   AuthTextFormField(
                     suffixIcon: viewPassword,
-                    hintText: 'password',
+                    labelText: 'password',
                     obscureText: obscureText,
                     controller: pwController,
                     icon: SvgPicture.asset(
@@ -315,7 +315,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                   // Confirm password textfield
                   AuthTextFormField(
                     suffixIcon: viewConfirmPassword,
-                    hintText: 'confirm password',
+                    labelText: 'confirm password',
                     obscureText: obscureText2,
                     controller: pwConfirmController,
                     keyboardType: TextInputType.visiblePassword,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // ignore: must_be_immutable
 class AuthTextFormField extends StatelessWidget {
   BorderRadius borderRadius = BorderRadius.circular(30);
-  final String hintText;
+
+  final String labelText;
   final bool obscureText;
   final TextEditingController controller;
   final String? helperText;
@@ -14,18 +14,20 @@ class AuthTextFormField extends StatelessWidget {
   final Function()? onTap;
   final Widget? suffixIcon;
   TextInputType? keyboardType;
-  AuthTextFormField(
-      {super.key,
-      required this.hintText,
-      required this.obscureText,
-      required this.controller,
-      this.helperText,
-      required this.icon,
-      this.width,
-      this.validator,
-      this.keyboardType,
-      this.onTap,
-      this.suffixIcon});
+  AuthTextFormField({
+    super.key,
+   
+    required this.obscureText,
+    required this.controller,
+    required this.labelText,
+    required this.icon,
+    this.width,
+    this.validator,
+    this.keyboardType,
+    this.onTap,
+    this.suffixIcon,
+    this.helperText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,10 @@ class AuthTextFormField extends StatelessWidget {
               obscureText: obscureText,
               textAlign: TextAlign.left,
               decoration: InputDecoration(
+                labelText: labelText,
+                labelStyle: TextStyle(
+                  color: colorScheme.onSurface.withOpacity(0.3),
+                ),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: screenHeight * 0.01,
                   horizontal: screenWidth * 0.083,
@@ -68,10 +74,6 @@ class AuthTextFormField extends StatelessWidget {
                   ),
                 ),
                 filled: true,
-                hintText: hintText,
-                hintStyle: TextStyle(
-                  color: colorScheme.onSurface.withOpacity(0.3),
-                ),
                 suffixIcon: suffixIcon,
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
