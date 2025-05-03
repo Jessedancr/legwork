@@ -71,7 +71,7 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
           return Center(
             child: Lottie.asset(
               'assets/lottie/loading.json',
-              height: 70,
+              height: 100,
             ),
           );
         }

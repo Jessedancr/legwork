@@ -52,11 +52,11 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
         backgroundColor: colorScheme.surface,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          centerTitle: false,
+          centerTitle: true,
           title: Text(
             'Messages',
             style: textTheme.headlineSmall?.copyWith(
-              color: colorScheme.primary,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -66,7 +66,7 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
             IconButton(
               icon: Icon(
                 Icons.refresh,
-                color: colorScheme.primary,
+                color: colorScheme.onSurface,
               ),
               onPressed: _refreshConversations,
             ),
@@ -79,21 +79,21 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
                 child: CircularProgressIndicator(),
               );
             }
-      
+
             if (chatProvider.error != null) {
               return Center(
                 child: Text('Error: ${chatProvider.error}'),
               );
             }
-      
+
             final conversations = chatProvider.conversations;
-      
+
             if (conversations.isEmpty) {
               return const Center(
                 child: Text('No conversations yet'),
               );
             }
-      
+
             return LiquidPullToRefresh(
               onRefresh: _refreshConversations,
               color: colorScheme.primary,
@@ -107,7 +107,7 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
                   final userId =
                       Provider.of<MyAuthProvider>(context, listen: false)
                           .getUserId();
-      
+
                   return ConversationCard(
                     conversation: conversation,
                     currentUserId: userId,

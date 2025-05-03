@@ -3,6 +3,7 @@ import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_job_container.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class OpenJobs extends StatefulWidget {
@@ -64,13 +65,18 @@ class _OpenJobsState extends State<OpenJobs>
       future: _fetchJobsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
+          return  Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 10),
-                Text(
+                Lottie.asset(
+                'assets/lottie/loading.json',
+                width: 100,
+                height: 100,
+                fit: BoxFit.contain,
+              ),
+               const SizedBox(height: 10),
+               const Text(
                   'Fetching jobs please wait...',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,

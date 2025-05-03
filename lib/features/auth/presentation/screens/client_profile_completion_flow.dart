@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
@@ -83,11 +84,12 @@ class _ClientProfileCompletionFlowState
           },
         );
         hideLoadingIndicator(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile Updated'),
-          ),
-        );
+        LegworkSnackbar(
+          title: 'Sharp guy!',
+          subTitle: 'Welcome to legwork',
+          imageColor: Theme.of(context).colorScheme.onPrimary,
+          contentColor: Theme.of(context).colorScheme.primary,
+        ).show(context);
 
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/clientApp',
@@ -97,9 +99,12 @@ class _ClientProfileCompletionFlowState
         debugPrint('error updating profile');
         hideLoadingIndicator(context);
         debugPrint('Error updating profile: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile: $e')),
-        );
+        LegworkSnackbar(
+          title: 'Omo!',
+          subTitle: 'Failed to update profile: $e',
+          imageColor: Theme.of(context).colorScheme.onError,
+          contentColor: Theme.of(context).colorScheme.error,
+        ).show(context);
       }
     }
 

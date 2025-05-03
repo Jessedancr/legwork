@@ -15,6 +15,8 @@ class DancerSettingsScreen extends StatefulWidget {
 class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    // THEMES
+    final colorScheme = Theme.of(context).colorScheme;
     //SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -67,8 +69,15 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
     // RETURNED WIDGET
     return Scaffold(
       appBar: AppBar(
-        title: const Text('DANCER SETTINGS SCREEN'),
+        backgroundColor: colorScheme.surface,
+        title: const Text('Settings'),
         centerTitle: true,
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: colorScheme.onSurface,
+            )),
       ),
       body: Center(
         child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
@@ -62,7 +63,11 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                   labelText: 'Title/Type of Job',
                   obscureText: false,
                   controller: widget.jobTitleController,
-                  icon: Image.asset('images/icons/title.png'),
+                  icon: SvgPicture.asset(
+                    'assets/svg/brand.svg',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fit: BoxFit.scaleDown,
+                  ),
                   helperText: 'Ex: TV commercial',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -78,9 +83,10 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                   labelText: 'Location',
                   obscureText: false,
                   controller: widget.locationController,
-                  icon: Image.asset(
-                    'images/icons/location.png',
-                    //height: 2,
+                  icon: SvgPicture.asset(
+                    'assets/svg/location.svg',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fit: BoxFit.scaleDown,
                   ),
                   helperText: 'Ex: Lekki phase 1',
                   validator: (value) {
@@ -97,7 +103,11 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                   labelText: 'date',
                   obscureText: false,
                   controller: widget.dateController,
-                  icon: const Icon(Icons.date_range),
+                  icon: SvgPicture.asset(
+                    'assets/svg/calendar.svg',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fit: BoxFit.scaleDown,
+                  ),
                   onTap: widget.showDatePicker,
                 ),
                 const SizedBox(height: 20),
@@ -108,7 +118,11 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                   labelText: 'Number of dancers hired',
                   obscureText: false,
                   controller: widget.numOfDancersController,
-                  icon: Image.asset('images/icons/employer.png'),
+                  icon: SvgPicture.asset(
+                    'assets/svg/hashtag_icon.svg',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fit: BoxFit.scaleDown,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please fill in the number of dancers you employed or worked with';
@@ -125,7 +139,11 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                   labelText: 'payment offered on job',
                   obscureText: false,
                   controller: widget.paymentController,
-                  icon: Icon(Icons.money),
+                  icon: SvgPicture.asset(
+                    'assets/svg/naira_icon.svg',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fit: BoxFit.scaleDown,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'How much did you pay the dancers you worked with?';
@@ -140,7 +158,11 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
                   hintText: 'Job description',
                   obscureText: false,
                   controller: widget.jobDescrController,
-                  icon: const Icon(Icons.description),
+                  icon: SvgPicture.asset(
+                    'assets/svg/description_icon.svg',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    fit: BoxFit.scaleDown,
+                  ),
                 ),
 
                 // Save button

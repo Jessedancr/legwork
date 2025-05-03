@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
@@ -176,6 +177,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Column(
                       children: [
+                        const SizedBox(height: 10),
                         // Professional title Text field
                         AuthTextFormField(
                           labelText: 'Professional title',
@@ -183,7 +185,10 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                               'Ex: Professional dancer and choreographer',
                           obscureText: false,
                           controller: widget.professonalTitleController,
-                          icon: Image.asset('images/icons/title.png'),
+                          icon: SvgPicture.asset(
+                            'assets/svg/brand.svg',
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                         SizedBox(height: screenHeight * 0.01),
 
@@ -196,9 +201,9 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                           child: LegworkElevatedButton(
                             onPressed: addWorkExperience,
                             buttonText: 'work experience',
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.add,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                             maximumSize: WidgetStatePropertyAll(Size(
                               screenWidth * 0.55,

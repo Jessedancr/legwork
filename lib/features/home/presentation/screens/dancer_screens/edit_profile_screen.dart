@@ -113,7 +113,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       contentColor: Theme.of(context).colorScheme.primary,
     ).show(context);
 
-    // Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   @override

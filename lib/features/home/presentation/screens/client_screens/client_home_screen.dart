@@ -8,6 +8,7 @@ import 'package:legwork/features/home/presentation/screens/client_screens/client
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
 import 'package:legwork/features/home/presentation/widgets/clients_drawer.dart';
 import 'package:legwork/features/home/presentation/widgets/post_job_bottom_sheet.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ClientHomeScreen extends StatefulWidget {
@@ -221,8 +222,13 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           future: _fetchJobsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: Lottie.asset(
+                  'assets/lottie/loading.json',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.contain,
+                ),
               );
             }
 

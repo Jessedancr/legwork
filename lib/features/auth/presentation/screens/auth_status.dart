@@ -31,13 +31,12 @@ class AuthStatus extends StatelessWidget {
             return FutureBuilder(
               future: authRemoteDataSource.getUserType(user!.uid),
               builder: (context, snapshot) {
-                // Show a circular progress indicator while fetching user type
+                // Show a loading indicator while fetching user type
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                     child: Lottie.asset(
                       'assets/lottie/loading.json',
-                      width: 150,
-                      height: 150,
+                      height: 100,
                       fit: BoxFit.cover,
                     ),
                   );

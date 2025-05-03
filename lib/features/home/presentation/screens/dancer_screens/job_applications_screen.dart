@@ -37,8 +37,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -51,10 +51,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
         centerTitle: true,
         title: Text(
           'Job Applications',
-          style: theme.textTheme.titleLarge?.copyWith(
+          style: textTheme.headlineSmall?.copyWith(
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
-            letterSpacing: 0.3,
           ),
         ),
         bottom: PreferredSize(
@@ -75,11 +74,11 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
               indicatorWeight: 3,
               labelColor: Colors.deepPurple.shade500,
               unselectedLabelColor: Colors.grey.shade600,
-              labelStyle: theme.textTheme.titleSmall?.copyWith(
+              labelStyle: textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
               ),
-              unselectedLabelStyle: theme.textTheme.titleSmall?.copyWith(
+              unselectedLabelStyle: textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.5,
               ),

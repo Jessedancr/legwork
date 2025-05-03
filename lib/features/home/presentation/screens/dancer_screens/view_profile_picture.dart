@@ -5,7 +5,11 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ViewProfilePicture extends StatefulWidget {
-  const ViewProfilePicture({super.key});
+  final String defaultImagePath;
+  const ViewProfilePicture({
+    super.key,
+    required this.defaultImagePath,
+  });
 
   @override
   State<ViewProfilePicture> createState() => _ViewProfilePictureState();
@@ -13,7 +17,7 @@ class ViewProfilePicture extends StatefulWidget {
 
 class _ViewProfilePictureState extends State<ViewProfilePicture> {
   late MyAuthProvider authProvider;
-  DancerEntity? dancerDetails;
+  UserEntity? userDetails;
   bool isLoading = true;
 
   @override
@@ -35,7 +39,7 @@ class _ViewProfilePictureState extends State<ViewProfilePicture> {
       },
       (data) {
         setState(() {
-          dancerDetails = data as DancerEntity;
+          userDetails = data as UserEntity;
           isLoading = false;
         });
       },
@@ -66,7 +70,7 @@ class _ViewProfilePictureState extends State<ViewProfilePicture> {
                 fit: BoxFit.contain,
               ),
             )
-          : dancerDetails == null
+          : userDetails == null
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -113,13 +117,12 @@ class _ViewProfilePictureState extends State<ViewProfilePicture> {
                       child: CircleAvatar(
                         radius: MediaQuery.of(context).size.width * 0.45,
                         backgroundColor: colorScheme.surface,
-                        backgroundImage:
-                            (dancerDetails!.profilePicture != null &&
-                                    dancerDetails!.profilePicture!.isNotEmpty)
-                                ? NetworkImage(dancerDetails!.profilePicture!)
-                                : const AssetImage(
-                                    'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                                  ) as ImageProvider,
+                        backgroundImage: (userDetails!.profilePicture != null &&
+                                userDetails!.profilePicture!.isNotEmpty)
+                            ? NetworkImage(userDetails!.profilePicture!)
+                            :  AssetImage(
+                                widget.defaultImagePath,
+                              ) as ImageProvider,
                       ),
                     ),
                   ),
