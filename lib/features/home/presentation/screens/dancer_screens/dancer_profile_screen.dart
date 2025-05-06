@@ -11,14 +11,14 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 
-class DancerProfile extends StatefulWidget {
-  const DancerProfile({super.key});
+class DancerProfileScreen extends StatefulWidget {
+  const DancerProfileScreen({super.key});
 
   @override
-  State<DancerProfile> createState() => _DancerProfileState();
+  State<DancerProfileScreen> createState() => _DancerProfileScreenState();
 }
 
-class _DancerProfileState extends State<DancerProfile> {
+class _DancerProfileScreenState extends State<DancerProfileScreen> {
   late MyAuthProvider authProvider;
   DancerEntity? dancerDetails;
   bool isLoading = true;

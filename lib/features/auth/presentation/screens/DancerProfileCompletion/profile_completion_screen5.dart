@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:legwork/features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
@@ -175,7 +174,10 @@ class _ProfileCompletionScreen5State extends State<ProfileCompletionScreen5> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                      horizontal: 25,
+                    ),
                     child: Column(
                       children: [
                         // Professional title Text field

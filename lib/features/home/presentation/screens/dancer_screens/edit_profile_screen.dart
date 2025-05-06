@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
-
-final jobsList = jobs;
+import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
+import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_text_form_field.dart';
+import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final DancerEntity? dancerDetails;
@@ -21,10 +25,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  late final UpdateProfileProvider provider;
 
   // Selected lists for dropdown/multi-select
   List<String> selectedDanceStyles = [];
-  List<String> selectedJobTypes = [];
+  List selectedJobTypes = [];
 
   // Sample options for dance styles and job types (replace with your actual data)
   final List<String> availableDanceStyles = [
@@ -37,26 +42,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     'Latin'
   ];
 
-  final List<String> availableJobTypes = [
-    'Performance',
-    'Teaching',
-    'Choreography',
-    'Workshop',
-    'Competition',
-    'Music Video'
-  ];
-
-  // final List<dynamic> availableJobTypes = jobsList;
+  final List<String> availableJobTypes =
+      jobs.map((job) => job[0] as String).toList();
 
   @override
   void initState() {
     super.initState();
+
     // Initialize controllers with existing data
     if (widget.dancerDetails != null) {
       _firstNameController.text = widget.dancerDetails!.firstName;
       _lastNameController.text = widget.dancerDetails!.lastName;
-      _phoneNumberController.text =
-          widget.dancerDetails!.phoneNumber.toString();
+      _phoneNumberController.text = widget.dancerDetails!.phoneNumber;
+
       _emailController.text = widget.dancerDetails!.email;
       _bioController.text = widget.dancerDetails!.bio ?? '';
 
@@ -87,10 +85,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   // Handle profile update
   Future<void> _updateProfile() async {
-    // Simulate saving profile data
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Create a map of the updated profile data
+    // Map containing the updated data
     final Map<String, dynamic> updatedProfile = {
       'firstName': _firstNameController.text,
       'lastName': _lastNameController.text,
@@ -103,7 +98,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     };
 
-    // TODO: Implement actual profile update logic with your Provider
+    showLoadingIndicator(context);
+    provider = Provider.of<UpdateProfileProvider>(context, listen: false);
+    await provider.updateProfileExecute(data: updatedProfile);
+    hideLoadingIndicator(context);
 
     // Show success message and navigate back
     LegworkSnackbar(
@@ -121,20 +119,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    //SCREEN SIZE
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       // * APPBAR
       appBar: AppBar(
+        centerTitle: true,
         title: Text(
           'Edit Profile',
-          style: TextStyle(
-            color: colorScheme.onPrimary,
+          style: textTheme.headlineSmall?.copyWith(
+            color: colorScheme.onSurface,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: colorScheme.primary,
+        backgroundColor: colorScheme.surface,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: colorScheme.onPrimary,
+            color: colorScheme.onSurface,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -148,40 +151,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           children: [
             // * Profile picture + edit icon
             Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: colorScheme.primaryContainer,
-                    backgroundImage: (widget.dancerDetails?.profilePicture !=
-                                null &&
-                            widget.dancerDetails!.profilePicture!.isNotEmpty)
-                        ? NetworkImage(widget.dancerDetails!.profilePicture!)
-                        : const AssetImage(
-                            'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                          ) as ImageProvider,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: colorScheme.background,
-                          width: 2,
+              child: Hero(
+                tag: 'profile_picture',
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: colorScheme.primaryContainer,
+                      backgroundImage: (widget.dancerDetails?.profilePicture !=
+                                  null &&
+                              widget.dancerDetails!.profilePicture!.isNotEmpty)
+                          ? NetworkImage(widget.dancerDetails!.profilePicture!)
+                          : const AssetImage(
+                              'images/depictions/dancer_dummy_default_profile_picture.jpg',
+                            ) as ImageProvider,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: SvgPicture.asset(
+                            'assets/svg/camera.svg',
+                            fit: BoxFit.scaleDown,
+                            color: colorScheme.onPrimary,
+                          ),
+                          color: colorScheme.onPrimary,
+                          onPressed: () {},
                         ),
                       ),
-                      child: IconButton(
-                        icon: const Icon(Icons.camera_alt),
-                        color: colorScheme.onPrimary,
-                        iconSize: 20,
-                        onPressed: () {},
-                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -198,8 +203,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Personal Information',
-                      style: textTheme.titleLarge?.copyWith(
+                      'Basic Information',
+                      style: textTheme.titleMedium?.copyWith(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
@@ -208,20 +213,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                     // Name Fields
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: _buildTextField(
-                            controller: _firstNameController,
-                            label: 'First Name',
-                            prefixIcon: Icons.person_outline,
+                        AuthTextFormField(
+                          width: screenWidth * 0.37,
+                          obscureText: false,
+                          controller: _firstNameController,
+                          labelText: 'First name',
+                          icon: SvgPicture.asset(
+                            'assets/svg/user.svg',
+                            fit: BoxFit.scaleDown,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildTextField(
-                            controller: _lastNameController,
-                            label: 'Last Name',
-                            prefixIcon: Icons.person_outline,
+                        AuthTextFormField(
+                          width: screenWidth * 0.37,
+                          obscureText: false,
+                          controller: _lastNameController,
+                          labelText: 'Last name',
+                          icon: SvgPicture.asset(
+                            'assets/svg/user.svg',
+                            fit: BoxFit.scaleDown,
                           ),
                         ),
                       ],
@@ -232,37 +243,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _buildTextField(
                       controller: _phoneNumberController,
                       label: 'Phone Number',
-                      prefixIcon: Icons.phone_outlined,
-                      keyboardType: TextInputType.phone,
+                      prefixIcon: SvgPicture.asset(
+                        'assets/svg/hashtag_icon.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      // keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 16),
 
                     _buildTextField(
                       controller: _emailController,
                       label: 'Email',
-                      prefixIcon: Icons.email_outlined,
+                      prefixIcon: SvgPicture.asset(
+                        'assets/svg/mail.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
 
-                    // Bio
-                    TextFormField(
+                    LargeTextField(
+                      maxLength: 300,
+                      hintText: 'bio',
+                      labelText: 'bio',
+                      obscureText: false,
                       controller: _bioController,
-                      decoration: InputDecoration(
-                        labelText: 'Bio',
-                        alignLabelWithHint: true,
-                        prefixIcon: const Icon(Icons.edit_note),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide:
-                              BorderSide(color: colorScheme.primary, width: 2),
-                        ),
-                        contentPadding: const EdgeInsets.all(16),
+                      icon: SvgPicture.asset(
+                        'assets/svg/description_icon.svg',
+                        fit: BoxFit.scaleDown,
                       ),
-                      maxLines: 4,
                     ),
                   ],
                 ),
@@ -283,7 +292,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     Text(
                       'Dance Styles',
-                      style: textTheme.titleLarge?.copyWith(
+                      style: textTheme.titleSmall?.copyWith(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
@@ -330,7 +339,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     Text(
                       'Job Preferences',
-                      style: textTheme.titleLarge?.copyWith(
+                      style: textTheme.titleSmall?.copyWith(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
@@ -341,6 +350,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       runSpacing: 8,
                       children: availableJobTypes.map((type) {
                         final isSelected = selectedJobTypes.contains(type);
+
                         return FilterChip(
                           label: Text(type),
                           selected: isSelected,
@@ -398,24 +408,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
-    required IconData prefixIcon,
+    required Widget prefixIcon,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return TextFormField(
+    //SCREEN SIZE
+
+    return AuthTextFormField(
+      obscureText: false,
       controller: controller,
+      labelText: label,
+      icon: prefixIcon,
       keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(prefixIcon),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary, width: 2),
-        ),
-      ),
     );
   }
 }

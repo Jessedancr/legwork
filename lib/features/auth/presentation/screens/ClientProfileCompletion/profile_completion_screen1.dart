@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
@@ -132,7 +133,10 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                     ),
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10.0,
+                          horizontal: 25,
+                        ),
                         child: Form(
                           key: formKey,
                           child: Column(
@@ -197,11 +201,9 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 hintText: 'Enter your bio',
                                 obscureText: false,
                                 controller: widget.bioController,
-                                icon: Image.asset(
-                                  'images/icons/edit_circle.png',
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
+                                icon: SvgPicture.asset(
+                                  'assets/svg/pen_circle.svg',
+                                  fit: BoxFit.scaleDown,
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -211,7 +213,10 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 labelText: 'preferred dance styles',
                                 obscureText: false,
                                 controller: widget.danceStylePrefsController,
-                                icon: const Icon(Icons.person),
+                                icon: SvgPicture.asset(
+                                  'assets/svg/disco_ball.svg',
+                                  fit: BoxFit.scaleDown,
+                                ),
                                 helperText: 'Ex: Afro, Hiphop',
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {

@@ -174,7 +174,10 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10.0,
+                      horizontal: 25,
+                    ),
                     child: Column(
                       children: [
                         const SizedBox(height: 10),

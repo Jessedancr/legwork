@@ -32,7 +32,7 @@ class MyAuthProvider extends ChangeNotifier {
     required String lastName,
     required String username,
     required String email,
-    required int phoneNumber,
+    required String phoneNumber,
     required String password,
     required UserType userType,
     Map<String, dynamic>? resume, // for dancers
@@ -133,7 +133,7 @@ class MyAuthProvider extends ChangeNotifier {
     String? firstName,
     String? lastName,
     String? username,
-    int? phoneNumber,
+    String? phoneNumber,
     Map<String, dynamic>? jobPrefs, // for dancers
     dynamic portfolio, // for dancers,
     String? organisationName, // for clients
@@ -170,7 +170,7 @@ class MyAuthProvider extends ChangeNotifier {
                 username: username ?? '',
                 email: email,
                 password: password,
-                phoneNumber: phoneNumber ?? 0,
+                phoneNumber: phoneNumber ?? '',
                 jobPrefs: jobPrefs ?? {},
                 resume: portfolio,
                 userType: userType ?? 'dancer',
@@ -183,7 +183,7 @@ class MyAuthProvider extends ChangeNotifier {
               lastName: lastName ?? '',
               username: username ?? '',
               email: email,
-              phoneNumber: phoneNumber ?? 0,
+              phoneNumber: phoneNumber ?? '',
               password: password,
               organisationName: organisationName,
               userType: userType ?? 'client',

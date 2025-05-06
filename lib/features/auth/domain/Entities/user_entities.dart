@@ -6,7 +6,7 @@ abstract class UserEntity {
   final String lastName;
   final String username;
   final String email;
-  final int phoneNumber;
+  final String phoneNumber;
   final String password;
   final String userType;
   final String? bio;

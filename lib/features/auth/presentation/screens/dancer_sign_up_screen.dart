@@ -65,7 +65,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             lastName: lastNameController.text.trim(),
             username: usernameController.text.toLowerCase().trim(),
             email: emailController.text.toLowerCase().trim(),
-            phoneNumber: int.parse(phoneNumberController.text.trim()),
+            phoneNumber: phoneNumberController.text.trim(),
             password: pwController.text.trim(),
             userType: UserType.dancer,
             deviceToken: deviceToken!,
@@ -176,169 +176,179 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             padding: const EdgeInsets.only(bottom: 10.0),
             child: Form(
               key: formKey,
-              child: Column(
-                children: [
-                  // Icon
-                  Image.asset(
-                    'images/logos/dance_icon_purple_cropped.png',
-                    width: screenWidth * 0.45,
-                    color: Theme.of(context).colorScheme.primary,
-                    filterQuality: FilterQuality.high,
-                  ),
-
-                  // create your account
-                  Text(
-                    'Create your Dancer account',
-                    style: GoogleFonts.robotoSlab(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: Column(
+                  children: [
+                    // Icon
+                    Image.asset(
+                      'images/logos/dance_icon_purple_cropped.png',
+                      width: screenWidth * 0.45,
+                      color: Theme.of(context).colorScheme.primary,
+                      filterQuality: FilterQuality.high,
                     ),
-                  ),
-                  const SizedBox(height: 15),
 
-                  // First name textfield
-                  AuthTextFormField(
-                    labelText: 'First name',
-                    obscureText: false,
-                    controller: firstNameController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/user.svg',
-                      fit: BoxFit.scaleDown,
+                    // create your account
+                    Text(
+                      'Create your Dancer account',
+                      style: GoogleFonts.robotoSlab(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'First name is compulsory';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 15),
 
-                  // Last name text field
-                  AuthTextFormField(
-                    labelText: 'last name',
-                    obscureText: false,
-                    controller: lastNameController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/user.svg',
-                      fit: BoxFit.scaleDown,
+                    // First name textfield
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AuthTextFormField(
+                          width: screenWidth * 0.4,
+                          labelText: 'First name',
+                          obscureText: false,
+                          controller: firstNameController,
+                          icon: SvgPicture.asset(
+                            'assets/svg/user.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          keyboardType: TextInputType.name,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'First name is compulsory';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Last name text field
+                        AuthTextFormField(
+                          width: screenWidth * 0.40,
+                          labelText: 'last name',
+                          obscureText: false,
+                          controller: lastNameController,
+                          icon: SvgPicture.asset(
+                            'assets/svg/user.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          keyboardType: TextInputType.name,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Last name is compulsory';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Last name is compulsory';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // Username textfield
-                  AuthTextFormField(
-                    labelText: 'username',
-                    obscureText: false,
-                    controller: usernameController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/username.svg',
-                      fit: BoxFit.scaleDown,
+                    // Username textfield
+                    AuthTextFormField(
+                      labelText: 'username',
+                      obscureText: false,
+                      controller: usernameController,
+                      icon: SvgPicture.asset(
+                        'assets/svg/username.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      keyboardType: TextInputType.name,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Username is compulsory';
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Username is compulsory';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // Email textfield
-                  AuthTextFormField(
-                    helperText: 'Ex: johndoe@gmail.com',
-                    labelText: 'email',
-                    obscureText: false,
-                    controller: emailController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/mail.svg',
-                      fit: BoxFit.scaleDown,
+                    // Email textfield
+                    AuthTextFormField(
+                      helperText: 'Ex: johndoe@gmail.com',
+                      labelText: 'email',
+                      obscureText: false,
+                      controller: emailController,
+                      icon: SvgPicture.asset(
+                        'assets/svg/mail.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Email is compulsory';
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Email is compulsory';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 18),
+                    const SizedBox(height: 18),
 
-                  // Phone number textfield
-                  AuthTextFormField(
-                    labelText: 'phone Number',
-                    obscureText: false,
-                    controller: phoneNumberController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/address_book.svg',
-                      fit: BoxFit.scaleDown,
+                    // Phone number textfield
+                    AuthTextFormField(
+                      labelText: 'phone Number',
+                      obscureText: false,
+                      controller: phoneNumberController,
+                      icon: SvgPicture.asset(
+                        'assets/svg/address_book.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Phone number is compulsory';
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Phone number is compulsory';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // Password textfield
-                  AuthTextFormField(
-                    suffixIcon: viewPassword,
-                    labelText: 'password',
-                    obscureText: obscureText,
-                    controller: pwController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/open_padlock.svg',
-                      fit: BoxFit.scaleDown,
+                    // Password textfield
+                    AuthTextFormField(
+                      suffixIcon: viewPassword,
+                      labelText: 'password',
+                      obscureText: obscureText,
+                      controller: pwController,
+                      icon: SvgPicture.asset(
+                        'assets/svg/open_padlock.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      validator: (value) {
+                        if (value!.length < 6) {
+                          return 'This your password no strong reach o';
+                        }
+                        return null;
+                      },
                     ),
-                    keyboardType: TextInputType.visiblePassword,
-                    validator: (value) {
-                      if (value!.length < 6) {
-                        return 'This your password no strong reach o';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // Confirm password textfield
-                  AuthTextFormField(
-                    suffixIcon: viewConfirmPassword,
-                    labelText: 'confirm password',
-                    obscureText: obscureText2,
-                    controller: pwConfirmController,
-                    keyboardType: TextInputType.visiblePassword,
-                    icon: SvgPicture.asset(
-                      'assets/svg/lock-hashtag.svg',
-                      fit: BoxFit.scaleDown,
+                    // Confirm password textfield
+                    AuthTextFormField(
+                      suffixIcon: viewConfirmPassword,
+                      labelText: 'confirm password',
+                      obscureText: obscureText2,
+                      controller: pwConfirmController,
+                      keyboardType: TextInputType.visiblePassword,
+                      icon: SvgPicture.asset(
+                        'assets/svg/lock-hashtag.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      validator: (value) {
+                        if (pwController.text != pwConfirmController.text ||
+                            value!.length < 6) {
+                          return "Your passwword no match o";
+                        }
+                        return null;
+                      },
                     ),
-                    validator: (value) {
-                      if (pwController.text != pwConfirmController.text ||
-                          value!.length < 6) {
-                        return "Your passwword no match o";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // Sign up button
-                  AuthButton(
-                    buttonText: 'Sign up',
-                    onPressed: dancerSignUp,
-                  )
-                ],
+                    // Sign up button
+                    AuthButton(
+                      buttonText: 'Sign up',
+                      onPressed: dancerSignUp,
+                    )
+                  ],
+                ),
               ),
             ),
           ),

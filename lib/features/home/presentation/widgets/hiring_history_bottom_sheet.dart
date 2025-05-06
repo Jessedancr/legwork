@@ -46,13 +46,12 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
       child: Container(
         height: screenHeight * 1.25,
         decoration: BoxDecoration(
-          //color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 10.0,
-            vertical: 10,
+            horizontal: 25.0,
+            vertical: 20,
           ),
           child: Form(
             key: formKey,

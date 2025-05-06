@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_home_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/job_applications_screen.dart';
 import 'package:legwork/features/chat/presentation/screens/dancer_messages_screen.dart';
-import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_profile.dart';
+import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_profile_screen.dart';
 import 'package:legwork/features/home/presentation/widgets/dancers_nav_bar.dart';
 
 class DancerApp extends StatefulWidget {
@@ -27,7 +27,7 @@ class _DancerAppState extends State<DancerApp> {
     const DancerHomeScreen(),
     const JobApplicationsScreen(),
     const DancerMessagesScreen(),
-    const DancerProfile()
+    const DancerProfileScreen()
   ];
 
   @override
