@@ -9,6 +9,39 @@ class PaymentRemoteDataSource {
 
   PaymentRemoteDataSource({required this.onlinePaymentInfo});
 
+  // SUB ACCOUNTS
+  Future<void> createSubAccount({
+    required String acctName,
+    required String acctNum,
+    required String bankName,
+  }) async {
+    try {
+      final response =
+          await onlinePaymentInfo.post(endpoint: '/subaccount', body: {
+        "acctName": acctName,
+        "banckName": bankName, // e.g. from Paystack's bank list
+        "acctNum": acctNum,
+        "description": "Dancer payout account"
+      });
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        debugPrint(data.toString());
+        if (data == null) {
+          debugPrint('Invalid response from paystack: ${data.toString()}');
+          throw Exception('Invalid response from paystack');
+        }
+        return data;
+      } else {
+        throw Exception('Failed to create sub account');
+      }
+    } catch (e) {
+      debugPrint('Unexpected error with creating sub account');
+      throw Exception(
+          'Unexpected error with creating sub account: ${e.toString()}');
+    }
+  }
+
   // INIT TRANSACTION
   Future<PaymentEntity> initializeTransaction({
     required double amount,
@@ -42,7 +75,6 @@ class PaymentRemoteDataSource {
           dancerId: dancerId,
           clientId: clientId,
           authorizationUrl: data['data']['authorization_url'],
-          
         );
       } else {
         throw Exception('Failed to initialize transaction');
