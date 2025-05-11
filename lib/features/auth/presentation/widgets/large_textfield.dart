@@ -70,6 +70,9 @@ class LargeTextField extends StatelessWidget {
             decoration: InputDecoration(
               alignLabelWithHint: true,
               labelText: labelText,
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+              ),
               contentPadding: EdgeInsets.only(
                 left: screenWidth * 0.1,
                 top: screenHeight * 0.05,

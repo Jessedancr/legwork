@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/entities.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_tile.dart';
+
 import 'package:legwork/core/Constants/jobs_list.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
 
 /**
  * THIS SCREEN PROMPTS THE USER TO INPUT THE TYPE OF JOBS HE IS INTERESTED IN
- * 
- * TODO: PROPERLY HANDLE THE STATE OF THE CHECKBOX
+ *
  */
 
 // Track selected skills
@@ -23,27 +24,25 @@ class ProfileCompletionScreen2 extends StatefulWidget {
 }
 
 class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
-  final TextEditingController skillTypeController = TextEditingController();
+  // final TextEditingController skillTypeController = TextEditingController();
   final SearchController searchController = SearchController();
-
-  // Copy jobs list to stateful widget so it can be updated
-  List<List<dynamic>> localJobs = [];
+  List<Job> jobs = [];
 
   @override
   void initState() {
     super.initState();
-    localJobs = List.from(
-        jobs); // Copy the jobs list to avoid modifying the global list
+    jobs =
+        jobsList.map((job) => Job(name: job[0], isSelected: job[1])).toList();
   }
 
   void checkBoxTapped(bool value, int index) {
     debugPrint('$index, $value');
     setState(() {
-      localJobs[index][1] = value;
+      jobs[index].isSelected = value;
       if (value) {
-        selectedSkills.add(localJobs[index][0]);
+        selectedSkills.add(jobs[index].name);
       } else {
-        selectedSkills.remove(localJobs[index][0]);
+        selectedSkills.remove(jobs[index].name);
       }
     });
   }
@@ -56,6 +55,7 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
         body: Center(
           child: Column(
             children: [
+              // * TOP SECTION (IMAGE)
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -96,6 +96,8 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                   ),
                 ),
               ),
+
+              // * BOTTOM SECTION
               Expanded(
                 flex: 2,
                 child: Container(
@@ -108,39 +110,47 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 15.0),
+                      horizontal: 15.0,
+                      vertical: 15.0,
+                    ),
                     child: Column(
                       children: [
                         JobSearchBar(
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
-                            final filteredJobs = localJobs.where(
+                            final filteredJobs = jobs.where(
                               (job) {
                                 return controller.text.isEmpty ||
-                                    job[0].toLowerCase().contains(
+                                    job.name.toLowerCase().contains(
                                         controller.text.toLowerCase());
                               },
                             ).toList();
 
                             return [
-                              SizedBox(
-                                height: 500,
-                                child: ListView.builder(
-                                  itemCount: filteredJobs.length,
-                                  itemBuilder: (context, index) {
-                                    final jobIndex = localJobs.indexWhere(
-                                        (job) =>
-                                            job[0] == filteredJobs[index][0]);
+                              StatefulBuilder(
+                                builder: (context, setState) {
+                                  return SizedBox(
+                                    height: 500,
+                                    child: ListView.builder(
+                                      itemCount: filteredJobs.length,
+                                      itemBuilder: (context, index) {
+                                        final jobIndex = jobs.indexWhere(
+                                            (job) =>
+                                                job.name ==
+                                                filteredJobs[index].name);
 
-                                    // localJobs.indexOf(filteredJobs[index]);
-                                    return JobTile(
-                                      job: filteredJobs[index][0],
-                                      checkedValue: localJobs[jobIndex][1],
-                                      onChanged: (value) =>
-                                          checkBoxTapped(value!, jobIndex),
-                                    );
-                                  },
-                                ),
+                                        return LegworkCheckboxTile(
+                                            title: jobs[index].name,
+                                            checkedValue:
+                                                jobs[index].isSelected,
+                                            onChanged: (value) {
+                                              checkBoxTapped(value!, jobIndex);
+                                              setState(() {});
+                                            });
+                                      },
+                                    ),
+                                  );
+                                },
                               ),
                             ];
                           },

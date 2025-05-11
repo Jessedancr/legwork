@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 
 // TODO: PROPERLY STYLE THIS BUTTON
 
@@ -22,6 +20,8 @@ class LegworkElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     // RETURNED WIDGET
     return ElevatedButton(
       style: ButtonStyle(
@@ -31,7 +31,6 @@ class LegworkElevatedButton extends StatelessWidget {
           Theme.of(context).colorScheme.primary,
         ),
         elevation: const WidgetStatePropertyAll(0.0),
-        
         splashFactory: InkSplash.splashFactory,
       ),
       onPressed: onPressed,
@@ -44,8 +43,9 @@ class LegworkElevatedButton extends StatelessWidget {
           // Button text
           Text(
             buttonText,
-            style: GoogleFonts.robotoSlab(
-              color: Theme.of(context).colorScheme.onPrimary,
+            style: textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onPrimary,
             ),
           ),
         ],

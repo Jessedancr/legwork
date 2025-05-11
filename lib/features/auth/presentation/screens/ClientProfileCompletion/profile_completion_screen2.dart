@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_tile.dart';
+
 import 'package:legwork/core/Constants/jobs_list.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
 
 // Track selected skills
 final List selectedSkills = [];
@@ -25,13 +26,13 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
   void checkBoxTapped(bool value, int index) {
     debugPrint('$index, $value');
     setState(() {
-      jobs[index][1] = value;
+      jobsList[index][1] = value;
       if (value) {
         // Add the skill to the selected skills list
-        selectedSkills.add(jobs[index][0]);
+        selectedSkills.add(jobsList[index][0]);
       } else {
         // Remove the skill from the selected skills list
-        selectedSkills.remove(jobs[index][0]);
+        selectedSkills.remove(jobsList[index][0]);
       }
     });
   }
@@ -114,8 +115,8 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                         JobSearchBar(
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
-                            // Filter jobs based on the search query
-                            final filteredJobs = jobs.where(
+                            // Filter jobsList based on the search query
+                            final filteredJobs = jobsList.where(
                               (job) {
                                 // Return empty search controller or the search query converted to lower case
                                 return controller.text.isEmpty ||
@@ -132,9 +133,9 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                                   itemCount: filteredJobs.length,
                                   itemBuilder: (context, index) {
                                     final jobIndex =
-                                        jobs.indexOf(filteredJobs[index]);
-                                    return JobTile(
-                                      job: filteredJobs[index][0],
+                                        jobsList.indexOf(filteredJobs[index]);
+                                    return LegworkCheckboxTile(
+                                      title: filteredJobs[index][0],
                                       checkedValue: filteredJobs[index][1],
                                       onChanged: (value) => checkBoxTapped(
                                         value!,

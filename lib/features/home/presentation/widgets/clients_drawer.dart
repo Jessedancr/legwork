@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'legwork_drawer_tile.dart';
+import 'legwork_list_tile.dart';
 
 class ClientsDrawer extends StatefulWidget {
   const ClientsDrawer({super.key});
@@ -36,7 +36,7 @@ class _ClientsDrawerState extends State<ClientsDrawer> {
 
           /// DRAWER TILES
           // Alerts/notifications
-          LegworkDrawerTile(
+          LegworkListTile(
             leading: Icon(
               Icons.notifications,
               color: Theme.of(context).colorScheme.surface,
@@ -53,7 +53,7 @@ class _ClientsDrawerState extends State<ClientsDrawer> {
           const SizedBox(height: 10),
 
           // Settings
-          LegworkDrawerTile(
+          LegworkListTile(
             leading: Icon(
               Icons.settings,
               color: Theme.of(context).colorScheme.surface,

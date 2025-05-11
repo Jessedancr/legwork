@@ -295,6 +295,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
+                                    horizontal: 25,
                                   ),
                                   child: LargeTextField(
                                     hintText:

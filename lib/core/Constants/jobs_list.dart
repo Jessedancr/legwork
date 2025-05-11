@@ -1,4 +1,4 @@
-final List jobs = [
+final List jobsList = [
   ["Social media promotion", false],
   ["Music video features", false],
   ["Brand advertisements", false],

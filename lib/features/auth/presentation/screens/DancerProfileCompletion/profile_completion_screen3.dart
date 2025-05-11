@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/entities.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_tile.dart';
+
 import 'package:legwork/core/Constants/lagos_locations.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
 
 // Track selected skills
 final List selectedLocations = [];
@@ -17,26 +19,36 @@ class ProfileCompletionScreen3 extends StatefulWidget {
 }
 
 class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
+  // CONTROLLERS
+  final SearchController searchController = SearchController();
+
+  List<LagosLocations> locations = [];
+  @override
+  void initState() {
+    super.initState();
+
+    locations = lagosLocations
+        .map((location) =>
+            LagosLocations(name: location[0], isSelected: location[1]))
+        .toList();
+  }
+
+  void checkBoxTapped(bool value, int index) {
+    debugPrint('$index, $value');
+    setState(() {
+      locations[index].isSelected = value;
+      if (value) {
+        // Add the skill to the selected skills list
+        selectedLocations.add(locations[index].name);
+      } else {
+        // Remove the skill from the selected skills list
+        selectedLocations.remove(locations[index].name);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // CONTROLLERS
-    final TextEditingController skillTypeController = TextEditingController();
-    final SearchController searchController = SearchController();
-
-    void checkBoxTapped(bool value, int index) {
-      debugPrint('$index, $value');
-      setState(() {
-        lagosLocations[index][1] = value;
-        if (value) {
-          // Add the skill to the selected skills list
-          selectedLocations.add(lagosLocations[index][0]);
-        } else {
-          // Remove the skill from the selected skills list
-          selectedLocations.remove(lagosLocations[index][0]);
-        }
-      });
-    }
-
     //SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -122,34 +134,44 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
                             // Filter locations based on the search query
-                            final filteredLocations = lagosLocations.where(
-                              (job) {
+                            final filteredLocations = locations.where(
+                              (location) {
                                 // Return empty search controller or the search query converted to lower case
                                 return controller.text.isEmpty ||
-                                    job[0].toLowerCase().contains(
+                                    location.name.toLowerCase().contains(
                                         controller.text.toLowerCase());
                               },
                             ).toList();
 
                             // Display filtered results in a single listview
                             return [
-                              SizedBox(
-                                height: 500,
-                                child: ListView.builder(
-                                  itemCount: filteredLocations.length,
-                                  itemBuilder: (context, index) {
-                                    final locationIndex = lagosLocations
-                                        .indexOf(filteredLocations[index]);
-                                    return JobTile(
-                                      job: filteredLocations[index][0],
-                                      checkedValue: filteredLocations[index][1],
-                                      onChanged: (value) => checkBoxTapped(
-                                        value!,
-                                        locationIndex,
-                                      ),
-                                    );
-                                  },
-                                ),
+                              StatefulBuilder(
+                                builder: (context, setState) {
+                                  return SizedBox(
+                                    height: 500,
+                                    child: ListView.builder(
+                                      itemCount: filteredLocations.length,
+                                      itemBuilder: (context, index) {
+                                        final locationIndex =
+                                            locations.indexWhere((location) =>
+                                                location.name ==
+                                                filteredLocations[index].name);
+                                        return LegworkCheckboxTile(
+                                          title: locations[index].name,
+                                          checkedValue:
+                                              locations[index].isSelected,
+                                          onChanged: (value) {
+                                            checkBoxTapped(
+                                              value!,
+                                              locationIndex,
+                                            );
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
                               ),
                             ];
                           },

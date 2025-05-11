@@ -25,7 +25,6 @@ final List lagosLocations = [
   ['Victoria island', false],
   ['Lagos Island', false],
   ['Onigbongbo', false],
-  ['Surulere', false],
   ['Yaba', false],
   ['Lekki', false],
   ['Epe', false],

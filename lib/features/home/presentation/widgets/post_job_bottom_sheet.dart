@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_tile.dart';
+
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
 
 // TEXTFORMFIELD KEY
 final formKey = GlobalKey<FormState>();
@@ -44,14 +45,14 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
   void checkBoxTapped(bool value, int index) {
     debugPrint('$index, $value');
     setState(() {
-      jobs[index][1] = value;
+      jobsList[index][1] = value;
       if (value) {
         // Add the skill to the selected skills list
-        selectedSkills.add(jobs[index][0]);
-        selectedJobType = jobs[index][0];
+        selectedSkills.add(jobsList[index][0]);
+        selectedJobType = jobsList[index][0];
       } else {
         // Remove the skill from the selected skills list
-        selectedSkills.remove(jobs[index][0]);
+        selectedSkills.remove(jobsList[index][0]);
         selectedJobType = null;
       }
     });
@@ -84,10 +85,11 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                   children: [
                     // JOB TYPE SEARCH FIELD
                     JobSearchBar(
+                      barHintText: 'Type of job',
                       searchController: widget.searchController,
                       suggestionsBuilder: (context, controller) {
                         // Filter jobs based on the search query
-                        final filteredJobs = jobs.where(
+                        final filteredJobs = jobsList.where(
                           (job) {
                             // Return empty search controller or the search query converted to lower case
                             return controller.text.isEmpty ||
@@ -103,9 +105,9 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                               itemCount: filteredJobs.length,
                               itemBuilder: (context, index) {
                                 final jobIndex =
-                                    jobs.indexOf(filteredJobs[index]);
-                                return JobTile(
-                                  job: filteredJobs[index][0],
+                                    jobsList.indexOf(filteredJobs[index]);
+                                return LegworkCheckboxTile(
+                                  title: filteredJobs[index][0],
                                   checkedValue: filteredJobs[index][1],
                                   onChanged: (value) => checkBoxTapped(
                                     value!,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/entities.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
@@ -7,6 +8,12 @@ import 'package:legwork/features/auth/presentation/Provider/update_profile_provi
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_text_form_field.dart';
+import 'package:legwork/features/auth/presentation/widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_elevated_button.dart';
+import 'package:legwork/core/Constants/lagos_locations.dart';
+import 'package:legwork/features/home/presentation/widgets/edit_job_types_bottom_sheet.dart';
+import 'package:legwork/features/home/presentation/widgets/legwork_list_tile.dart';
 import 'package:provider/provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -25,25 +32,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _danceStylesController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final SearchController searchController = SearchController();
   late final UpdateProfileProvider provider;
 
   // Selected lists for dropdown/multi-select
   List<String> selectedDanceStyles = [];
+
+  // This list holds all our locations
+  List<LagosLocations> locations = [];
   List selectedJobTypes = [];
 
-  // Sample options for dance styles and job types (replace with your actual data)
-  final List<String> availableDanceStyles = [
-    'Ballet',
-    'Contemporary',
-    'Hip-Hop',
-    'Jazz',
-    'Tap',
-    'Ballroom',
-    'Latin'
-  ];
+  // List of selected Locations to be shown to the user and send to the backend
+  List selectedLocations = [];
 
+  // Extracting the job from the jobs list
   final List<String> availableJobTypes =
-      jobs.map((job) => job[0] as String).toList();
+      jobsList.map((job) => job[0] as String).toList();
 
   @override
   void initState() {
@@ -54,21 +60,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _firstNameController.text = widget.dancerDetails!.firstName;
       _lastNameController.text = widget.dancerDetails!.lastName;
       _phoneNumberController.text = widget.dancerDetails!.phoneNumber;
+      _usernameController.text = widget.dancerDetails!.username;
+      _danceStylesController.text =
+          widget.dancerDetails!.jobPrefs!['danceStyles'].join(', ').toString();
 
       _emailController.text = widget.dancerDetails!.email;
       _bioController.text = widget.dancerDetails!.bio ?? '';
 
       // Initialize selected lists
-      if (widget.dancerDetails!.jobPrefs != null) {
-        if (widget.dancerDetails!.jobPrefs!['danceStyles'] is List) {
-          selectedDanceStyles =
-              List<String>.from(widget.dancerDetails!.jobPrefs!['danceStyles']);
-        }
-        if (widget.dancerDetails!.jobPrefs!['jobTypes'] is List) {
-          selectedJobTypes =
-              List<String>.from(widget.dancerDetails!.jobPrefs!['jobTypes']);
-        }
+      if (widget.dancerDetails!.jobPrefs != null &&
+          widget.dancerDetails!.jobPrefs!['danceStyles'] is List &&
+          widget.dancerDetails!.jobPrefs!['jobLocations'] is List) {
+        selectedDanceStyles =
+            List<String>.from(widget.dancerDetails!.jobPrefs!['danceStyles']);
+
+        selectedLocations =
+            List<String>.from(widget.dancerDetails!.jobPrefs!['jobLocations']);
       }
+
+      locations = lagosLocations
+          .map((location) =>
+              LagosLocations(name: location[0], isSelected: location[1]))
+          .toList();
     }
   }
 
@@ -89,12 +102,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final Map<String, dynamic> updatedProfile = {
       'firstName': _firstNameController.text,
       'lastName': _lastNameController.text,
+      'username': _usernameController.text,
       'phoneNumber': _phoneNumberController.text,
       'email': _emailController.text,
       'bio': _bioController.text,
       'jobPrefs': {
-        'danceStyles': selectedDanceStyles,
+        'danceStyles': _danceStylesController.text
+            .trim()
+            .split(RegExp(r'(\s*,\s)+'))
+            .where((style) => style.isNotEmpty)
+            .toList(),
         'jobTypes': selectedJobTypes,
+        'jobLocations': selectedLocations,
       }
     };
 
@@ -121,6 +140,150 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     //SCREEN SIZE
     final screenWidth = MediaQuery.of(context).size.width;
+
+    // * JOB TYPES BOTTOM SHEET
+    void openJobTypesBottomSheet() {
+      if (widget.dancerDetails!.jobPrefs != null &&
+          widget.dancerDetails!.jobPrefs!['jobTypes'] is List) {
+        selectedJobTypes =
+            List<String>.from(widget.dancerDetails!.jobPrefs!['jobTypes']);
+      }
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return EditJobTypesBottomSheet(
+              colorScheme: colorScheme,
+              textTheme: textTheme,
+              availableJobTypes: availableJobTypes,
+              selectedJobTypes: selectedJobTypes,
+              widget: widget,
+            );
+          });
+    }
+
+    // * JOB LOCATIONS BOTTOM SHEET
+    void openJobLocationsBottomSheet() {
+      // * Copy of lagosLocations list
+      final initialLocations = List<LagosLocations>.from(locations);
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setModalState) {
+              return Container(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    JobSearchBar(
+                      barHintText: 'Search locations',
+                      searchController: searchController,
+                      suggestionsBuilder: (context, controller) {
+                        /// * Here we filter locations based on what the user has typed.
+                        /// * If the user hasn't typed anything, return the full list.
+                        /// * We do this using the .where() method and convert it to list
+                        /// * because the .where() method returns an iterable.
+                        final filtered = initialLocations.where((location) {
+                          return controller.text.isEmpty ||
+                              location.name
+                                  .toLowerCase()
+                                  .contains(controller.text.toLowerCase());
+                        }).toList();
+
+                        return [
+                          SizedBox(
+                            height: 400,
+                            child: ListView.builder(
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                return LegworkCheckboxTile(
+                                  title: filtered[index].name,
+                                  checkedValue: filtered[index].isSelected,
+                                  onChanged: (value) {
+                                    setModalState(() {
+                                      // Update the original location's state
+                                      final originalIndex =
+                                          locations.indexWhere((l) =>
+                                              l.name == filtered[index].name);
+                                      // final filteredIndex = loca
+
+                                      // If a match is found(originalIndex != -1),
+                                      // update the isSelected value of that item to true/false
+                                      if (originalIndex != -1) {
+                                        locations[originalIndex].isSelected =
+                                            value!;
+                                      }
+
+                                      // Update filtered list
+                                      filtered[index].isSelected = value!;
+
+                                      /// * Update selectedLocations list
+                                      /// * If the checkbox is ticked and the selectedLocations list
+                                      /// * does not already contain the location from the
+                                      /// * filteredLocations list then add it to the selectedLocations
+                                      /// * else, remove it
+                                      if (value &&
+                                          !selectedLocations
+                                              .contains(filtered[index].name)) {
+                                        selectedLocations
+                                            .add(filtered[index].name);
+                                      } else {
+                                        selectedLocations
+                                            .remove(filtered[index].name);
+                                      }
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ];
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Selected Locations:',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    // Display selected locations
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: selectedLocations.map((location) {
+                        return Chip(
+                          label: Text(location),
+                          onDeleted: () {
+                            setModalState(() {
+                              selectedLocations.remove(location);
+                              final index = locations
+                                  .indexWhere((l) => l.name == location);
+                              if (index != -1) {
+                                locations[index].isSelected = false;
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        setState(() {}); // Refresh parent widget
+                      },
+                      child: const Text('Done'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
 
     return Scaffold(
       // * APPBAR
@@ -191,7 +354,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Edit Form
+            // Basic Information Edit Form
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -239,7 +402,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Contact Fields
+                    _buildTextField(
+                      controller: _usernameController,
+                      label: 'Username',
+                      prefixIcon: SvgPicture.asset(
+                        'assets/svg/username.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Phone number
                     _buildTextField(
                       controller: _phoneNumberController,
                       label: 'Phone Number',
@@ -251,6 +424,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const SizedBox(height: 16),
 
+                    // Email
                     _buildTextField(
                       controller: _emailController,
                       label: 'Email',
@@ -292,33 +466,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     Text(
                       'Dance Styles',
-                      style: textTheme.titleSmall?.copyWith(
+                      style: textTheme.titleMedium?.copyWith(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: availableDanceStyles.map((style) {
-                        final isSelected = selectedDanceStyles.contains(style);
-                        return FilterChip(
-                          label: Text(style),
-                          selected: isSelected,
-                          selectedColor: colorScheme.primaryContainer,
-                          checkmarkColor: colorScheme.primary,
-                          onSelected: (selected) {
-                            setState(() {
-                              if (selected) {
-                                selectedDanceStyles.add(style);
-                              } else {
-                                selectedDanceStyles.remove(style);
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
+                    _buildTextField(
+                      controller: _danceStylesController,
+                      label: 'dance Styles',
+                      helperText: 'Separate each dance style with a comma',
+                      prefixIcon: SvgPicture.asset(
+                        'assets/svg/disco_ball.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
                     ),
                   ],
                 ),
@@ -326,76 +487,49 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Job Types Card
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            // * Job types list tile
+            LegworkListTile(
+              leading: SvgPicture.asset(
+                'assets/svg/briefcase.svg',
+                color: colorScheme.onPrimary,
+                fit: BoxFit.scaleDown,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Job Preferences',
-                      style: textTheme.titleSmall?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: availableJobTypes.map((type) {
-                        final isSelected = selectedJobTypes.contains(type);
-
-                        return FilterChip(
-                          label: Text(type),
-                          selected: isSelected,
-                          selectedColor: colorScheme.primaryContainer,
-                          checkmarkColor: colorScheme.primary,
-                          onSelected: (selected) {
-                            setState(() {
-                              if (selected) {
-                                selectedJobTypes.add(type);
-                              } else {
-                                selectedJobTypes.remove(type);
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                  ],
+              title: Text(
+                'Job types',
+                style: textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onPrimary,
                 ),
               ),
+              onTap: openJobTypesBottomSheet,
             ),
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 32),
+            // * Job locations list tile
+            LegworkListTile(
+              leading: SvgPicture.asset(
+                'assets/svg/location.svg',
+                color: colorScheme.onPrimary,
+                fit: BoxFit.scaleDown,
+              ),
+              title: Text(
+                'Job locations',
+                style: textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.onPrimary,
+                ),
+              ),
+              onTap: openJobLocationsBottomSheet,
+            ),
+            const SizedBox(height: 30),
 
             // Save Button
             SizedBox(
               width: double.infinity,
               height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colorScheme.onPrimary,
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                ),
+              child: LegworkElevatedButton(
                 onPressed: _updateProfile,
-                child: const Text(
-                  'Save Profile',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                buttonText: 'Update profile',
               ),
             ),
             const SizedBox(height: 24),
@@ -410,6 +544,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     required String label,
     required Widget prefixIcon,
     TextInputType keyboardType = TextInputType.text,
+    String? helperText,
   }) {
     //SCREEN SIZE
 
@@ -419,6 +554,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       labelText: label,
       icon: prefixIcon,
       keyboardType: keyboardType,
+      helperText: helperText,
     );
   }
 }
