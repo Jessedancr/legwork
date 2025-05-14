@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/features/chat/data/models/conversation_model.dart';
 import 'package:legwork/features/chat/data/models/message_model.dart';
-import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 
 /**
  * THIS ABSTRACY CLASS DEFINES WHAT OPERATIONS IT'S IMPLEMENTATION CAN CARRY OUT

@@ -91,6 +91,24 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
         ],
       ),
 
+      // * FLOATING ACTION BUTTON
+      floatingActionButton: isLoading
+          ? null
+          : FloatingActionButton.extended(
+              backgroundColor: colorScheme.primary.withOpacity(0.5),
+              onPressed: () {},
+              label: Column(
+                children: [
+                  const Icon(Icons.add),
+                  const SizedBox(height: 8),
+                  SvgPicture.asset(
+                    'assets/svg/briefcase.svg',
+                    fit: BoxFit.scaleDown,
+                  )
+                ],
+              ),
+            ),
+
       // * BODY
       body: isLoading
           ? Center(
@@ -122,7 +140,13 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
                       const SizedBox(height: 8),
                       ElevatedButton(
                         onPressed: _fetchDancerDetails,
-                        child: const Text('Retry'),
+                        child: isLoading
+                            ? Lottie.asset(
+                                'assets/lottie/loading.svg',
+                                height: 100,
+                                fit: BoxFit.contain,
+                              )
+                            : const Text('retry'),
                       ),
                     ],
                   ),

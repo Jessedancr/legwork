@@ -15,6 +15,7 @@ import 'package:legwork/features/home/data/models/job_model.dart';
 import 'package:legwork/features/home/data/repo_impl/job_repo_impl.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_app.dart';
+import 'package:legwork/features/home/presentation/screens/client_screens/edit_client_profile_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/edit_profile_screen.dart';
@@ -254,6 +255,12 @@ class MyApp extends StatelessWidget {
               ModalRoute.of(context)!.settings.arguments as DancerEntity;
 
           return EditProfileScreen(dancerDetails: dancerDetails);
+        },
+        '/editClientProfileScreen': (context) {
+          final clientDetails =
+              ModalRoute.of(context)!.settings.arguments as ClientEntity;
+
+          return EditClientProfileScreen(clientDetails: clientDetails);
         }
       },
     );

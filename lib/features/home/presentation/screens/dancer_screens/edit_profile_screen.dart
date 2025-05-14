@@ -7,6 +7,7 @@ import 'package:legwork/core/Constants/jobs_list.dart';
 import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/widgets/job_search_bar.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
@@ -156,7 +157,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               textTheme: textTheme,
               availableJobTypes: availableJobTypes,
               selectedJobTypes: selectedJobTypes,
-              widget: widget,
+              editProfileScreen: widget,
+              onPressed: (){
+                 widget.dancerDetails!
+                        .jobPrefs?['jobTypes'] = selectedJobTypes;
+                    Navigator.of(context).pop();
+              },
             );
           });
     }
@@ -171,6 +177,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         isScrollControlled: true,
         builder: (context) {
           return StatefulBuilder(
+            // TODO!: COME BACK AND FIX THE FILTERED LIST NOT UPDATING STATE
             builder: (context, setModalState) {
               return Container(
                 padding: const EdgeInsets.all(10),
@@ -207,24 +214,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       final originalIndex =
                                           locations.indexWhere((l) =>
                                               l.name == filtered[index].name);
-                                      // final filteredIndex = loca
 
                                       // If a match is found(originalIndex != -1),
                                       // update the isSelected value of that item to true/false
                                       if (originalIndex != -1) {
                                         locations[originalIndex].isSelected =
                                             value!;
+                                        filtered[index].isSelected = true;
                                       }
 
-                                      // Update filtered list
-                                      filtered[index].isSelected = value!;
+                                      // // Update filtered list
+                                      // filtered[index].isSelected = value!;
 
                                       /// * Update selectedLocations list
                                       /// * If the checkbox is ticked and the selectedLocations list
                                       /// * does not already contain the location from the
                                       /// * filteredLocations list then add it to the selectedLocations
                                       /// * else, remove it
-                                      if (value &&
+                                      if (value! &&
                                           !selectedLocations
                                               .contains(filtered[index].name)) {
                                         selectedLocations
@@ -269,12 +276,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       }).toList(),
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
+                    AuthButton(
                       onPressed: () {
                         Navigator.pop(context);
                         setState(() {}); // Refresh parent widget
                       },
-                      child: const Text('Done'),
+                      buttonText: 'Done',
                     ),
                   ],
                 ),

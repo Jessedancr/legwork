@@ -55,7 +55,7 @@ class DancerEntity extends UserEntity {
 /// CLIENT ENTITY
 class ClientEntity extends UserEntity {
   final List<dynamic> danceStylePrefs;
-  final List<dynamic> jobOfferings;
+   List<dynamic> jobOfferings;
   final String? organisationName;
   final Map<String, dynamic>? hiringHistory;
 

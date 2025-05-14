@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/features/home/presentation/screens/dancer_screens/edit_profile_screen.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_filled_icon_button.dart';
 
 class EditJobTypesBottomSheet extends StatefulWidget {
@@ -7,7 +6,8 @@ class EditJobTypesBottomSheet extends StatefulWidget {
   final TextTheme textTheme;
   final List<String> availableJobTypes;
   final List selectedJobTypes;
-  final EditProfileScreen widget;
+  final dynamic editProfileScreen;
+  final void Function()? onPressed;
 
   // Constructor
   const EditJobTypesBottomSheet({
@@ -16,7 +16,8 @@ class EditJobTypesBottomSheet extends StatefulWidget {
     required this.textTheme,
     required this.availableJobTypes,
     required this.selectedJobTypes,
-    required this.widget,
+    required this.editProfileScreen,
+    required this.onPressed,
   });
 
   @override
@@ -86,11 +87,7 @@ class _EditJobTypesBottomSheetState extends State<EditJobTypesBottomSheet> {
                 LegworkFilledIconButton(
                   colorScheme: widget.colorScheme,
                   icon: const Icon(Icons.check),
-                  onPressed: () {
-                    widget.widget.dancerDetails!.jobPrefs?['jobTypes'] =
-                        widget.selectedJobTypes;
-                    Navigator.of(context).pop();
-                  },
+                  onPressed: widget.onPressed,
                   backgroundColor: widget.colorScheme.primary,
                 ),
               ],

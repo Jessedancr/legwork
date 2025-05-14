@@ -54,7 +54,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
   void _navigateToEditProfile() {
     Navigator.pushNamed(
       context,
-      '/editProfileScreen',
+      '/editClientProfileScreen',
       arguments: clientDetails,
     );
   }

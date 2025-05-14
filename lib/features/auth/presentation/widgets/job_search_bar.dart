@@ -4,11 +4,13 @@ class JobSearchBar extends StatefulWidget {
   final SuggestionsBuilder suggestionsBuilder;
   final SearchController searchController;
   final String? barHintText;
+  final void Function(String)? onChanged;
   const JobSearchBar({
     super.key,
     required this.suggestionsBuilder,
     required this.searchController,
     this.barHintText,
+    this.onChanged,
   });
 
   @override
@@ -20,6 +22,7 @@ class _JobSearchBarState extends State<JobSearchBar> {
   Widget build(BuildContext context) {
     // RETURNED WIDGET
     return SearchAnchor.bar(
+      onChanged: widget.onChanged,
       searchController: widget.searchController,
       barElevation: const WidgetStatePropertyAll(0.0),
       barBackgroundColor: WidgetStatePropertyAll(
