@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_home_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_app.dart';
+import 'package:lottie/lottie.dart';
 
 import 'account_type_screen.dart';
 /**
@@ -30,20 +31,19 @@ class AuthStatus extends StatelessWidget {
             return FutureBuilder(
               future: authRemoteDataSource.getUserType(user!.uid),
               builder: (context, snapshot) {
-                // Show a circular progress indicator while fetching user type
+                // Show a loading indicator while fetching user type
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
-                      backgroundColor: Theme.of(context).colorScheme.surface,
+                    child: Lottie.asset(
+                      'assets/lottie/loading.json',
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
                   );
-
-                  // showLoadingIndicator(context);
                 }
                 final userType = snapshot.data;
                 if (userType == 'dancer') {
-                  return DancerApp();
+                  return const DancerApp();
                 } else if (userType == 'client') {
                   return ClientHomeScreen();
                 } else {

@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +7,7 @@ import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_cont
 import 'package:legwork/core/Enums/user_type.dart';
 
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 
 import 'package:provider/provider.dart';
 
@@ -25,8 +24,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // final _notificationRemoteDataSourceImpl =
-  //     NotificationRemoteDataSourceImpl(firebaseMessaging: fir);
   // TEXTFORMFIELD KEY
   final formKey = GlobalKey<FormState>();
 
@@ -35,9 +32,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController pwController = TextEditingController();
   final TextEditingController userTypecontroller = TextEditingController();
 
-  final auth = FirebaseAuth.instance;
-
   bool obscureText = true;
+
+  final _notificationRepoImpl = NotificationRepoImpl();
 
   // BUILD METHOD
   @override
@@ -58,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Attempt login
         try {
           // Retrieve the device token
-          final deviceToken = await FirebaseMessaging.instance.getToken();
+          final deviceToken = await _notificationRepoImpl.getDeviceToken();
           final result = await authProvider.userlogin(
             email: emailController.text.trim(),
             password: pwController.text.trim(),
@@ -178,109 +175,112 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             child: Form(
               key: formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Icon
-                  Image.asset(
-                    'images/logos/dance_icon_purple_cropped.png',
-                    width: screenWidth * 0.45,
-                    color: Theme.of(context).colorScheme.primary,
-                    filterQuality: FilterQuality.high,
-                  ),
-                  const SizedBox(height: 15),
-
-                  // Welcome back message
-                  Text(
-                    'Welcome back!',
-                    style: GoogleFonts.robotoSlab(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Icon
+                    Image.asset(
+                      'images/logos/dance_icon_purple_cropped.png',
+                      width: screenWidth * 0.45,
+                      color: Theme.of(context).colorScheme.primary,
+                      filterQuality: FilterQuality.high,
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Login to your account',
-                    style: GoogleFonts.robotoCondensed(
-                      fontSize: 15,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
+                    const SizedBox(height: 15),
 
-                  // Dancer or Client
-                  AuthTextFormField(
-                    hintText: 'Are you a dancer or a client',
-                    obscureText: false,
-                    controller: userTypecontroller,
-                    icon: SvgPicture.asset(
-                      'assets/svg/user.svg',
-                      fit: BoxFit.scaleDown,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Please enter 'dancer' or 'client'";
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Email text field
-                  AuthTextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    hintText: 'Email',
-                    obscureText: false,
-                    controller: emailController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/mail.svg',
-                      fit: BoxFit.scaleDown,
-                    ),
-                    helperText: 'Ex: johndoe@gmail.com',
-                    validator: (value) {
-                      if (!value!.contains('@gmail.com') || value.isEmpty) {
-                        return 'Please enter a valid email address';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Password textfield
-                  AuthTextFormField(
-                    suffixIcon: viewPassword,
-                    hintText: 'Password',
-                    obscureText: obscureText,
-                    controller: pwController,
-                    icon: SvgPicture.asset(
-                      'assets/svg/lock-hashtag.svg',
-                      fit: BoxFit.scaleDown,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 5),
-
-                  // Forgot password
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('Forgot password?'),
+                    // Welcome back message
+                    Text(
+                      'Welcome back!',
+                      style: GoogleFonts.robotoSlab(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Login to your account',
+                      style: GoogleFonts.robotoCondensed(
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
 
-                  // Login button
-                  AuthButton(
-                    buttonText: 'Login',
-                    onPressed: userLogin,
-                  )
-                ],
+                    // Dancer or Client
+                    AuthTextFormField(
+                      labelText: 'Are you a dancer or a client',
+                      obscureText: false,
+                      controller: userTypecontroller,
+                      icon: SvgPicture.asset(
+                        'assets/svg/user.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter 'dancer' or 'client'";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Email text field
+                    AuthTextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      labelText: 'Email',
+                      obscureText: false,
+                      controller: emailController,
+                      icon: SvgPicture.asset(
+                        'assets/svg/mail.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      helperText: 'Ex: johndoe@gmail.com',
+                      validator: (value) {
+                        if (!value!.contains('@gmail.com') || value.isEmpty) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Password textfield
+                    AuthTextFormField(
+                      suffixIcon: viewPassword,
+                      labelText: 'Password',
+                      obscureText: obscureText,
+                      controller: pwController,
+                      icon: SvgPicture.asset(
+                        'assets/svg/lock-hashtag.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 5),
+
+                    // Forgot password
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('Forgot password?'),
+                        ),
+                      ],
+                    ),
+
+                    // Login button
+                    AuthButton(
+                      buttonText: 'Login',
+                      onPressed: userLogin,
+                    )
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-// TODO: COME BACK TO PROPERLY IMPLEMENT THE STATE CHANGE OF THE CHEKBOX
 
 class JobSearchBar extends StatefulWidget {
   final SuggestionsBuilder suggestionsBuilder;
   final SearchController searchController;
+  final String? barHintText;
+  final void Function(String)? onChanged;
   const JobSearchBar({
     super.key,
     required this.suggestionsBuilder,
     required this.searchController,
+    this.barHintText,
+    this.onChanged,
   });
 
   @override
@@ -21,17 +22,17 @@ class _JobSearchBarState extends State<JobSearchBar> {
   Widget build(BuildContext context) {
     // RETURNED WIDGET
     return SearchAnchor.bar(
+      onChanged: widget.onChanged,
       searchController: widget.searchController,
       barElevation: const WidgetStatePropertyAll(0.0),
       barBackgroundColor: WidgetStatePropertyAll(
         Theme.of(context).colorScheme.surfaceContainer,
       ),
-      barHintText: 'Skills',
+      barHintText: widget.barHintText,
       barHintStyle: WidgetStatePropertyAll(
-        GoogleFonts.robotoSlab(
-          color: Colors.grey,
-        ),
+        TextStyle(color: Colors.grey[500]),
       ),
+
       barSide: WidgetStatePropertyAll(
         BorderSide(
           color: Theme.of(context).colorScheme.secondary,

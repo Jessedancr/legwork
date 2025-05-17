@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class JobTile extends StatelessWidget {
-  final String job;
+class LegworkCheckboxTile extends StatelessWidget {
+  final String title;
   final bool checkedValue;
   final void Function(bool?)? onChanged;
-  const JobTile({
+  const LegworkCheckboxTile({
     super.key,
-    required this.job,
+    required this.title,
     required this.checkedValue,
     required this.onChanged,
   });
@@ -16,7 +16,6 @@ class JobTile extends StatelessWidget {
   Widget build(BuildContext context) {
     //SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     // RETURNED WIDGET
     return Padding(
@@ -40,7 +39,7 @@ class JobTile extends StatelessWidget {
               shape: const CircleBorder(),
             ),
             Text(
-              job,
+              title,
               style: GoogleFonts.robotoSlab(
                 color: Colors.white,
               ),

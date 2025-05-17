@@ -12,6 +12,7 @@ class LargeTextField extends StatelessWidget {
   final int? maxLength;
   final Color? iconContainercolor;
   final FormFieldValidator<String>? validator;
+  final String? labelText;
 
   const LargeTextField({
     super.key,
@@ -24,6 +25,7 @@ class LargeTextField extends StatelessWidget {
     this.maxLength,
     this.iconContainercolor,
     this.validator,
+    this.labelText,
   });
 
   @override
@@ -38,85 +40,87 @@ class LargeTextField extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         // Textfield
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-          child: SizedBox(
-            width: width,
-            child: TextFormField(
-              validator: validator,
-              buildCounter: (
-                BuildContext context, {
-                required int currentLength,
-                required bool isFocused,
-                required int? maxLength,
-              }) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Text(
-                    '$currentLength/$maxLength',
-                    style: TextStyle(
-                      color: isFocused ? Colors.grey[500] : Colors.grey,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                    ),
+        SizedBox(
+          width: width,
+          child: TextFormField(
+            validator: validator,
+            buildCounter: (
+              BuildContext context, {
+              required int currentLength,
+              required bool isFocused,
+              required int? maxLength,
+            }) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  '$currentLength/$maxLength',
+                  style: TextStyle(
+                    color: isFocused ? Colors.grey[500] : Colors.grey,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
                   ),
-                );
-              },
-              maxLines: 4,
-              maxLength: maxLength ?? 150,
-              controller: controller,
-              obscureText: obscureText,
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(
-                  left: screenWidth * 0.081,
-                  top: screenHeight * 0.05,
-                  right: screenWidth * 0.05,
                 ),
-                fillColor: Theme.of(context).colorScheme.surfaceContainer,
-                helper: Text(
-                  helperText ?? '',
-                  style: TextStyle(color: Colors.grey[500]),
-                ),
-                filled: true,
-                hintText: hintText,
-                hintStyle: TextStyle(
-                  color: Colors.grey[500],
-                ),
+              );
+            },
+            maxLines: 4,
+            maxLength: maxLength ?? 150,
+            controller: controller,
+            obscureText: obscureText,
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(
+              alignLabelWithHint: true,
+              labelText: labelText,
+              labelStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+              ),
+              contentPadding: EdgeInsets.only(
+                left: screenWidth * 0.1,
+                top: screenHeight * 0.05,
+                right: screenWidth * 0.05,
+              ),
+              fillColor: Theme.of(context).colorScheme.surfaceContainer,
+              helper: Text(
+                helperText ?? '',
+                style: TextStyle(color: Colors.grey[500]),
+              ),
+              filled: true,
+              hintText: hintText,
+              hintStyle: TextStyle(
+                color: Colors.grey[500],
+              ),
 
-                // * Style of border when it is focused
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 2.0,
-                  ),
-                  borderRadius: borderRadius,
+              // * Style of border when it is focused
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 2.0,
                 ),
+                borderRadius: borderRadius,
+              ),
 
-                //* Style of border normally (when unfocused)
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  borderRadius: borderRadius,
+              //* Style of border normally (when unfocused)
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
                 ),
+                borderRadius: borderRadius,
+              ),
 
-                // * Style of border when on error
-                errorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  borderRadius: borderRadius,
+              // * Style of border when on error
+              errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.error,
                 ),
+                borderRadius: borderRadius,
+              ),
 
-                // * Style of border when focused on error
-                focusedErrorBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.error,
-                    width: 2.0,
-                  ),
-                  borderRadius: borderRadius,
+              // * Style of border when focused on error
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.error,
+                  width: 2.0,
                 ),
+                borderRadius: borderRadius,
               ),
             ),
           ),
@@ -124,13 +128,11 @@ class LargeTextField extends StatelessWidget {
 
         //* Custom leading icon
         Positioned(
-          //top: -0.5,
-          left: screenWidth * 0.03,
-          height: screenHeight * 0.05,
-          width: screenWidth * 0.1,
+          left: screenWidth * -0.03,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(50),
             child: Container(
+              padding: const EdgeInsets.all(8),
               color: iconContainercolor ??
                   Theme.of(context).colorScheme.primaryContainer,
               child: icon,

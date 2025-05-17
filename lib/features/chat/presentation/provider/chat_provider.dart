@@ -1,11 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/chat/data/repo_impl/chat_repo_impl.dart';
 import 'package:legwork/features/chat/domain/business_logic/get_conversations_business_logic.dart';
 import 'package:legwork/features/chat/domain/business_logic/get_messages_business_logic.dart';
 import 'package:legwork/features/chat/domain/business_logic/send_message_business_logic.dart';
 import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
+import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
+import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 
 class ChatProvider extends ChangeNotifier {
   // INSTANCE OF CHAT REPO IMPL
@@ -15,6 +18,9 @@ class ChatProvider extends ChangeNotifier {
   late final GetConversationsBusinessLogic getConversationsBusinessLogic;
   late final GetMessagesBusinessLogic getMessagesBusinessLogic;
   late final SendMessageBusinessLogic sendMessageBusinessLogic;
+  final notificationRepo = NotificationRepoImpl();
+  final notificationRemoteDataSource = NotificationRemoteDataSourceImpl();
+  final _authRemoteDataSource = AuthRemoteDataSourceImpl();
 
   // State variables
   bool isLoading = false;
@@ -116,6 +122,17 @@ class ChatProvider extends ChangeNotifier {
 
       final result =
           await sendMessageBusinessLogic.execute(message: newMessage);
+
+      // SEND NOTIFICATION TO RECEIVER
+      // final receiverDeviceToken = await notificationRepo.getDeviceToken();
+      final receiverDeviceToken =
+          await _authRemoteDataSource.getDeviceToken(userId: receiverId);
+
+      await notificationRepo.sendNotification(
+        deviceToken: receiverDeviceToken,
+        title: 'New message',
+        body: 'New message from $senderId',
+      );
 
       isLoading = false;
       result.fold(

@@ -1,4 +1,4 @@
-final List jobs = [
+final List jobsList = [
   ["Social media promotion", false],
   ["Music video features", false],
   ["Brand advertisements", false],
@@ -10,3 +10,5 @@ final List jobs = [
   ["Dance therapy", false],
   ["Live entertainment", false],
 ];
+
+

@@ -6,7 +6,7 @@ abstract class UserEntity {
   final String lastName;
   final String username;
   final String email;
-  final int phoneNumber;
+  final String phoneNumber;
   final String password;
   final String userType;
   final String? bio;
@@ -24,8 +24,6 @@ abstract class UserEntity {
     this.profilePicture,
     this.bio,
   });
-
-  //UserType get userType;
 }
 
 /// DANCER ENTITY
@@ -48,9 +46,6 @@ class DancerEntity extends UserEntity {
     this.resume,
   });
 
-  // @override
-  // UserType get userType => UserType.dancer;
-
   @override
   String toString() {
     return 'DancerEntity(email: $email, userType: $userType)';
@@ -60,28 +55,26 @@ class DancerEntity extends UserEntity {
 /// CLIENT ENTITY
 class ClientEntity extends UserEntity {
   final List<dynamic> danceStylePrefs;
-  final List<dynamic> jobOfferings;
+   List<dynamic> jobOfferings;
   final String? organisationName;
   final Map<String, dynamic>? hiringHistory;
 
   // Constructor
-  ClientEntity(
-      {required super.firstName,
-      required super.lastName,
-      required super.username,
-      required super.email,
-      required super.phoneNumber,
-      required super.password,
-      required super.userType,
-      required this.danceStylePrefs,
-      required this.jobOfferings,
-      super.profilePicture,
-      super.bio,
-      this.organisationName,
-      this.hiringHistory});
-
-  // @override
-  // UserType get userType => UserType.client;
+  ClientEntity({
+    required super.firstName,
+    required super.lastName,
+    required super.username,
+    required super.email,
+    required super.phoneNumber,
+    required super.password,
+    required super.userType,
+    required this.danceStylePrefs,
+    required this.jobOfferings,
+    super.profilePicture,
+    super.bio,
+    this.organisationName,
+    this.hiringHistory,
+  });
 
   @override
   String toString() {

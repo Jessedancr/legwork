@@ -37,19 +37,17 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
   Widget build(BuildContext context) {
     // SCREEN SIZE
     final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     // RETURNED WIDGET
     return SingleChildScrollView(
       child: Container(
         height: screenHeight,
         decoration: BoxDecoration(
-          //color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 10.0,
+            horizontal: 25.0,
             vertical: 10,
           ),
           child: Form(
@@ -58,7 +56,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
               children: [
                 // Job Title text field
                 AuthTextFormField(
-                  hintText: 'Title',
+                  labelText: 'Title',
                   obscureText: false,
                   controller: widget.titleController,
                   icon: SvgPicture.asset(
@@ -79,7 +77,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
 
                 // Employer text field
                 AuthTextFormField(
-                  hintText: 'Employer',
+                  labelText: 'Employer',
                   obscureText: false,
                   controller: widget.employerController,
                   icon: SvgPicture.asset(
@@ -98,7 +96,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
 
                 // Location textfield
                 AuthTextFormField(
-                  hintText: 'Location',
+                  labelText: 'Location',
                   obscureText: false,
                   controller: widget.locationController,
                   icon: SvgPicture.asset(
@@ -117,7 +115,7 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
 
                 // Date textfield
                 AuthTextFormField(
-                  hintText: 'date',
+                  labelText: 'date',
                   obscureText: false,
                   controller: widget.dateController,
                   icon: SvgPicture.asset(
@@ -130,6 +128,8 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
 
                 // Job descr text field
                 LargeTextField(
+                  labelText: 'Job description',
+                  maxLength: 300,
                   hintText: 'Job description',
                   obscureText: false,
                   controller: widget.jobDescrController,

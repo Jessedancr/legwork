@@ -13,8 +13,9 @@ class JobApplicationRemoteDataSource {
   late final NotificationRemoteDataSource notificationRemoteDataSource;
 
   JobApplicationRemoteDataSource() {
-    notificationRemoteDataSource =
-        NotificationRemoteDataSourceImpl(firebaseMessaging: firebaseMessaging);
+    // notificationRemoteDataSource =
+    //     NotificationRemoteDataSourceImpl(firebaseMessaging: firebaseMessaging);
+    notificationRemoteDataSource = NotificationRemoteDataSourceImpl();
   }
 
   // GET DANCER DEVICE TOKEN

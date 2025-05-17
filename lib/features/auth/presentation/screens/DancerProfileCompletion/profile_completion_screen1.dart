@@ -135,7 +135,10 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                     ),
                     child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10.0,
+                          horizontal: 25,
+                        ),
                         child: Column(
                           children: [
                             // PROFILE PICTURE
@@ -235,7 +238,9 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
 
                             // BIO TEXT FIELD
                             LargeTextField(
-                              hintText: 'Enter your bio',
+                              maxLength: 300,
+                              labelText: 'Bio',
+                              hintText: 'Bio',
                               obscureText: false,
                               controller: widget.bioController,
                               icon: SvgPicture.asset(
@@ -248,7 +253,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                             AuthTextFormField(
                               helperText:
                                   'Separate each dance style with a comma',
-                              hintText: 'dance styles',
+                              labelText: 'dance styles',
                               obscureText: false,
                               controller: widget.danceStylesController,
                               icon: SvgPicture.asset(

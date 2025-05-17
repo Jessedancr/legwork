@@ -3,6 +3,7 @@ import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_job_container.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class AllJobs extends StatefulWidget {
@@ -67,8 +68,11 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
       future: _fetchJobsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: Lottie.asset(
+              'assets/lottie/loading.json',
+              height: 100,
+            ),
           );
         }
 

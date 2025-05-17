@@ -17,7 +17,7 @@ class SignUpBusinessLogic {
     required String lastName,
     required String username,
     required String email,
-    required int phoneNumber,
+    required String phoneNumber,
     required String password,
     required UserType userType,
     dynamic profilePicture,
@@ -27,6 +27,7 @@ class SignUpBusinessLogic {
     String? organizationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
+    required String deviceToken, // Add deviceToken
   }) async {
     // Validating firstname, lastname, username, email and password
     if (firstName.isEmpty ||
@@ -46,7 +47,6 @@ class SignUpBusinessLogic {
       return const Left('Omo only gmail accounts are allowed for now');
     }
 
-    // TODO: ADD SOME MORE VALIDATION RULES
     if (password.length < 6) {
       debugPrint('Password must be at least 6 characters');
       return const Left('Password must be at least 6 characters');
@@ -68,6 +68,7 @@ class SignUpBusinessLogic {
       organizationName: organizationName, // for clients
       danceStylePrefs: danceStylePrefs, // for clients
       jobOfferings: jobOfferings, // for clients
+      deviceToken: deviceToken,
     );
 
     return result.fold(

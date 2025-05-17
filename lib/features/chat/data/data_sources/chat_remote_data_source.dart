@@ -20,8 +20,9 @@ abstract class ChatRemoteDataSource {
   });
 
   // SEND MESSAGE
-  Future<Either<String, MessageModel>> sendMessage(
-      {required MessageModel message});
+  Future<Either<String, MessageModel>> sendMessage({
+    required MessageModel message,
+  });
 
   // MARK MESSAGE AS READ
   Future<Either<String, void>> markMessageAsRead({
@@ -99,6 +100,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<Either<String, MessageModel>> sendMessage({
     required MessageModel message,
+    // required String deviceToken,
   }) async {
     try {
       // Get conversation ID directly from the parameter

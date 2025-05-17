@@ -24,7 +24,7 @@ class AuthRepoImpl implements AuthRepo {
     required String lastName,
     required String username,
     required String email,
-    required int phoneNumber,
+    required String phoneNumber,
     required String password,
     required UserType userType,
     dynamic profilePicture,
@@ -34,23 +34,26 @@ class AuthRepoImpl implements AuthRepo {
     String? organizationName, // For clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
+    required String deviceToken, // Add deviceToken
   }) async {
     try {
       final result = await _authRemoteDataSource.userSignUp(
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-          email: email,
-          phoneNumber: phoneNumber,
-          password: password,
-          userType: userType,
-          bio: bio,
-          profilePicture: profilePicture,
-          resume: resume, // for dancers => 'hiringHistory' for clients
-          organisationName: organizationName ?? '', // for clients
-          danceStylePrefs: danceStylePrefs, // for clients
-          jobOfferings: jobOfferings, // for clients
-          jobPrefs: jobPrefs ?? {});
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+        userType: userType,
+        bio: bio,
+        profilePicture: profilePicture,
+        resume: resume, // for dancers => 'hiringHistory' for clients
+        organisationName: organizationName ?? '', // for clients
+        danceStylePrefs: danceStylePrefs, // for clients
+        jobOfferings: jobOfferings, // for clients
+        jobPrefs: jobPrefs ?? {},
+        deviceToken: deviceToken,
+      );
 
       // Return either a fail or a dancer or client entity
       return result.fold(
@@ -79,7 +82,7 @@ class AuthRepoImpl implements AuthRepo {
     String? firstName,
     String? lastName,
     String? username,
-    int? phoneNumber,
+    String? phoneNumber,
     String? bio,
     dynamic profilePicture,
     Map<String, dynamic>? jobPrefs, // for dancers
@@ -91,7 +94,10 @@ class AuthRepoImpl implements AuthRepo {
   }) async {
     try {
       final result = await _authRemoteDataSource.userLogin(
-          email: email, password: password, deviceToken: deviceToken);
+        email: email,
+        password: password,
+        deviceToken: deviceToken,
+      );
 
       // User type check
       if (userType == UserType.dancer.name) {
@@ -104,8 +110,7 @@ class AuthRepoImpl implements AuthRepo {
               username: username ?? '',
               email: email,
               password: password,
-              phoneNumber: phoneNumber ?? 0,
-              //jobPrefs: jobPrefs ?? {},
+              phoneNumber: phoneNumber ?? '',
               resume: resume,
               bio: bio,
               profilePicture: profilePicture,
@@ -122,7 +127,7 @@ class AuthRepoImpl implements AuthRepo {
               lastName: lastName ?? '',
               username: username ?? '',
               email: email,
-              phoneNumber: phoneNumber ?? 0,
+              phoneNumber: phoneNumber ?? '',
               password: password,
               bio: bio,
               profilePicture: profilePicture,
@@ -175,6 +180,27 @@ class AuthRepoImpl implements AuthRepo {
       return result;
     } catch (e) {
       return 'error getting user id';
+    }
+  }
+
+  String getUserEmail() {
+    try {
+      final result = _authRemoteDataSource.getUserEmail();
+      return result;
+    } catch (e) {
+      return 'error getting user email';
+    }
+  }
+
+  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+    try {
+      final result = await _authRemoteDataSource.getUserDetails(uid: uid);
+      return result.fold(
+        (fail) => Left(fail.toString()),
+        (user) => Right(user),
+      );
+    } catch (e) {
+      return Left(e.toString());
     }
   }
 }

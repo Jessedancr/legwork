@@ -26,15 +26,13 @@ class MyAuthProvider extends ChangeNotifier {
   UserEntity? get currentUser => _currentUser;
   String? get currentUserUsername => _currentUser?.username;
 
-  // String? get currentUserId => FirebaseAuth.instance.currentUser?.uid;
-
   /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
     required String firstName,
     required String lastName,
     required String username,
     required String email,
-    required int phoneNumber,
+    required String phoneNumber,
     required String password,
     required UserType userType,
     Map<String, dynamic>? resume, // for dancers
@@ -42,6 +40,7 @@ class MyAuthProvider extends ChangeNotifier {
     String? organisationName, // for clients
     List<dynamic>? danceStylePrefs, // for clients
     List<dynamic>? jobOfferings, // for clients
+    required String deviceToken, // Add deviceToken
   }) async {
     SignUpBusinessLogic signUpBusinessLogic =
         SignUpBusinessLogic(authRepo: authRepo);
@@ -61,16 +60,21 @@ class MyAuthProvider extends ChangeNotifier {
         userType: userType,
         resume: resume,
         organizationName: organisationName,
+        deviceToken: deviceToken,
       );
 
       isLoading = false;
       notifyListeners();
 
       // signUpExecute returns an Either object so this takes care of both scenarios
-      return result.fold((fail) {
+      return result.fold(
+          // Handle failure
+          (fail) {
         debugPrint(fail);
         return Left(fail);
-      }, (userEntity) {
+      },
+          // Handle success
+          (userEntity) {
         _currentUser = userEntity; // Store the user
         debugPrint('user created: $userEntity');
         if (userType == UserType.dancer) {
@@ -129,7 +133,7 @@ class MyAuthProvider extends ChangeNotifier {
     String? firstName,
     String? lastName,
     String? username,
-    int? phoneNumber,
+    String? phoneNumber,
     Map<String, dynamic>? jobPrefs, // for dancers
     dynamic portfolio, // for dancers,
     String? organisationName, // for clients
@@ -166,7 +170,7 @@ class MyAuthProvider extends ChangeNotifier {
                 username: username ?? '',
                 email: email,
                 password: password,
-                phoneNumber: phoneNumber ?? 0,
+                phoneNumber: phoneNumber ?? '',
                 jobPrefs: jobPrefs ?? {},
                 resume: portfolio,
                 userType: userType ?? 'dancer',
@@ -179,7 +183,7 @@ class MyAuthProvider extends ChangeNotifier {
               lastName: lastName ?? '',
               username: username ?? '',
               email: email,
-              phoneNumber: phoneNumber ?? 0,
+              phoneNumber: phoneNumber ?? '',
               password: password,
               organisationName: organisationName,
               userType: userType ?? 'client',
@@ -218,5 +222,22 @@ class MyAuthProvider extends ChangeNotifier {
   String getUserId() {
     final result = authRepo.getUserId();
     return result;
+  }
+
+  /// GET USER EMAIL
+  String getUserEmail() {
+    final result = authRepo.getUserEmail();
+    return result;
+  }
+
+  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+    try {
+      final result = authRepo.getUserDetails(uid: uid);
+
+      return result;
+    } catch (e) {
+      debugPrint('Provider Error: error with getUserDetails: ${e.toString()}');
+      return Left(e.toString());
+    }
   }
 }

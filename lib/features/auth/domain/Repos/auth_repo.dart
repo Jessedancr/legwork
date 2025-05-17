@@ -24,12 +24,13 @@ abstract class AuthRepo {
     required String lastName,
     required String username,
     required String email,
-    required int phoneNumber,
+    required String phoneNumber,
     required String password,
     required UserType userType,
     Map<String, dynamic>? resume,
     Map<String, dynamic>? jobPrefs, // for dancer
     String? organizationName, // for client
+    required String deviceToken, // Add deviceToken
   });
 
   /// LOGOUT METHOD
