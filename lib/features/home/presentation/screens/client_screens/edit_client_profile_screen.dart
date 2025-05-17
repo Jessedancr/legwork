@@ -35,6 +35,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _organisationNameController =
       TextEditingController();
+  final TextEditingController _proTitleController = TextEditingController();
 
   // Selected lists for dropdown/multi-select
   List<String> selectedDanceStyles = [];
@@ -51,7 +52,6 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
   void initState() {
     super.initState();
     // Initialize controllers with existing data
-
     _firstNameController.text = widget.clientDetails.firstName;
     _lastNameController.text = widget.clientDetails.lastName;
     _phoneNumberController.text = widget.clientDetails.phoneNumber;
@@ -63,6 +63,8 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
 
     _emailController.text = widget.clientDetails.email;
     _bioController.text = widget.clientDetails.bio ?? '';
+    _proTitleController.text =
+        widget.clientDetails.hiringHistory?['professionalTitle'] ?? '';
 
     // Initialize selected lists
     if (widget.clientDetails.danceStylePrefs.isNotEmpty ||
@@ -82,6 +84,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
     _phoneNumberController.dispose();
     _emailController.dispose();
     _bioController.dispose();
+    _proTitleController.dispose();
     super.dispose();
   }
 
@@ -96,6 +99,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
       'email': _emailController.text,
       'bio': _bioController.text,
       'jobOfferings': selectedJobTypes,
+      'hiringHistory.professionalTitle': _proTitleController.text,
       'danceStylePrefs': _danceStylesController.text
           .trim()
           .split(RegExp(r'(\s*,\s)+'))
@@ -319,6 +323,41 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       controller: _bioController,
                       icon: SvgPicture.asset(
                         'assets/svg/description_icon.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Professional title card
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Professional title',
+                      style: textTheme.titleMedium?.copyWith(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _proTitleController,
+                      label: 'Professional title',
+                      helperText:
+                          'Professional title should be brief and concise',
+                      prefixIcon: SvgPicture.asset(
+                        'assets/svg/brand.svg',
                         fit: BoxFit.scaleDown,
                       ),
                     ),

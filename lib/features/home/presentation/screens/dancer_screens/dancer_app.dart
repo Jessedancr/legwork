@@ -27,7 +27,7 @@ class _DancerAppState extends State<DancerApp> {
     const DancerHomeScreen(),
     const JobApplicationsScreen(),
     const DancerMessagesScreen(),
-    const DancerProfileScreen()
+    DancerProfileScreen()
   ];
 
   @override

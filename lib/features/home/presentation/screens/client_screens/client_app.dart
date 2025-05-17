@@ -26,7 +26,7 @@ class _ClientAppState extends State<ClientApp> {
   final List<Widget> screens = [
     ClientHomeScreen(),
     const ClientMessagesScreen(),
-    const ClientProfileScreen()
+    ClientProfileScreen()
   ];
 
   @override

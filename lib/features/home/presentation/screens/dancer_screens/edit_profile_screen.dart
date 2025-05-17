@@ -36,6 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _danceStylesController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final SearchController searchController = SearchController();
+  final TextEditingController _proTitleController = TextEditingController();
   late final UpdateProfileProvider provider;
 
   // Selected lists for dropdown/multi-select
@@ -62,6 +63,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _lastNameController.text = widget.dancerDetails!.lastName;
       _phoneNumberController.text = widget.dancerDetails!.phoneNumber;
       _usernameController.text = widget.dancerDetails!.username;
+      _proTitleController.text =
+          widget.dancerDetails!.resume?['professionalTitle'] ?? '';
       _danceStylesController.text =
           widget.dancerDetails!.jobPrefs!['danceStyles'].join(', ').toString();
 
@@ -115,6 +118,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             .toList(),
         'jobTypes': selectedJobTypes,
         'jobLocations': selectedLocations,
+      },
+      'resume': {
+        'professionalTitle': _proTitleController.text,
+        'workExperiences':
+            widget.dancerDetails!.resume?['workExperiences'] ?? [],
       }
     };
 
@@ -158,10 +166,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               availableJobTypes: availableJobTypes,
               selectedJobTypes: selectedJobTypes,
               editProfileScreen: widget,
-              onPressed: (){
-                 widget.dancerDetails!
-                        .jobPrefs?['jobTypes'] = selectedJobTypes;
-                    Navigator.of(context).pop();
+              onPressed: () {
+                widget.dancerDetails!.jobPrefs?['jobTypes'] = selectedJobTypes;
+                Navigator.of(context).pop();
               },
             );
           });
@@ -361,7 +368,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Basic Information Edit Form
+            // * Basic Information Edit Form
             Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
@@ -451,6 +458,41 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: _bioController,
                       icon: SvgPicture.asset(
                         'assets/svg/description_icon.svg',
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // * Professional title card
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Professional Title',
+                      style: textTheme.titleMedium?.copyWith(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTextField(
+                      controller: _proTitleController,
+                      label: 'Professional title',
+                      helperText:
+                          'Professional title should be brief and concise',
+                      prefixIcon: SvgPicture.asset(
+                        'assets/svg/brand.svg',
                         fit: BoxFit.scaleDown,
                       ),
                     ),

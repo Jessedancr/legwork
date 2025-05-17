@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/view_profile_picture.dart';
 import 'package:legwork/features/home/presentation/widgets/bio_card.dart';
 import 'package:legwork/features/home/presentation/widgets/job_preferences_card.dart';
 import 'package:legwork/features/home/presentation/widgets/profile_header_section.dart';
 import 'package:legwork/features/home/presentation/widgets/resume_section.dart';
+import 'package:legwork/features/home/presentation/widgets/work_experience_bottom_sheet.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 
 class DancerProfileScreen extends StatefulWidget {
-  const DancerProfileScreen({super.key});
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController employerController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController jobDescrController = TextEditingController();
+  DancerProfileScreen({super.key});
 
   @override
   State<DancerProfileScreen> createState() => _DancerProfileScreenState();
@@ -38,13 +47,15 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
     result.fold(
       (fail) {
         debugPrint('Failed to fetch dancer details: $fail');
-        setState(() => isLoading = false);
+        if (mounted) setState(() => isLoading = false);
       },
       (data) {
-        setState(() {
-          dancerDetails = data as DancerEntity;
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            dancerDetails = data as DancerEntity;
+            isLoading = false;
+          });
+        }
       },
     );
   }
@@ -61,6 +72,117 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    // DATE PICKER
+    Future<void> datePicker() async {
+      DateTime? pickedDate = await showDatePicker(
+        context: context,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
+
+      if (pickedDate != null) {
+        setState(() {
+          widget.dateController.text = pickedDate.toString().split(' ')[0];
+        });
+      }
+    }
+
+    void saveExperience() async {
+      if (formKey.currentState!.validate()) {
+        final provider =
+            Provider.of<UpdateProfileProvider>(context, listen: false);
+
+        final newExp = {
+          'date': widget.dateController.text,
+          'employer': widget.employerController.text,
+          'jobDescription': widget.jobDescrController.text,
+          'jobTitle': widget.titleController.text,
+          'location': widget.locationController.text,
+        };
+
+        final currentExp = dancerDetails!.resume?['workExperiences'] ?? [];
+
+        final updatedExp = [...currentExp, newExp];
+
+        final data = {
+          'resume.workExperiences': updatedExp,
+        };
+
+        showLoadingIndicator(context);
+        final result = await provider.updateProfileExecute(data: data);
+
+        result.fold(
+            // handle failure
+            (fail) {
+          debugPrint(fail.toString());
+          hideLoadingIndicator(context);
+          Navigator.of(context).pop();
+          LegworkSnackbar(
+            title: 'Omo!',
+            subTitle: fail,
+            imageColor: colorScheme.onError,
+            contentColor: colorScheme.error,
+          ).show(context);
+
+          // Clear controllers
+          widget.dateController.clear();
+          widget.employerController.clear();
+          widget.jobDescrController.clear();
+          widget.locationController.clear();
+          widget.titleController.clear();
+        },
+
+            // handle success
+            (_) {
+          hideLoadingIndicator(context);
+
+          // Notify parent widget of change
+          if (dancerDetails != null) {
+            dancerDetails!.resume!['workExperiences'] = updatedExp;
+          }
+
+          // Force UI update
+          if (mounted) {
+            setState(() {});
+          }
+
+          Navigator.of(context).pop();
+          LegworkSnackbar(
+            title: 'Sharp guy!',
+            subTitle: 'Work experience added',
+            imageColor: colorScheme.onPrimary,
+            contentColor: colorScheme.primary,
+          ).show(context);
+
+          // Clear controllers
+          widget.dateController.clear();
+          widget.employerController.clear();
+          widget.jobDescrController.clear();
+          widget.locationController.clear();
+          widget.titleController.clear();
+        });
+      }
+    }
+
+    // METHOD THAT SHOWS BOTTOM SHEET TO ADD WORK EXPERIENCE
+    void addWorkExperience() {
+      showModalBottomSheet(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+        context: context,
+        builder: (context) {
+          return WorkExperienceBottomSheet(
+            onPressed: saveExperience,
+            employerController: widget.employerController,
+            titleController: widget.titleController,
+            jobDescrController: widget.jobDescrController,
+            locationController: widget.locationController,
+            dateController: widget.dateController,
+            showDatePicker: datePicker,
+          );
+        },
+      );
+    }
 
     return Scaffold(
       // * APP BAR
@@ -94,19 +216,10 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
       // * FLOATING ACTION BUTTON
       floatingActionButton: isLoading
           ? null
-          : FloatingActionButton.extended(
-              backgroundColor: colorScheme.primary.withOpacity(0.5),
-              onPressed: () {},
-              label: Column(
-                children: [
-                  const Icon(Icons.add),
-                  const SizedBox(height: 8),
-                  SvgPicture.asset(
-                    'assets/svg/briefcase.svg',
-                    fit: BoxFit.scaleDown,
-                  )
-                ],
-              ),
+          : FloatingActionButton(
+              backgroundColor: colorScheme.primary,
+              onPressed: addWorkExperience,
+              child: const Icon(Icons.add),
             ),
 
       // * BODY
@@ -143,7 +256,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
                         child: isLoading
                             ? Lottie.asset(
                                 'assets/lottie/loading.svg',
-                                height: 100,
+                                height: 20,
                                 fit: BoxFit.contain,
                               )
                             : const Text('retry'),
@@ -195,9 +308,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
                               const SizedBox(height: 20),
 
                               // Dance Preferences (Dance Styles & Job Types)
-                              JobPreferencesCard(
-                                user: dancerDetails!,
-                              ),
+                              JobPreferencesCard(user: dancerDetails!),
 
                               const SizedBox(height: 20),
 
