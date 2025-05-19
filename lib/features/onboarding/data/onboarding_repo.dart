@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /**
  * LOCAL STORAGE IMPLEMENTATION
- * This class simply interacts with the shared_preferences package to store and retrieve data.
+ * This class interacts with the shared_preferences package to store and retrieve data.
  */
 
 abstract class OnboardingRepo {
@@ -14,19 +15,17 @@ abstract class OnboardingRepo {
 }
 
 class OnboardingRepoImpl implements OnboardingRepo {
-  
-
   @override
   Future<bool> isOnboardingComplete() async {
-    late final SharedPreferences prefs;
-    prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    debugPrint('Checking if onboarding is complete');
     return prefs.getBool('onboarding_complete') ?? false;
   }
 
   @override
   Future<void> onboardingCompleted() async {
-    late final SharedPreferences prefs;
-    prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('onboarding_complete', true);
+    debugPrint('Your onboarding is compelete');
   }
 }

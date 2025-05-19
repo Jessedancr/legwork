@@ -14,8 +14,6 @@ ThemeData lightMode = ThemeData(
 
 ThemeData seedScheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
-    // seedColor: Colors.deepPurple.shade900,
-    // seedColor: const Color.fromARGB(255, 23, 7, 52),
     seedColor: Colors.deepPurple,
     brightness: Brightness.light,
   ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/features/onboarding/domain/onboarding_status_check.dart';
+import 'package:legwork/features/onboarding/presentation/widgets/onboard_button.dart';
+import 'package:legwork/features/onboarding/presentation/widgets/page_indicator.dart';
 
-import '../widgets/onboard_button.dart';
-import '../widgets/page_indicator.dart';
 import 'onboarding_screen2.dart';
 import 'onboarding_screen3.dart';
 import 'onboarding_screen1.dart';
@@ -24,9 +24,16 @@ class _OnboardingState extends State<Onboarding> {
 
   // calls the "call" method from the OnboardingStatusCheck class
   Future<void> _completeOnboarding() async {
-    final repo = widget.onboardingStatusCheck.repo;
-    await repo.onboardingCompleted(); // to mark onboarding as complete
+    // Mark onboarding as complete
+    await widget.onboardingStatusCheck.onboardingCompletedCall();
   }
+
+  // List of Onborading screens
+  List<Widget> onBoardingScreens = const [
+    OnboardingScreen1(),
+    OnboardingScreen2(),
+    OnboardingScreen3()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +45,13 @@ class _OnboardingState extends State<Onboarding> {
             controller: pageController,
             onPageChanged: (value) {
               setState(() {
-                isLastPage = (value == 2);
-                debugPrint('ONBOARDING LAST PAGE');
+                isLastPage = (value == onBoardingScreens.length - 1);
               });
+              if (isLastPage) {
+                debugPrint('Onboarding Last page');
+              }
             },
-            children: const [
-              OnboardingScreen1(),
-              OnboardingScreen2(),
-              OnboardingScreen3()
-            ],
+            children: onBoardingScreens,
           ),
 
           // Indicator
@@ -55,20 +60,19 @@ class _OnboardingState extends State<Onboarding> {
             left: 40.0,
             right: 40.0,
             child: Column(
-              //mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 // Indicator
                 PageIndicator(
                   pageController: pageController,
-                  count: 3,
+                  count: onBoardingScreens.length,
                 ),
                 const SizedBox(height: 10),
 
-                // GET STARTED OR NEXT button
-                isLastPage
-                    ? OnboardButton(
-                        buttonText: 'Get Started!',
-                        onPressed: () async {
+                // GET STARTED OR NEXT BUTTON
+                OnboardButton(
+                  buttonText: isLastPage ? 'Get Started!' : 'Next',
+                  onPressed: isLastPage
+                      ? () async {
                           await _completeOnboarding();
 
                           if (!mounted) return;
@@ -76,17 +80,14 @@ class _OnboardingState extends State<Onboarding> {
                           // Navigate to the LOGIN SCREEN
                           Navigator.of(context)
                               .pushReplacementNamed('/acctType');
-                        },
-                      )
-                    : OnboardButton(
-                        buttonText: 'Next',
-                        onPressed: () {
+                        }
+                      : () {
                           pageController.nextPage(
                             duration: const Duration(milliseconds: 500),
                             curve: Curves.easeInOut,
                           );
                         },
-                      )
+                ),
               ],
             ),
           ),
