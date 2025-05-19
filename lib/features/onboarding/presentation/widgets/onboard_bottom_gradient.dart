@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
-class GlassBox extends StatelessWidget {
+class OnboardBottomGradient extends StatelessWidget {
   final Widget child;
-  const GlassBox({
+  const OnboardBottomGradient({
     super.key,
     required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Screen size
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return ClipRRect(
       child: SizedBox(
-        height: screenHeight * 0.4,
-        width: screenWidth,
+        height: screenHeight(context) * 0.4,
+        width: screenWidth(context),
         child: Stack(
           children: [
             // Gradient effect

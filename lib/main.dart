@@ -84,15 +84,9 @@ void main() async {
 
   await notificationRemoteDataSource.setupFlutterNotifications();
 
-  // Instance of onboarding repo
-  final onboardingRepo = OnboardingRepoImpl();
-
-  // Instance of onboarding status check
-  final onboardingStatusCheck = OnboardingStatusCheck(repo: onboardingRepo);
-
-  // Check if onboarding is complete
+  // Call isOnboardingComplete from OnboardingStatusCheck
   final isOnboardingComplete =
-      await onboardingStatusCheck.isOnboardingCompleteCall();
+      OnboardingStatusCheck().isOnboardingCompleteCall();
 
   // Instance of auth repo
   final authRepo = AuthRepoImpl();
@@ -156,21 +150,19 @@ void main() async {
         ),
       ],
       child: MyApp(
-        onboardingStatusCheck: onboardingStatusCheck,
-        isOnboardingComplete: isOnboardingComplete,
+        isOnboardingComplete: await isOnboardingComplete,
       ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final OnboardingStatusCheck onboardingStatusCheck;
+  final onboardingStatusCheck = OnboardingStatusCheck();
   final bool isOnboardingComplete;
   final auth = FirebaseAuth.instance;
 
   MyApp({
     super.key,
-    required this.onboardingStatusCheck,
     required this.isOnboardingComplete,
   });
 
