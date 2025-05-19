@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 // ignore: must_be_immutable
 class AuthTextFormField extends StatelessWidget {
@@ -30,11 +31,6 @@ class AuthTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -51,13 +47,13 @@ class AuthTextFormField extends StatelessWidget {
             decoration: InputDecoration(
               labelText: labelText,
               labelStyle: TextStyle(
-                color: colorScheme.onSurface.withOpacity(0.3),
+                color: context.colorScheme.onSurface.withOpacity(0.3),
               ),
               contentPadding: EdgeInsets.symmetric(
-                vertical: screenHeight * 0.01,
-                horizontal: screenWidth * 0.09,
+                vertical: screenHeight(context) * 0.01,
+                horizontal: screenWidth(context) * 0.09,
               ),
-              fillColor: colorScheme.surfaceContainer,
+              fillColor: context.colorScheme.surfaceContainer,
               helper: Text(
                 helperText ?? '',
                 style: TextStyle(
@@ -70,26 +66,26 @@ class AuthTextFormField extends StatelessWidget {
               suffixIcon: suffixIcon,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: colorScheme.primary,
+                  color: context.colorScheme.primary,
                   width: 2.0,
                 ),
                 borderRadius: borderRadius,
               ),
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: colorScheme.secondary,
+                  color: context.colorScheme.secondary,
                 ),
                 borderRadius: borderRadius,
               ),
               errorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: colorScheme.error,
+                  color: context.colorScheme.error,
                 ),
                 borderRadius: borderRadius,
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderSide: BorderSide(
-                  color: colorScheme.error,
+                  color: context.colorScheme.error,
                   width: 2.0,
                 ),
                 borderRadius: borderRadius,
@@ -107,7 +103,7 @@ class AuthTextFormField extends StatelessWidget {
             borderRadius: BorderRadius.circular(40),
             child: Container(
               padding: const EdgeInsets.all(8),
-              color: colorScheme.primaryContainer,
+              color: context.colorScheme.primaryContainer,
               child: icon,
             ),
           ),

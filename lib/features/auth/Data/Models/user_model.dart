@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
-
-import '../../../../core/Enums/user_type.dart';
 
 /**
  * TWO MODELS FOR DANCER AND CLIENT

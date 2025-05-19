@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Domain/BusinessLogic/logout_business_logic.dart';
-import 'package:legwork/core/Enums/user_type.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/domain/BusinessLogic/login_business_logic.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';

@@ -1,7 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
-import '../../../../core/Enums/user_type.dart';
+// import '../../../../core/Enums/user_type.dart';
 
 /**
  * THIS CLASS INTERFACES BETWEEN THE DATA LAYER AND THE APP'S BUSINESS LOGIC

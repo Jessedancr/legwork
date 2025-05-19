@@ -10,6 +10,7 @@ abstract class UserEntity {
   final String password;
   final String userType;
   final String? bio;
+  // final String deviceToken;
   dynamic profilePicture;
 
   // Constructor
@@ -21,6 +22,7 @@ abstract class UserEntity {
     required this.lastName,
     required this.phoneNumber,
     required this.userType,
+    // required this.deviceToken,
     this.profilePicture,
     this.bio,
   });
@@ -40,6 +42,7 @@ class DancerEntity extends UserEntity {
     required super.password,
     required super.phoneNumber,
     required super.userType,
+    // required super.deviceToken,
     this.jobPrefs,
     super.profilePicture,
     super.bio,
@@ -55,7 +58,7 @@ class DancerEntity extends UserEntity {
 /// CLIENT ENTITY
 class ClientEntity extends UserEntity {
   final List<dynamic> danceStylePrefs;
-   List<dynamic> jobOfferings;
+  List<dynamic> jobOfferings;
   final String? organisationName;
   final Map<String, dynamic>? hiringHistory;
 
