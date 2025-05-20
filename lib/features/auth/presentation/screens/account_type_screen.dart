@@ -19,6 +19,27 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
         backgroundColor: context.colorScheme.surface,
         body: Stack(
           children: [
+            // * Top circular Bubble
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              right: -30,
+              top: -20,
+              xAlignValue: 1,
+              yAlignValue: -0.8,
+            ),
+
+            // * Bottom circular Bubble
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              left: -30,
+              bottom: -20,
+              xAlignValue: -1,
+              yAlignValue: 0.8,
+            ),
+
+            // * Main screen content
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -92,26 +113,6 @@ class _AccountTypeScreenState extends State<AccountTypeScreen> {
                   ],
                 )
               ],
-            ),
-
-            // * Top circular Bubble
-            const LegworkScreenBubble(
-              outerCircularAvatarRadius: 60,
-              innerCircularAvatarRadius: 47,
-              right: -30,
-              top: -20,
-              xAlignValue: 1,
-              yAlignValue: -0.8,
-            ),
-
-            // * Bottom circular Bubble
-            const LegworkScreenBubble(
-              outerCircularAvatarRadius: 60,
-              innerCircularAvatarRadius: 47,
-              left: -30,
-              bottom: -20,
-              xAlignValue: -1,
-              yAlignValue: 0.8,
             ),
           ],
         ),

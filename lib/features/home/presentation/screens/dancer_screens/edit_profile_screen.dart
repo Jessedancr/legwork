@@ -329,7 +329,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             // * Profile picture + edit icon
             Center(
               child: Hero(
-                tag: 'profile_picture',
+                tag: 'profile_picture_${widget.dancerDetails!.email}',
                 child: Stack(
                   children: [
                     CircleAvatar(

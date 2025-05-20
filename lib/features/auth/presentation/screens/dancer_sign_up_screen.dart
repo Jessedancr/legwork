@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_screen_bubble.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
@@ -51,17 +52,21 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
         // show loading indicator
         showLoadingIndicator(context);
         try {
-          // Retrieve the device token
           final deviceToken = await _notificationRepoImpl.getDeviceToken();
-          final result = await authProvider.userSignUp(
+
+          final dancerEntity = DancerEntity(
             firstName: firstNameController.text.trim(),
             lastName: lastNameController.text.trim(),
             username: usernameController.text.toLowerCase().trim(),
-            email: emailController.text.toLowerCase().trim(),
-            phoneNumber: phoneNumberController.text.trim(),
-            password: pwController.text.trim(),
-            userType: UserType.dancer,
+            email: emailController.text.trim(),
+            password: pwController.text,
+            phoneNumber: phoneNumberController.text,
+            userType: UserType.dancer.name,
             deviceToken: deviceToken!,
+          );
+          // Retrieve the device token
+          final result = await authProvider.userSignUp(
+            userEntity: dancerEntity,
           );
 
           if (mounted) {
@@ -149,23 +154,14 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               yAlignValue: -0.8,
             ),
 
-            // * Custom app bar
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.only(top: 0, left: 0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back_ios),
-                      color: context.colorScheme.onSurface,
-                    ),
-                  ],
-                ),
-              ),
+            // * Bottom circular container
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              left: -30,
+              bottom: -20,
+              xAlignValue: -1,
+              yAlignValue: 0.8,
             ),
 
             // * Main screen content
@@ -356,14 +352,20 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               ),
             ),
 
-            // * Bottom circular container
-            const LegworkScreenBubble(
-              outerCircularAvatarRadius: 60,
-              innerCircularAvatarRadius: 47,
-              left: -30,
-              bottom: -20,
-              xAlignValue: -1,
-              yAlignValue: 0.8,
+            // * Custom app bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.only(top: 10, left: 10),
+                child: IconButton(
+                  alignment: const Alignment(-1, 0),
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back_ios),
+                  color: context.colorScheme.onSurface,
+                ),
+              ),
             ),
           ],
         ),

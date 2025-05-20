@@ -24,6 +24,7 @@ class DancerModel extends DancerEntity {
     required super.phoneNumber,
     required super.username,
     required super.userType,
+    required super.deviceToken,
     super.profilePicture,
     super.bio,
     super.jobPrefs,
@@ -43,6 +44,7 @@ class DancerModel extends DancerEntity {
       userType: doc['userType'] ?? 'dancer',
       profilePicture: doc['profilePicture'] ?? '',
       bio: doc['bio'] ?? '',
+      deviceToken: doc['deviceToken'] ?? '',
     );
   }
 
@@ -60,24 +62,25 @@ class DancerModel extends DancerEntity {
       'userType': UserType.dancer.name, // Include userType
       'profilePicture': profilePicture,
       'bio': bio,
+      'deviceToken': deviceToken,
     };
   }
 
   // Convert user profile to entity for business logic use
   DancerEntity toDancerEntity() {
     return DancerEntity(
-      username: username,
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-      phoneNumber: phoneNumber,
-      jobPrefs: jobPrefs,
-      resume: resume,
-      userType: userType,
-      profilePicture: profilePicture,
-      bio: bio,
-    );
+        username: username,
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        phoneNumber: phoneNumber,
+        jobPrefs: jobPrefs,
+        resume: resume,
+        userType: userType,
+        profilePicture: profilePicture,
+        bio: bio,
+        deviceToken: deviceToken);
   }
 }
 
@@ -97,6 +100,7 @@ class ClientModel extends ClientEntity {
     required super.danceStylePrefs,
     required super.jobOfferings,
     required super.hiringHistory,
+    required super.deviceToken,
     super.organisationName,
     super.profilePicture,
     super.bio,
@@ -118,6 +122,7 @@ class ClientModel extends ClientEntity {
       danceStylePrefs: doc['danceStylePrefs'] ?? [],
       jobOfferings: doc['jobOfferings'] ?? [],
       hiringHistory: doc['hiringHistory'] ?? {},
+      deviceToken: doc['deviceToken'] ?? '',
     );
   }
 
@@ -137,6 +142,7 @@ class ClientModel extends ClientEntity {
       'danceStylePrefs': danceStylePrefs,
       'jobOfferings': jobOfferings,
       'hiringHistory': hiringHistory,
+      'deviceToken': deviceToken,
     };
   }
 
@@ -156,6 +162,7 @@ class ClientModel extends ClientEntity {
       danceStylePrefs: danceStylePrefs,
       jobOfferings: jobOfferings,
       hiringHistory: hiringHistory,
+      deviceToken: deviceToken,
     );
   }
 }

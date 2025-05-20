@@ -59,7 +59,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
     _organisationNameController.text =
         widget.clientDetails.organisationName ?? '';
     _danceStylesController.text =
-        widget.clientDetails.danceStylePrefs.join(', ').toString();
+        widget.clientDetails.danceStylePrefs!.join(', ').toString();
 
     _emailController.text = widget.clientDetails.email;
     _bioController.text = widget.clientDetails.bio ?? '';
@@ -67,12 +67,13 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
         widget.clientDetails.hiringHistory?['professionalTitle'] ?? '';
 
     // Initialize selected lists
-    if (widget.clientDetails.danceStylePrefs.isNotEmpty ||
-        widget.clientDetails.jobOfferings.isNotEmpty) {
+    if (widget.clientDetails.danceStylePrefs!.isNotEmpty ||
+        widget.clientDetails.jobOfferings!.isNotEmpty) {
       selectedDanceStyles =
-          List<String>.from(widget.clientDetails.danceStylePrefs);
+          List<String>.from(widget.clientDetails.danceStylePrefs as Iterable);
 
-      selectedJobTypes = List<String>.from(widget.clientDetails.jobOfferings);
+      selectedJobTypes =
+          List<String>.from(widget.clientDetails.jobOfferings as Iterable);
     }
   }
 
@@ -133,8 +134,9 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
 
     // * JOB TYPES BOTTOM SHEET
     void openJobTypesBottomSheet() {
-      if (widget.clientDetails.jobOfferings.isNotEmpty) {
-        selectedJobTypes = List<String>.from(widget.clientDetails.jobOfferings);
+      if (widget.clientDetails.jobOfferings!.isNotEmpty) {
+        selectedJobTypes =
+            List<String>.from(widget.clientDetails.jobOfferings as Iterable);
       }
       showModalBottomSheet(
           context: context,
@@ -182,7 +184,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
             // * Profile picture + edit icon
             Center(
               child: Hero(
-                tag: 'profile_picture',
+                tag: 'profile_picture_${widget.clientDetails.email}',
                 child: Stack(
                   children: [
                     CircleAvatar(

@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Domain/BusinessLogic/logout_business_logic.dart';
 import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/domain/BusinessLogic/login_business_logic.dart';
+import 'package:legwork/features/auth/domain/BusinessLogic/sign_up_business_logic.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
-
-import '../../domain/BusinessLogic/sign_up_business_logic.dart';
 
 class MyAuthProvider extends ChangeNotifier {
   // Instance of auth repo
@@ -28,19 +27,7 @@ class MyAuthProvider extends ChangeNotifier {
 
   /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
-    required String firstName,
-    required String lastName,
-    required String username,
-    required String email,
-    required String phoneNumber,
-    required String password,
-    required UserType userType,
-    Map<String, dynamic>? resume, // for dancers
-    Map<String, dynamic>? jobPrefs, // for dancers
-    String? organisationName, // for clients
-    List<dynamic>? danceStylePrefs, // for clients
-    List<dynamic>? jobOfferings, // for clients
-    required String deviceToken, // Add deviceToken
+    required UserEntity userEntity,
   }) async {
     SignUpBusinessLogic signUpBusinessLogic =
         SignUpBusinessLogic(authRepo: authRepo);
@@ -51,16 +38,7 @@ class MyAuthProvider extends ChangeNotifier {
     try {
       // Call the signUpExecute Func from the SignUpBusinessLogic class
       final result = await signUpBusinessLogic.signUpExecute(
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password,
-        userType: userType,
-        resume: resume,
-        organizationName: organisationName,
-        deviceToken: deviceToken,
+        userEntity: userEntity,
       );
 
       isLoading = false;
@@ -77,34 +55,36 @@ class MyAuthProvider extends ChangeNotifier {
           (userEntity) {
         _currentUser = userEntity; // Store the user
         debugPrint('user created: $userEntity');
-        if (userType == UserType.dancer) {
+        if (userEntity.userType == UserType.dancer.name) {
           return Right(
             DancerEntity(
-              firstName: firstName,
-              lastName: lastName,
-              username: username,
-              email: email,
-              password: password,
-              phoneNumber: phoneNumber,
-              jobPrefs: jobPrefs ?? {},
-              resume: resume,
-              userType: userType.name,
+              firstName: userEntity.firstName,
+              lastName: userEntity.lastName,
+              username: userEntity.username,
+              email: userEntity.email,
+              password: userEntity.password,
+              phoneNumber: userEntity.phoneNumber,
+              jobPrefs: userEntity.asDancer?.jobPrefs ?? {},
+              resume: userEntity.asDancer?.resume,
+              userType: userEntity.userType,
+              deviceToken: userEntity.deviceToken,
             ),
           );
         } else {
           return Right(
             ClientEntity(
-              firstName: firstName,
-              lastName: lastName,
-              username: username,
-              email: email,
-              phoneNumber: phoneNumber,
-              password: password,
-              userType: userType.name,
-              danceStylePrefs: danceStylePrefs ?? [],
-              organisationName: organisationName,
-              jobOfferings: jobOfferings ?? [],
-              hiringHistory: resume ?? {},
+              firstName: userEntity.firstName,
+              lastName: userEntity.lastName,
+              username: userEntity.username,
+              email: userEntity.email,
+              phoneNumber: userEntity.phoneNumber,
+              password: userEntity.password,
+              userType: userEntity.userType,
+              danceStylePrefs: userEntity.asClient?.danceStylePrefs ?? [],
+              organisationName: userEntity.asClient?.organisationName,
+              jobOfferings: userEntity.asClient?.jobOfferings ?? [],
+              hiringHistory: userEntity.asClient?.hiringHistory ?? {},
+              deviceToken: userEntity.deviceToken,
             ),
           );
         }
@@ -127,19 +107,7 @@ class MyAuthProvider extends ChangeNotifier {
 
   /// USER LOGIN METHOD
   Future<Either<String, dynamic>> userlogin({
-    required String email,
-    required String password,
-    required String? userType,
-    String? firstName,
-    String? lastName,
-    String? username,
-    String? phoneNumber,
-    Map<String, dynamic>? jobPrefs, // for dancers
-    dynamic portfolio, // for dancers,
-    String? organisationName, // for clients
-    List<dynamic>? danceStylePrefs, // for clients
-    List<dynamic>? jobOfferings,
-    required String deviceToken, // Add deviceToken
+    required UserEntity userEntity,
   }) async {
     LoginBusinessLogic loginBusinessLogic =
         LoginBusinessLogic(authRepo: authRepo);
@@ -148,12 +116,14 @@ class MyAuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await loginBusinessLogic.loginExecute(
-        email: email,
-        password: password,
-        userType: userType ?? 'dancer',
-        deviceToken: deviceToken,
-      );
+      // * User-type-specific data
+      final resume = userEntity.asDancer?.resume ?? {};
+      final jobPrefs = userEntity.asDancer?.jobPrefs ?? {};
+      final organisationName = userEntity.asClient?.organisationName ?? '';
+      final danceStylePrefs = userEntity.asClient?.danceStylePrefs ?? [];
+      final jobOfferings = userEntity.asClient?.jobOfferings ?? [];
+      final result =
+          await loginBusinessLogic.loginExecute(userEntity: userEntity);
 
       return result.fold(
         // Handle failure
@@ -162,33 +132,35 @@ class MyAuthProvider extends ChangeNotifier {
         // Handle success
         (userEntity) {
           _currentUser = userEntity; // Store the user
-          if (userType == UserType.dancer.name) {
+          if (userEntity.userType == UserType.dancer.name) {
             return Right(
               DancerEntity(
-                firstName: firstName ?? '',
-                lastName: lastName ?? '',
-                username: username ?? '',
-                email: email,
-                password: password,
-                phoneNumber: phoneNumber ?? '',
-                jobPrefs: jobPrefs ?? {},
-                resume: portfolio,
-                userType: userType ?? 'dancer',
+                firstName: userEntity.firstName,
+                lastName: userEntity.lastName,
+                username: userEntity.username,
+                email: userEntity.email,
+                password: userEntity.password,
+                phoneNumber: userEntity.phoneNumber,
+                jobPrefs: jobPrefs,
+                resume: resume,
+                userType: userEntity.userType,
+                deviceToken: userEntity.deviceToken,
               ),
             );
           }
           return Right(
             ClientEntity(
-              firstName: firstName ?? '',
-              lastName: lastName ?? '',
-              username: username ?? '',
-              email: email,
-              phoneNumber: phoneNumber ?? '',
-              password: password,
+              firstName: userEntity.firstName,
+              lastName: userEntity.lastName,
+              username: userEntity.username,
+              email: userEntity.email,
+              phoneNumber: userEntity.phoneNumber,
+              password: userEntity.password,
               organisationName: organisationName,
-              userType: userType ?? 'client',
-              danceStylePrefs: danceStylePrefs ?? [],
-              jobOfferings: jobOfferings ?? [],
+              userType: userEntity.userType,
+              danceStylePrefs: danceStylePrefs,
+              jobOfferings: jobOfferings,
+              deviceToken: userEntity.deviceToken,
             ),
           );
         },

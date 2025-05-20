@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_screen_bubble.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
@@ -54,16 +54,20 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
         showLoadingIndicator(context);
         try {
           final deviceToken = await _notificationRepo.getDeviceToken();
-          final result = await authProvider.userSignUp(
+          final clientEntity = ClientEntity(
             firstName: firstNameController.text,
             lastName: lastNameController.text,
             username: usernameController.text,
             email: emailController.text,
-            organisationName: organisationNameController.text,
             phoneNumber: phoneNumberController.text,
             password: pwController.text,
-            userType: UserType.client,
+            userType: UserType.client.name,
             deviceToken: deviceToken!,
+            organisationName: organisationNameController.text,
+          );
+
+          final result = await authProvider.userSignUp(
+            userEntity: clientEntity,
           );
 
           // hide loading indicator if mounted
@@ -170,23 +174,14 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
               yAlignValue: -0.8,
             ),
 
-            // * Custom app bar
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.only(top: 0, left: 0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back_ios),
-                      color: context.colorScheme.onSurface,
-                    ),
-                  ],
-                ),
-              ),
+            // * Bottom circular container
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              left: -30,
+              bottom: -20,
+              xAlignValue: -1,
+              yAlignValue: 0.8,
             ),
 
             // * Main screen content
@@ -210,9 +205,9 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                         // create your account
                         Text(
                           'Create your Client account',
-                          style: GoogleFonts.robotoSlab(
-                            fontSize: 15,
+                          style: context.text2Xl?.copyWith(
                             fontWeight: FontWeight.bold,
+                            color: context.colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 15),
@@ -386,14 +381,20 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
               ),
             ),
 
-            // * Bottom circular container
-            const LegworkScreenBubble(
-              outerCircularAvatarRadius: 60,
-              innerCircularAvatarRadius: 47,
-              left: -30,
-              bottom: -20,
-              xAlignValue: -1,
-              yAlignValue: 0.8,
+            // * Custom app bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.only(top: 10, left: 10),
+                child: IconButton(
+                  alignment: const Alignment(-1, 0),
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back_ios),
+                  color: context.colorScheme.onSurface,
+                ),
+              ),
             ),
           ],
         ),

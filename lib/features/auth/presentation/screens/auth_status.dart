@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_app.dart';
-import 'package:legwork/features/home/presentation/screens/client_screens/client_home_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:lottie/lottie.dart';
 

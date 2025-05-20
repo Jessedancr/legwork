@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_screen_bubble.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
-
 import 'package:legwork/core/Enums/user_type.dart';
-
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
-
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -52,12 +48,52 @@ class _LoginScreenState extends State<LoginScreen> {
         try {
           // Retrieve the device token
           final deviceToken = await _notificationRepoImpl.getDeviceToken();
-          final result = await authProvider.userlogin(
-            email: emailController.text.trim(),
-            password: pwController.text.trim(),
-            userType: userTypecontroller.text.trim().toLowerCase(),
-            deviceToken: deviceToken!,
-          );
+
+          // Create appropriate user entity based on user type
+          final userType = userTypecontroller.text.trim().toLowerCase();
+          UserEntity userEntity;
+
+          // If dancer, create dancer entity
+          if (userType == UserType.dancer.name) {
+            userEntity = DancerEntity(
+              email: emailController.text.trim(),
+              password: pwController.text.trim(),
+              userType: UserType.dancer.name,
+              deviceToken: deviceToken!,
+              firstName: '',
+              lastName: '',
+              phoneNumber: '',
+              username: '',
+            );
+          }
+
+          // If client, create client entity
+          else if (userType == UserType.client.name) {
+            userEntity = ClientEntity(
+              email: emailController.text.trim(),
+              password: pwController.text.trim(),
+              userType: UserType.client.name,
+              deviceToken: deviceToken!,
+              firstName: '',
+              lastName: '',
+              phoneNumber: '',
+              username: '',
+            );
+          }
+
+          // Show error message if user type is invalid
+          else {
+            hideLoadingIndicator(context);
+            LegworkSnackbar(
+              title: "Invalid user type",
+              subTitle: 'Please enter either "dancer" or "client"',
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
+            ).show(context);
+            return;
+          }
+
+          final result = await authProvider.userlogin(userEntity: userEntity);
 
           if (mounted) hideLoadingIndicator(context);
 
@@ -65,24 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
             // Handle failed login
             (fail) {
               debugPrint('Login failed: $fail'); // Debug message for failure
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0.0,
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 5),
-                  content: LegWorkSnackBarContent(
-                    screenHeight: screenHeight(context),
-                    context: context,
-                    screenWidth: screenWidth(context),
-                    title: 'Oh snap!',
-                    subTitle: fail,
-                    contentColor: Theme.of(context).colorScheme.error,
-                    imageColor: Theme.of(context).colorScheme.onError,
-                  ),
-                ),
-              );
+              LegworkSnackbar(
+                title: 'Omo!',
+                subTitle: fail,
+                imageColor: context.colorScheme.error,
+                contentColor: context.colorScheme.onError,
+              ).show(context);
             },
             // Handle successful login
             (user) {
@@ -90,43 +114,22 @@ class _LoginScreenState extends State<LoginScreen> {
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
                 debugPrint('DANCER BLOCK');
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/dancerProfileCompletionFlow',
-                //   (route) => false,
-                // );
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/dancerApp',
                   (route) => false,
                 );
               } else if (user.userType == UserType.client.name) {
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/clientProfileCompletionFlow',
-                //   (route) => false,
-                // ); // This is client's homepage
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/clientApp',
                   (route) => false,
                 );
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0.0,
-                    behavior: SnackBarBehavior.floating,
-                    duration: const Duration(seconds: 5),
-                    content: LegWorkSnackBarContent(
-                      screenHeight: screenHeight(context),
-                      context: context,
-                      screenWidth: screenWidth(context),
-                      title: 'Oh Snap!',
-                      subTitle: 'Invalid user type',
-                      contentColor: Theme.of(context).colorScheme.error,
-                      imageColor: Theme.of(context).colorScheme.onError,
-                    ),
-                  ),
-                );
+                LegworkSnackbar(
+                  title: "Omo!",
+                  subTitle: 'Invalid user type',
+                  imageColor: context.colorScheme.onError,
+                  contentColor: context.colorScheme.error,
+                ).show(context);
               }
             },
           );
@@ -134,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // CATCH ANY OTHER ERROR THAT MAY OCCUR
           if (mounted) hideLoadingIndicator(context);
           LegworkSnackbar(
-            title: 'Oops!',
+            title: 'Omo!',
             subTitle: 'An unknown error occurred',
             imageColor: Theme.of(context).colorScheme.onError,
             contentColor: Theme.of(context).colorScheme.error,
@@ -174,26 +177,17 @@ class _LoginScreenState extends State<LoginScreen> {
               yAlignValue: -0.8,
             ),
 
-            // * Custom app bar
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.only(top: 0, left: 0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.arrow_back_ios),
-                      color: context.colorScheme.onSurface,
-                    ),
-                  ],
-                ),
-              ),
+            // * Bottom circular container
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              left: -30,
+              bottom: -20,
+              xAlignValue: -1,
+              yAlignValue: 0.8,
             ),
 
-            // * Main scree content
+            // * Main screen content
             Center(
               child: SingleChildScrollView(
                 child: Form(
@@ -310,14 +304,20 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
 
-            // * Bottom circular container
-            const LegworkScreenBubble(
-              outerCircularAvatarRadius: 60,
-              innerCircularAvatarRadius: 47,
-              left: -30,
-              bottom: -20,
-              xAlignValue: -1,
-              yAlignValue: 0.8,
+            // * Custom app bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.only(top: 10, left: 10),
+                child: IconButton(
+                  alignment: const Alignment(-1, 0),
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back_ios),
+                  color: context.colorScheme.onSurface,
+                ),
+              ),
             ),
           ],
         ),

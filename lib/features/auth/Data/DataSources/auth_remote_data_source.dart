@@ -2,11 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/Data/Models/resume_model.dart';
 import 'package:legwork/features/auth/Data/Models/user_model.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
-
-import '../../../../core/Enums/user_type.dart';
 
 final auth = FirebaseAuth.instance;
 final db = FirebaseFirestore.instance;
@@ -17,24 +16,12 @@ final db = FirebaseFirestore.instance;
 abstract class AuthRemoteDataSource {
   /// USER SIGN UP METHOD
   Future<Either<String, dynamic>> userSignUp({
-    required String firstName,
-    required String lastName,
-    required String username,
-    required String email,
-    required String phoneNumber,
-    required String password,
-    required UserType userType,
-    Map<String, dynamic>? resume,
-    String? bio,
-    Map<String, dynamic>? jobPrefs,
-    List<dynamic>? danceStylePrefs,
+    required UserEntity userEntity,
   });
 
   /// USER LOGIN METHOD
   Future<Either<String, dynamic>> userLogin({
-    required String email,
-    required String password,
-    required String deviceToken, // Add deviceToken
+    required UserEntity userEntity,
   });
 
   /// USER LOGOUT METHOD
@@ -52,30 +39,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
 
-  /// USER SIGN IN METHOD
+  /// USER SIGN UP METHOD
   @override
   Future<Either<String, dynamic>> userSignUp({
-    required String firstName,
-    required String lastName,
-    required String username,
-    required String email,
-    required String phoneNumber,
-    required String password,
-    required UserType userType,
-    dynamic profilePicture,
-    String? bio,
-    Map<String, dynamic>? jobPrefs, // for dancers
-    Map<String, dynamic>? resume, // For dancers => 'hiringHistory' for clients
-    String? organisationName, // for clients
-    List<dynamic>? danceStylePrefs, // for clients
-    List<dynamic>? jobOfferings, // for clients
-    String? deviceToken, // Add deviceToken
+    required UserEntity userEntity,
   }) async {
     try {
-      // Sign dancer in
+      // Sign Useer in
       final userCred = await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+        email: userEntity.email,
+        password: userEntity.password,
       );
 
       final user = userCred.user;
@@ -87,23 +60,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final uid = user.uid;
 
       // if user is client
-      if (userType == UserType.client) {
+      if (userEntity.userType == UserType.client.name) {
         // Store client data
         final clientData = {
-          'firstName': firstName,
-          'lastName': lastName,
-          'username': username,
-          'organisationName': organisationName ?? '',
-          'password': password,
-          'email': email,
-          'phoneNumber': phoneNumber,
+          'firstName': userEntity.firstName,
+          'lastName': userEntity.lastName,
+          'username': userEntity.username,
+          'organisationName': userEntity.asClient?.organisationName ?? '',
+          'password': userEntity.password,
+          'email': userEntity.email,
+          'phoneNumber': userEntity.phoneNumber,
           'userType': UserType.client.name, // Store the userType
-          'profilePicture': profilePicture,
-          'bio': bio ?? '',
-          'danceStylePrefs': danceStylePrefs ?? [],
-          'jobOfferings': jobOfferings ?? [],
-          'hiringHistory': resume ?? {},
-          'deviceToken': deviceToken, // Save device token
+          'profilePicture': userEntity.profilePicture,
+          'bio': userEntity.bio ?? '',
+          'danceStylePrefs': userEntity.asClient?.danceStylePrefs ?? [],
+          'jobOfferings': userEntity.asClient?.jobOfferings ?? [],
+          'hiringHistory': userEntity.asClient?.hiringHistory ?? {},
+          'deviceToken': userEntity.deviceToken, // Save device token
         };
 
         await db.collection('clients').doc(uid).set(clientData);
@@ -114,21 +87,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       // If user is dancer
-      else if (userType == UserType.dancer) {
+      else if (userEntity.userType == UserType.dancer.name) {
         // Store additional dancer's data to firebase
         final dancerData = {
-          'firstName': firstName,
-          'lastName': lastName,
-          'username': username,
-          'email': email,
-          'phoneNumber': phoneNumber,
-          'jobPrefs': jobPrefs ?? {},
-          'resume': resume ?? {},
-          'password': password,
-          'profilePicture': profilePicture,
-          'bio': bio ?? '',
+          'firstName': userEntity.firstName,
+          'lastName': userEntity.lastName,
+          'username': userEntity.username,
+          'email': userEntity.email,
+          'phoneNumber': userEntity.phoneNumber,
+          'jobPrefs': userEntity.asDancer?.jobPrefs ?? {},
+          'resume': userEntity.asDancer?.resume ?? {},
+          'password': userEntity.password,
+          'profilePicture': userEntity.profilePicture,
+          'bio': userEntity.bio ?? '',
           'userType': UserType.dancer.name, // Store the userType
-          'deviceToken': deviceToken, // Save device token
+          'deviceToken': userEntity.deviceToken, // Save device token
         };
 
         await db.collection('dancers').doc(uid).set(dancerData);
@@ -163,15 +136,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// USER LOGIN METHOD
   @override
   Future<Either<String, dynamic>> userLogin({
-    required String email,
-    required String password,
-    required String deviceToken, // Add deviceToken
+    required UserEntity userEntity,
   }) async {
     try {
       // sign User in using the sign in method in firebase auth
       final userCred = await auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+        email: userEntity.email,
+        password: userEntity.password,
       );
       final user = userCred.user;
 
@@ -182,66 +153,62 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // get uid of current user
       final uid = user.uid;
 
-      // the Future.wait method checks both collections at the same time
-      final results = await Future.wait([
-        db.collection('dancers').doc(uid).get(),
-        db.collection('clients').doc(uid).get()
-      ]);
-      final dancersDoc = results[0];
-      final clientsDoc = results[1];
+      // Check the collection based on the user type
+      String collection =
+          userEntity.userType == UserType.dancer.name ? 'dancers' : 'clients';
 
-      // Check if the document is in the dancers collection and if it has userType field
-      if (dancersDoc.exists) {
-        // Extracting the data fronm the dancers doc using the .data() method and converting it to a map
-        final dancersData = dancersDoc.data() as Map<String, dynamic>;
-        final userType = dancersData['userType'];
-        if (userType == UserType.dancer.name) {
-          await db
-              .collection('dancers')
-              .doc(uid)
-              .update({'deviceToken': deviceToken});
-          debugPrint('FCM Token: $deviceToken');
-          // convert firebase doc to user profile so we can use in the app
-          final dancerModel = DancerModel.fromDocument(dancersDoc);
-          return Right(dancerModel);
-        }
+      // Query the relevant collection
+      final docSnapshot = await db.collection(collection).doc(uid).get();
+
+      if (!docSnapshot.exists) {
+        return const Left('User profile not found');
       }
 
-      // Same check for client
-      else if (clientsDoc.exists) {
-        // Extracting the data fronm the dancers doc using the .data() method and converting it to a map
-        final clientsData = clientsDoc.data() as Map<String, dynamic>;
-        final userType = clientsData['userType'];
-        if (userType == UserType.client.name) {
-          await db
-              .collection('clients')
-              .doc(uid)
-              .update({'deviceToken': deviceToken});
-          debugPrint('FCM Token: $deviceToken');
-          // convert firebase doc to user profile so we can use in the app
-          final clientModel = ClientModel.fromDocument(clientsDoc);
-          return Right(clientModel);
-        }
+      // Casting the document snapshot to Map so we can extract the user type
+      final userData = docSnapshot.data() as Map<String, dynamic>;
+      final storedUserType = userData['userType'];
+
+      // Verify the user type matches
+      if (storedUserType != userEntity.userType) {
+        return const Left('Invalid user type');
       }
-      debugPrint('User not found brr');
-      return const Left('User not found');
+
+      // Update device token of relevant collection
+      await db
+          .collection(collection)
+          .doc(uid)
+          .update({'deviceToken': userEntity.deviceToken});
+      debugPrint('FCM Token: ${userEntity.deviceToken}');
+
+      // Convert to appropriate user model
+      if (userEntity.userType == UserType.dancer.name) {
+        final dancerModel = DancerModel.fromDocument(docSnapshot);
+        return Right(dancerModel);
+      } else {
+        final clientModel = ClientModel.fromDocument(docSnapshot);
+        return Right(clientModel);
+      }
     } on FirebaseAuthException catch (e) {
-      debugPrint("Firebase  Login error: ${e.code}");
+      debugPrint("Firebase Login error: $e");
       if (e.code == 'user-not-found') {
         return const Left('No user found for this email.');
       } else if (e.code == 'wrong-password') {
         return const Left('Incorrect password. Please try again.');
       } else if (e.code == 'invalid-credential') {
         return const Left('Invalid email or password.');
-      } else if (e.code == 'network-request-failed' ||
-          e.code == 'cloud_firestore/unavailable') {
+      } else if (e.code == 'network-request-failed') {
         return const Left('Check your internet connection and try again');
+      } else if (e.code == 'user-disabled') {
+        return const Left('This account has been disabled.');
+      } else if (e.code == 'too-many-requests') {
+        return const Left(
+            'Too many failed login attempts. Please try again later.');
       } else {
         return const Left('An unexpected error occurred.');
       }
     } catch (e) {
-      debugPrint("An unknown error occurred while logging in");
-      return Future.value(Left<String, UserEntity>(e.toString()));
+      debugPrint("Unexpected error during login: $e");
+      return Left('An unexpected error occurred: ${e.toString()}');
     }
   }
 
