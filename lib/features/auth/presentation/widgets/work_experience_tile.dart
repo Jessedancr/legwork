@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 
 class WorkExperienceTile extends StatelessWidget {
@@ -19,10 +19,6 @@ class WorkExperienceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // RETURNED WIDGET
     return IntrinsicHeight(
       child: Padding(
@@ -43,14 +39,14 @@ class WorkExperienceTile extends StatelessWidget {
             ),
           ),
           child: BlurEffect(
-            sigmaX: 3.5,
-            sigmaY: 3.5,
+            sigmaX: 2.0,
+            sigmaY: 2.0,
             firstGradientColor: Colors.black.withOpacity(0.9),
             secondGradientColor: Colors.black.withOpacity(0.7),
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomCenter,
             height: null,
-            width: screenWidth,
+            width: screenWidth(context),
             child: Padding(
               padding: const EdgeInsets.only(left: 10.0, top: 10.0),
               child: Column(
@@ -59,10 +55,8 @@ class WorkExperienceTile extends StatelessWidget {
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: GoogleFonts.robotoSlab(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 16,
-                        letterSpacing: 1.5,
+                      style: context.text2Xl?.copyWith(
+                        color: context.colorScheme.surface,
                       ),
                       children: [
                         // Job title

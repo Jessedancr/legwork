@@ -113,16 +113,22 @@ class _LoginScreenState extends State<LoginScreen> {
               debugPrint('Login successful: ${user.toString()}');
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
-                debugPrint('DANCER BLOCK');
+                // Navigator.of(context).pushNamedAndRemoveUntil(
+                //   '/dancerApp',
+                //   (route) => false,
+                // );
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/dancerApp',
+                  '/dancerProfileCompletionFlow',
                   (route) => false,
                 );
               } else if (user.userType == UserType.client.name) {
+                // Navigator.of(context).pushNamedAndRemoveUntil(
+                //   '/clientApp',
+                //   (route) => false,
+                // );
+
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/clientApp',
-                  (route) => false,
-                );
+                    '/clientProfileCompletionFlow', (route) => false);
               } else {
                 LegworkSnackbar(
                   title: "Omo!",

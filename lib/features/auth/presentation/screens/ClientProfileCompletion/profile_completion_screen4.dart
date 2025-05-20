@@ -208,10 +208,10 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                               Icons.add,
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
-                            maximumSize: WidgetStatePropertyAll(Size(
+                            maximumSize: Size(
                               screenWidth * 0.55,
                               screenHeight,
-                            )),
+                            ),
                           ),
                         ),
                         SizedBox(height: screenHeight * 0.01),

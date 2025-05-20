@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
@@ -35,20 +36,17 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    // SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-
     // RETURNED WIDGET
     return SingleChildScrollView(
       child: Container(
-        height: screenHeight,
+        height: screenHeight(context) * 1.4,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 25.0,
-            vertical: 10,
+            vertical: 25.0,
           ),
           child: Form(
             key: formKey,
@@ -130,11 +128,10 @@ class _WorkExperienceBottomSheetState extends State<WorkExperienceBottomSheet> {
                 LargeTextField(
                   labelText: 'Job description',
                   maxLength: 300,
-                  hintText: 'Job description',
                   obscureText: false,
                   controller: widget.jobDescrController,
                   icon: SvgPicture.asset(
-                    'assets/svg/info.svg',
+                    'assets/svg/description_icon.svg',
                     fit: BoxFit.scaleDown,
                   ),
                 ),

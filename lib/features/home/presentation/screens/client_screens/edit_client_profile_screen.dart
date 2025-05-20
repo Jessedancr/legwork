@@ -319,7 +319,6 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
 
                     LargeTextField(
                       maxLength: 300,
-                      hintText: 'bio',
                       labelText: 'bio',
                       obscureText: false,
                       controller: _bioController,

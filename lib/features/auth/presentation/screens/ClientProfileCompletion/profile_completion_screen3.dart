@@ -104,9 +104,8 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
-                        maximumSize: WidgetStatePropertyAll(
-                          Size(screenWidth * 0.65, screenHeight * 0.1),
-                        ),
+                        maximumSize:
+                            Size(screenWidth * 0.65, screenHeight * 0.1),
                         onPressed: _uploadHiringHistory,
                         buttonText: 'Upload hiring history',
                       ),
@@ -114,9 +113,8 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
 
                       // Fill out manually
                       LegworkElevatedButton(
-                        maximumSize: WidgetStatePropertyAll(
-                          Size(screenWidth * 0.65, screenHeight * 0.1),
-                        ),
+                        maximumSize:
+                            Size(screenWidth * 0.65, screenHeight * 0.1),
                         onPressed: widget.onPressed,
                         buttonText: 'Fill out manually',
                       ),

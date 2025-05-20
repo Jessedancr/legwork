@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class LegworkCheckboxTile extends StatelessWidget {
   final String title;
@@ -40,8 +40,8 @@ class LegworkCheckboxTile extends StatelessWidget {
             ),
             Text(
               title,
-              style: GoogleFonts.robotoSlab(
-                color: Colors.white,
+              style: context.textMd?.copyWith(
+                color: context.colorScheme.surface,
               ),
             ),
           ],

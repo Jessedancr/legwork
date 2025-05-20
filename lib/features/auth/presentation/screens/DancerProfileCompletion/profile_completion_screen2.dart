@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/core/Constants/entities.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
 
@@ -51,7 +51,7 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Center(
           child: Column(
             children: [
@@ -64,33 +64,34 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                       filterQuality: FilterQuality.high,
                       fit: BoxFit.cover,
                     ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                   child: Center(
                     child: BlurEffect(
-                      height: MediaQuery.of(context).size.height * 0.18,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'What type of work are you looking for?',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
+                      height: screenHeight(context) * 0.18,
+                      width: screenWidth(context) * 0.8,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            'What type of work are you looking for?',
+                            textAlign: TextAlign.center,
+                            style: context.text2Xl?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.colorScheme.onPrimary,
                             ),
-                            Text(
-                              'Search for skills you have',
-                              style: GoogleFonts.robotoSlab(
-                                color: Colors.white,
-                              ),
-                            )
-                          ],
-                        ),
+                          ),
+                          Text(
+                            'Search for skills you have',
+                            style: context.textXl?.copyWith(
+                              fontWeight: FontWeight.w400,
+                              color: context.colorScheme.onPrimary,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -102,11 +103,7 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                 flex: 2,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+                    color: context.colorScheme.surface,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -116,6 +113,7 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                     child: Column(
                       children: [
                         JobSearchBar(
+                          barHintText: 'Search skills',
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
                             final filteredJobs = jobs.where(
@@ -160,13 +158,12 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                             children: [
                               Text(
                                 'Selected Skills:',
-                                style: GoogleFonts.robotoSlab(
+                                style: context.textXl?.copyWith(
+                                  color: context.colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
                               Expanded(
                                 child: ListView.builder(
                                   itemCount: selectedSkills.length,
@@ -175,16 +172,13 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                                       padding: const EdgeInsets.all(10),
                                       margin: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                        color: context.colorScheme.onSurface,
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       child: Text(
                                         '- ${selectedSkills[index]}',
-                                        style: GoogleFonts.robotoSlab(
-                                          fontSize: 16,
-                                          color: Colors.white,
+                                        style: context.textLg?.copyWith(
+                                          color: context.colorScheme.surface,
                                         ),
                                       ),
                                     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/core/Constants/entities.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
 
@@ -49,14 +49,10 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Center(
           child: Column(
             children: [
@@ -69,38 +65,41 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                       filterQuality: FilterQuality.high,
                       fit: BoxFit.cover,
                     ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                   child: Center(
                     child: BlurEffect(
-                      height: screenHeight * 0.18,
-                      width: screenWidth * 0.8,
+                      height: screenHeight(context) * 0.2,
+                      width: screenWidth(context) * 0.8,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
                               'What are your preferred locations for jobs',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(
+                              style: context.text2Xl?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white,
+                                color: context.colorScheme.surface,
                               ),
                             ),
                             Text(
                               'This would help us better recommend jobs to you',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(
-                                color: Colors.white,
+                              style: context.textXl?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                color: context.colorScheme.surface,
                               ),
                             ),
                             Text(
                               'Search for locations in Lagos',
-                              style: GoogleFonts.robotoSlab(
-                                color: Colors.white,
+                              style: context.textSm?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: context.colorScheme.surface,
                               ),
                             )
                           ],
@@ -131,6 +130,7 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                       children: [
                         // Search bar
                         JobSearchBar(
+                          barHintText: 'Search locations',
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
                             // Filter locations based on the search query
@@ -183,13 +183,12 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                             children: [
                               Text(
                                 'Selected Locations:',
-                                style: GoogleFonts.robotoSlab(
+                                style: context.textXl?.copyWith(
+                                  color: context.colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
 
                               // Show selected skills
                               Expanded(
@@ -207,9 +206,8 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                                       ),
                                       child: Text(
                                         '- ${selectedLocations[index]}',
-                                        style: GoogleFonts.robotoSlab(
-                                          fontSize: 16,
-                                          color: Colors.white,
+                                        style: context.textLg?.copyWith(
+                                          color: context.colorScheme.surface,
                                         ),
                                       ),
                                     );

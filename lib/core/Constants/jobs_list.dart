@@ -10,5 +10,3 @@ final List jobsList = [
   ["Dance therapy", false],
   ["Live entertainment", false],
 ];
-
-

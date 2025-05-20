@@ -198,7 +198,6 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ),
                               const SizedBox(height: 20),
                               LargeTextField(
-                                hintText: 'Enter your bio',
                                 obscureText: false,
                                 controller: widget.bioController,
                                 icon: SvgPicture.asset(

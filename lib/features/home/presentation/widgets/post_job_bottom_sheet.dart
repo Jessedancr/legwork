@@ -243,7 +243,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                     const SizedBox(height: 20),
 
                     LargeTextField(
-                      hintText: 'Job description',
+                      labelText: 'Job description',
                       obscureText: false,
                       controller: widget.jobDescrController,
                       icon: SvgPicture.asset(
