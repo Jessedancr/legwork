@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../widgets/account_type_button.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/widgets/legwork_screen_bubble.dart';
+import 'package:legwork/features/auth/presentation/widgets/account_type_button.dart';
 
 class AccountTypeScreen extends StatefulWidget {
   const AccountTypeScreen({super.key});
@@ -12,87 +14,106 @@ class AccountTypeScreen extends StatefulWidget {
 class _AccountTypeScreenState extends State<AccountTypeScreen> {
   @override
   Widget build(BuildContext context) {
-    // Screen size
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: context.colorScheme.surface,
+        body: Stack(
           children: [
-            // App Logo
-            Image.asset(
-              'images/logos/dance_icon_purple_cropped.png',
-              color: Theme.of(context).colorScheme.primary,
-              width: screenWidth * 0.4,
+            // * Top circular Bubble
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              right: -30,
+              top: -20,
+              xAlignValue: 1,
+              yAlignValue: -0.8,
             ),
 
-            // Select Account Type
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // * Bottom circular Bubble
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              left: -30,
+              bottom: -20,
+              xAlignValue: -1,
+              yAlignValue: 0.8,
+            ),
+
+            // * Main screen content
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Select Account Type',
-                  style: TextStyle(
-                    fontFamily: 'RobotoSlab',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // App Logo
+                Image.asset(
+                  'images/logos/dance_icon_purple_cropped.png',
+                  color: context.colorScheme.primary,
+                  width: screenWidth(context) * 0.4,
                 ),
-                Text(
-                  'Please Choose Your Profession',
-                  style: TextStyle(fontFamily: 'RobotoCondensed'),
+                const SizedBox(height: 20),
+
+                // Select Account Type
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Select Account Type',
+                      style: context.headingXs?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Text(
+                      'Please Choose Your Profession',
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // Dancer Acct Button
+                AccountTypeButton(
+                  icon: SvgPicture.asset(
+                    'assets/svg/disco_ball.svg',
+                    color: context.colorScheme.onPrimary,
+                    height: 40,
+                  ),
+                  buttonText: 'Dancer',
+                  onTap: () =>
+                      Navigator.of(context).pushNamed('/dancerSignUpScreen'),
+                ),
+                const SizedBox(height: 20),
+
+                // Client Acct button
+                AccountTypeButton(
+                  icon: SvgPicture.asset(
+                    'assets/svg/briefcase.svg',
+                    color: context.colorScheme.onPrimary,
+                    height: 40,
+                  ),
+                  buttonText: 'Client',
+                  onTap: () =>
+                      Navigator.of(context).pushNamed('/clientSignUpScreen'),
+                ),
+                const SizedBox(height: 20),
+
+                // Already have an acct? Login
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Already have an account?'),
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed('/loginScreen'),
+                      child: Text(
+                        'Login',
+                        style: context.text2Xl?.copyWith(
+                          color: context.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 )
               ],
             ),
-            const SizedBox(height: 15),
-
-            // Dancer Acct Button
-            AccountTypeButton(
-              icon: Image.asset(
-                'images/icons/nobg_dancer_icon.png',
-                filterQuality: FilterQuality.high,
-                height: 110,
-              ),
-              buttonText: 'Dancer',
-              onTap: () =>
-                  Navigator.of(context).pushNamed('/dancerSignUpScreen'),
-            ),
-            const SizedBox(height: 15),
-
-            // Client Acct button
-            AccountTypeButton(
-              icon: Icon(
-                Icons.person,
-                size: 60,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-              buttonText: 'Client',
-              onTap: () =>
-                  Navigator.of(context).pushNamed('/clientSignUpScreen'),
-            ),
-            const SizedBox(height: 15),
-
-            // Already have an acct? Login
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Already have an account?'),
-                TextButton(
-                  onPressed: () =>
-                      Navigator.of(context).pushNamed('/loginScreen'),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(
-                      fontFamily: 'RobotoCondensed',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            )
           ],
         ),
       ),

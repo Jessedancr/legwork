@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/onboarding/domain/onboarding_status_check.dart';
 import 'package:legwork/features/onboarding/presentation/widgets/onboard_button.dart';
 import 'package:legwork/features/onboarding/presentation/widgets/page_indicator.dart';
@@ -54,11 +55,11 @@ class _OnboardingState extends State<Onboarding> {
             children: onBoardingScreens,
           ),
 
-          // Indicator
+          // Indicator + button
           Positioned(
-            bottom: 10.0,
-            left: 40.0,
-            right: 40.0,
+            bottom: screenHeight(context) * 0.03,
+            left: screenWidth(context) * 0.1,
+            right: screenWidth(context) * 0.1,
             child: Column(
               children: [
                 // Indicator
@@ -68,7 +69,7 @@ class _OnboardingState extends State<Onboarding> {
                 ),
                 const SizedBox(height: 10),
 
-                // GET STARTED OR NEXT BUTTON
+                // Button
                 OnboardButton(
                   buttonText: isLastPage ? 'Get Started!' : 'Next',
                   onPressed: isLastPage

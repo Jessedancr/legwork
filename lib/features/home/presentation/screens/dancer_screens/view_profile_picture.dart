@@ -120,7 +120,7 @@ class _ViewProfilePictureState extends State<ViewProfilePicture> {
                         backgroundImage: (userDetails!.profilePicture != null &&
                                 userDetails!.profilePicture!.isNotEmpty)
                             ? NetworkImage(userDetails!.profilePicture!)
-                            :  AssetImage(
+                            : AssetImage(
                                 widget.defaultImagePath,
                               ) as ImageProvider,
                       ),

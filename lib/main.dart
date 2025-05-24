@@ -181,12 +181,21 @@ class MyApp extends StatelessWidget {
         '/loginScreen': (context) => const LoginScreen(),
         '/clientSignUpScreen': (context) => const ClientSignUpScreen(),
         '/dancerSignUpScreen': (context) => const DancerSignUpScreen(),
-        '/dancerProfileCompletionFlow': (context) =>
-            const DancerProfileCompletionFlow(),
-        '/clientProfileCompletionFlow': (context) =>
-            ClientProfileCompletionFlow(
-              email: auth.currentUser!.email ?? '',
-            ),
+        '/dancerProfileCompletionFlow': (context) {
+          final dancerDetails =
+              ModalRoute.of(context)!.settings.arguments as DancerEntity;
+          return DancerProfileCompletionFlow(
+            dancerDetails: dancerDetails,
+          );
+        },
+        '/clientProfileCompletionFlow': (context) {
+          final clientDetails =
+              ModalRoute.of(context)!.settings.arguments as ClientEntity;
+
+          return ClientProfileCompletionFlow(
+            clientDetails: clientDetails,
+          );
+        },
         '/dancerApp': (context) => const DancerApp(),
         '/clientHomeScreen': (context) => ClientHomeScreen(),
         '/dancerSettingsScreen': (context) => const DancerSettingsScreen(),

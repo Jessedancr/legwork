@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
@@ -37,14 +38,10 @@ class HiringHistoryBottomSheet extends StatefulWidget {
 class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    // SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // RETURNED WIDGET
     return SingleChildScrollView(
       child: Container(
-        height: screenHeight * 1.25,
+        height: screenHeight(context) * 1.25,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -154,7 +151,7 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
 
                 // Job Description
                 LargeTextField(
-                  hintText: 'Job description',
+                  labelText: 'Job description',
                   obscureText: false,
                   controller: widget.jobDescrController,
                   icon: SvgPicture.asset(

@@ -1,10 +1,9 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
@@ -18,8 +17,8 @@ class ProfileCompletionScreen1 extends StatefulWidget {
   final String? email;
   const ProfileCompletionScreen1({
     super.key,
-    required this.email,
     required this.bioController,
+    required this.email,
     required this.danceStylePrefsController,
   });
 
@@ -29,9 +28,6 @@ class ProfileCompletionScreen1 extends StatefulWidget {
 }
 
 class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
-  // Instance of firebase auth
-  final auth = FirebaseAuth.instance;
-
   // Seleced image
   File? selectedImage;
 
@@ -48,14 +44,10 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return SafeArea(
       child: Scaffold(
         //resizeToAvoidBottomInset: false,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: context.colorScheme.surface,
         body: Center(
           child: Column(
             children: [
@@ -68,28 +60,32 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                       filterQuality: FilterQuality.high,
                       fit: BoxFit.cover,
                     ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                   child: Center(
                     // TEXT CONTAINER
                     child: BlurEffect(
-                      height: screenHeight * 0.18,
-                      width: screenWidth * 0.8,
+                      height: screenHeight(context) * 0.18,
+                      width: screenWidth(context) * 0.8,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
                             'WELCOME TO LEGWORK!',
-                            style: GoogleFonts.robotoSlab(
+                            style: context.text2Xl?.copyWith(
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Colors.white,
+                              color: context.colorScheme.onPrimary,
                             ),
                           ),
                           Text(
                             "let's get you started by completing your profile",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.robotoSlab(
-                              fontSize: 18,
-                              color: Colors.white,
+                            style: context.textXl?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.colorScheme.onPrimary,
                             ),
                           ),
                           Row(
@@ -97,20 +93,20 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                             children: [
                               Text(
                                 'Signed in as: ',
-                                style: GoogleFonts.robotoSlab(
-                                  color: Colors.white,
+                                style: context.textLg?.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: context.colorScheme.onPrimary,
                                 ),
                               ),
                               Text(
-                                widget.email!,
-                                style: GoogleFonts.robotoSlab(
+                                widget.email ?? 'email not available',
+                                style: context.textLg?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: context.colorScheme.onPrimary,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 30),
                         ],
                       ),
                     ),
@@ -123,13 +119,9 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                 flex: 2,
                 child: SingleChildScrollView(
                   child: Container(
-                    height: screenHeight * 0.7,
+                    height: screenHeight(context) * 0.7,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
-                      ),
+                      color: context.colorScheme.surface,
                     ),
                     child: Center(
                       child: Padding(
@@ -145,60 +137,75 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                               if (selectedImage == null)
                                 // EMPTY PROFILE PICTURE
                                 Stack(
+                                  clipBehavior: Clip.none,
                                   children: [
-                                    Container(
-                                      height: 100,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainer,
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      child: Image.asset(
-                                        'images/icons/user.png',
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor:
+                                          context.colorScheme.surfaceContainer,
+                                      child: SvgPicture.asset(
+                                        'assets/svg/user.svg',
+                                        height: 50,
                                       ),
                                     ),
                                     // Edit icon
                                     Positioned(
-                                      bottom: 5,
+                                      bottom: -3,
+                                      left: -3,
                                       child: Ink(
                                         child: InkWell(
                                           onTap: _pickImageFromGallery,
-                                          child: Image.asset(
-                                            'images/icons/edit_circle.png',
-                                            height: screenHeight * 0.04,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimaryContainer,
+                                          child: CircleAvatar(
+                                            radius: 17,
+                                            backgroundColor: context
+                                                .colorScheme.primaryContainer,
+                                            child: SvgPicture.asset(
+                                              'assets/svg/pen_circle.svg',
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
                                   ],
                                 )
+
+                              // * PFP with picture
                               else
-                                Container(
-                                  height: 100,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .surfaceContainer,
-                                    borderRadius: BorderRadius.circular(50),
-                                    image: DecorationImage(
-                                      image: FileImage(
-                                          selectedImage!), // IMAGE FROM FILE
-                                      fit: BoxFit.cover,
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor:
+                                          context.colorScheme.surfaceContainer,
+                                      backgroundImage:
+                                          FileImage(selectedImage!),
                                     ),
-                                  ),
+
+                                    // Edit icon
+                                    Positioned(
+                                      bottom: -3,
+                                      left: -3,
+                                      child: GestureDetector(
+                                        onTap: _pickImageFromGallery,
+                                        child: CircleAvatar(
+                                          radius: 17,
+                                          backgroundColor: context
+                                              .colorScheme.primaryContainer,
+                                          child: SvgPicture.asset(
+                                            'assets/svg/pen_circle.svg',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 40),
+
+                              // * Bio textfield
                               LargeTextField(
-                                hintText: 'Enter your bio',
+                                labelText: 'bio',
+                                maxLength: 300,
                                 obscureText: false,
                                 controller: widget.bioController,
                                 icon: SvgPicture.asset(

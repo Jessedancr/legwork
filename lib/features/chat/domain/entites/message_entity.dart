@@ -16,7 +16,7 @@ class MessageEntity {
     required this.content,
     required this.timeStamp,
     required this.isRead,
-     this.attachmentUrl,
-     this.attachmentType,
+    this.attachmentUrl,
+    this.attachmentType,
   });
 }

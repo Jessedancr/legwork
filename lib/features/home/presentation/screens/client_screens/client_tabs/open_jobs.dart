@@ -65,18 +65,18 @@ class _OpenJobsState extends State<OpenJobs>
       future: _fetchJobsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return  Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Lottie.asset(
-                'assets/lottie/loading.json',
-                width: 100,
-                height: 100,
-                fit: BoxFit.contain,
-              ),
-               const SizedBox(height: 10),
-               const Text(
+                  'assets/lottie/loading.json',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 10),
+                const Text(
                   'Fetching jobs please wait...',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,

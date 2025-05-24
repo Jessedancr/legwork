@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/entities.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_search_bar.dart';
 
 import 'package:legwork/core/Constants/jobs_list.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
 
 // Track selected skills
-final List selectedSkills = [];
+final List selectedJobTypes = [];
 
 class ProfileCompletionScreen2 extends StatefulWidget {
   const ProfileCompletionScreen2({super.key});
@@ -22,31 +23,36 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
   final TextEditingController skillTypeController = TextEditingController();
   final SearchController searchController = SearchController();
 
+  // * Local list of job objects where each job has a name and isSelected prop
+  List<Job> jobTypes = [];
+
+  // * Here, we take the global job lists and convert each one to a Job object using .map()
+  @override
+  void initState() {
+    jobTypes =
+        jobsList.map((job) => Job(name: job[0], isSelected: job[1])).toList();
+    super.initState();
+  }
+
   // METHOD TO CHECK AND UNCHECK THE CHECKBOX
   void checkBoxTapped(bool value, int index) {
     debugPrint('$index, $value');
     setState(() {
-      jobsList[index][1] = value;
-      if (value) {
-        // Add the skill to the selected skills list
-        selectedSkills.add(jobsList[index][0]);
+      jobTypes[index].isSelected = value;
+      if (value && !selectedJobTypes.contains(jobTypes[index].name)) {
+        selectedJobTypes.add(jobTypes[index].name);
       } else {
-        // Remove the skill from the selected skills list
-        selectedSkills.remove(jobsList[index][0]);
+        selectedJobTypes.remove(jobTypes[index].name);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: context.colorScheme.surface,
         body: Center(
           child: Column(
             children: [
@@ -59,30 +65,32 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                       filterQuality: FilterQuality.high,
                       fit: BoxFit.cover,
                     ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                   child: Center(
                     child: BlurEffect(
-                      height: screenHeight * 0.18,
-                      width: screenWidth * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      height: screenHeight(context) * 0.18,
+                      width: screenWidth(context) * 0.8,
+                      child: Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              'What type of work are you offering?',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(
+                              'What type of jobs are you offering?',
+                              textAlign: TextAlign.end,
+                              style: context.text2Xl?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white,
+                                color: context.colorScheme.onPrimary,
                               ),
                             ),
                             Text(
-                              'Search for gigs you would be posting',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(
-                                color: Colors.white,
+                              'Search for jobs you would be posting',
+                              style: context.textXl?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: context.colorScheme.onPrimary,
                               ),
                             )
                           ],
@@ -98,11 +106,7 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                 flex: 2,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+                    color: context.colorScheme.surface,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -112,38 +116,47 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                     child: Column(
                       children: [
                         // Search bar
-                        JobSearchBar(
+                        LegworkSearchBar(
+                          barHintText: 'Search for job types',
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
-                            // Filter jobsList based on the search query
-                            final filteredJobs = jobsList.where(
+                            // Filter jobsList based on the search query.
+                            // This takes a list of job names and converts them into proper job objects
+                            final filteredJobs = jobTypes.where(
                               (job) {
                                 // Return empty search controller or the search query converted to lower case
                                 return controller.text.isEmpty ||
-                                    job[0].toLowerCase().contains(
+                                    job.name.toLowerCase().contains(
                                         controller.text.toLowerCase());
                               },
                             ).toList();
 
                             // Display filtered results in a single listview
                             return [
-                              SizedBox(
-                                height: 500,
-                                child: ListView.builder(
-                                  itemCount: filteredJobs.length,
-                                  itemBuilder: (context, index) {
-                                    final jobIndex =
-                                        jobsList.indexOf(filteredJobs[index]);
-                                    return LegworkCheckboxTile(
-                                      title: filteredJobs[index][0],
-                                      checkedValue: filteredJobs[index][1],
-                                      onChanged: (value) => checkBoxTapped(
-                                        value!,
-                                        jobIndex,
-                                      ),
-                                    );
-                                  },
-                                ),
+                              StatefulBuilder(
+                                builder: (context, setState) {
+                                  return SizedBox(
+                                    height: 500,
+                                    child: ListView.builder(
+                                      itemCount: filteredJobs.length,
+                                      itemBuilder: (context, index) {
+                                        final jobIndex = jobTypes.indexWhere(
+                                            (job) =>
+                                                job.name ==
+                                                filteredJobs[index].name);
+                                        return LegworkCheckboxTile(
+                                          title: filteredJobs[index].name,
+                                          checkedValue:
+                                              filteredJobs[index].isSelected,
+                                          onChanged: (value) {
+                                            checkBoxTapped(value!, jobIndex);
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
                               ),
                             ];
                           },
@@ -154,34 +167,30 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                           child: Column(
                             children: [
                               Text(
-                                'Selected Skills:',
-                                style: GoogleFonts.robotoSlab(
+                                'Selected Jobs:',
+                                style: context.textXl?.copyWith(
+                                  color: context.colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.black,
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
 
                               // Show selected skills
                               Expanded(
                                 child: ListView.builder(
-                                  itemCount: selectedSkills.length,
+                                  itemCount: selectedJobTypes.length,
                                   itemBuilder: (context, index) {
                                     return Container(
                                       padding: const EdgeInsets.all(10),
                                       margin: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                        color: context.colorScheme.onSurface,
                                         borderRadius: BorderRadius.circular(30),
                                       ),
                                       child: Text(
-                                        '- ${selectedSkills[index]}',
-                                        style: GoogleFonts.robotoSlab(
-                                          fontSize: 16,
-                                          color: Colors.white,
+                                        '- ${selectedJobTypes[index]}',
+                                        style: context.textLg?.copyWith(
+                                          color: context.colorScheme.surface,
                                         ),
                                       ),
                                     );

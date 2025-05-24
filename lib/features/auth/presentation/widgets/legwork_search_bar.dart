@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
-class JobSearchBar extends StatefulWidget {
+class LegworkSearchBar extends StatefulWidget {
   final SuggestionsBuilder suggestionsBuilder;
   final SearchController searchController;
   final String? barHintText;
   final void Function(String)? onChanged;
-  const JobSearchBar({
+  const LegworkSearchBar({
     super.key,
     required this.suggestionsBuilder,
     required this.searchController,
@@ -14,10 +15,10 @@ class JobSearchBar extends StatefulWidget {
   });
 
   @override
-  State<JobSearchBar> createState() => _JobSearchBarState();
+  State<LegworkSearchBar> createState() => _LegworkSearchBarState();
 }
 
-class _JobSearchBarState extends State<JobSearchBar> {
+class _LegworkSearchBarState extends State<LegworkSearchBar> {
   @override
   Widget build(BuildContext context) {
     // RETURNED WIDGET
@@ -26,16 +27,16 @@ class _JobSearchBarState extends State<JobSearchBar> {
       searchController: widget.searchController,
       barElevation: const WidgetStatePropertyAll(0.0),
       barBackgroundColor: WidgetStatePropertyAll(
-        Theme.of(context).colorScheme.surfaceContainer,
+        context.colorScheme.surfaceContainer,
       ),
       barHintText: widget.barHintText,
       barHintStyle: WidgetStatePropertyAll(
-        TextStyle(color: Colors.grey[500]),
+        TextStyle(color: context.colorScheme.onSurface),
       ),
 
       barSide: WidgetStatePropertyAll(
         BorderSide(
-          color: Theme.of(context).colorScheme.secondary,
+          color: context.colorScheme.secondary,
         ),
       ),
       dividerColor: Colors.grey,

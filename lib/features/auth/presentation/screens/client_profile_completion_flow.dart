@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
@@ -13,10 +15,10 @@ import 'ClientProfileCompletion/profile_completion_screen3.dart';
 import 'ClientProfileCompletion/profile_completion_screen4.dart';
 
 class ClientProfileCompletionFlow extends StatefulWidget {
-  final String email;
+  final ClientEntity clientDetails;
   const ClientProfileCompletionFlow({
+    required this.clientDetails,
     super.key,
-    required this.email,
   });
 
   @override
@@ -48,10 +50,6 @@ class _ClientProfileCompletionFlowState
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // PROVIDER
     final updateProfileProvider = Provider.of<UpdateProfileProvider>(context);
 
@@ -59,41 +57,58 @@ class _ClientProfileCompletionFlowState
     void saveAndUpdateProfile() async {
       showLoadingIndicator(context);
       try {
-        await updateProfileProvider.updateProfileExecute(
-          data: {
-            'bio': bioController.text,
-            'danceStylePrefs': danceStylePrefsController.text
-                .trim()
-                .replaceAll(RegExp(r'[,;\s|/]+'), ',')
-                .split(',')
+        Map<String, dynamic> data = {
+          'bio': bioController.text,
+          'danceStylePrefs': danceStylePrefsController.text
+              .trim()
+              .replaceAll(RegExp(r'[,;\s|/]+'), ',')
+              .split(',')
+              .toList(),
+          'jobOfferings': selectedJobTypes,
+          'hiringHistory': {
+            'professionalTitle': professionalTitleController.text,
+            'hiringHistories': hiringHistoryList
+                .map((history) => {
+                      'jobTitle': history[0],
+                      'location': history[1],
+                      'date': history[2],
+                      'numOfDancers': history[3],
+                      'paymentOffered': history[4],
+                      'jobDescription': history[5],
+                    })
                 .toList(),
-            'jobOfferings': selectedSkills,
-            'hiringHistory': {
-              'professionalTitle': professionalTitleController.text,
-              'hiringHistories': hiringHistoryList
-                  .map((history) => {
-                        'jobTitle': history[0],
-                        'location': history[1],
-                        'date': history[2],
-                        'numOfDancers': history[3],
-                        'paymentOffered': history[4],
-                        'jobDescription': history[5],
-                      })
-                  .toList(),
-            }
-          },
-        );
-        hideLoadingIndicator(context);
-        LegworkSnackbar(
-          title: 'Sharp guy!',
-          subTitle: 'Welcome to legwork',
-          imageColor: Theme.of(context).colorScheme.onPrimary,
-          contentColor: Theme.of(context).colorScheme.primary,
-        ).show(context);
+          }
+        };
+        final result =
+            await updateProfileProvider.updateProfileExecute(data: data);
 
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/clientApp',
-          (route) => false,
+        result.fold(
+          // handle failure
+          (fail) {
+            hideLoadingIndicator(context);
+            debugPrint(fail.toString());
+            LegworkSnackbar(
+              title: 'Omo!',
+              subTitle: fail,
+              contentColor: context.colorScheme.error,
+              imageColor: context.colorScheme.onError,
+            );
+          },
+          // handle success
+          (success) {
+            debugPrint('Profile completion successful');
+            hideLoadingIndicator(context);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/clientApp',
+              (route) => false,
+            );
+            LegworkSnackbar(
+              title: 'Sharp guy!',
+              subTitle: 'Welcome to LEGWORK',
+              imageColor: context.colorScheme.onPrimary,
+              contentColor: context.colorScheme.primary,
+            ).show(context);
+          },
         );
       } catch (e) {
         debugPrint('error updating profile');
@@ -102,8 +117,8 @@ class _ClientProfileCompletionFlowState
         LegworkSnackbar(
           title: 'Omo!',
           subTitle: 'Failed to update profile: $e',
-          imageColor: Theme.of(context).colorScheme.onError,
-          contentColor: Theme.of(context).colorScheme.error,
+          imageColor: context.colorScheme.onError,
+          contentColor: context.colorScheme.error,
         ).show(context);
       }
     }
@@ -123,6 +138,31 @@ class _ClientProfileCompletionFlowState
       );
     }
 
+    //  * Profile completition screens
+    List<Widget> profileCompletitionScreen = [
+      ProfileCompletionScreen1(
+        email: widget.clientDetails.email,
+        bioController: bioController,
+        danceStylePrefsController: danceStylePrefsController,
+      ),
+      const ProfileCompletionScreen2(),
+      ProfileCompletionScreen3(
+        onPressed: () => pageController.nextPage(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        ),
+      ),
+      ProfileCompletionScreen4(
+        dateController: dateController,
+        jobDescrController: jobDescrController,
+        jobTitleController: jobTitleController,
+        locationController: locationController,
+        numOfDancersController: numOfDancersController,
+        paymentController: paymentController,
+        professonalTitleController: professionalTitleController,
+      ),
+    ];
+
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
@@ -135,50 +175,30 @@ class _ClientProfileCompletionFlowState
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (value) {
                 setState(() {
-                  isLastPage = (value == 3);
-                  debugPrint('CLIENT PROFILE COMPLETION LAST PAGE');
+                  isLastPage = (value == profileCompletitionScreen.length - 1);
                 });
+                if (isLastPage) {
+                  debugPrint('Cliemt profile completiton Last page');
+                }
               },
-              children: [
-                ProfileCompletionScreen1(
-                  email: auth.currentUser!.email,
-                  bioController: bioController,
-                  danceStylePrefsController: danceStylePrefsController,
-                ),
-                ProfileCompletionScreen2(),
-                ProfileCompletionScreen3(
-                  onPressed: () => pageController.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  ),
-                ),
-                ProfileCompletionScreen4(
-                  dateController: dateController,
-                  jobDescrController: jobDescrController,
-                  jobTitleController: jobTitleController,
-                  locationController: locationController,
-                  numOfDancersController: numOfDancersController,
-                  paymentController: paymentController,
-                  professonalTitleController: professionalTitleController,
-                ),
-              ],
+              children: profileCompletitionScreen,
             ),
 
             // PAGE INDICATOR
             Positioned(
-              bottom: screenHeight * 0.04,
-              left: screenWidth * 0.38,
+              bottom: screenHeight(context) * 0.04,
+              left: screenWidth(context) * 0.38,
               child: PageIndicator(
                 pageController: pageController,
-                count: 4,
-                dotColor: Theme.of(context).colorScheme.primaryContainer,
+                count: profileCompletitionScreen.length,
+                dotColor: context.colorScheme.primaryContainer,
               ),
             ),
 
             // PREVIOUS ICON BUTTON
             Positioned(
-              bottom: screenHeight * 0.01,
-              left: screenWidth * 0.05,
+              bottom: screenHeight(context) * 0.01,
+              left: screenWidth(context) * 0.05,
               child: IconButton(
                 onPressed: () {
                   // back to previous screen
@@ -187,23 +207,18 @@ class _ClientProfileCompletionFlowState
                     curve: Curves.easeInOut,
                   );
                 },
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back_ios),
               ),
             ),
 
             // SAVE AND CONTINUE BUTTON
             Positioned(
-              bottom: screenHeight * 0.01,
-              right: screenWidth * 0.05,
-              child: isLastPage
-                  ? LegworkElevatedButton(
-                      buttonText: 'Done',
-                      onPressed: saveAndUpdateProfile,
-                    )
-                  : LegworkElevatedButton(
-                      onPressed: nextPage,
-                      buttonText: 'Next',
-                    ),
+              bottom: screenHeight(context) * 0.01,
+              right: screenWidth(context) * 0.05,
+              child: LegworkElevatedButton(
+                onPressed: isLastPage ? saveAndUpdateProfile : nextPage,
+                buttonText: isLastPage ? 'Done' : 'Next',
+              ),
             )
           ],
         ),

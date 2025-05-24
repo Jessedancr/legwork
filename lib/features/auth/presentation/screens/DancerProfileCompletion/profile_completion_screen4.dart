@@ -1,6 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
 
@@ -21,14 +21,10 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // RETURNED WIDGET
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Center(
           child: Column(
             children: [
@@ -41,30 +37,33 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                       filterQuality: FilterQuality.high,
                       fit: BoxFit.cover,
                     ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
                   ),
                   child: Center(
                     child: BlurEffect(
-                      height: screenHeight * 0.18,
-                      width: screenWidth * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      height: screenHeight(context) * 0.18,
+                      width: screenWidth(context) * 0.8,
+                      child: Center(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
                               'How would you like to tell us more about yourself?',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(
+                              style: context.textXl?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white,
+                                color: context.colorScheme.surface,
                               ),
                             ),
                             Text(
                               'You can either upload your resume or manually fill it out.',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(
-                                color: Colors.white,
+                              style: context.textSm?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: context.colorScheme.surface,
                               ),
                             )
                           ],
@@ -79,7 +78,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
               Expanded(
                 flex: 2,
                 child: Container(
-                  width: screenWidth,
+                  width: screenWidth(context),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: const BorderRadius.only(
@@ -100,8 +99,9 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
-                        maximumSize: WidgetStatePropertyAll(
-                          Size(screenWidth * 0.6, screenHeight * 0.1),
+                        maximumSize: Size(
+                          screenWidth(context) * 0.5,
+                          screenHeight(context) * 0.1,
                         ),
                         onPressed: _uploadResume,
                         buttonText: 'Upload resume',
@@ -110,8 +110,9 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
 
                       // Fill out manually
                       LegworkElevatedButton(
-                        maximumSize: WidgetStatePropertyAll(
-                          Size(screenWidth * 0.6, screenHeight * 0.1),
+                        maximumSize: Size(
+                          screenWidth(context) * 0.5,
+                          screenHeight(context) * 0.1,
                         ),
                         onPressed: widget.onPressed,
                         buttonText: 'Fill out manually',

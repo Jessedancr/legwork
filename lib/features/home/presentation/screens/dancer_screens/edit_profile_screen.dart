@@ -9,7 +9,7 @@ import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicato
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_text_form_field.dart';
-import 'package:legwork/features/auth/presentation/widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_search_bar.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_elevated_button.dart';
 import 'package:legwork/core/Constants/lagos_locations.dart';
@@ -191,7 +191,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    JobSearchBar(
+                    LegworkSearchBar(
                       barHintText: 'Search locations',
                       searchController: searchController,
                       suggestionsBuilder: (context, controller) {
@@ -329,7 +329,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             // * Profile picture + edit icon
             Center(
               child: Hero(
-                tag: 'profile_picture',
+                tag: 'profile_picture_${widget.dancerDetails!.email}',
                 child: Stack(
                   children: [
                     CircleAvatar(
@@ -452,7 +452,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                     LargeTextField(
                       maxLength: 300,
-                      hintText: 'bio',
                       labelText: 'bio',
                       obscureText: false,
                       controller: _bioController,

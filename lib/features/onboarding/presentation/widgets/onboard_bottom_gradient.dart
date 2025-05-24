@@ -25,7 +25,7 @@ class OnboardBottomGradient extends StatelessWidget {
                   colors: [
                     Colors.transparent,
                     Colors.black.withOpacity(0.8),
-                    Colors.black,
+                    Colors.black.withOpacity(0.9),
                     Colors.black
                   ],
                 ),

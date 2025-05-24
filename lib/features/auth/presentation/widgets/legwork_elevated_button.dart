@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-
-// TODO: PROPERLY STYLE THIS BUTTON
+import 'package:legwork/core/Constants/helpers.dart';
 
 class LegworkElevatedButton extends StatelessWidget {
   final void Function()? onPressed;
   final String buttonText;
   final PageController pageController = PageController();
-  final Widget? icon;
-  final WidgetStateProperty<Size?>? maximumSize;
-  final WidgetStateProperty<Size?>? minimumSize;
+  final dynamic icon;
+  final Size? maximumSize;
+  final Size? minimumSize;
   LegworkElevatedButton({
     super.key,
     required this.onPressed,
@@ -20,34 +19,33 @@ class LegworkElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
     // RETURNED WIDGET
     return ElevatedButton(
-      style: ButtonStyle(
+      style: ElevatedButton.styleFrom(
         maximumSize: maximumSize,
         minimumSize: minimumSize,
-        backgroundColor: WidgetStatePropertyAll(
-          Theme.of(context).colorScheme.primary,
-        ),
-        elevation: const WidgetStatePropertyAll(0.0),
+        backgroundColor: context.colorScheme.primary,
+        elevation: 2.0,
         splashFactory: InkSplash.splashFactory,
+        enableFeedback: true,
       ),
       onPressed: onPressed,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: icon == null
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.spaceAround,
         children: [
-          // Button Icon
-          icon ?? const SizedBox(width: 0),
-
           // Button text
           Text(
             buttonText,
-            style: textTheme.labelSmall?.copyWith(
+            style: context.textXs?.copyWith(
               fontWeight: FontWeight.bold,
-              color: colorScheme.onPrimary,
+              color: context.colorScheme.onPrimary,
             ),
           ),
+
+          // Button Icon
+          if (icon != null) icon,
         ],
       ),
     );

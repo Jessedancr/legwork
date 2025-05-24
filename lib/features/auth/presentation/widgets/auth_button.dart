@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class AuthButton extends StatelessWidget {
   final void Function()? onPressed;
@@ -11,14 +12,10 @@ class AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // RETURNED WIDGET
     return Ink(
-      height: screenHeight * 0.05,
-      width: screenWidth * 0.3,
+      height: screenHeight(context) * 0.05,
+      width: screenWidth(context) * 0.3,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(40),
@@ -26,15 +23,14 @@ class AuthButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(40),
         onTap: onPressed,
-        splashColor: Theme.of(context).colorScheme.onPrimary,
+        splashColor: Theme.of(context).colorScheme.primary,
         splashFactory: InkSplash.splashFactory,
         child: Center(
           child: Text(
             buttonText,
-            style: TextStyle(
+            style: context.textMd?.copyWith(
+              color: context.colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ),

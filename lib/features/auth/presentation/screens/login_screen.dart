@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/widgets/legwork_screen_bubble.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
-
 import 'package:legwork/core/Enums/user_type.dart';
-
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
-
 import 'package:provider/provider.dart';
-
-import '../Provider/my_auth_provider.dart';
-import '../widgets/auth_button.dart';
-
-import '../widgets/auth_loading_indicator.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -39,10 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // Auth Provider
     var authProvider = Provider.of<MyAuthProvider>(context);
 
@@ -56,12 +48,52 @@ class _LoginScreenState extends State<LoginScreen> {
         try {
           // Retrieve the device token
           final deviceToken = await _notificationRepoImpl.getDeviceToken();
-          final result = await authProvider.userlogin(
-            email: emailController.text.trim(),
-            password: pwController.text.trim(),
-            userType: userTypecontroller.text.trim().toLowerCase(),
-            deviceToken: deviceToken!,
-          );
+
+          // Create appropriate user entity based on user type
+          final userType = userTypecontroller.text.trim().toLowerCase();
+          UserEntity userEntity;
+
+          // If dancer, create dancer entity
+          if (userType == UserType.dancer.name) {
+            userEntity = DancerEntity(
+              email: emailController.text.trim(),
+              password: pwController.text.trim(),
+              userType: UserType.dancer.name,
+              deviceToken: deviceToken!,
+              firstName: '',
+              lastName: '',
+              phoneNumber: '',
+              username: '',
+            );
+          }
+
+          // If client, create client entity
+          else if (userType == UserType.client.name) {
+            userEntity = ClientEntity(
+              email: emailController.text.trim(),
+              password: pwController.text.trim(),
+              userType: UserType.client.name,
+              deviceToken: deviceToken!,
+              firstName: '',
+              lastName: '',
+              phoneNumber: '',
+              username: '',
+            );
+          }
+
+          // Show error message if user type is invalid
+          else {
+            hideLoadingIndicator(context);
+            LegworkSnackbar(
+              title: "Invalid user type",
+              subTitle: 'Please enter either "dancer" or "client"',
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
+            ).show(context);
+            return;
+          }
+
+          final result = await authProvider.userlogin(userEntity: userEntity);
 
           if (mounted) hideLoadingIndicator(context);
 
@@ -69,68 +101,34 @@ class _LoginScreenState extends State<LoginScreen> {
             // Handle failed login
             (fail) {
               debugPrint('Login failed: $fail'); // Debug message for failure
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0.0,
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 5),
-                  content: LegWorkSnackBarContent(
-                    screenHeight: screenHeight,
-                    context: context,
-                    screenWidth: screenWidth,
-                    title: 'Oh snap!',
-                    subTitle: fail,
-                    contentColor: Theme.of(context).colorScheme.error,
-                    imageColor: Theme.of(context).colorScheme.onError,
-                  ),
-                ),
-              );
+              LegworkSnackbar(
+                title: 'Omo!',
+                subTitle: fail,
+                imageColor: context.colorScheme.onError,
+                contentColor: context.colorScheme.error,
+              ).show(context);
             },
             // Handle successful login
             (user) {
               debugPrint('Login successful: ${user.toString()}');
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
-                debugPrint('DANCER BLOCK');
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/dancerProfileCompletionFlow',
-                //   (route) => false,
-                // );
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/dancerApp',
                   (route) => false,
                 );
               } else if (user.userType == UserType.client.name) {
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/clientProfileCompletionFlow',
-                //   (route) => false,
-                // ); // This is client's homepage
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/clientApp',
                   (route) => false,
                 );
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.transparent,
-                    elevation: 0.0,
-                    behavior: SnackBarBehavior.floating,
-                    duration: const Duration(seconds: 5),
-                    content: LegWorkSnackBarContent(
-                      screenHeight: screenHeight,
-                      context: context,
-                      screenWidth: screenWidth,
-                      title: 'Oh Snap!',
-                      subTitle: 'Invalid user type',
-                      contentColor: Theme.of(context).colorScheme.error,
-                      imageColor: Theme.of(context).colorScheme.onError,
-                    ),
-                  ),
-                );
+                LegworkSnackbar(
+                  title: "Omo!",
+                  subTitle: 'Invalid user type',
+                  imageColor: context.colorScheme.onError,
+                  contentColor: context.colorScheme.error,
+                ).show(context);
               }
             },
           );
@@ -138,10 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
           // CATCH ANY OTHER ERROR THAT MAY OCCUR
           if (mounted) hideLoadingIndicator(context);
           LegworkSnackbar(
-            title: 'Oops!',
+            title: 'Omo!',
             subTitle: 'An unknown error occurred',
-            imageColor: Theme.of(context).colorScheme.onError,
-            contentColor: Theme.of(context).colorScheme.error,
+            imageColor: context.colorScheme.onError,
+            contentColor: context.colorScheme.error,
           ).show(context);
           debugPrint('Error logging in: $e');
         }
@@ -166,124 +164,161 @@ class _LoginScreenState extends State<LoginScreen> {
     // RETURNED SCAFFOLD
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          backgroundColor: Colors.transparent,
-        ),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Icon
-                    Image.asset(
-                      'images/logos/dance_icon_purple_cropped.png',
-                      width: screenWidth * 0.45,
-                      color: Theme.of(context).colorScheme.primary,
-                      filterQuality: FilterQuality.high,
-                    ),
-                    const SizedBox(height: 15),
+        body: Stack(
+          children: [
+            // * Top circular container
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              right: -30,
+              top: -20,
+              xAlignValue: 1,
+              yAlignValue: -0.8,
+            ),
 
-                    // Welcome back message
-                    Text(
-                      'Welcome back!',
-                      style: GoogleFonts.robotoSlab(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Login to your account',
-                      style: GoogleFonts.robotoCondensed(
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
+            // * Bottom circular container
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              left: -30,
+              bottom: -20,
+              xAlignValue: -1,
+              yAlignValue: 0.8,
+            ),
 
-                    // Dancer or Client
-                    AuthTextFormField(
-                      labelText: 'Are you a dancer or a client',
-                      obscureText: false,
-                      controller: userTypecontroller,
-                      icon: SvgPicture.asset(
-                        'assets/svg/user.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter 'dancer' or 'client'";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Email text field
-                    AuthTextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      labelText: 'Email',
-                      obscureText: false,
-                      controller: emailController,
-                      icon: SvgPicture.asset(
-                        'assets/svg/mail.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      helperText: 'Ex: johndoe@gmail.com',
-                      validator: (value) {
-                        if (!value!.contains('@gmail.com') || value.isEmpty) {
-                          return 'Please enter a valid email address';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Password textfield
-                    AuthTextFormField(
-                      suffixIcon: viewPassword,
-                      labelText: 'Password',
-                      obscureText: obscureText,
-                      controller: pwController,
-                      icon: SvgPicture.asset(
-                        'assets/svg/lock-hashtag.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 5),
-
-                    // Forgot password
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+            // * Main screen content
+            Center(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextButton(
-                          onPressed: () {},
-                          child: const Text('Forgot password?'),
+                        // Icon
+                        Image.asset(
+                          'images/logos/dance_icon_purple_cropped.png',
+                          width: screenWidth(context) * 0.45,
+                          color: context.colorScheme.primary,
+                          filterQuality: FilterQuality.high,
                         ),
+                        const SizedBox(height: 15),
+
+                        // Welcome back message
+                        Text(
+                          'Welcome back!',
+                          style: context.headingXs?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: context.colorScheme.onSurface,
+                          ),
+                        ),
+
+                        Text(
+                          'Login to your account',
+                          style: context.textMd?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: context.colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+
+                        // Dancer or Client
+                        AuthTextFormField(
+                          labelText: 'Are you a dancer or a client',
+                          obscureText: false,
+                          controller: userTypecontroller,
+                          icon: SvgPicture.asset(
+                            'assets/svg/user.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter 'dancer' or 'client'";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Email text field
+                        AuthTextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          labelText: 'Email',
+                          obscureText: false,
+                          controller: emailController,
+                          icon: SvgPicture.asset(
+                            'assets/svg/mail.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          helperText: 'Ex: johndoe@gmail.com',
+                          validator: (value) {
+                            if (!value!.contains('@gmail.com') ||
+                                value.isEmpty) {
+                              return 'Please enter a valid email address';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Password textfield
+                        AuthTextFormField(
+                          suffixIcon: viewPassword,
+                          labelText: 'Password',
+                          obscureText: obscureText,
+                          controller: pwController,
+                          icon: SvgPicture.asset(
+                            'assets/svg/lock-hashtag.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        // Forgot password
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text('Forgot password?'),
+                            ),
+                          ],
+                        ),
+
+                        // Login button
+                        AuthButton(
+                          buttonText: 'Login',
+                          onPressed: userLogin,
+                        )
                       ],
                     ),
-
-                    // Login button
-                    AuthButton(
-                      buttonText: 'Login',
-                      onPressed: userLogin,
-                    )
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+
+            // * Custom app bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.only(top: 10, left: 10),
+                child: IconButton(
+                  alignment: const Alignment(-1, 0),
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back_ios),
+                  color: context.colorScheme.onSurface,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,18 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/widgets/legwork_screen_bubble.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
-import 'package:legwork/core/Enums/user_type.dart';
-
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 
 import 'package:provider/provider.dart';
-
-import '../widgets/auth_button.dart';
 
 class DancerSignUpScreen extends StatefulWidget {
   const DancerSignUpScreen({
@@ -36,7 +35,6 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
   final TextEditingController pwConfirmController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
 
-  final auth = FirebaseAuth.instance;
   final _notificationRepoImpl = NotificationRepoImpl();
 
   // Keeps track of the obscure text of the pw textfields
@@ -45,10 +43,6 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // Auth Provider
     var authProvider = Provider.of<MyAuthProvider>(context);
 
@@ -58,17 +52,21 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
         // show loading indicator
         showLoadingIndicator(context);
         try {
-          // Retrieve the device token
           final deviceToken = await _notificationRepoImpl.getDeviceToken();
-          final result = await authProvider.userSignUp(
+
+          final dancerEntity = DancerEntity(
             firstName: firstNameController.text.trim(),
             lastName: lastNameController.text.trim(),
             username: usernameController.text.toLowerCase().trim(),
-            email: emailController.text.toLowerCase().trim(),
-            phoneNumber: phoneNumberController.text.trim(),
-            password: pwController.text.trim(),
-            userType: UserType.dancer,
+            email: emailController.text.trim(),
+            password: pwController.text,
+            phoneNumber: phoneNumberController.text,
+            userType: UserType.dancer.name,
             deviceToken: deviceToken!,
+          );
+          // Retrieve the device token
+          final result = await authProvider.userSignUp(
+            userEntity: dancerEntity,
           );
 
           if (mounted) {
@@ -80,23 +78,12 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             (fail) {
               // Handle failure
               debugPrint(fail.toString());
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0.0,
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 5),
-                  content: LegWorkSnackBarContent(
-                    screenHeight: screenHeight,
-                    context: context,
-                    screenWidth: screenWidth,
-                    title: 'Oh Snap!',
-                    subTitle: fail,
-                    contentColor: Theme.of(context).colorScheme.error,
-                    imageColor: Theme.of(context).colorScheme.onError,
-                  ),
-                ),
-              );
+              LegworkSnackbar(
+                title: 'Omo!',
+                subTitle: fail,
+                imageColor: context.colorScheme.onError,
+                contentColor: context.colorScheme.error,
+              ).show(context);
             },
             (user) {
               // Handle success
@@ -104,6 +91,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               Navigator.of(context).pushNamedAndRemoveUntil(
                 '/dancerProfileCompletionFlow',
                 (route) => false,
+                arguments: dancerEntity,
               );
             },
           );
@@ -111,24 +99,12 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
           // Hide loading circle after failed sign up
           // and display snackbar with error message
           if (mounted) {
-            hideLoadingIndicator(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0.0,
-                behavior: SnackBarBehavior.floating,
-                duration: const Duration(seconds: 5),
-                content: LegWorkSnackBarContent(
-                  screenHeight: screenHeight,
-                  context: context,
-                  screenWidth: screenWidth,
-                  title: 'Oh Snap!',
-                  subTitle: 'An unknown error occured',
-                  contentColor: Theme.of(context).colorScheme.error,
-                  imageColor: Theme.of(context).colorScheme.onError,
-                ),
-              ),
-            );
+            LegworkSnackbar(
+              title: 'Omo!',
+              subTitle: 'An unknown error occured',
+              imageColor: context.colorScheme.error,
+              contentColor: context.colorScheme.onError,
+            ).show(context);
           }
           debugPrint('SIGN-UP ERROR: $e');
         }
@@ -167,191 +143,232 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
     // RETURNED SCAFFOLD
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          scrolledUnderElevation: 0.0,
-          backgroundColor: Colors.transparent,
-        ),
-        body: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 10.0),
-            child: Form(
-              key: formKey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Column(
-                  children: [
-                    // Icon
-                    Image.asset(
-                      'images/logos/dance_icon_purple_cropped.png',
-                      width: screenWidth * 0.45,
-                      color: Theme.of(context).colorScheme.primary,
-                      filterQuality: FilterQuality.high,
-                    ),
+        body: Stack(
+          children: [
+            // * Top circular container
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              right: -30,
+              top: -20,
+              xAlignValue: 1,
+              yAlignValue: -0.8,
+            ),
 
-                    // create your account
-                    Text(
-                      'Create your Dancer account',
-                      style: GoogleFonts.robotoSlab(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
+            // * Bottom circular container
+            const LegworkScreenBubble(
+              outerCircularAvatarRadius: 60,
+              innerCircularAvatarRadius: 47,
+              left: -30,
+              bottom: -20,
+              xAlignValue: -1,
+              yAlignValue: 0.8,
+            ),
 
-                    // First name textfield
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // * Main screen content
+            Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: Form(
+                  key: formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Column(
                       children: [
+                        // Icon
+                        Image.asset(
+                          'images/logos/dance_icon_purple_cropped.png',
+                          width: screenWidth(context) * 0.45,
+                          color: context.colorScheme.primary,
+                          filterQuality: FilterQuality.high,
+                        ),
+                        const SizedBox(height: 10),
+
+                        // create your account
+                        Text(
+                          'Create your Dancer account',
+                          style: context.text2Xl?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // First name textfield
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            AuthTextFormField(
+                              width: screenWidth(context) * 0.4,
+                              labelText: 'First name',
+                              obscureText: false,
+                              controller: firstNameController,
+                              icon: SvgPicture.asset(
+                                'assets/svg/user.svg',
+                                fit: BoxFit.scaleDown,
+                              ),
+                              keyboardType: TextInputType.name,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'compulsory';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Last name text field
+                            AuthTextFormField(
+                              width: screenWidth(context) * 0.40,
+                              labelText: 'last name',
+                              obscureText: false,
+                              controller: lastNameController,
+                              icon: SvgPicture.asset(
+                                'assets/svg/user.svg',
+                                fit: BoxFit.scaleDown,
+                              ),
+                              keyboardType: TextInputType.name,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'compulsory';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Username textfield
                         AuthTextFormField(
-                          width: screenWidth * 0.4,
-                          labelText: 'First name',
+                          labelText: 'username',
                           obscureText: false,
-                          controller: firstNameController,
+                          controller: usernameController,
                           icon: SvgPicture.asset(
-                            'assets/svg/user.svg',
+                            'assets/svg/username.svg',
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.name,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'First name is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 10),
 
-                        // Last name text field
+                        // Email textfield
                         AuthTextFormField(
-                          width: screenWidth * 0.40,
-                          labelText: 'last name',
+                          helperText: 'Ex: johndoe@gmail.com',
+                          labelText: 'email',
                           obscureText: false,
-                          controller: lastNameController,
+                          controller: emailController,
                           icon: SvgPicture.asset(
-                            'assets/svg/user.svg',
+                            'assets/svg/mail.svg',
                             fit: BoxFit.scaleDown,
                           ),
-                          keyboardType: TextInputType.name,
+                          keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Last name is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
                         ),
+                        const SizedBox(height: 18),
+
+                        // Phone number textfield
+                        AuthTextFormField(
+                          labelText: 'phone Number',
+                          obscureText: false,
+                          controller: phoneNumberController,
+                          icon: SvgPicture.asset(
+                            'assets/svg/address_book.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'compulsory';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Password textfield
+                        AuthTextFormField(
+                          suffixIcon: viewPassword,
+                          labelText: 'password',
+                          obscureText: obscureText,
+                          controller: pwController,
+                          icon: SvgPicture.asset(
+                            'assets/svg/open_padlock.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          keyboardType: TextInputType.visiblePassword,
+                          validator: (value) {
+                            if (value!.length < 6) {
+                              return 'Your password no strong reach o';
+                            } else if (pwController.text !=
+                                pwConfirmController.text) {
+                              return "Your passwword no match o";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Confirm password textfield
+                        AuthTextFormField(
+                          suffixIcon: viewConfirmPassword,
+                          labelText: 'confirm password',
+                          obscureText: obscureText2,
+                          controller: pwConfirmController,
+                          keyboardType: TextInputType.visiblePassword,
+                          icon: SvgPicture.asset(
+                            'assets/svg/lock-hashtag.svg',
+                            fit: BoxFit.scaleDown,
+                          ),
+                          validator: (value) {
+                            if (pwController.text != pwConfirmController.text) {
+                              return "Your passwword no match o";
+                            } else if (value!.length < 6) {
+                              'Your password no strong reach o';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Sign up button
+                        AuthButton(
+                          buttonText: 'Sign up',
+                          onPressed: dancerSignUp,
+                        )
                       ],
                     ),
-                    const SizedBox(height: 10),
-
-                    // Username textfield
-                    AuthTextFormField(
-                      labelText: 'username',
-                      obscureText: false,
-                      controller: usernameController,
-                      icon: SvgPicture.asset(
-                        'assets/svg/username.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      keyboardType: TextInputType.name,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Username is compulsory';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Email textfield
-                    AuthTextFormField(
-                      helperText: 'Ex: johndoe@gmail.com',
-                      labelText: 'email',
-                      obscureText: false,
-                      controller: emailController,
-                      icon: SvgPicture.asset(
-                        'assets/svg/mail.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Email is compulsory';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 18),
-
-                    // Phone number textfield
-                    AuthTextFormField(
-                      labelText: 'phone Number',
-                      obscureText: false,
-                      controller: phoneNumberController,
-                      icon: SvgPicture.asset(
-                        'assets/svg/address_book.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      keyboardType: TextInputType.phone,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Phone number is compulsory';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Password textfield
-                    AuthTextFormField(
-                      suffixIcon: viewPassword,
-                      labelText: 'password',
-                      obscureText: obscureText,
-                      controller: pwController,
-                      icon: SvgPicture.asset(
-                        'assets/svg/open_padlock.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      keyboardType: TextInputType.visiblePassword,
-                      validator: (value) {
-                        if (value!.length < 6) {
-                          return 'This your password no strong reach o';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Confirm password textfield
-                    AuthTextFormField(
-                      suffixIcon: viewConfirmPassword,
-                      labelText: 'confirm password',
-                      obscureText: obscureText2,
-                      controller: pwConfirmController,
-                      keyboardType: TextInputType.visiblePassword,
-                      icon: SvgPicture.asset(
-                        'assets/svg/lock-hashtag.svg',
-                        fit: BoxFit.scaleDown,
-                      ),
-                      validator: (value) {
-                        if (pwController.text != pwConfirmController.text ||
-                            value!.length < 6) {
-                          return "Your passwword no match o";
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Sign up button
-                    AuthButton(
-                      buttonText: 'Sign up',
-                      onPressed: dancerSignUp,
-                    )
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+
+            // * Custom app bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.only(top: 10, left: 10),
+                child: IconButton(
+                  alignment: const Alignment(-1, 0),
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.arrow_back_ios),
+                  color: context.colorScheme.onSurface,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

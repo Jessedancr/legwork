@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
+import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/auth/domain/Repos/auth_repo.dart';
-import 'package:legwork/core/Enums/user_type.dart';
+
 import 'package:legwork/features/auth/Data/Models/user_model.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
-
-import '../DataSources/auth_remote_data_source.dart';
 
 /**
  * THIS CLASS IMPLEMENTS THE AUTH REPO CLASS
@@ -20,39 +20,11 @@ class AuthRepoImpl implements AuthRepo {
   // USER SIGN UP
   @override
   Future<Either<String, UserEntity>> userSignUp({
-    required String firstName,
-    required String lastName,
-    required String username,
-    required String email,
-    required String phoneNumber,
-    required String password,
-    required UserType userType,
-    dynamic profilePicture,
-    String? bio,
-    Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
-    Map<String, dynamic>? jobPrefs, // for dancer
-    String? organizationName, // For clients
-    List<dynamic>? danceStylePrefs, // for clients
-    List<dynamic>? jobOfferings, // for clients
-    required String deviceToken, // Add deviceToken
+    required UserEntity userEntity,
   }) async {
     try {
       final result = await _authRemoteDataSource.userSignUp(
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password,
-        userType: userType,
-        bio: bio,
-        profilePicture: profilePicture,
-        resume: resume, // for dancers => 'hiringHistory' for clients
-        organisationName: organizationName ?? '', // for clients
-        danceStylePrefs: danceStylePrefs, // for clients
-        jobOfferings: jobOfferings, // for clients
-        jobPrefs: jobPrefs ?? {},
-        deviceToken: deviceToken,
+        userEntity: userEntity,
       );
 
       // Return either a fail or a dancer or client entity
@@ -62,7 +34,7 @@ class AuthRepoImpl implements AuthRepo {
 
           // Handle success
           (userModel) {
-        if (userType == UserType.dancer) {
+        if (userEntity.userType == UserType.dancer.name) {
           return Right((userModel as DancerModel).toDancerEntity());
         } else {
           return Right((userModel as ClientModel).toClientEntity());
@@ -76,45 +48,35 @@ class AuthRepoImpl implements AuthRepo {
   // USER LOGIN
   @override
   Future<Either<String, UserEntity>> userLogin({
-    required String email,
-    required String password,
-    String? userType,
-    String? firstName,
-    String? lastName,
-    String? username,
-    String? phoneNumber,
-    String? bio,
-    dynamic profilePicture,
-    Map<String, dynamic>? jobPrefs, // for dancers
-    Map<String, dynamic>? resume, // for dancers => 'hiringHistory' for clients
-    List<dynamic>? danceStylePrefs, // for clients
-    String? organisationName, // for clients
-    List<dynamic>? jobOfferings, // for clients
-    required String deviceToken, // Add deviceToken
+    required UserEntity userEntity,
   }) async {
+    // User specific data
+    final resume = userEntity.asDancer?.resume ?? {};
+    final danceStylePrefs = userEntity.asClient?.danceStylePrefs ?? [];
+    final organisationName = userEntity.asClient?.organisationName ?? '';
+    final jobOfferings = userEntity.asClient?.jobOfferings ?? [];
+    final hiringHistory = userEntity.asClient?.hiringHistory ?? {};
     try {
-      final result = await _authRemoteDataSource.userLogin(
-        email: email,
-        password: password,
-        deviceToken: deviceToken,
-      );
+      final result =
+          await _authRemoteDataSource.userLogin(userEntity: userEntity);
 
       // User type check
-      if (userType == UserType.dancer.name) {
+      if (userEntity.userType == UserType.dancer.name) {
         return result.fold(
           (fail) => Left(fail.toString()),
           (userEntity) => Right(
             DancerEntity(
-              firstName: firstName ?? '',
-              lastName: lastName ?? '',
-              username: username ?? '',
-              email: email,
-              password: password,
-              phoneNumber: phoneNumber ?? '',
+              firstName: userEntity.firstName ?? '',
+              lastName: userEntity.lastName ?? '',
+              username: userEntity.username ?? '',
+              email: userEntity.email,
+              password: userEntity.password,
+              phoneNumber: userEntity.phoneNumber ?? '',
               resume: resume,
-              bio: bio,
-              profilePicture: profilePicture,
+              bio: userEntity.bio,
+              profilePicture: userEntity.profilePicture,
               userType: UserType.dancer.name,
+              deviceToken: userEntity.deviceToken,
             ),
           ),
         );
@@ -123,19 +85,20 @@ class AuthRepoImpl implements AuthRepo {
           (fail) => Left(fail.toString()),
           (userEntity) => Right(
             ClientEntity(
-              firstName: firstName ?? '',
-              lastName: lastName ?? '',
-              username: username ?? '',
-              email: email,
-              phoneNumber: phoneNumber ?? '',
-              password: password,
-              bio: bio,
-              profilePicture: profilePicture,
+              firstName: userEntity.firstName ?? '',
+              lastName: userEntity.lastName ?? '',
+              username: userEntity.username ?? '',
+              email: userEntity.email,
+              phoneNumber: userEntity.phoneNumber ?? '',
+              password: userEntity.password,
+              bio: userEntity.bio,
+              profilePicture: userEntity.profilePicture,
               userType: UserType.client.name,
-              danceStylePrefs: danceStylePrefs ?? [],
-              organisationName: organisationName ?? '',
-              jobOfferings: jobOfferings ?? [],
-              hiringHistory: resume,
+              danceStylePrefs: danceStylePrefs,
+              organisationName: organisationName,
+              jobOfferings: jobOfferings,
+              hiringHistory: hiringHistory,
+              deviceToken: userEntity.deviceToken,
             ),
           ),
         );
