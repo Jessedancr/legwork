@@ -104,8 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
               LegworkSnackbar(
                 title: 'Omo!',
                 subTitle: fail,
-                imageColor: context.colorScheme.error,
-                contentColor: context.colorScheme.onError,
+                imageColor: context.colorScheme.onError,
+                contentColor: context.colorScheme.error,
               ).show(context);
             },
             // Handle successful login
@@ -113,22 +113,15 @@ class _LoginScreenState extends State<LoginScreen> {
               debugPrint('Login successful: ${user.toString()}');
               debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/dancerApp',
-                //   (route) => false,
-                // );
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/dancerProfileCompletionFlow',
+                  '/dancerApp',
                   (route) => false,
                 );
               } else if (user.userType == UserType.client.name) {
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //   '/clientApp',
-                //   (route) => false,
-                // );
-
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/clientProfileCompletionFlow', (route) => false);
+                  '/clientApp',
+                  (route) => false,
+                );
               } else {
                 LegworkSnackbar(
                   title: "Omo!",
@@ -145,8 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
           LegworkSnackbar(
             title: 'Omo!',
             subTitle: 'An unknown error occurred',
-            imageColor: Theme.of(context).colorScheme.onError,
-            contentColor: Theme.of(context).colorScheme.error,
+            imageColor: context.colorScheme.onError,
+            contentColor: context.colorScheme.error,
           ).show(context);
           debugPrint('Error logging in: $e');
         }

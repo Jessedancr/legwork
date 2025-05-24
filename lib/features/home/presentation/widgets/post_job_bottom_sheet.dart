@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_search_bar.dart';
 
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
@@ -84,7 +84,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                 child: Column(
                   children: [
                     // JOB TYPE SEARCH FIELD
-                    JobSearchBar(
+                    LegworkSearchBar(
                       barHintText: 'Type of job',
                       searchController: widget.searchController,
                       suggestionsBuilder: (context, controller) {

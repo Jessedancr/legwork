@@ -298,8 +298,8 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                     horizontal: 25,
                                   ),
                                   child: LargeTextField(
-                                   
-                                        labelText: 'Describe your skills and experience...',
+                                    labelText:
+                                        'Describe your skills and experience...',
                                     obscureText: false,
                                     controller: proposalController,
                                     icon: SvgPicture.asset(

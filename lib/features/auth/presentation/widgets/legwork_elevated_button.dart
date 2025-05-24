@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 
-// TODO: PROPERLY STYLE THIS BUTTON
-
 class LegworkElevatedButton extends StatelessWidget {
   final void Function()? onPressed;
   final String buttonText;
@@ -26,19 +24,17 @@ class LegworkElevatedButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         maximumSize: maximumSize,
         minimumSize: minimumSize,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: context.colorScheme.primary,
         elevation: 2.0,
         splashFactory: InkSplash.splashFactory,
+        enableFeedback: true,
       ),
       onPressed: onPressed,
       child: Row(
         mainAxisAlignment: icon == null
             ? MainAxisAlignment.center
-            : MainAxisAlignment.spaceEvenly,
+            : MainAxisAlignment.spaceAround,
         children: [
-          // Button Icon
-          if (icon != null) icon,
-
           // Button text
           Text(
             buttonText,
@@ -47,6 +43,9 @@ class LegworkElevatedButton extends StatelessWidget {
               color: context.colorScheme.onPrimary,
             ),
           ),
+
+          // Button Icon
+          if (icon != null) icon,
         ],
       ),
     );

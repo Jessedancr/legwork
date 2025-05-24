@@ -27,8 +27,8 @@ class WorkExperienceTile extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),
             border: Border.all(
-              color: Theme.of(context).colorScheme.onPrimaryContainer,
-              width: 3.0,
+              color: context.colorScheme.onPrimaryContainer,
+              width: 2.0,
             ),
             image: const DecorationImage(
               image: AssetImage(

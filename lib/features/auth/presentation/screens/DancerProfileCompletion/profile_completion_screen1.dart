@@ -12,6 +12,7 @@ import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart'
 //TODO: IMPLEMENT UPLOADING USER'S PROFILE PICTURE TO FIREBASE STORAGE
 
 class ProfileCompletionScreen1 extends StatefulWidget {
+  // CONTROLLERS
   final TextEditingController danceStylesController;
   final TextEditingController bioController;
   final String? email;
@@ -99,7 +100,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ),
                               ),
                               Text(
-                                widget.email!,
+                                widget.email ?? 'email not available',
                                 style: context.textLg?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: context.colorScheme.onPrimary,

@@ -46,8 +46,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                     child: BlurEffect(
                       height: screenHeight(context) * 0.18,
                       width: screenWidth(context) * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -100,8 +99,10 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
-                        maximumSize: Size(screenWidth(context) * 0.6,
-                            screenHeight(context) * 0.1),
+                        maximumSize: Size(
+                          screenWidth(context) * 0.5,
+                          screenHeight(context) * 0.1,
+                        ),
                         onPressed: _uploadResume,
                         buttonText: 'Upload resume',
                       ),
@@ -110,7 +111,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                       // Fill out manually
                       LegworkElevatedButton(
                         maximumSize: Size(
-                          screenWidth(context) * 0.6,
+                          screenWidth(context) * 0.5,
                           screenHeight(context) * 0.1,
                         ),
                         onPressed: widget.onPressed,

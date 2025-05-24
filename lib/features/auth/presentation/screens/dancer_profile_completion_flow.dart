@@ -1,6 +1,8 @@
-//import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen1.dart';
 import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen5.dart';
@@ -8,15 +10,17 @@ import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompleti
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
+import 'package:legwork/features/onboarding/presentation/widgets/page_indicator.dart';
 import 'package:provider/provider.dart';
 
-import '../../../onboarding/presentation/widgets/page_indicator.dart';
 import 'DancerProfileCompletion/profile_completion_screen2.dart';
 import 'DancerProfileCompletion/profile_completion_screen4.dart';
 
 class DancerProfileCompletionFlow extends StatefulWidget {
+  final DancerEntity dancerDetails;
   const DancerProfileCompletionFlow({
     super.key,
+    required this.dancerDetails,
   });
 
   @override
@@ -26,7 +30,7 @@ class DancerProfileCompletionFlow extends StatefulWidget {
 
 class _DancerProfileCompletionFlowState
     extends State<DancerProfileCompletionFlow> {
-  final auth = FirebaseAuth.instance;
+  late MyAuthProvider authProvider;
 
   // CONTROLLERS
   final PageController pageController = PageController();
@@ -43,14 +47,15 @@ class _DancerProfileCompletionFlowState
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
+  @override
+  void initState() {
+    super.initState();
+    authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+  }
 
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // PROVIDER
     final updateProfileProvider = Provider.of<UpdateProfileProvider>(context);
 
@@ -58,90 +63,71 @@ class _DancerProfileCompletionFlowState
     void saveAndUpdateProfile() async {
       showLoadingIndicator(context);
       try {
-        final result = await updateProfileProvider.updateProfileExecute(
-          data: {
-            'bio': bioController.text,
-            'jobPrefs': {
-              'danceStyles': danceStylesController.text
-                  .trim()
-                  .split(RegExp(r'(\s*,\s)+'))
-                  .where((style) => style.isNotEmpty)
-                  .toList(),
-              'jobTypes': selectedSkills,
-              'jobLocations': selectedLocations,
-            },
-            'resume': {
-              'professionalTitle': professonalTitleController.text,
-              'workExperiences': workExperienceList
-                  .map((experience) => {
-                        'jobTitle': experience[0],
-                        'employer': experience[1],
-                        'location': experience[2],
-                        'date': experience[3],
-                        'jobDescription': experience[4],
-                      })
-                  .toList(),
-            }
+        Map<String, dynamic> data = {
+          'bio': bioController.text,
+          'jobPrefs': {
+            'danceStyles': danceStylesController.text
+                .trim()
+                .split(RegExp(r'(\s*,\s)+'))
+                .where((style) => style.isNotEmpty)
+                .toList(),
+            'jobTypes': selectedSkills,
+            'jobLocations': selectedLocations,
           },
-        );
+          'resume': {
+            'professionalTitle': professonalTitleController.text,
+            'workExperiences': workExperienceList
+                .map((experience) => {
+                      'jobTitle': experience[0],
+                      'employer': experience[1],
+                      'location': experience[2],
+                      'date': experience[3],
+                      'jobDescription': experience[4],
+                    })
+                .toList(),
+          }
+        };
+        final result =
+            await updateProfileProvider.updateProfileExecute(data: data);
 
         result.fold(
-            // handle failure
-            (fail) {
-          hideLoadingIndicator(context);
-          debugPrint(fail.toString());
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 5),
-              content: LegWorkSnackBarContent(
-                screenHeight: screenHeight,
-                context: context,
-                screenWidth: screenWidth,
-                title: 'Oh snap!',
-                subTitle: fail,
-                contentColor: Theme.of(context).colorScheme.error,
-                imageColor: Theme.of(context).colorScheme.onError,
-              ),
-            ),
-          );
-        },
-            // handle success
-            (success) {
-          debugPrint('Profile completion successful');
-          hideLoadingIndicator(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 5),
-              content: LegWorkSnackBarContent(
-                screenHeight: screenHeight,
-                context: context,
-                screenWidth: screenWidth,
-                title: 'Congrats!',
-                subTitle: 'Welcome to LEGWORK!',
-                contentColor: Theme.of(context).colorScheme.primary,
-                imageColor: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-          );
-
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/dancerApp',
-            (route) => false,
-          );
-        });
+          // handle failure
+          (fail) {
+            hideLoadingIndicator(context);
+            debugPrint(fail.toString());
+            LegworkSnackbar(
+              title: 'Omo!',
+              subTitle: fail,
+              contentColor: context.colorScheme.error,
+              imageColor: context.colorScheme.onError,
+            );
+          },
+          // handle success
+          (success) {
+            debugPrint('Profile completion successful');
+            hideLoadingIndicator(context);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              '/dancerApp',
+              (route) => false,
+            );
+            LegworkSnackbar(
+              title: 'Sharp guy!',
+              subTitle: 'Welcome to LEGWORK',
+              imageColor: context.colorScheme.onPrimary,
+              contentColor: context.colorScheme.primary,
+            ).show(context);
+          },
+        );
       } catch (e) {
         debugPrint('error updating profile');
         hideLoadingIndicator(context);
         debugPrint('Error updating profile: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile: $e')),
-        );
+        LegworkSnackbar(
+          title: 'Omo!',
+          subTitle: 'An unknown error occured',
+          imageColor: context.colorScheme.onError,
+          contentColor: context.colorScheme.error,
+        ).show(context);
       }
     }
 
@@ -153,6 +139,30 @@ class _DancerProfileCompletionFlowState
       );
     }
 
+    // * Profile ocmpletition screens
+    List<Widget> profileCompletionScreens = [
+      ProfileCompletionScreen1(
+        email: widget.dancerDetails.email,
+        bioController: bioController,
+        danceStylesController: danceStylesController,
+      ),
+      const ProfileCompletionScreen2(),
+      const ProfileCompletionScreen3(),
+      ProfileCompletionScreen4(
+        onPressed: () => pageController.nextPage(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        ),
+      ),
+      ProfileCompletionScreen5(
+        dateController: dateController,
+        employerController: employerController,
+        jobDescrController: jobDescrController,
+        locationController: locationController,
+        professonalTitleController: professonalTitleController,
+        titleController: titleController,
+      ),
+    ];
     // RETURNED SCAFFOLD
     return SafeArea(
       child: Scaffold(
@@ -165,50 +175,30 @@ class _DancerProfileCompletionFlowState
               physics: const NeverScrollableScrollPhysics(),
               onPageChanged: (value) {
                 setState(() {
-                  isLastPage = (value == 4);
-                  debugPrint('DANCER PROFILE COMPLETION LAST PAGE');
+                  isLastPage = (value == profileCompletionScreens.length - 1);
                 });
+                if (isLastPage) {
+                  debugPrint('Dancer profile completiton Last page');
+                }
               },
-              children: [
-                ProfileCompletionScreen1(
-                  email: auth.currentUser!.email,
-                  bioController: bioController,
-                  danceStylesController: danceStylesController,
-                ),
-                const ProfileCompletionScreen2(),
-                const ProfileCompletionScreen3(),
-                ProfileCompletionScreen4(
-                  onPressed: () => pageController.nextPage(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  ),
-                ),
-                ProfileCompletionScreen5(
-                  dateController: dateController,
-                  employerController: employerController,
-                  jobDescrController: jobDescrController,
-                  locationController: locationController,
-                  professonalTitleController: professonalTitleController,
-                  titleController: titleController,
-                ),
-              ],
+              children: profileCompletionScreens,
             ),
 
             // PAGE INDICATOR
             Positioned(
-              bottom: screenHeight * 0.04,
-              left: screenWidth * 0.38,
+              bottom: screenHeight(context) * 0.04,
+              left: screenWidth(context) * 0.38,
               child: PageIndicator(
                 pageController: pageController,
-                count: 5,
-                dotColor: Theme.of(context).colorScheme.primaryContainer,
+                count: profileCompletionScreens.length,
+                dotColor: context.colorScheme.primaryContainer,
               ),
             ),
 
             // PREVIOUS ICON BUTTON
             Positioned(
-              bottom: screenHeight * 0.01,
-              left: screenWidth * 0.05,
+              bottom: screenHeight(context) * 0.01,
+              left: screenWidth(context) * 0.05,
               child: IconButton(
                 onPressed: () {
                   // back to previous screen
@@ -217,23 +207,18 @@ class _DancerProfileCompletionFlowState
                     curve: Curves.easeInOut,
                   );
                 },
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back_ios),
               ),
             ),
 
             // SAVE AND CONTINUE BUTTON
             Positioned(
-              bottom: screenHeight * 0.01,
-              right: screenWidth * 0.05,
-              child: isLastPage
-                  ? LegworkElevatedButton(
-                      buttonText: 'Done',
-                      onPressed: saveAndUpdateProfile,
-                    )
-                  : LegworkElevatedButton(
-                      onPressed: nextPage,
-                      buttonText: 'Next',
-                    ),
+              bottom: screenHeight(context) * 0.01,
+              right: screenWidth(context) * 0.05,
+              child: LegworkElevatedButton(
+                onPressed: isLastPage ? saveAndUpdateProfile : nextPage,
+                buttonText: isLastPage ? 'Done' : 'Next',
+              ),
             )
           ],
         ),

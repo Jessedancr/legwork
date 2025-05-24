@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/entities.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_search_bar.dart';
 
 import 'package:legwork/core/Constants/jobs_list.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
@@ -51,7 +51,7 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         body: Center(
           child: Column(
             children: [
@@ -73,25 +73,27 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                     child: BlurEffect(
                       height: screenHeight(context) * 0.18,
                       width: screenWidth(context) * 0.8,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            'What type of work are you looking for?',
-                            textAlign: TextAlign.center,
-                            style: context.text2Xl?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: context.colorScheme.onPrimary,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              'What type of work are you looking for?',
+                              textAlign: TextAlign.center,
+                              style: context.text2Xl?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: context.colorScheme.onPrimary,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Search for skills you have',
-                            style: context.textXl?.copyWith(
-                              fontWeight: FontWeight.w400,
-                              color: context.colorScheme.onPrimary,
-                            ),
-                          )
-                        ],
+                            Text(
+                              'Search for skills you have',
+                              style: context.textXl?.copyWith(
+                                fontWeight: FontWeight.w400,
+                                color: context.colorScheme.onPrimary,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -112,7 +114,7 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                     ),
                     child: Column(
                       children: [
-                        JobSearchBar(
+                        LegworkSearchBar(
                           barHintText: 'Search skills',
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
@@ -138,9 +140,9 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                                                 filteredJobs[index].name);
 
                                         return LegworkCheckboxTile(
-                                            title: jobs[index].name,
+                                            title: filteredJobs[index].name,
                                             checkedValue:
-                                                jobs[index].isSelected,
+                                                filteredJobs[index].isSelected,
                                             onChanged: (value) {
                                               checkBoxTapped(value!, jobIndex);
                                               setState(() {});

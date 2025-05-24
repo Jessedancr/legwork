@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class LegworkListTile extends StatelessWidget {
   final Widget leading;
@@ -15,7 +16,7 @@ class LegworkListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: title,
-      tileColor: Theme.of(context).colorScheme.scrim,
+      tileColor: context.colorScheme.scrim,
       leading: leading,
       onTap: onTap,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

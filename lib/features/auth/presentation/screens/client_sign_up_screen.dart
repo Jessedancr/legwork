@@ -6,7 +6,6 @@ import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
-import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/widgets/auth_loading_indicator.dart';
@@ -91,6 +90,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
               context,
               '/clientProfileCompletionFlow',
               (route) => false,
+              arguments: clientEntity,
             );
           });
         } catch (e) {
@@ -101,30 +101,19 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             LegworkSnackbar(
               title: 'Omo!',
               subTitle: 'An unknown error occured',
-              imageColor: context.colorScheme.error,
-              contentColor: context.colorScheme.onError,
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
             ).show(context);
           }
           debugPrint('SIGN-UP ERROR: $e');
         }
       }
       if (pwController.text != pwConfirmController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 5),
-            content: LegWorkSnackBarContent(
-              screenHeight: screenHeight(context),
-              context: context,
-              screenWidth: screenWidth(context),
-              title: 'Oh Snap!',
-              subTitle: 'Your passwords no match o!',
-              contentColor: Theme.of(context).colorScheme.error,
-              imageColor: Theme.of(context).colorScheme.onError,
-            ),
-          ),
+        LegworkSnackbar(
+          title: 'Oh Snap!',
+          subTitle: 'Your passwords no match o!',
+          contentColor: Theme.of(context).colorScheme.error,
+          imageColor: Theme.of(context).colorScheme.onError,
         );
         return;
       }
@@ -228,7 +217,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                               keyboardType: TextInputType.name,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'First name is compulsory';
+                                  return 'compulsory';
                                 }
                                 return null;
                               },
@@ -247,7 +236,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                               keyboardType: TextInputType.name,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Last name is compulsory';
+                                  return 'compulsory';
                                 }
                                 return null;
                               },
@@ -268,7 +257,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           keyboardType: TextInputType.name,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Username is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
@@ -302,7 +291,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'First name is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
@@ -321,7 +310,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           keyboardType: TextInputType.phone,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'First name is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
@@ -342,6 +331,9 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           validator: (value) {
                             if (value!.length < 6) {
                               return 'This your password no strong reach o';
+                            } else if (pwController.text !=
+                                pwConfirmController.text) {
+                              return "Your passwword no match o";
                             }
                             return null;
                           },
@@ -362,7 +354,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           validator: (value) {
                             if (pwController.text != pwConfirmController.text ||
                                 value!.length < 6) {
-                              return "Your passwword no match o!, check am well";
+                              return "Your passwword no match o!";
                             }
                             return null;
                           },

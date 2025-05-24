@@ -121,28 +121,30 @@ class _ProfileCompletionScreen5State extends State<ProfileCompletionScreen5> {
                     child: BlurEffect(
                       height: screenHeight(context) * 0.2,
                       width: screenWidth(context) * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              'Got it! Now add a title to your resume',
-                              textAlign: TextAlign.center,
-                              style: context.text2Xl?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.colorScheme.surface,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                'Got it! Now add a title to your resume',
+                                textAlign: TextAlign.center,
+                                style: context.text2Xl?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: context.colorScheme.surface,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Describe your expertise in your own words',
-                              textAlign: TextAlign.center,
-                              style: context.textSm?.copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: context.colorScheme.surface,
+                              Text(
+                                'Describe your expertise in your own words',
+                                textAlign: TextAlign.center,
+                                style: context.textSm?.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: context.colorScheme.surface,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

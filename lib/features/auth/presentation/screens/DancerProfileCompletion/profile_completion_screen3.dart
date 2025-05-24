@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/entities.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
-import 'package:legwork/features/auth/presentation/Widgets/job_search_bar.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_search_bar.dart';
 
 import 'package:legwork/core/Constants/lagos_locations.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_checkbox_tile.dart';
@@ -129,7 +129,7 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                     child: Column(
                       children: [
                         // Search bar
-                        JobSearchBar(
+                        LegworkSearchBar(
                           barHintText: 'Search locations',
                           searchController: searchController,
                           suggestionsBuilder: (context, controller) {
@@ -157,9 +157,9 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                                                 location.name ==
                                                 filteredLocations[index].name);
                                         return LegworkCheckboxTile(
-                                          title: locations[index].name,
-                                          checkedValue:
-                                              locations[index].isSelected,
+                                          title: filteredLocations[index].name,
+                                          checkedValue: filteredLocations[index]
+                                              .isSelected,
                                           onChanged: (value) {
                                             checkBoxTapped(
                                               value!,

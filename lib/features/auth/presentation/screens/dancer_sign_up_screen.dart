@@ -81,8 +81,8 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               LegworkSnackbar(
                 title: 'Omo!',
                 subTitle: fail,
-                imageColor: context.colorScheme.error,
-                contentColor: context.colorScheme.onError,
+                imageColor: context.colorScheme.onError,
+                contentColor: context.colorScheme.error,
               ).show(context);
             },
             (user) {
@@ -91,6 +91,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
               Navigator.of(context).pushNamedAndRemoveUntil(
                 '/dancerProfileCompletionFlow',
                 (route) => false,
+                arguments: dancerEntity,
               );
             },
           );
@@ -208,7 +209,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                               keyboardType: TextInputType.name,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'First name is compulsory';
+                                  return 'compulsory';
                                 }
                                 return null;
                               },
@@ -228,7 +229,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                               keyboardType: TextInputType.name,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Last name is compulsory';
+                                  return 'compulsory';
                                 }
                                 return null;
                               },
@@ -249,7 +250,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           keyboardType: TextInputType.name,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Username is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
@@ -269,7 +270,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Email is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
@@ -288,7 +289,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           keyboardType: TextInputType.phone,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Phone number is compulsory';
+                              return 'compulsory';
                             }
                             return null;
                           },
