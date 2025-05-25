@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/job_application/presentation/widgets/legwork_outline_button.dart';
 
 class LegworkJobContainer extends StatelessWidget {
@@ -31,13 +32,11 @@ class LegworkJobContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     // Format the created date
     String formattedDate = DateFormat('MMM dd, yyyy • h:mma').format(createdAt);
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: context.colorScheme.surface,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -51,8 +50,8 @@ class LegworkJobContainer extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                      context.colorScheme.primary,
+                      context.colorScheme.primary.withOpacity(0.7),
                     ],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
@@ -71,7 +70,8 @@ class LegworkJobContainer extends StatelessWidget {
                           children: [
                             SvgPicture.asset(
                               'assets/svg/calendar.svg',
-                              color: colorScheme.onPrimary.withOpacity(0.9),
+                              color: context.colorScheme.onPrimary
+                                  .withOpacity(0.9),
                               height: 16,
                             ),
                             const SizedBox(width: 4),
@@ -79,7 +79,8 @@ class LegworkJobContainer extends StatelessWidget {
                               formattedDate,
                               style: TextStyle(
                                 fontSize: 10,
-                                color: colorScheme.onPrimary.withOpacity(0.9),
+                                color: context.colorScheme.onPrimary
+                                    .withOpacity(0.9),
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
@@ -93,7 +94,8 @@ class LegworkJobContainer extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: colorScheme.onPrimary.withOpacity(0.2),
+                            color:
+                                context.colorScheme.onPrimary.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -101,7 +103,7 @@ class LegworkJobContainer extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 8,
                               fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: context.colorScheme.onPrimary,
                             ),
                           ),
                         ),
@@ -116,7 +118,7 @@ class LegworkJobContainer extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: colorScheme.onPrimary,
+                        color: context.colorScheme.onPrimary,
                         fontSize: 18,
                       ),
                     ),
@@ -131,7 +133,8 @@ class LegworkJobContainer extends StatelessWidget {
                           children: [
                             SvgPicture.asset(
                               'assets/svg/naira_icon.svg',
-                              color: colorScheme.onPrimary.withOpacity(0.8),
+                              color: context.colorScheme.onPrimary
+                                  .withOpacity(0.8),
                               height: 18,
                             ),
                             const SizedBox(width: 6),
@@ -139,7 +142,7 @@ class LegworkJobContainer extends StatelessWidget {
                               pay,
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: colorScheme.onPrimary,
+                                color: context.colorScheme.onPrimary,
                                 fontSize: 16,
                               ),
                             ),
@@ -152,7 +155,8 @@ class LegworkJobContainer extends StatelessWidget {
                           children: [
                             SvgPicture.asset(
                               'assets/svg/location.svg',
-                              color: colorScheme.onPrimary.withOpacity(0.8),
+                              color: context.colorScheme.onPrimary
+                                  .withOpacity(0.8),
                               height: 18,
                             ),
                             const SizedBox(width: 6),
@@ -161,7 +165,7 @@ class LegworkJobContainer extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: colorScheme.onPrimary,
+                                color: context.colorScheme.onPrimary,
                                 fontSize: 16,
                               ),
                             ),
@@ -174,7 +178,7 @@ class LegworkJobContainer extends StatelessWidget {
               ),
             ),
 
-            // * CONTENCT SECTION
+            // * CONTENT SECTION
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -187,51 +191,48 @@ class LegworkJobContainer extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 16,
-                      color: colorScheme.onSurface,
+                      color: context.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 16),
 
                   // Job details grid
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/svg/user.svg',
-                              color: colorScheme.onSurface,
-                              height: 16,
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            'assets/svg/user.svg',
+                            color: context.colorScheme.onSurface,
+                            height: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '$amtOfDancers dancers needed',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: context.colorScheme.onSurface,
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '$amtOfDancers dancers needed',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.access_time,
-                              size: 16,
-                              color: colorScheme.onSurface,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time,
+                            size: 16,
+                            color: context.colorScheme.onSurface,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            jobDuration,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: context.colorScheme.onSurface,
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              jobDuration,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -247,7 +248,7 @@ class LegworkJobContainer extends StatelessWidget {
                       onPressed: onJobTap,
                       icon: SvgPicture.asset(
                         'assets/svg/briefcase.svg',
-                        color: colorScheme.onSurface,
+                        color: context.colorScheme.onSurface,
                         height: 20,
                       ),
                       buttonText: 'View Details',

@@ -34,3 +34,17 @@ extension LegworkColorScheme on BuildContext {
 extension LegwrokTheme on BuildContext {
   ThemeData get theme => Theme.of(this);
 }
+
+
+// Preload images before showing onboarding
+void preloadImages(BuildContext context) async {
+  final images = [
+    'images/OnboardingImages/onboarding_image1.jpg',
+    'images/OnboardingImages/onboarding_image2.jpg',
+    'images/OnboardingImages/onboarding_image3.jpg',
+  ];
+  
+  for (var image in images) {
+    await precacheImage(AssetImage(image), context);
+  }
+}

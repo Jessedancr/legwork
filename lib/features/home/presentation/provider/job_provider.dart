@@ -16,17 +16,6 @@ class JobProvider extends ChangeNotifier {
 
   // POST JOB METHOD
   Future<Either<String, JobEntity>> postJob({
-    // required String jobTitle,
-    // required String jobLocation,
-    // required List prefDanceStyles,
-    // required String pay,
-    // required String amtOfDancers,
-    // required String jobDuration,
-    // required String jobType,
-    // required String jobDescr,
-    // required String jobId,
-    // required String clientId,
-    // required bool status,
     required JobEntity job,
   }) async {
     PostJobBusinessLogic postJobBusinessLogic =
@@ -79,7 +68,6 @@ class JobProvider extends ChangeNotifier {
   // FETCH JOB METHOD
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs() async {
     isLoading = true;
-    // notifyListeners();
 
     try {
       final result = await jobRepo.fetchJobs();

@@ -23,6 +23,39 @@ class _OnboardingState extends State<Onboarding> {
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
 
+  // Preload images
+  @override
+  void initState() {
+    super.initState();
+    // Preload images in the background
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preloadImages();
+    });
+  }
+
+  Future<void> _preloadImages() async {
+    final imageCache = PaintingBinding.instance.imageCache;
+    // Increase the cache size
+    imageCache.maximumSize = 100;
+    imageCache.maximumSizeBytes = 100 << 20; // 100 MB
+
+    // Preload all onboarding images
+    await Future.wait([
+      precacheImage(
+        const AssetImage('images/OnboardingImages/onboarding_image1.jpg'),
+        context,
+      ),
+      precacheImage(
+        const AssetImage('images/OnboardingImages/onboarding_image2.jpg'),
+        context,
+      ),
+      precacheImage(
+        const AssetImage('images/OnboardingImages/onboarding_image3.jpg'),
+        context,
+      ),
+    ]);
+  }
+
   // calls the "call" method from the OnboardingStatusCheck class
   Future<void> _completeOnboarding() async {
     // Mark onboarding as complete
