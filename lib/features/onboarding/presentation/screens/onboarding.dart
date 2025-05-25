@@ -3,6 +3,7 @@ import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/onboarding/domain/onboarding_status_check.dart';
 import 'package:legwork/features/onboarding/presentation/widgets/onboard_button.dart';
 import 'package:legwork/features/onboarding/presentation/widgets/page_indicator.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'onboarding_screen2.dart';
 import 'onboarding_screen3.dart';
@@ -10,7 +11,10 @@ import 'onboarding_screen1.dart';
 
 class Onboarding extends StatefulWidget {
   final OnboardingStatusCheck onboardingStatusCheck;
-  const Onboarding({super.key, required this.onboardingStatusCheck});
+  const Onboarding({
+    super.key,
+    required this.onboardingStatusCheck,
+  });
 
   @override
   State<Onboarding> createState() => _OnboardingState();
@@ -35,6 +39,8 @@ class _OnboardingState extends State<Onboarding> {
   }
 
   Future<void> _preloadImages() async {
+    // if (!mounted) return;
+
     // * Access flutter's image cache in the PaintingBinding class
     final imageCache = PaintingBinding.instance.imageCache;
     // Increase the cache size
@@ -44,9 +50,8 @@ class _OnboardingState extends State<Onboarding> {
     // Preload all onboarding images
     await Future.wait([
       precacheImage(
-        const AssetImage('images/OnboardingImages/onboarding_image1.jpg'),
-        context,
-      ),
+          const AssetImage('images/OnboardingImages/onboarding_image1.jpg'),
+          context),
       precacheImage(
         const AssetImage('images/OnboardingImages/onboarding_image2.jpg'),
         context,
@@ -56,6 +61,10 @@ class _OnboardingState extends State<Onboarding> {
         context,
       ),
     ]);
+
+    // Remove splash screen after images are loaded
+    FlutterNativeSplash.remove();
+    debugPrint('Onboarding images loaded, splash screen removed');
   }
 
   // calls the "call" method from the OnboardingStatusCheck class

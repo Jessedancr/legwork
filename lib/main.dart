@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/core/network/online_payment_info.dart';
@@ -56,7 +57,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   // This is required in order to use async in main
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  // Preserve splash screen until we explicitly remove it
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize hive
   await Hive.initFlutter();
