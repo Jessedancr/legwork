@@ -28,12 +28,14 @@ class _OnboardingState extends State<Onboarding> {
   void initState() {
     super.initState();
     // Preload images in the background
+    // * addPostFrameCallback waits for the widget to fully render before running _preloadImages()
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _preloadImages();
     });
   }
 
   Future<void> _preloadImages() async {
+    // * Access flutter's image cache in the PaintingBinding class
     final imageCache = PaintingBinding.instance.imageCache;
     // Increase the cache size
     imageCache.maximumSize = 100;

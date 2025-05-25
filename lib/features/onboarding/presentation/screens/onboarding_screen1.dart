@@ -16,7 +16,7 @@ class OnboardingScreen1 extends StatelessWidget {
           Container(
             height: screenHeight(context),
             width: screenWidth(context),
-            color: Theme.of(context).colorScheme.surface,
+            color: context.colorScheme.surface,
             child: Image.asset(
               'images/OnboardingImages/onboarding_image1.jpg',
               fit: BoxFit.cover,

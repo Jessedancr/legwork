@@ -155,6 +155,7 @@ void main() async {
   );
 }
 
+// * MY APP
 class MyApp extends StatelessWidget {
   final onboardingStatusCheck = OnboardingStatusCheck();
   final bool isOnboardingComplete;
