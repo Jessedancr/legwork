@@ -91,6 +91,11 @@ void main() async {
   final isOnboardingComplete =
       OnboardingStatusCheck().isOnboardingCompleteCall();
 
+  // If onboarding is complete, remove splash screen immediately
+  if (await isOnboardingComplete) {
+    FlutterNativeSplash.remove();
+  }
+
   // Instance of auth repo
   final authRepo = AuthRepoImpl();
 

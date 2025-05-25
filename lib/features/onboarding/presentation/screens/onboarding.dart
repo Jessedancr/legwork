@@ -71,6 +71,9 @@ class _OnboardingState extends State<Onboarding> {
   Future<void> _completeOnboarding() async {
     // Mark onboarding as complete
     await widget.onboardingStatusCheck.onboardingCompletedCall();
+
+    // Remove splash screen when onboarding is completed
+    FlutterNativeSplash.remove();
   }
 
   // List of Onborading screens
