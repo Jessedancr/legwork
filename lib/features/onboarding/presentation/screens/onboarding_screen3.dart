@@ -10,57 +10,62 @@ class OnboardingScreen3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Image
-      body: Container(
-        height: screenHeight(context),
-        width: screenWidth(context),
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            filterQuality: FilterQuality.high,
-            image: AssetImage(
+      body: Stack(
+        children: [
+          // Background Image
+          Container(
+            height: screenHeight(context),
+            width: screenWidth(context),
+            color: Theme.of(context).colorScheme.surface,
+            child: Image.asset(
               'images/OnboardingImages/onboarding_image3.jpg',
+              fit: BoxFit.cover,
+              width: screenWidth(context),
+              height: screenHeight(context),
+              cacheWidth: (screenWidth(context) * 2.7).toInt(),
+              cacheHeight: (screenHeight(context) * 2).toInt(),
+              filterQuality: FilterQuality.medium,
             ),
           ),
-        ),
 
-        // Black gradient
-        child: Container(
-          alignment: const Alignment(0, 1),
-          child: OnboardBottomGradient(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Title
-                  Text(
-                    'Safe and Secure Payments',
-                    style: context.headingSm?.copyWith(
-                      color: context.colorScheme.surface,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  // Subtitle
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0,
-                      vertical: 10.0,
-                    ),
-                    child: Text(
-                      'Get swift payments on every dance gig',
-                      textAlign: TextAlign.center,
-                      style: context.textXl?.copyWith(
+          // Content
+          Container(
+            alignment: const Alignment(0, 1),
+            child: OnboardBottomGradient(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Title
+                    Text(
+                      'Safe and Secure Payments',
+                      style: context.headingSm?.copyWith(
                         color: context.colorScheme.surface,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
-                ],
+
+                    // Subtitle
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0,
+                        vertical: 10.0,
+                      ),
+                      child: Text(
+                        'Get swift payments on every dance gig',
+                        textAlign: TextAlign.center,
+                        style: context.textXl?.copyWith(
+                          color: context.colorScheme.surface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

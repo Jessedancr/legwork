@@ -10,14 +10,6 @@ class JobService {
 
   // POST JOBS
   Future<Either<String, JobModel>> createJob({
-    // required String jobTitle,
-    // required String jobLocation,
-    // required List prefDanceStyles,
-    // required String pay,
-    // required String amtOfDancers,
-    // required String jobDuration,
-    // required String jobDescr,
-    // required String jobType,
     required JobModel job,
   }) async {
     try {
@@ -31,7 +23,7 @@ class JobService {
       }
       final String uid = user.uid;
 
-      // generate unique job ID
+      // Get the auto generated doc id
       final String jobId = db.collection('jobs').doc().id;
 
       // store job date in firebase

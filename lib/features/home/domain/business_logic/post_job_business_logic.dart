@@ -10,17 +10,6 @@ class PostJobBusinessLogic {
   PostJobBusinessLogic({required this.jobRepo});
 
   Future<Either<String, JobEntity>> postJobExecute({
-    // required String jobTitle,
-    // required String jobLocation,
-    // required List prefDanceStyles,
-    // required String pay,
-    // required String amtOfDancers,
-    // required String jobDuration,
-    // required String jobType,
-    // required String jobDescr,
-    // required String jobId,
-    // required String clientId,
-    // required bool status,
     required JobEntity job,
   }) async {
     // TODO: Add some validations for posted jobs

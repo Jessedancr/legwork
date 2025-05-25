@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/core/network/online_payment_info.dart';
@@ -33,7 +34,6 @@ import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Screens/account_type_screen.dart';
 import 'package:legwork/features/auth/presentation/Screens/client_profile_completion_flow.dart';
-import 'package:legwork/features/onboarding/data/onboarding_repo.dart';
 import 'package:legwork/features/payment/data/data_sources/payment_remote_data_source.dart';
 import 'package:legwork/features/payment/data/repo_impl/payment_repo_impl.dart';
 import 'package:legwork/features/payment/domain/business_logic/initialize_transaction_business_logic.dart';
@@ -57,7 +57,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   // This is required in order to use async in main
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  // Preserve splash screen until we explicitly remove it
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize hive
   await Hive.initFlutter();
@@ -87,6 +90,11 @@ void main() async {
   // Call isOnboardingComplete from OnboardingStatusCheck
   final isOnboardingComplete =
       OnboardingStatusCheck().isOnboardingCompleteCall();
+
+  // If onboarding is complete, remove splash screen immediately
+  if (await isOnboardingComplete) {
+    FlutterNativeSplash.remove();
+  }
 
   // Instance of auth repo
   final authRepo = AuthRepoImpl();
@@ -156,6 +164,7 @@ void main() async {
   );
 }
 
+// * MY APP
 class MyApp extends StatelessWidget {
   final onboardingStatusCheck = OnboardingStatusCheck();
   final bool isOnboardingComplete;

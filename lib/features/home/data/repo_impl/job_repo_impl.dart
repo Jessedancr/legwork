@@ -20,17 +20,6 @@ class JobRepoImpl implements JobRepo {
   //* FUNCTION TO CREATE JOB
   @override
   Future<Either<String, JobEntity>> createJob({
-    // required String jobTitle,
-    // required String jobLocation,
-    // required List prefDanceStyles,
-    // required String pay,
-    // required String amtOfDancers,
-    // required String jobDuration,
-    // required String jobType,
-    // required String jobDescr,
-    // required String jobId,
-    // required String clientId,
-    // required bool status,
     required JobEntity job,
   }) async {
     try {
@@ -50,20 +39,22 @@ class JobRepoImpl implements JobRepo {
       );
 
       final result = await jobService.createJob(
-        job: JobModel(
-          jobTitle: job.jobTitle,
-          jobLocation: job.jobLocation,
-          prefDanceStyles: job.prefDanceStyles,
-          pay: job.pay,
-          amtOfDancers: job.amtOfDancers,
-          jobDuration: job.jobDuration,
-          jobDescr: job.jobDescr,
-          jobType: job.jobType,
-          status: job.status,
-          clientId: job.clientId,
-          jobId: job.jobId,
-          createdAt: job.createdAt,
-        ),
+        job: jobModel,
+        
+        // JobModel(
+        //   jobTitle: job.jobTitle,
+        //   jobLocation: job.jobLocation,
+        //   prefDanceStyles: job.prefDanceStyles,
+        //   pay: job.pay,
+        //   amtOfDancers: job.amtOfDancers,
+        //   jobDuration: job.jobDuration,
+        //   jobDescr: job.jobDescr,
+        //   jobType: job.jobType,
+        //   status: job.status,
+        //   clientId: job.clientId,
+        //   jobId: job.jobId,
+        //   createdAt: job.createdAt,
+        // ),
       );
 
       // Save to local data storgae

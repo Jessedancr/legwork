@@ -121,20 +121,21 @@ class JobModel extends JobEntity {
     };
   }
 
-  /// Convert job to entity foe business logic use
+  /// Convert job to entity for business logic use
   JobEntity toJobEntity() {
     return JobEntity(
-        jobTitle: jobTitle,
-        jobLocation: jobLocation,
-        prefDanceStyles: prefDanceStyles,
-        pay: pay,
-        amtOfDancers: amtOfDancers,
-        jobDuration: jobDuration,
-        jobType: jobType,
-        jobDescr: jobDescr,
-        jobId: jobId,
-        clientId: clientId,
-        status: status,
-        createdAt: createdAt);
+      jobTitle: jobTitle,
+      jobLocation: jobLocation,
+      prefDanceStyles: prefDanceStyles,
+      pay: pay,
+      amtOfDancers: amtOfDancers,
+      jobDuration: jobDuration,
+      jobType: jobType,
+      jobDescr: jobDescr,
+      jobId: jobId,
+      clientId: clientId,
+      status: status,
+      createdAt: createdAt,
+    );
   }
 }
