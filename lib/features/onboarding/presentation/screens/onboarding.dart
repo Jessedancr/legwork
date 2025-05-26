@@ -27,6 +27,9 @@ class _OnboardingState extends State<Onboarding> {
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
 
+  // Track if images are preloaded
+  bool _imagesPreloaded = false;
+
   // Preload images
   @override
   void initState() {
@@ -39,7 +42,7 @@ class _OnboardingState extends State<Onboarding> {
   }
 
   Future<void> _preloadImages() async {
-    // if (!mounted) return;
+    if (!mounted) return;
 
     // * Access flutter's image cache in the PaintingBinding class
     final imageCache = PaintingBinding.instance.imageCache;
@@ -47,24 +50,41 @@ class _OnboardingState extends State<Onboarding> {
     imageCache.maximumSize = 100;
     imageCache.maximumSizeBytes = 100 << 20; // 100 MB
 
-    // Preload all onboarding images
-    await Future.wait([
-      precacheImage(
+    try {
+      // Preload all onboarding images
+      await Future.wait([
+        precacheImage(
           const AssetImage('images/OnboardingImages/onboarding_image1.jpg'),
-          context),
-      precacheImage(
-        const AssetImage('images/OnboardingImages/onboarding_image2.jpg'),
-        context,
-      ),
-      precacheImage(
-        const AssetImage('images/OnboardingImages/onboarding_image3.jpg'),
-        context,
-      ),
-    ]);
+          context,
+        ),
+        precacheImage(
+          const AssetImage('images/OnboardingImages/onboarding_image2.jpg'),
+          context,
+        ),
+        precacheImage(
+          const AssetImage('images/OnboardingImages/onboarding_image3.jpg'),
+          context,
+        ),
+      ]);
 
-    // Remove splash screen after images are loaded
-    FlutterNativeSplash.remove();
-    debugPrint('Onboarding images loaded, splash screen removed');
+      // Remove splash screen after images are loaded
+      FlutterNativeSplash.remove();
+      debugPrint('Onboarding images loaded, splash screen removed');
+
+      if (mounted) {
+        setState(() {
+          _imagesPreloaded = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error preloading images: $e');
+      // Even if there's an error, we should show the onboarding screens
+      if (mounted) {
+        setState(() {
+          _imagesPreloaded = true;
+        });
+      }
+    }
   }
 
   // calls the "call" method from the OnboardingStatusCheck class

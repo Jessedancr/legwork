@@ -91,11 +91,6 @@ void main() async {
   final isOnboardingComplete =
       OnboardingStatusCheck().isOnboardingCompleteCall();
 
-  // If onboarding is complete, remove splash screen immediately
-  if (await isOnboardingComplete) {
-    FlutterNativeSplash.remove();
-  }
-
   // Instance of auth repo
   final authRepo = AuthRepoImpl();
 
@@ -122,6 +117,14 @@ void main() async {
   final paymentRepo = PaymentRepoImpl(
     paymentRemoteDataSource: paymentRemoteDataSource,
   );
+
+  // If onboarding is complete, remove splash screen
+  if (await isOnboardingComplete) {
+    await Future.delayed(const Duration(seconds: 3), () {
+      debugPrint('Onboarding is complete, removing splash screen');
+      FlutterNativeSplash.remove();
+    });
+  }
 
   // THIS FUNCTION IS CALLED WHEN THE APP IS LAUNCHED
   runApp(
