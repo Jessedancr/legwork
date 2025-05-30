@@ -472,8 +472,8 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           debugPrint('Application Successful. Application ID: $applicationId');
           debugPrint('Application Successful');
           LegworkSnackbar(
-            title: 'Application Successful',
-            subTitle: 'You have successfully applied for this job',
+            title: 'Sharp guy!',
+            subTitle: 'job application successful',
             imageColor: Theme.of(context).colorScheme.surface,
             contentColor: Theme.of(context).colorScheme.primary,
           ).show(context);

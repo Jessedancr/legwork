@@ -118,6 +118,7 @@ class JobModel extends JobEntity {
       'jobId': jobId,
       'status': status,
       'clientId': clientId,
+      'createdAt': Timestamp.fromDate(createdAt),
     };
   }
 

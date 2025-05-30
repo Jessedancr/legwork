@@ -13,7 +13,6 @@ import 'package:legwork/features/auth/presentation/Screens/auth_status.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/features/home/data/models/job_model.dart';
-import 'package:legwork/features/home/data/repo_impl/job_repo_impl.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/edit_client_profile_screen.dart';
@@ -97,9 +96,6 @@ void main() async {
   // Instance of Resume repo
   final resumeRepo = ResumeRepoImpl();
 
-  // Instance of Job repo
-  final jobRepo = JobRepoImpl();
-
   // Instance of job application repo
   final jobApplicationRepo = JobApplicationRepoImpl();
 
@@ -140,7 +136,7 @@ void main() async {
           create: (context) => UpdateProfileProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => JobProvider(jobRepo: jobRepo),
+          create: (context) => JobProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => JobApplicationProvider(

@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/domain/Repos/auth_repo.dart';
 
 class SignUpBusinessLogic {
   // Instance of auth repo
-  final AuthRepoImpl authRepo;
+  final AuthRepo authRepo;
 
   // Constructor
   SignUpBusinessLogic({required this.authRepo});

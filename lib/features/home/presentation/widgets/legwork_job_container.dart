@@ -77,8 +77,7 @@ class LegworkJobContainer extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               formattedDate,
-                              style: TextStyle(
-                                fontSize: 10,
+                              style: context.text2Xs?.copyWith(
                                 color: context.colorScheme.onPrimary
                                     .withOpacity(0.9),
                                 fontWeight: FontWeight.w300,
@@ -100,9 +99,8 @@ class LegworkJobContainer extends StatelessWidget {
                           ),
                           child: Text(
                             jobType,
-                            style: TextStyle(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w500,
+                            style: context.text2Xs?.copyWith(
+                              fontWeight: FontWeight.w400,
                               color: context.colorScheme.onPrimary,
                             ),
                           ),
@@ -116,10 +114,9 @@ class LegworkJobContainer extends StatelessWidget {
                       jobTitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: context.textMd?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: context.colorScheme.onPrimary,
-                        fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -140,10 +137,9 @@ class LegworkJobContainer extends StatelessWidget {
                             const SizedBox(width: 6),
                             Text(
                               pay,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                              style: context.textMd?.copyWith(
+                                fontWeight: FontWeight.bold,
                                 color: context.colorScheme.onPrimary,
-                                fontSize: 16,
                               ),
                             ),
                           ],
@@ -163,10 +159,9 @@ class LegworkJobContainer extends StatelessWidget {
                             Text(
                               jobLocation,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
+                              style: context.textMd?.copyWith(
+                                fontWeight: FontWeight.bold,
                                 color: context.colorScheme.onPrimary,
-                                fontSize: 16,
                               ),
                             ),
                           ],
@@ -189,8 +184,7 @@ class LegworkJobContainer extends StatelessWidget {
                     jobDescr,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: context.textSm?.copyWith(
                       color: context.colorScheme.onSurface,
                     ),
                   ),
@@ -210,8 +204,7 @@ class LegworkJobContainer extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             '$amtOfDancers dancers needed',
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: context.textSm?.copyWith(
                               color: context.colorScheme.onSurface,
                             ),
                           ),
@@ -227,8 +220,7 @@ class LegworkJobContainer extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             jobDuration,
-                            style: TextStyle(
-                              fontSize: 14,
+                            style: context.textSm?.copyWith(
                               color: context.colorScheme.onSurface,
                             ),
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class LegworkOutlineButton extends StatelessWidget {
   final void Function()? onPressed;
@@ -15,8 +16,6 @@ class LegworkOutlineButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     return OutlinedButton.icon(
       onPressed: onPressed,
       icon: icon,
@@ -25,14 +24,14 @@ class LegworkOutlineButton extends StatelessWidget {
               height: 20,
               width: 20,
               child: CircularProgressIndicator(
-                color: colorScheme.primary,
+                color: context.colorScheme.primary,
                 strokeWidth: 2.0,
               ),
             )
           : Text(
               buttonText,
-              style: textTheme.labelLarge?.copyWith(
-                color: colorScheme.primary,
+              style: context.textLg?.copyWith(
+                color: context.colorScheme.primary,
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
               ),
@@ -40,7 +39,7 @@ class LegworkOutlineButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         side: BorderSide(
-          color: colorScheme.primary,
+          color: context.colorScheme.primary,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),

@@ -23,6 +23,8 @@ extension LegworkTextStyles on BuildContext {
   TextStyle? get textMd => Theme.of(this).textTheme.labelLarge;
   TextStyle? get textSm => Theme.of(this).textTheme.labelMedium;
   TextStyle? get textXs => Theme.of(this).textTheme.labelSmall;
+  TextStyle? get text2Xs =>
+      Theme.of(this).textTheme.labelSmall?.copyWith(fontSize: 8);
 }
 
 // Extension to get the color scheme of the app

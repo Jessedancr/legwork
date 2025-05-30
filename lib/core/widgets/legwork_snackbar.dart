@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 
 class LegworkSnackbar extends StatelessWidget {
@@ -16,9 +17,6 @@ class LegworkSnackbar extends StatelessWidget {
   });
 
   void show(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.transparent,
@@ -26,9 +24,9 @@ class LegworkSnackbar extends StatelessWidget {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 5),
         content: LegWorkSnackBarContent(
-          screenHeight: screenHeight,
+          screenHeight: screenHeight(context),
           context: context,
-          screenWidth: screenWidth,
+          screenWidth: screenWidth(context),
           title: title,
           subTitle: subTitle,
           contentColor: contentColor,

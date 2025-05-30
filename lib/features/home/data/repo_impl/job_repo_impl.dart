@@ -38,24 +38,7 @@ class JobRepoImpl implements JobRepo {
         createdAt: job.createdAt,
       );
 
-      final result = await jobService.createJob(
-        job: jobModel,
-        
-        // JobModel(
-        //   jobTitle: job.jobTitle,
-        //   jobLocation: job.jobLocation,
-        //   prefDanceStyles: job.prefDanceStyles,
-        //   pay: job.pay,
-        //   amtOfDancers: job.amtOfDancers,
-        //   jobDuration: job.jobDuration,
-        //   jobDescr: job.jobDescr,
-        //   jobType: job.jobType,
-        //   status: job.status,
-        //   clientId: job.clientId,
-        //   jobId: job.jobId,
-        //   createdAt: job.createdAt,
-        // ),
-      );
+      final result = await jobService.createJob(job: jobModel);
 
       // Save to local data storgae
       await localJobService.saveJob(jobModel);
@@ -64,22 +47,7 @@ class JobRepoImpl implements JobRepo {
         // handle fail
         (fail) => Left(fail.toString()),
         // handle success
-        (jobEntity) => Right(
-          JobEntity(
-            jobTitle: job.jobTitle,
-            jobLocation: job.jobLocation,
-            prefDanceStyles: job.prefDanceStyles,
-            pay: job.pay,
-            amtOfDancers: job.amtOfDancers,
-            jobDuration: job.jobDuration,
-            jobType: job.jobType,
-            jobDescr: job.jobDescr,
-            clientId: job.clientId,
-            jobId: job.jobId,
-            status: job.status,
-            createdAt: job.createdAt,
-          ),
-        ),
+        (jobEntity) => Right(jobModel.toJobEntity()),
       );
     } catch (e) {
       debugPrint('Job repo error: $e');
