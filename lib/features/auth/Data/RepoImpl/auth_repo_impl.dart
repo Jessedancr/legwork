@@ -155,7 +155,7 @@ class AuthRepoImpl implements AuthRepo {
     }
   }
 
-  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+  Future<Either<String, UserEntity>> getUserDetails({required String uid}) async {
     try {
       final result = await _authRemoteDataSource.getUserDetails(uid: uid);
       return result.fold(

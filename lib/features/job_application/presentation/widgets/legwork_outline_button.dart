@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
+import 'package:lottie/lottie.dart';
 
 class LegworkOutlineButton extends StatelessWidget {
   final void Function()? onPressed;
@@ -21,23 +22,21 @@ class LegworkOutlineButton extends StatelessWidget {
       icon: icon,
       label: isLoading
           ? SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                color: context.colorScheme.primary,
-                strokeWidth: 2.0,
+              height: 30,
+              width: 30,
+              child: Lottie.asset(
+                'assets/lottie/loading.json',
               ),
             )
           : Text(
               buttonText,
               style: context.textLg?.copyWith(
                 color: context.colorScheme.primary,
-                fontSize: 16,
                 fontWeight: FontWeight.w400,
               ),
             ),
       style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         side: BorderSide(
           color: context.colorScheme.primary,
         ),

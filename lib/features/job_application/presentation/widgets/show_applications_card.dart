@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/features/job_application/presentation/widgets/status_tag.dart';
@@ -26,13 +27,12 @@ class ShowApplicationsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: Theme.of(context).colorScheme.surfaceContainer,
+      color: context.colorScheme.surfaceContainer,
       child: ListTile(
         title: Text(
           job.jobTitle,
-          style: const TextStyle(
+          style: context.text2Xl?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 18,
           ),
         ),
         subtitle: Row(
@@ -40,9 +40,8 @@ class ShowApplicationsCard extends StatelessWidget {
           children: [
             Text(
               'Applied on: $formattedCreatedAt',
-              style: const TextStyle(
+              style: context.textXs?.copyWith(
                 fontWeight: FontWeight.w300,
-                fontSize: 10,
               ),
             ),
             StatusTag(

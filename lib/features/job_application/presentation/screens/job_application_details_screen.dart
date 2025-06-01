@@ -1,14 +1,12 @@
 import 'package:dartz/dartz.dart' hide State;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/features/job_application/data/data_sources/job_application_remote_data_source.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
-import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/applicant_info_card.dart';
 import 'package:legwork/features/job_application/presentation/widgets/job_application_button.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
@@ -47,10 +45,10 @@ class _JobApplicationDetailScreenState
   Future<void> _fetchDancerDetails() async {
     final JobApplicationModel app =
         ModalRoute.of(context)!.settings.arguments as JobApplicationModel;
-    final provider =
-        Provider.of<JobApplicationProvider>(context, listen: false);
 
-    final result = await provider.getDancerDetails(dancerId: app.dancerId);
+    final provider = Provider.of<MyAuthProvider>(context, listen: false);
+
+    final result = await provider.getUserDetails(uid: app.dancerId);
     if (!mounted) return;
     result.fold(
       (fail) {
@@ -61,9 +59,8 @@ class _JobApplicationDetailScreenState
       },
       (data) {
         setState(() {
-          dancerUserName = data['username'] ?? 'Unknown';
-          dancerProfileImage =
-              data['profileImage']; // Assuming profile image URL is available
+          dancerUserName = data.username;
+          dancerProfileImage = data.profilePicture;
           isLoading = false;
         });
       },
@@ -175,7 +172,8 @@ class _JobApplicationDetailScreenState
     Future<void> onAcceptApplication(String applicationId) async {
       showLoadingIndicator(context);
       try {
-        final result = await _dataSource.acceptApplication(applicationId);
+        final result =
+            await _dataSource.acceptApplication(applicationId: applicationId);
 
         result.fold(
           // Handle fail
@@ -249,7 +247,8 @@ class _JobApplicationDetailScreenState
 
       showLoadingIndicator(context);
       try {
-        final result = await _dataSource.rejectApplication(applicationId);
+        final result =
+            await _dataSource.rejectApplication(applicationId: applicationId);
 
         result.fold(
           // handle fail

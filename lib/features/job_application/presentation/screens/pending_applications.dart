@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
-
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/show_applications_card.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class PendingApplications extends StatefulWidget {
@@ -36,7 +36,6 @@ class _PendingApplicationsState extends State<PendingApplications> {
     final provider =
         Provider.of<JobApplicationProvider>(context, listen: false);
     await provider.getPendingApplicationsWithJobs();
-    // provider.notifyListeners();
   }
 
   @override
@@ -45,7 +44,13 @@ class _PendingApplicationsState extends State<PendingApplications> {
       body: Consumer<JobApplicationProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: Lottie.asset(
+                'assets/lottie/loading.json',
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            );
           }
 
           // Check if we have pending applications with jobs data
@@ -64,8 +69,8 @@ class _PendingApplicationsState extends State<PendingApplications> {
   Widget _buildPendingApplicationsWithJobs(JobApplicationProvider provider) {
     return LiquidPullToRefresh(
       onRefresh: _refresh,
-      color: Theme.of(context).colorScheme.primary,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      color: context.colorScheme.primary,
+      backgroundColor: context.colorScheme.surface,
       animSpeedFactor: 3.0,
       showChildOpacityTransition: false,
       child: ListView.builder(

@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/features/job_application/data/data_sources/job_application_remote_data_source.dart';
+import 'package:legwork/features/job_application/data/models/job_application_model.dart';
+import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/features/job_application/domain/repo/job_application_repo.dart';
-import '../../domain/entities/job_application_entity.dart';
-import '../data_sources/job_application_remote_data_source.dart';
-import '../models/job_application_model.dart';
 
 class JobApplicationRepoImpl implements JobApplicationRepo {
   // Instance of remote data source
@@ -11,9 +11,9 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
 
   // APPLY FOR JOB
   @override
-  Future<Either<String, String>> applyForJob(
-    JobApplicationEntity application,
-  ) async {
+  Future<Either<String, JobApplicationEntity>> applyForJob({
+    required JobApplicationEntity application,
+  }) async {
     final applicationModel = JobApplicationModel(
       jobId: application.jobId,
       dancerId: application.dancerId,
@@ -25,17 +25,17 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
     );
 
     // Save to remote data storage
-    return await remoteDataSource.applyForJob(applicationModel);
+    return await remoteDataSource.applyForJob(application: applicationModel);
   }
 
   // GET APPLICATION
   @override
-  Future<Either<String, List<JobApplicationEntity>>> getJobApplications(
-    String jobId,
-  ) async {
+  Future<Either<String, List<JobApplicationEntity>>> getJobApplications({
+    required String jobId,
+  }) async {
     try {
       final remoteApplications =
-          await remoteDataSource.getJobApplications(jobId);
+          await remoteDataSource.getJobApplications(jobId: jobId);
 
       return remoteApplications.fold(
         // handle fail
@@ -55,11 +55,13 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
 
   // Function to get client details using client ID
   // This func is used to display the clients email, phone etc on the job appl screen
-  Future<Either<String, Map<String, dynamic>>> getClientDetails(
-    String clientId,
-  ) async {
+  @override
+  Future<Either<String, Map<String, dynamic>>> getClientDetails({
+    required String clientId,
+  }) async {
     try {
-      final clientDetails = await remoteDataSource.getClientDetails(clientId);
+      final clientDetails =
+          await remoteDataSource.getClientDetails(clientId: clientId);
       return clientDetails.fold(
           // Handle fail
           (fail) => Left(fail),
@@ -74,29 +76,8 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
     }
   }
 
-  // FUNCTION TO GET DANCER'S DETAILS USING DANCERID IN APPL
-  // THIS FUNC IS USED TO DISPLAY THE DANCERS NAME, EMAIL AND PHONE NUM ON THE JOB APPL DETAILS SCREEN
-  Future<Either<String, Map<String, dynamic>>> getDancerDetails({
-    required String dancerId,
-  }) async {
-    try {
-      final dancerDetails =
-          await remoteDataSource.getDancerDetails(dancerId: dancerId);
-
-      return dancerDetails.fold(
-        // handle fail
-        (fail) => Left(fail),
-
-        // Handle success
-        (dancerDetails) => Right(dancerDetails),
-      );
-    } catch (e) {
-      debugPrint('An unknown error occured while fetching dancer details: $e');
-      return Left('An unknown error occured while fetching dancer details: $e');
-    }
-  }
-
   // GET PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS (FROM FIRESTORE)
+  @override
   Future<Either<String, List<Map<String, dynamic>>>>
       getPendingApplicationsWithJobs() async {
     try {
@@ -108,6 +89,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
   }
 
   // GET REJECTED APPLICATIONS WITH THEIR CORRESPONDING JOBS (FROM FIRESTORE)
+  @override
   Future<Either<String, List<Map<String, dynamic>>>>
       getRejectedApplicationsWithJobs() async {
     try {
@@ -119,6 +101,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
   }
 
   // GET ACCEPTED APPLICATIONS WITH THEIR CORRESPONDING JOBS (FROM FIRESTORE)
+  @override
   Future<Either<String, List<Map<String, dynamic>>>>
       getAcceptedApplicationsWithJobs() async {
     try {

@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class StatusTag extends StatelessWidget {
   final String status;
-  // final double? width;
 
   const StatusTag({
     super.key,
     required this.status,
-    // this.width,
   });
 
   @override
@@ -16,7 +14,6 @@ class StatusTag extends StatelessWidget {
     final chipData = _getTagData(status, theme);
 
     return Container(
-      // width: width ?? MediaQuery.of(context).size.width * 0.25,
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
         vertical: 5,

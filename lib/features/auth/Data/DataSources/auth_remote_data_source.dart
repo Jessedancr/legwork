@@ -27,8 +27,15 @@ abstract class AuthRemoteDataSource {
   /// USER LOGOUT METHOD
   Future<Either<String, void>> logout();
 
+  /// GET CURRENLY LOGGED IN USER'S ID
+  String getUserId();
+
   /// METHOD TO GET THE USERNAME FROM DOCUMENT
   Future<Either<String, String>> getUsername({required String userId});
+
+  Future<String> getDeviceToken({required String userId});
+
+  Future<Either<String, UserEntity>> getUserDetails({required String uid});
 }
 
 /**
@@ -275,6 +282,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   // GET CURRENTLY LOGGED IN USER
+  @override
   String getUserId() {
     try {
       final user = auth.currentUser;
@@ -301,6 +309,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
+  @override
   Future<String> getDeviceToken({required String userId}) async {
     try {
       final results = await Future.wait([
@@ -321,7 +330,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+  @override
+  Future<Either<String, UserEntity>> getUserDetails({
+    required String uid,
+  }) async {
     try {
       // Query the two collections at the same time
       final docs = await Future.wait([

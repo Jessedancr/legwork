@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/job_application/presentation/screens/accpeted_applications.dart';
 import 'package:legwork/features/job_application/presentation/screens/pending_applications.dart';
 import 'package:legwork/features/job_application/presentation/screens/rejected_applications.dart';
@@ -37,22 +38,20 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
 
       // * AppBar
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         toolbarHeight: 40.0,
         elevation: 0,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         centerTitle: true,
         title: Text(
           'Job Applications',
-          style: textTheme.headlineSmall?.copyWith(
-            color: colorScheme.onSurface,
+          style: context.headingXs?.copyWith(
+            color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -60,7 +59,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
             decoration: BoxDecoration(
-              color: colorScheme.surface,
+              color: context.colorScheme.surface,
               border: Border(
                 bottom: BorderSide(
                   color: Colors.grey.shade200,
@@ -74,11 +73,11 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
               indicatorWeight: 3,
               labelColor: Colors.deepPurple.shade500,
               unselectedLabelColor: Colors.grey.shade600,
-              labelStyle: textTheme.titleSmall?.copyWith(
+              labelStyle: context.textSm?.copyWith(
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
               ),
-              unselectedLabelStyle: textTheme.titleSmall?.copyWith(
+              unselectedLabelStyle: context.textSm?.copyWith(
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.5,
               ),

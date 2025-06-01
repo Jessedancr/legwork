@@ -33,6 +33,9 @@ extension LegworkColorScheme on BuildContext {
 }
 
 // Extension to get the current theme of the app
-extension LegwrokTheme on BuildContext {
+extension LegworkTheme on BuildContext {
   ThemeData get theme => Theme.of(this);
 }
+
+const defaultDancerProfileImage =
+    'images/depictions/dancer_dummy_default_profile_picture.jpg';

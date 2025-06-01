@@ -1,30 +1,25 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
+import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
+import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/legwork_outline_button.dart';
-import 'package:legwork/features/onboarding/presentation/widgets/onboard_button.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class ApplyForJobScreen extends StatefulWidget {
-  final String jobId;
-  final String clientId;
-  final String jobDescr;
-
-  final String clientImageUrl; // Added client image URL
+  final JobEntity jobEntity;
 
   const ApplyForJobScreen({
     super.key,
-    required this.jobId,
-    required this.clientId,
-    required this.jobDescr,
-    required this.clientImageUrl,
+    required this.jobEntity,
   });
 
   @override
@@ -43,15 +38,16 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<JobApplicationProvider>(context, listen: false)
-          .getClientDetails(widget.clientId);
+          .getClientDetails(clientId: widget.jobEntity.clientId);
     });
   }
 
   // METHOD TO NAVIGATE TO CHAT
   void chatWithClient() async {
-    final theme = Theme.of(context);
-    final clientId = widget.clientId;
-    final dancerId = FirebaseAuth.instance.currentUser!.uid;
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+
+    final dancerId = authProvider.getUserId();
+    final clientId = widget.jobEntity.clientId;
 
     try {
       setState(() {
@@ -70,10 +66,10 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           _isChatLoading = false;
         });
         LegworkSnackbar(
-          title: 'Error',
+          title: 'Omo!',
           subTitle: fail,
-          imageColor: theme.colorScheme.onError,
-          contentColor: theme.colorScheme.error,
+          imageColor: context.colorScheme.onError,
+          contentColor: context.colorScheme.error,
         ).show(context);
       },
 
@@ -113,18 +109,80 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
       LegworkSnackbar(
         title: 'Error',
         subTitle: 'An unexpected error occurred. Please try again.',
-        imageColor: theme.colorScheme.onError,
-        contentColor: theme.colorScheme.error,
+        imageColor: context.colorScheme.onError,
+        contentColor: context.colorScheme.error,
       ).show(context);
     }
   }
 
-  void _navToClientProfile(BuildContext context) {}
+  ///* FUNCTION TO APPLY FOR JOB
+  Future<void> applyForJob() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    showLoadingIndicator(context);
+    try {
+      // Dancer's application
+      final application = JobApplicationEntity(
+        jobId: widget.jobEntity.jobId,
+        dancerId: '',
+        clientId: widget.jobEntity.clientId,
+        applicationStatus: "pending",
+        proposal: proposalController.text,
+        appliedAt: DateTime.now(),
+        applicationId: '',
+      );
+
+      final result =
+          await Provider.of<JobApplicationProvider>(context, listen: false)
+              .applyForJob(application: application);
+
+      result.fold(
+        // Handle fail
+        (fail) {
+          hideLoadingIndicator(context);
+          debugPrint('failed to apply for job: $fail');
+          LegworkSnackbar(
+            title: 'Application failed!',
+            subTitle: fail,
+            imageColor: context.colorScheme.surface,
+            contentColor: context.colorScheme.error,
+          ).show(context);
+        },
+
+        // Handle success
+        (applicationId) async {
+          hideLoadingIndicator(context);
+          debugPrint('Application Successful');
+          LegworkSnackbar(
+            title: 'Sharp guy!',
+            subTitle: 'job application successful',
+            imageColor: context.colorScheme.surface,
+            contentColor: context.colorScheme.primary,
+          ).show(context);
+          Navigator.pop(context);
+        },
+      );
+    } catch (e) {
+      hideLoadingIndicator(context);
+      debugPrint('An unknown error occured while applying for job: $e');
+      LegworkSnackbar(
+        title: 'Application failed!',
+        subTitle: 'An unknown error occured!: $e',
+        imageColor: context.colorScheme.onError,
+        contentColor: context.colorScheme.error,
+      ).show(context);
+    }
+  }
+
+  void _navToClientProfile(BuildContext context) {
+    // Navigator.of(context).pushNamed(
+    //   '/clientProfileScreen',
+    //   arguments: widget.jobEntity,
+    // );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
@@ -133,14 +191,22 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
         // * App bar
         appBar: AppBar(
           backgroundColor: Colors.black,
+          scrolledUnderElevation: 0.0,
           elevation: 0.0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: theme.colorScheme.surface),
+          iconTheme: IconThemeData(color: context.colorScheme.surface),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: context.colorScheme.surface,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
           title: Text(
             "Let's get you hired!",
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: theme.colorScheme.surface,
-              fontWeight: FontWeight.w600,
+            style: context.headingXs?.copyWith(
+              color: context.colorScheme.surface,
+              fontWeight: FontWeight.w500,
             ),
           ),
           toolbarHeight: 56.0,
@@ -151,11 +217,14 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           builder: (context, provider, child) {
             final clientName =
                 provider.clientDetails?['firstName'] ?? 'Client name';
-            final email = provider.clientDetails?['email'] ?? 'client emai';
+            final email = provider.clientDetails?['email'] ?? 'client email';
             final phoneNum =
                 provider.clientDetails?['phoneNumber'] ?? '123456789';
             final organisationName =
                 provider.clientDetails?['organisationName'] ?? 'clientName';
+
+            final clientProfilePicture =
+                provider.clientDetails?['profilePicture'];
 
             return Column(
               children: [
@@ -181,10 +250,8 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                           padding: const EdgeInsets.all(20),
                           child: ConstrainedBox(
                             constraints: BoxConstraints(
-                              minHeight:
-                                  MediaQuery.of(context).size.height * 0.1,
-                              maxHeight:
-                                  MediaQuery.of(context).size.height * 0.4,
+                              minHeight: screenHeight(context) * 0.1,
+                              maxHeight: screenHeight(context) * 0.4,
                             ),
                             child: Padding(
                               padding:
@@ -195,19 +262,16 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                   children: [
                                     Text(
                                       'Job Description',
-                                      style: theme.textTheme.headlineSmall
-                                          ?.copyWith(
-                                        color: theme.colorScheme.surface,
+                                      style: context.text2Xl?.copyWith(
+                                        color: context.colorScheme.surface,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(height: 16),
                                     Text(
-                                      widget.jobDescr,
-                                      style:
-                                          theme.textTheme.bodyLarge?.copyWith(
-                                        color: theme.colorScheme.surface
-                                            .withOpacity(0.9),
+                                      widget.jobEntity.jobDescr,
+                                      style: context.textXl?.copyWith(
+                                        color: context.colorScheme.surface,
                                         height: 1.5,
                                       ),
                                       textAlign: TextAlign.center,
@@ -230,7 +294,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                     borderRadius:
                         const BorderRadius.vertical(top: Radius.circular(30)),
                     child: Container(
-                      color: theme.colorScheme.surface,
+                      color: context.colorScheme.surface,
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: SingleChildScrollView(
                         child: Form(
@@ -245,22 +309,31 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                   children: [
                                     const SizedBox(height: 8),
                                     CircleAvatar(
-                                      radius: 30,
-                                      backgroundImage: widget
-                                              .clientImageUrl.isNotEmpty
-                                          ? NetworkImage(widget.clientImageUrl)
-                                          : const AssetImage(
-                                              'images/depictions/img_depc1.jpg',
-                                            ),
-                                    ),
+                                        radius: 30,
+                                        child: ClipOval(
+                                          child: clientProfilePicture != null &&
+                                                  clientProfilePicture!
+                                                      .isNotEmpty
+                                              ? Image.network(
+                                                  clientProfilePicture!,
+                                                  width: 60,
+                                                  height: 60,
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : Image.asset(
+                                                  'images/depictions/img_depc1.jpg',
+                                                  width: 60,
+                                                  height: 60,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        )),
                                     const SizedBox(height: 8),
 
                                     // * Client name
                                     Text(
                                       organisationName ?? clientName,
-                                      style:
-                                          theme.textTheme.bodyLarge?.copyWith(
-                                        color: theme.colorScheme.onSurface,
+                                      style: context.textLg?.copyWith(
+                                        color: context.colorScheme.onSurface,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -272,7 +345,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                               // * PROPOSAL
                               Text(
                                 'Your Proposal',
-                                style: theme.textTheme.titleMedium?.copyWith(
+                                style: context.text2Xl?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -280,32 +353,30 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
 
                               Text(
                                 'Explain why you\'re the best fit for this job',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurface
-                                      .withOpacity(0.7),
+                                style: context.textXl?.copyWith(
+                                  color: context.colorScheme.onSurface,
+                                  fontWeight: FontWeight.w300,
                                 ),
                               ),
                               const SizedBox(height: 24),
 
                               //* Proposal Text Field
-                              Material(
-                                elevation: 4,
-                                borderRadius: BorderRadius.circular(16),
-                                color: theme.colorScheme.primaryContainer,
+                              Card(
+                                elevation: 2.0,
+                                color: context.colorScheme.primaryContainer,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                     horizontal: 25,
                                   ),
                                   child: LargeTextField(
-                                    labelText:
-                                        'Describe your skills and experience...',
+                                    labelText: 'Describe your skills...',
                                     obscureText: false,
                                     controller: proposalController,
                                     icon: SvgPicture.asset(
                                       'assets/svg/pen_circle.svg',
                                       fit: BoxFit.scaleDown,
-                                      color: theme.colorScheme.surface,
+                                      color: context.colorScheme.surface,
                                     ),
                                     maxLength: 1000,
                                     validator: (value) {
@@ -318,15 +389,15 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                       return null;
                                     },
                                     iconContainercolor:
-                                        theme.colorScheme.onPrimaryContainer,
+                                        context.colorScheme.onPrimaryContainer,
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 'Minimum 50 characters',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: theme.colorScheme.onSurface
+                                style: context.textLg?.copyWith(
+                                  color: context.colorScheme.onSurface
                                       .withOpacity(0.5),
                                 ),
                               ),
@@ -338,7 +409,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                 icon: SvgPicture.asset(
                                   'assets/svg/chat_icon.svg',
                                   fit: BoxFit.scaleDown,
-                                  color: theme.colorScheme.primary,
+                                  color: context.colorScheme.primary,
                                 ),
                                 isLoading: _isChatLoading,
                                 buttonText: organisationName != null
@@ -348,12 +419,9 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                               const SizedBox(height: 16),
 
                               //* Apply Button
-                              OnboardButton(
-                                buttonText: 'Submit Application',
+                              LegworkElevatedButton(
                                 onPressed: applyForJob,
-                                buttonColor: theme.colorScheme.primary,
-                                borderColor:
-                                    theme.colorScheme.onPrimaryContainer,
+                                buttonText: 'Submit Application',
                               ),
                               const SizedBox(height: 24),
 
@@ -361,13 +429,11 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                               _buildContactInfo(
                                 icon: Icons.email_outlined,
                                 text: email,
-                                theme: theme,
                               ),
                               const SizedBox(height: 12),
                               _buildContactInfo(
                                 icon: Icons.phone_outlined,
-                                text: '+234 ${phoneNum.toString()}',
-                                theme: theme,
+                                text: phoneNum,
                               ),
                               const SizedBox(height: 24),
                             ],
@@ -389,106 +455,22 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   Widget _buildContactInfo({
     required IconData icon,
     required String text,
-    required ThemeData theme,
   }) {
     return Row(
       children: [
         Icon(
           icon,
           size: 16,
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          color: context.colorScheme.onSurface.withOpacity(0.6),
         ),
         const SizedBox(width: 8),
         Text(
           text,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          style: context.textLg?.copyWith(
+            color: context.colorScheme.onSurface.withOpacity(0.6),
           ),
         ),
       ],
     );
-  }
-
-  ///* FUNCTION TO APPLY FOR JOB
-  Future<void> applyForJob() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    showLoadingIndicator(context);
-    try {
-      // fetch the currently logged in dancer's ID
-      final dancerIdResult =
-          await Provider.of<JobApplicationProvider>(context, listen: false)
-              .getUserId();
-
-      // Handle the Either result
-      final dancerId = dancerIdResult.fold(
-        (failure) {
-          hideLoadingIndicator(context);
-          debugPrint('Failed to fetch dancer ID: $failure');
-          LegworkSnackbar(
-            title: 'Error',
-            subTitle: 'Failed to fetch your ID: $failure',
-            imageColor: Theme.of(context).colorScheme.onError,
-            contentColor: Theme.of(context).colorScheme.error,
-          ).show(context);
-          return null; // Return null to stop further execution
-        },
-        (id) => id,
-      );
-
-      if (dancerId == null) return; // Stop execution if dancerId is null
-
-      // Dancer's application
-      final application = JobApplicationEntity(
-        jobId: widget.jobId,
-        dancerId: dancerId,
-        clientId: widget.clientId,
-        applicationStatus: "pending",
-        proposal: proposalController.text,
-        appliedAt: DateTime.now(),
-        applicationId: '',
-      );
-
-      final result =
-          await Provider.of<JobApplicationProvider>(context, listen: false)
-              .applyForJob(application);
-
-      result.fold(
-        // Handle fail
-        (fail) {
-          hideLoadingIndicator(context);
-          debugPrint('failed to apply for job: $fail');
-          LegworkSnackbar(
-            title: 'Application failed!',
-            subTitle: fail,
-            imageColor: Theme.of(context).colorScheme.surface,
-            contentColor: Theme.of(context).colorScheme.error,
-          ).show(context);
-        },
-
-        // Handle success
-        (applicationId) async {
-          hideLoadingIndicator(context);
-          debugPrint('Application Successful. Application ID: $applicationId');
-          debugPrint('Application Successful');
-          LegworkSnackbar(
-            title: 'Sharp guy!',
-            subTitle: 'job application successful',
-            imageColor: Theme.of(context).colorScheme.surface,
-            contentColor: Theme.of(context).colorScheme.primary,
-          ).show(context);
-          Navigator.pop(context);
-        },
-      );
-    } catch (e) {
-      hideLoadingIndicator(context);
-      debugPrint('An unknown error occured while applying for job: $e');
-      LegworkSnackbar(
-        title: 'Application failed!',
-        subTitle: 'An unknown error occured!: $e',
-        imageColor: Theme.of(context).colorScheme.onError,
-        contentColor: Theme.of(context).colorScheme.error,
-      ).show(context);
-    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 import 'status_tag.dart';
 
@@ -31,12 +32,23 @@ class ApplicantInfoCard extends StatelessWidget {
             //* Profile image or placeholder
             CircleAvatar(
               radius: 30,
-              backgroundColor: Colors.grey[200],
-              backgroundImage: dancerProfileImage != null
-                  ? NetworkImage(dancerProfileImage!)
-                  : const AssetImage(
-                      'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                    ),
+              backgroundColor: context.colorScheme.surface,
+              child: ClipOval(
+                child:
+                    dancerProfileImage != null && dancerProfileImage!.isNotEmpty
+                        ? Image.network(
+                            dancerProfileImage!,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'images/depictions/dancer_dummy_default_profile_picture.jpg',
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
+              ),
             ),
             const SizedBox(width: 16),
 

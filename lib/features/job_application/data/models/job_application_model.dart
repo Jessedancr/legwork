@@ -74,23 +74,6 @@ class JobApplicationModel extends JobApplicationEntity {
     };
   }
 
-  ///? CopyWith() function given to me by chat
-  JobApplicationModel copyWith({
-    String? dancerId,
-    String? clientId,
-    String? applicationId,
-  }) {
-    return JobApplicationModel(
-      jobId: jobId,
-      dancerId: dancerId ?? this.dancerId,
-      clientId: clientId ?? this.clientId,
-      applicationId: applicationId ?? this.applicationId,
-      applicationStatus: applicationStatus,
-      proposal: proposal,
-      appliedAt: appliedAt,
-    );
-  }
-
   /// Convert job application to entity for business logic use
   JobApplicationEntity toJobApplicationEntity() {
     return JobApplicationEntity(

@@ -4,41 +4,17 @@ import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/job_application/data/data_sources/job_application_remote_data_source.dart';
 
 import 'package:legwork/features/job_application/data/repo_impl/job_application_repo_impl.dart';
-import 'package:legwork/features/job_application/domain/business_logic/apply_for_job_business_logic.dart';
-import 'package:legwork/features/job_application/domain/business_logic/get_client_details_business_logic.dart';
-import 'package:legwork/features/job_application/domain/business_logic/get_job_applicants_business_logic.dart';
-import '../../domain/entities/job_application_entity.dart';
+import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
 
 class JobApplicationProvider extends ChangeNotifier {
   // Instance of job application repo
-  final JobApplicationRepoImpl jobApplicationRepo;
-
-  late ApplyForJobBusinessLogic applyForJobBusinessLogic;
-
-  late GetJobApplicantsBusinessLogic getJobApplicantsBusinessLogic;
-
-  late GetClientDetailsBusinessLogic getClientDetailsBusinessLogic;
+  final JobApplicationRepoImpl jobApplicationRepo = JobApplicationRepoImpl();
 
   final remoteDataSource = JobApplicationRemoteDataSource();
-
-  // Pass it to constructor
-  JobApplicationProvider({
-    required this.jobApplicationRepo,
-    required this.getJobApplicantsBusinessLogic,
-  }) {
-    applyForJobBusinessLogic =
-        ApplyForJobBusinessLogic(jobApplicationRepo: jobApplicationRepo);
-    getClientDetailsBusinessLogic =
-        GetClientDetailsBusinessLogic(jobApplicationRepo: jobApplicationRepo);
-  }
 
   // Local list of job applications
   // Used by client when viewing all applications to his job
   List<JobApplicationEntity> allApplications = [];
-
-  // Local list of pending applications
-  // Used by dancer when viewing all the jobs he has applied to
-  List<JobApplicationEntity> pendingApplications = [];
 
   // Add this to your provider's properties
   Map<JobApplicationEntity, JobEntity> pendingAppsWithJobs = {};
@@ -67,30 +43,29 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// APPLY FOR JOB
-  Future<Either<String, String>> applyForJob(
-    JobApplicationEntity application,
-  ) async {
+  Future<Either<String, JobApplicationEntity>> applyForJob({
+    required JobApplicationEntity application,
+  }) async {
     // Instance of job application business logic
     final result =
-        await applyForJobBusinessLogic.applyForJobExecute(application);
+        await jobApplicationRepo.applyForJob(application: application);
     return result.fold(
       // handle fail
       (fail) => Left(fail),
 
       // handle success
-      (applicationId) => Right(applicationId),
+      (application) => Right(application),
     );
   }
 
   /// FETCH JOB APPLICATIONS FROM BOTH LOCAL AND REMOTE DB
-  Future<Either<String, List<JobApplicationEntity>>> getJobApplications(
-    String jobId,
-  ) async {
+  Future<Either<String, List<JobApplicationEntity>>> getJobApplications({
+    required String jobId,
+  }) async {
     try {
       isLoading = true;
 
-      final result =
-          await getJobApplicantsBusinessLogic.getJobApplicationsExecute(jobId);
+      final result = await jobApplicationRepo.getJobApplications(jobId: jobId);
 
       return result.fold(
         // handle failure
@@ -116,12 +91,12 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// FETCH CLIENT DETAILS
-  Future<Either<String, Map<String, dynamic>>> getClientDetails(
-    String clientId,
-  ) async {
+  Future<Either<String, Map<String, dynamic>>> getClientDetails({
+    required String clientId,
+  }) async {
     try {
       final result =
-          await getClientDetailsBusinessLogic.getClientDetails(clientId);
+          await jobApplicationRepo.getClientDetails(clientId: clientId);
 
       return result.fold(
           // handle fail
@@ -138,33 +113,6 @@ class JobApplicationProvider extends ChangeNotifier {
       debugPrint('An unknown error occured with getClientDetails provider: $e');
       return Left(
           'An unknown error occured with getClientDetails provider: $e');
-    }
-  }
-
-  /// GET DANCER DETAILS
-  Future<Either<String, Map<String, dynamic>>> getDancerDetails({
-    required String dancerId,
-  }) async {
-    try {
-      final result =
-          await jobApplicationRepo.getDancerDetails(dancerId: dancerId);
-
-      return result.fold(
-        // Handle fail
-        (fail) => Left(fail),
-
-        // handle success
-        (data) {
-          dancerDetails = data;
-          debugPrint("Dancer data: ${data.toString()}");
-          notifyListeners();
-          return Right(data);
-        },
-      );
-    } catch (e) {
-      debugPrint('An unknown error occured with getDancerDetails provider: $e');
-      return Left(
-          'An unknown error occured with getDancerDetails provider: $e');
     }
   }
 
