@@ -8,6 +8,7 @@ class LegworkElevatedButton extends StatelessWidget {
   final dynamic icon;
   final Size? maximumSize;
   final Size? minimumSize;
+  final Color? backgroundColor;
   LegworkElevatedButton({
     super.key,
     required this.onPressed,
@@ -15,6 +16,7 @@ class LegworkElevatedButton extends StatelessWidget {
     this.icon,
     this.maximumSize,
     this.minimumSize,
+    this.backgroundColor,
   });
 
   @override
@@ -24,7 +26,7 @@ class LegworkElevatedButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         maximumSize: maximumSize,
         minimumSize: minimumSize,
-        backgroundColor: context.colorScheme.primary,
+        backgroundColor: backgroundColor ?? context.colorScheme.primary,
         elevation: 2.0,
         splashFactory: InkSplash.splashFactory,
         enableFeedback: true,

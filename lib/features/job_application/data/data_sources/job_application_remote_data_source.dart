@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -10,16 +11,12 @@ class JobApplicationRemoteDataSource {
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  late final NotificationRemoteDataSource notificationRemoteDataSource;
-
-  JobApplicationRemoteDataSource() {
-    // notificationRemoteDataSource =
-    //     NotificationRemoteDataSourceImpl(firebaseMessaging: firebaseMessaging);
-    notificationRemoteDataSource = NotificationRemoteDataSourceImpl();
-  }
+  final NotificationRemoteDataSource notificationRemoteDataSource =
+      NotificationRemoteDataSourceImpl();
+  final AuthRemoteDataSource _authRemoteDataSource = AuthRemoteDataSourceImpl();
 
   // GET DANCER DEVICE TOKEN
-  Future<String?> getDancerDeviceToken(String dancerId) async {
+  Future<String?> getDancerDeviceToken({required String dancerId}) async {
     try {
       final dancerDoc = await db.collection('dancers').doc(dancerId).get();
       if (dancerDoc.exists) {
@@ -47,10 +44,10 @@ class JobApplicationRemoteDataSource {
     }
   }
 
-  // APPLY FOR JOB
-  Future<Either<String, String>> applyForJob(
-    JobApplicationModel application,
-  ) async {
+  // * APPLY FOR JOB
+  Future<Either<String, JobApplicationModel>> applyForJob({
+    required JobApplicationModel application,
+  }) async {
     try {
       final user = auth.currentUser;
       if (user == null) {
@@ -85,37 +82,39 @@ class JobApplicationRemoteDataSource {
       // generate unique job ID
       final String applicationId = db.collection('jobApplications').doc().id;
 
-      // Prepare updated application with correct IDs
-      final updatedApplication = application.copyWith(
-        dancerId: uid,
-        clientId: clientId,
-        applicationId: applicationId,
-      );
-
-      final applicationData = updatedApplication.toMap();
+      final updatedApplication = {
+        ...application.toMap(),
+        'dancerId': uid,
+        'clientId': clientId,
+        'applicationId': applicationId,
+      };
 
       // Save application with explicit applicationId field
       await db
           .collection('jobApplications')
           .doc(applicationId)
-          .set(applicationData);
+          .set(updatedApplication);
 
-      return Right(applicationId);
+      final jobApplicationDoc =
+          await db.collection('jobApplications').doc(applicationId).get();
+      final jobApplicationModel =
+          JobApplicationModel.fromDocument(jobApplicationDoc);
+      return Right(jobApplicationModel);
+
+      // return Right(applicationId);
     } catch (e) {
       return Left("Failed to apply for job: $e");
     }
   }
 
-  // FETCH ALL JOB APPLICATIONS FOR A SPECIFIC JOB
-  Future<Either<String, List<JobApplicationModel>>> getJobApplications(
-    String jobId,
-  ) async {
+  // * FETCH ALL JOB APPLICATIONS FOR A SPECIFIC JOB
+  Future<Either<String, List<JobApplicationModel>>> getJobApplications({
+    required String jobId,
+  }) async {
     try {
-      // This query fetches all pending job applications for a specific job
       final snapshot = await db
           .collection('jobApplications')
           .where('jobId', isEqualTo: jobId)
-          // .where('applicationStatus', isEqualTo: 'pending')
           .get();
 
       final applications = snapshot.docs
@@ -128,8 +127,10 @@ class JobApplicationRemoteDataSource {
     }
   }
 
-  // ACCEPT JOB APPLICATION
-  Future<Either<String, void>> acceptApplication(String applicationId) async {
+  // * ACCEPT JOB APPLICATION
+  Future<Either<String, void>> acceptApplication({
+    required String applicationId,
+  }) async {
     try {
       final user = auth.currentUser;
       if (user == null) {
@@ -138,29 +139,32 @@ class JobApplicationRemoteDataSource {
       }
 
       // Get the document reference
-      final docRef = db.collection('jobApplications').doc(applicationId);
+      final applicationDocRef =
+          db.collection('jobApplications').doc(applicationId);
 
       // Update the application status to 'accepted'
-      await docRef.update({'applicationStatus': 'accepted'});
+      await applicationDocRef.update({'applicationStatus': 'accepted'});
+
+      // Fetch dancer ID and device token
+      final applicationDoc = await applicationDocRef.get();
+      final dancerId = applicationDoc.data()?['dancerId'];
+
+      final userEntity =
+          await _authRemoteDataSource.getUserDetails(uid: dancerId);
+      userEntity.fold(
+        (fail) => Left(fail),
+        (user) async {
+          // Extract device token from user entity object and send notification
+          await notificationRemoteDataSource.sendNotification(
+            deviceToken: user.deviceToken,
+            title: 'Application Accepted',
+            body: 'Congratulations! Your application has been accepted.',
+          );
+        },
+      );
 
       // Delete the application after accepting
       // await docRef.delete();
-
-      // Fetch dancer ID and device token
-      final application = await docRef.get();
-      final dancerId = application.data()?['dancerId'];
-      final deviceToken = await getDancerDeviceToken(dancerId);
-
-      // Send notification
-      if (deviceToken != null) {
-        await notificationRemoteDataSource.sendNotification(
-          deviceToken: deviceToken,
-          title: 'Application Accepted',
-          body: 'Congratulations! Your application has been accepted.',
-        );
-      } else {
-        debugPrint('Device token is null, notification not sent');
-      }
 
       debugPrint('Application accepted  successfully');
       return const Right(null);
@@ -169,8 +173,10 @@ class JobApplicationRemoteDataSource {
     }
   }
 
-  // REJECT JOB APPLICATION
-  Future<Either<String, void>> rejectApplication(String applicationId) async {
+  // * REJECT JOB APPLICATION
+  Future<Either<String, void>> rejectApplication({
+    required String applicationId,
+  }) async {
     try {
       final user = auth.currentUser;
       if (user == null) {
@@ -179,26 +185,29 @@ class JobApplicationRemoteDataSource {
       }
 
       // Update the application status to 'rejected'
-      final docRef = db.collection('jobApplications').doc(applicationId);
-      await docRef.update({'applicationStatus': 'rejected'});
+      final applicationDocRef =
+          db.collection('jobApplications').doc(applicationId);
+      await applicationDocRef.update({'applicationStatus': 'rejected'});
       debugPrint('Application rejected successfully');
 
       // Fetch dancer ID and device token
-      final application = await docRef.get();
-      final dancerId = application.data()?['dancerId'];
-      final deviceToken = await getDancerDeviceToken(dancerId);
+      final applicationDoc = await applicationDocRef.get();
+      final dancerId = applicationDoc.data()?['dancerId'];
 
       // Send notification
-      if (deviceToken != null) {
-        await notificationRemoteDataSource.sendNotification(
-          deviceToken: deviceToken,
-          title: 'Application Rejected',
-          body: 'Unfortunately, your application has been rejected.',
-        );
-      } else {
-        debugPrint('Device token is null, notification not sent');
-      }
-      debugPrint('Application rejected  successfully');
+      final userEntity =
+          await _authRemoteDataSource.getUserDetails(uid: dancerId);
+      userEntity.fold(
+        (fail) => Left(fail),
+        (user) async {
+          // Extract device token from user entity object and send notification
+          await notificationRemoteDataSource.sendNotification(
+            deviceToken: user.deviceToken,
+            title: 'Application rejected',
+            body: 'Unfortunately, your application has been rejected',
+          );
+        },
+      );
 
       return const Right(null);
     } catch (e) {
@@ -206,10 +215,10 @@ class JobApplicationRemoteDataSource {
     }
   }
 
-  // GET CLIENT DETAILS WITH CLIENT ID
-  Future<Either<String, Map<String, dynamic>>> getClientDetails(
-    String clientId,
-  ) async {
+  // * GET CLIENT DETAILS WITH CLIENT ID
+  Future<Either<String, Map<String, dynamic>>> getClientDetails({
+    required String clientId,
+  }) async {
     try {
       final clientDoc = await db.collection('clients').doc(clientId).get();
 
@@ -222,7 +231,7 @@ class JobApplicationRemoteDataSource {
     }
   }
 
-  // GET PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS
+  // * GET PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS
   Future<Either<String, List<Map<String, dynamic>>>>
       getPendingApplicationsWithJobs() async {
     try {
@@ -232,45 +241,41 @@ class JobApplicationRemoteDataSource {
         return const Left('User not found');
       }
 
-      final snapshot = await db
+      // Query the DB to get pending applications for logged in user
+      final pendingApplicationsSnapshot = await db
           .collection('jobApplications')
           .where('dancerId', isEqualTo: user.uid)
           .where('applicationStatus', isEqualTo: 'pending')
           .get();
 
-      final applicationsWithJobs =
-          await Future.wait(snapshot.docs.map((doc) async {
-        final jobDoc = await db.collection('jobs').doc(doc['jobId']).get();
+      final pendingAppsWithJobs = await Future.wait(
+        pendingApplicationsSnapshot.docs.map(
+          (applicationDoc) async {
+            // Get the corresponding job for each application
+            final jobDoc =
+                await db.collection('jobs').doc(applicationDoc['jobId']).get();
 
-        // Skip if any required field is missing
-        if (!doc.exists || !jobDoc.exists) {
-          debugPrint('Missing required fields in Firestore document');
-          return null;
-        }
+            // Skip if any required field is missing
+            if (!applicationDoc.exists || !jobDoc.exists) {
+              debugPrint('Missing required fields in Firestore document');
+              return null;
+            }
 
-        return {
-          'application': {
-            ...doc.data(),
-            'appliedAt': (doc['appliedAt'] as Timestamp).toDate(),
+            return {
+              'application': applicationDoc.data(),
+              'job': jobDoc.data()!,
+            };
           },
-          'job': {
-            ...jobDoc.data()!,
-            'createdAt': (jobDoc['createdAt'] as Timestamp).toDate(),
-          },
-        };
-      }).toList());
+        ).toList(),
+      );
 
-      // Filter out null entries
-      final validApplicationsWithJobs =
-          applicationsWithJobs.where((item) => item != null).toList();
-
-      return Right(validApplicationsWithJobs.cast<Map<String, dynamic>>());
+      return Right(pendingAppsWithJobs.cast<Map<String, dynamic>>());
     } catch (e) {
       return Left("Failed to fetch pending applications: $e");
     }
   }
 
-  // GET REJECTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
+  // * GET REJECTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
   Future<Either<String, List<Map<String, dynamic>>>>
       getRejectedApplicationsWithJobs() async {
     try {
@@ -280,28 +285,33 @@ class JobApplicationRemoteDataSource {
         return const Left('User not found');
       }
 
-      final snapshot = await db
+      final rejectedApplicationsSnapshot = await db
           .collection('jobApplications')
           .where('dancerId', isEqualTo: user.uid)
           .where('applicationStatus', isEqualTo: 'rejected')
           .get();
 
-      final applicationsWithJobs =
-          await Future.wait(snapshot.docs.map((doc) async {
-        final jobDoc = await db.collection('jobs').doc(doc['jobId']).get();
-        return {
-          'application': doc.data(),
-          'job': jobDoc.exists ? jobDoc.data() : null,
-        };
-      }).toList());
+      final rejectedAppsWithJobs = await Future.wait(
+        rejectedApplicationsSnapshot.docs.map(
+          (applicationDoc) async {
+            // Get the corresponding job for each application
+            final jobDoc =
+                await db.collection('jobs').doc(applicationDoc['jobId']).get();
+            return {
+              'application': applicationDoc.data(),
+              'job': jobDoc.exists ? jobDoc.data() : null,
+            };
+          },
+        ).toList(),
+      );
 
-      return Right(applicationsWithJobs);
+      return Right(rejectedAppsWithJobs);
     } catch (e) {
       return Left("Failed to fetch rejected applications: $e");
     }
   }
 
-  // GET ACCEPTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
+  // * GET ACCEPTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
   Future<Either<String, List<Map<String, dynamic>>>>
       getAcceptedApplicationsWithJobs() async {
     try {
@@ -311,40 +321,28 @@ class JobApplicationRemoteDataSource {
         return const Left('User not found');
       }
 
-      final snapshot = await db
+      final acceptedApplicationsSanpshot = await db
           .collection('jobApplications')
           .where('dancerId', isEqualTo: user.uid)
           .where('applicationStatus', isEqualTo: 'accepted')
           .get();
 
-      final applicationsWithJobs =
-          await Future.wait(snapshot.docs.map((doc) async {
-        final jobDoc = await db.collection('jobs').doc(doc['jobId']).get();
-        return {
-          'application': doc.data(),
-          'job': jobDoc.exists ? jobDoc.data() : null,
-        };
-      }).toList());
+      final acceptedAppsWithJobs = await Future.wait(
+        acceptedApplicationsSanpshot.docs.map(
+          (applicationDoc) async {
+            final jobDoc =
+                await db.collection('jobs').doc(applicationDoc['jobId']).get();
+            return {
+              'application': applicationDoc.data(),
+              'job': jobDoc.exists ? jobDoc.data() : null,
+            };
+          },
+        ).toList(),
+      );
 
-      return Right(applicationsWithJobs);
+      return Right(acceptedAppsWithJobs);
     } catch (e) {
       return Left("Failed to fetch accepted applications: $e");
-    }
-  }
-
-  // GET DANCER'S DETAILS WITH DANCERID
-  Future<Either<String, Map<String, dynamic>>> getDancerDetails({
-    required String dancerId,
-  }) async {
-    try {
-      final dancerDoc = await db.collection('dancers').doc(dancerId).get();
-
-      if (!dancerDoc.exists) return const Left('Dancer not found');
-
-      return Right(dancerDoc.data()!);
-    } catch (e) {
-      debugPrint('Failed to fetch dancers details: $e');
-      return Left("Failed to fetch dancers details: $e");
     }
   }
 }

@@ -26,4 +26,9 @@ abstract class AuthRepo {
 
   // GET UID
   String getUserId();
+
+  /// GET USER DETAILS
+  Future<Either<String, UserEntity>> getUserDetails({
+    required String uid,
+  });
 }

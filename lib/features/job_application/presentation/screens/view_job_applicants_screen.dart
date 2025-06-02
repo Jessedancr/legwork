@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/applicant_card.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ViewJobApplicantsScreen extends StatefulWidget {
@@ -20,8 +25,17 @@ class ViewJobApplicantsScreen extends StatefulWidget {
 
 class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
   final TextEditingController proposalController = TextEditingController();
-  // Map to store dancer details
-  final Map<String, Map<String, dynamic>> dancerDetails = {};
+  UserEntity dancerDetails = UserEntity(
+    username: 'username',
+    email: 'email',
+    password: 'password',
+    firstName: 'firstName',
+    lastName: 'lastName',
+    phoneNumber: 'phoneNumber',
+    userType: 'userType',
+    deviceToken: 'deviceToken',
+  );
+
   bool isLoadingDancerDetails = true; // Track loading state for dancer details
 
   // Init state to fetch all job applications when the screen loads
@@ -33,17 +47,20 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
 
   // FETCH JOB APPLICATIONS AND DANCER DETAILS
   Future<void> fetchJobApplicationsAndDancerDetails() async {
-    final provider =
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    final jobApplicationProvider =
         Provider.of<JobApplicationProvider>(context, listen: false);
 
     // Fetch all job applications
-    await provider.getJobApplications(widget.jobId);
+    await jobApplicationProvider.getJobApplications(jobId: widget.jobId);
 
     // Fetch dancer details for each application
-    final applications = provider.allApplications;
+    final applications = jobApplicationProvider.allApplications;
     for (var application in applications) {
+      // Get the dancer's details
       final result =
-          await provider.getDancerDetails(dancerId: application.dancerId);
+          await authProvider.getUserDetails(uid: application.dancerId);
+
       result.fold(
           // handle fail
           (fail) => debugPrint(
@@ -53,9 +70,7 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
           // handle success
           (dancerData) {
         setState(() {
-          // Store all dancer details in the map
-          dancerDetails[application.dancerId] = dancerData;
-          debugPrint(dancerData.toString());
+          dancerDetails = dancerData;
         });
       });
     }
@@ -67,38 +82,26 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Extract arguments passed to the screen from the navigation
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    debugPrint("Job ID: ${args['jobId']}, Client ID: ${args['clientId']}");
-
-    // Color scheme
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
-    // Text theme
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
 
       // * APPBAR
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         elevation: 0,
         centerTitle: true,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         title: Text(
           "Job Applicants",
-          style: textTheme.titleLarge?.copyWith(
+          style: context.heading2Xs?.copyWith(
             fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
-            letterSpacing: 0.3,
+            color: context.colorScheme.onSurface,
           ),
         ),
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_new,
-            color: colorScheme.onSurface,
-            size: 20,
+            color: context.colorScheme.onSurface,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -108,13 +111,17 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
       body: Consumer<JobApplicationProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return _buildLoadingState();
+            return Center(
+              child: Lottie.asset(
+                'assets/lottie/loadingList.json',
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
+              ),
+            );
           }
 
           if (provider.allApplications.isEmpty) {
-            debugPrint(
-              "Job applications: ${provider.allApplications.toString()}",
-            );
             return _buildEmptyState();
           }
 
@@ -124,97 +131,30 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
     );
   }
 
-  // WIDGET TO BE DISPLAYED WHEN THE APPLICATIONS ARE STILL LOADING
-  Widget _buildLoadingState() {
-    // Color scheme
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 5,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: Container(
-            height: 120,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainer,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 150,
-                    height: 16,
-                    color: colorScheme.surfaceDim,
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    width: double.infinity,
-                    height: 12,
-                    color: colorScheme.surfaceDim,
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    width: 200,
-                    height: 12,
-                    color: colorScheme.surfaceDim,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildEmptyState() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset(
-            'assets/images/no_applicants.png',
-            height: 150,
-            width: 150,
-            errorBuilder: (context, error, stackTrace) => const Icon(
-              Icons.person_off_outlined,
-              size: 80,
-              color: Color(0xFFBDBDBD),
-            ),
+          const Icon(
+            Icons.person_off_outlined,
+            size: 80,
+            color: Color(0xFFBDBDBD),
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             "No applicants yet",
-            style: TextStyle(
-              fontFamily: 'RobotoSlab',
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF303030),
+            style: context.text2Xl?.copyWith(
+              color: context.colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
-              "When dancers apply for this job, they'll appear here.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'RobotoSlab',
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF757575),
-              ),
+          Text(
+            "When dancers apply for this job, they'll appear here.",
+            textAlign: TextAlign.center,
+            style: context.textSm?.copyWith(
+              color: context.colorScheme.onSurface,
             ),
           ),
         ],
@@ -223,23 +163,21 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
   }
 
   Widget _buildApplicantsList(JobApplicationProvider provider) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final TextTheme textTheme = Theme.of(context).textTheme;
-
-    return RefreshIndicator(
+    return LiquidPullToRefresh(
       onRefresh: fetchJobApplicationsAndDancerDetails,
+      color: context.colorScheme.primary,
+      backgroundColor: context.colorScheme.surface,
+      animSpeedFactor: 3.0,
+      showChildOpacityTransition: false,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: provider.allApplications.length,
         itemBuilder: (context, index) {
-          final app = provider.allApplications[index];
-          final dancer = dancerDetails[app.dancerId] ?? {};
+          final jobApplication = provider.allApplications[index];
 
           return ApplicantCard(
-            app: app,
-            dancer: dancer,
-            colorScheme: colorScheme,
-            textTheme: textTheme,
+            jobApplication: jobApplication,
+            dancerEntity: dancerDetails,
           );
         },
       ),

@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/core/network/online_payment_info.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/resume_repo_impl.dart';
@@ -20,8 +18,6 @@ import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/edit_profile_screen.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
-import 'package:legwork/features/job_application/data/repo_impl/job_application_repo_impl.dart';
-import 'package:legwork/features/job_application/domain/business_logic/get_job_applicants_business_logic.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/screens/apply_for_job_screen.dart';
 import 'package:legwork/features/job_application/presentation/screens/job_application_details_screen.dart';
@@ -96,9 +92,6 @@ void main() async {
   // Instance of Resume repo
   final resumeRepo = ResumeRepoImpl();
 
-  // Instance of job application repo
-  final jobApplicationRepo = JobApplicationRepoImpl();
-
   final onlinePaymentInfo = OnlinePaymentInfo(
     baseUrl: dotenv.env['PAYSTACK_API_BASE_URL']!,
     secretKey: dotenv.env['PAYSTACK_TEST_SECRET_KEY']!,
@@ -139,12 +132,7 @@ void main() async {
           create: (context) => JobProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => JobApplicationProvider(
-            jobApplicationRepo: jobApplicationRepo,
-            getJobApplicantsBusinessLogic: GetJobApplicantsBusinessLogic(
-              jobApplicationRepo: jobApplicationRepo,
-            ),
-          ),
+          create: (context) => JobApplicationProvider(),
         ),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
         ChangeNotifierProvider(
@@ -210,13 +198,10 @@ class MyApp extends StatelessWidget {
         '/clientApp': (context) => const ClientApp(),
         '/clientSettingsScreen': (context) => const ClientSettingsScreen(),
         '/applyForJob': (context) {
-          final args =
-              ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+          final args = ModalRoute.of(context)!.settings.arguments as JobModel;
+
           return ApplyForJobScreen(
-            jobId: args['jobId'] ?? '',
-            clientId: args['clientId'] ?? '',
-            jobDescr: args['jobDescr'] ?? '',
-            clientImageUrl: '',
+            jobEntity: args,
           );
         },
         '/viewJobApplicantsScreen': (context) {
@@ -270,7 +255,7 @@ class MyApp extends StatelessWidget {
               ModalRoute.of(context)!.settings.arguments as ClientEntity;
 
           return EditClientProfileScreen(clientDetails: clientDetails);
-        }
+        },
       },
     );
   }

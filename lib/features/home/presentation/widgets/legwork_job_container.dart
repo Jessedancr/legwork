@@ -237,6 +237,7 @@ class LegworkJobContainer extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: LegworkOutlineButton(
+                      isLoading: false,
                       onPressed: onJobTap,
                       icon: SvgPicture.asset(
                         'assets/svg/briefcase.svg',

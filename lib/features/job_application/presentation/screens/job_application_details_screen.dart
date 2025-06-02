@@ -1,19 +1,20 @@
 import 'package:dartz/dartz.dart' hide State;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/widgets/legwork_text_button.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/auth/presentation/widgets/legwork_elevated_button.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
-import 'package:legwork/features/job_application/data/data_sources/job_application_remote_data_source.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/applicant_info_card.dart';
-import 'package:legwork/features/job_application/presentation/widgets/job_application_button.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/job_application/presentation/widgets/legwork_outline_button.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class JobApplicationDetailScreen extends StatefulWidget {
   const JobApplicationDetailScreen({super.key});
@@ -25,13 +26,6 @@ class JobApplicationDetailScreen extends StatefulWidget {
 
 class _JobApplicationDetailScreenState
     extends State<JobApplicationDetailScreen> {
-  // * INSTANCE OF JOB APPLICATION DATA SOURCE
-  final JobApplicationRemoteDataSource _dataSource =
-      JobApplicationRemoteDataSource();
-
-  // * INSTANCE OF FIREBASE MESSAGING
-  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-
   String? dancerUserName;
   String? dancerProfileImage;
   bool isLoading = true;
@@ -47,10 +41,10 @@ class _JobApplicationDetailScreenState
   Future<void> _fetchDancerDetails() async {
     final JobApplicationModel app =
         ModalRoute.of(context)!.settings.arguments as JobApplicationModel;
-    final provider =
-        Provider.of<JobApplicationProvider>(context, listen: false);
 
-    final result = await provider.getDancerDetails(dancerId: app.dancerId);
+    final provider = Provider.of<MyAuthProvider>(context, listen: false);
+
+    final result = await provider.getUserDetails(uid: app.dancerId);
     if (!mounted) return;
     result.fold(
       (fail) {
@@ -61,9 +55,8 @@ class _JobApplicationDetailScreenState
       },
       (data) {
         setState(() {
-          dancerUserName = data['username'] ?? 'Unknown';
-          dancerProfileImage =
-              data['profileImage']; // Assuming profile image URL is available
+          dancerUserName = data.username;
+          dancerProfileImage = data.profilePicture;
           isLoading = false;
         });
       },
@@ -72,53 +65,58 @@ class _JobApplicationDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-    final JobApplicationModel app =
+    // Get the arguments passed to this screen from the previou screen
+    final JobApplicationModel application =
         ModalRoute.of(context)!.settings.arguments as JobApplicationModel;
 
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    // Job provider
+    final jobAppProvider =
+        Provider.of<JobApplicationProvider>(context, listen: false);
 
+    // Auth provider
     final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
     final clientId = authProvider.getUserId();
-    final clientEmail = authProvider.getUserEmail();
 
-    final String dancerId = app.dancerId;
-    final String proposal = app.proposal;
-    final String status = app.applicationStatus;
-    final String applicationId = app.applicationId;
+    String? clientEmail;
+
+    final String dancerId = application.dancerId;
+    final String proposal = application.proposal;
+    final String status = application.applicationStatus;
+    final String applicationId = application.applicationId;
+
+    Future<String> fetchClientDetails() async {
+      final result = await authProvider.getUserDetails(uid: clientId);
+      result.fold(
+        (fail) => Left(fail),
+        (userEntity) {
+          clientEmail = userEntity.email;
+          return Right(clientEmail);
+        },
+      );
+      return clientEmail!;
+    }
 
     Color statusColor;
     IconData statusIcon;
 
     // Set color and icon based on application status
-    switch (status.toLowerCase()) {
-      case 'pending':
-        statusColor = Colors.amber;
-        statusIcon = Icons.hourglass_empty;
-        break;
-      case 'accepted':
-        statusColor = Colors.green;
-        statusIcon = Icons.check_circle;
-        break;
-      case 'rejected':
-        statusColor = Colors.red;
-        statusIcon = Icons.cancel;
-        break;
-      default:
-        statusColor = Colors.grey;
-        statusIcon = Icons.question_mark;
+    if (status.toLowerCase() == 'accepted') {
+      statusColor = Colors.green;
+      statusIcon = Icons.check_circle;
+    } else if (status.toLowerCase() == 'rejected') {
+      statusColor = Colors.red;
+      statusIcon = Icons.cancel;
+    } else {
+      statusColor = Colors.grey;
+      statusIcon = Icons.question_mark;
     }
 
     // CHAT WITH JOB APPLICANT(DANCER)
     void chatWithDancer() async {
-      final theme = Theme.of(context);
       try {
         setState(() {
           _isChatLoading = true;
         });
-
-        // Get the client and dancer IDs
-        final clientId = FirebaseAuth.instance.currentUser!.uid;
 
         // Create a conversation ID (or fetch existing)
         final result = await context.read<ChatProvider>().createConversation(
@@ -132,10 +130,10 @@ class _JobApplicationDetailScreenState
             _isChatLoading = false;
           });
           LegworkSnackbar(
-            title: 'Oops',
+            title: 'Omo!',
             subTitle: error,
-            imageColor: theme.colorScheme.onError,
-            contentColor: theme.colorScheme.error,
+            imageColor: context.colorScheme.onError,
+            contentColor: context.colorScheme.error,
           ).show(context);
         },
 
@@ -163,29 +161,31 @@ class _JobApplicationDetailScreenState
 
         if (!mounted) return;
         LegworkSnackbar(
-          title: 'Error',
+          title: 'Omo!',
           subTitle: 'An unexpected error occurred. Please try again.',
-          imageColor: theme.colorScheme.onError,
-          contentColor: theme.colorScheme.error,
+          imageColor: context.colorScheme.onError,
+          contentColor: context.colorScheme.error,
         ).show(context);
       }
     }
 
     // ACCEPT JOB APPLICATION
-    Future<void> onAcceptApplication(String applicationId) async {
+    Future<void> onAcceptApplication({required String applicationId}) async {
       showLoadingIndicator(context);
       try {
-        final result = await _dataSource.acceptApplication(applicationId);
+        final resultt = await jobAppProvider.acceptApplication(
+          applicationId: applicationId,
+        );
 
-        result.fold(
+        resultt.fold(
           // Handle fail
           (error) {
             Navigator.pop(context); // Close loading indicator
             LegworkSnackbar(
-              title: 'Oops!',
-              subTitle: 'Failed to accept application: $error',
-              imageColor: Theme.of(context).colorScheme.onError,
-              contentColor: Theme.of(context).colorScheme.error,
+              title: 'Omo!',
+              subTitle: 'Failed to accept application',
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
             ).show(context);
             debugPrint('Failed to accept application: $error');
             return Left(error);
@@ -197,14 +197,14 @@ class _JobApplicationDetailScreenState
 
             // Show snackbar
             LegworkSnackbar(
-              title: 'Success!',
-              subTitle: "You've accepted this dancer's application",
-              imageColor: colorScheme.onPrimary,
-              contentColor: colorScheme.primary,
+              title: 'Sharp guy!',
+              subTitle: "Application accepted",
+              imageColor: context.colorScheme.onPrimary,
+              contentColor: context.colorScheme.primary,
             ).show(context);
 
             setState(() {
-              app.applicationStatus = 'Accepted';
+              application.applicationStatus = 'Accepted';
             });
 
             Navigator.pop(context); // Return to previous screen
@@ -219,27 +219,27 @@ class _JobApplicationDetailScreenState
     }
 
     // REJECT JOB APPLICATION
-    Future<void> onRejectApplication(String applicationId) async {
+    Future<void> onRejectApplication({required String applicationId}) async {
       // Show a confirmation dialog first
       final confirm = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           title: Text(
             'Confirm Rejection',
-            style:
-                textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: context.headingXs?.copyWith(fontWeight: FontWeight.bold),
           ),
           content:
               const Text('Are you sure you want to reject this application?'),
           actions: [
-            TextButton(
+            LegworkTextButton(
+              foregroundColor: context.colorScheme.primary,
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              buttonText: 'Cancel',
             ),
-            TextButton(
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
+            LegworkTextButton(
+              buttonText: 'Reject',
+              foregroundColor: context.colorScheme.error,
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Reject'),
             ),
           ],
         ),
@@ -249,17 +249,19 @@ class _JobApplicationDetailScreenState
 
       showLoadingIndicator(context);
       try {
-        final result = await _dataSource.rejectApplication(applicationId);
+        final result = await jobAppProvider.rejectApplication(
+          applicationId: applicationId,
+        );
 
         result.fold(
           // handle fail
           (error) {
             Navigator.pop(context); // Close loading indicator
             LegworkSnackbar(
-              title: 'Oops!',
-              subTitle: 'Failed to reject application: $error',
-              imageColor: Theme.of(context).colorScheme.error,
-              contentColor: Theme.of(context).colorScheme.onError,
+              title: 'Omo!',
+              subTitle: 'Failed to reject application',
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
             ).show(context);
             return Left(error);
           },
@@ -271,13 +273,13 @@ class _JobApplicationDetailScreenState
               title: 'Application Rejected',
               subTitle:
                   "You've rejected this application! That's so sad for the dancer",
-              imageColor: colorScheme.onPrimary,
-              contentColor: colorScheme.primary,
+              imageColor: context.colorScheme.onPrimary,
+              contentColor: context.colorScheme.primary,
             ).show(context);
 
             // Update the UI with new status
             setState(() {
-              app.applicationStatus = 'Rejected';
+              application.applicationStatus = 'Rejected';
             });
 
             Navigator.pop(context); // Return to previous screen
@@ -292,16 +294,17 @@ class _JobApplicationDetailScreenState
     }
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
 
       floatingActionButton: status.toLowerCase() == 'accepted'
           ? FloatingActionButton(
-              onPressed: () {
+              onPressed: () async {
+                final email = await fetchClientDetails();
                 Navigator.of(context).pushNamed('/paymentScreen', arguments: {
                   'dancerId': dancerId,
                   'clientId': clientId,
                   'amount': 100.0,
-                  'email': clientEmail
+                  'email': email,
                 });
               },
               child: const Icon(Icons.payment),
@@ -311,14 +314,13 @@ class _JobApplicationDetailScreenState
       // * APPBAR
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         centerTitle: true,
         title: Text(
           isLoading ? 'Loading Applicant Details...' : 'Application Details',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
+          style: context.heading2Xs?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: context.colorScheme.onSurface,
           ),
         ),
         leading: IconButton(
@@ -329,8 +331,12 @@ class _JobApplicationDetailScreenState
 
       // * BODY
       body: isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
+          ? Center(
+              child: Lottie.asset(
+                'assets/lottie/loading.json',
+                height: 100,
+                fit: BoxFit.contain,
+              ),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
@@ -339,7 +345,7 @@ class _JobApplicationDetailScreenState
                 children: [
                   //* APPLICANT CARD INFO
                   ApplicantInfoCard(
-                    colorScheme: colorScheme,
+                    colorScheme: context.colorScheme,
                     dancerProfileImage: dancerProfileImage,
                     dancerUserName: dancerUserName,
                     status: status,
@@ -348,12 +354,11 @@ class _JobApplicationDetailScreenState
                   const SizedBox(height: 24),
 
                   // * PROPOSAL SECTION
-                  const Text(
+                  Text(
                     "Proposal",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                    style: context.text2Xl?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: context.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -366,10 +371,9 @@ class _JobApplicationDetailScreenState
                       padding: const EdgeInsets.all(16),
                       child: Text(
                         proposal,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 1.5,
-                          color: Colors.black87,
+                        style: context.textXl?.copyWith(
+                          color: context.colorScheme.onSurface,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ),
@@ -383,26 +387,22 @@ class _JobApplicationDetailScreenState
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             const Divider(height: 32),
-                            const Text(
+                            Text(
                               "Take Action",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
+                              style: context.text2Xl?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: context.colorScheme.onSurface,
                               ),
                             ),
                             const SizedBox(height: 16),
 
                             // * BUTTON TO CHAT WITH DANCER
-                            JobApplicationButton(
+                            LegworkOutlineButton(
                               isLoading: _isChatLoading,
-                              colorScheme: colorScheme,
-                              textTheme: textTheme,
                               onPressed: chatWithDancer,
-                              backgroundColor: colorScheme.primaryContainer,
-                              buttonText: 'Message Dancer',
-                              buttonTextColor: colorScheme.onPrimaryContainer,
-                              svgIconPath: 'assets/svg/chat_icon.svg',
+                              icon:
+                                  SvgPicture.asset('assets/svg/chat_icon.svg'),
+                              buttonText: 'Message dancer',
                             ),
                             const SizedBox(height: 16),
 
@@ -410,34 +410,31 @@ class _JobApplicationDetailScreenState
                               children: [
                                 // * ACCEPT BUTTON
                                 Expanded(
-                                  child: JobApplicationButton(
-                                    isLoading: isLoading,
-                                    colorScheme: colorScheme,
-                                    textTheme: textTheme,
-                                    onPressed: () =>
-                                        onAcceptApplication(applicationId),
-                                    backgroundColor: colorScheme.primary,
+                                  child: LegworkElevatedButton(
+                                    onPressed: () => onAcceptApplication(
+                                        applicationId: applicationId),
                                     buttonText: 'Accept',
-                                    buttonTextColor: colorScheme.onPrimary,
-                                    normalIcon: Icons.check,
-                                    iconColor: colorScheme.onPrimary,
+                                    backgroundColor:
+                                        context.colorScheme.primary,
+                                    icon: Icon(
+                                      Icons.check,
+                                      color: context.colorScheme.onPrimary,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
 
                                 // * REJECT BUTTON
                                 Expanded(
-                                  child: JobApplicationButton(
-                                    isLoading: isLoading,
-                                    colorScheme: colorScheme,
-                                    textTheme: textTheme,
-                                    onPressed: () =>
-                                        onRejectApplication(applicationId),
-                                    backgroundColor: colorScheme.error,
+                                  child: LegworkElevatedButton(
+                                    onPressed: () => onRejectApplication(
+                                        applicationId: applicationId),
                                     buttonText: 'Reject',
-                                    buttonTextColor: colorScheme.onError,
-                                    normalIcon: Icons.close,
-                                    iconColor: colorScheme.onError,
+                                    backgroundColor: context.colorScheme.error,
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: context.colorScheme.onError,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -451,15 +448,13 @@ class _JobApplicationDetailScreenState
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               // * BUTTON TO CHAT WITH DANCER
-                              JobApplicationButton(
+                              LegworkOutlineButton(
                                 isLoading: _isChatLoading,
-                                colorScheme: colorScheme,
-                                textTheme: textTheme,
                                 onPressed: chatWithDancer,
-                                backgroundColor: colorScheme.primaryContainer,
-                                buttonText: 'Message Dancer',
-                                buttonTextColor: colorScheme.onPrimaryContainer,
-                                svgIconPath: 'assets/svg/chat_icon.svg',
+                                icon: SvgPicture.asset(
+                                  'assets/svg/chat_icon.svg',
+                                ),
+                                buttonText: 'Message dancer',
                               ),
                               const SizedBox(height: 32),
 
@@ -474,17 +469,15 @@ class _JobApplicationDetailScreenState
                                     vertical: 12,
                                   ),
                                   child: Row(
-                                    // mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(statusIcon, color: statusColor),
                                       const SizedBox(width: 8),
                                       Text(
                                         "Application is $status",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                                        style: context.textMd?.copyWith(
                                           color: statusColor,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ],
