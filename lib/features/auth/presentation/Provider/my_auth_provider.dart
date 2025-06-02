@@ -196,12 +196,6 @@ class MyAuthProvider extends ChangeNotifier {
     return result;
   }
 
-  /// GET USER EMAIL
-  String getUserEmail() {
-    final result = authRepo.getUserEmail();
-    return result;
-  }
-
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,
   }) async {

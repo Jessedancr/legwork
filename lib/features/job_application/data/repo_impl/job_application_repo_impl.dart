@@ -111,4 +111,44 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, void>> acceptApplication({
+    required String applicationId,
+  }) async {
+    try {
+      final result = await remoteDataSource.acceptApplication(
+        applicationId: applicationId,
+      );
+
+      return result.fold(
+        // handle fail
+        (fail) => Left(fail),
+        (_) => const Right(null),
+      );
+    } catch (e) {
+      debugPrint('Error accepting application: ${e.toString()}');
+      return Left('Error accepting application: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<Either<String, void>> rejectApplication({
+    required String applicationId,
+  }) async {
+    try {
+      final result = await remoteDataSource.rejectApplication(
+        applicationId: applicationId,
+      );
+
+      return result.fold(
+        // handle fail
+        (fail) => Left(fail),
+        (_) => const Right(null),
+      );
+    } catch (e) {
+      debugPrint('Error rejecting application: ${e.toString()}');
+      return Left('Error rejecting application: ${e.toString()}');
+    }
+  }
 }

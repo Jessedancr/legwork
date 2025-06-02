@@ -20,7 +20,7 @@ class ApplicantInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: colorScheme.surfaceContainer,
+      color: context.colorScheme.surfaceContainer,
       elevation: 1,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -58,9 +58,8 @@ class ApplicantInfoCard extends StatelessWidget {
               children: [
                 Text(
                   dancerUserName ?? 'Unknown Dancer',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: context.textMd?.copyWith(
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),

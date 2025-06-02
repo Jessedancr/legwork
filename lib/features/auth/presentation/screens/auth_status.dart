@@ -29,7 +29,7 @@ class AuthStatus extends StatelessWidget {
           else {
             final user = snapShot.data;
             return FutureBuilder(
-              future: authRemoteDataSource.getUserType(user!.uid),
+              future: authRemoteDataSource.getUserType(uid: user!.uid),
               builder: (context, snapshot) {
                 // Show a loading indicator while fetching user type
                 if (snapshot.connectionState == ConnectionState.waiting) {

@@ -50,7 +50,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen>
         centerTitle: true,
         title: Text(
           'Job Applications',
-          style: context.headingXs?.copyWith(
+          style: context.heading2Xs?.copyWith(
             color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),

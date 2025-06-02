@@ -90,6 +90,68 @@ class JobApplicationProvider extends ChangeNotifier {
     }
   }
 
+  /// ACCEPT JOB
+  Future<Either<String, void>> acceptApplication({
+    required String applicationId,
+  }) async {
+    try {
+      isLoading = true;
+      final result = await jobApplicationRepo.acceptApplication(
+        applicationId: applicationId,
+      );
+
+      return result.fold(
+        // handle fail
+        (fail) {
+          isLoading = false;
+          notifyListeners();
+          return Left(fail);
+        },
+
+        // handle success
+        (_) {
+          isLoading = false;
+          notifyListeners();
+          return const Right(null);
+        },
+      );
+    } catch (e) {
+      debugPrint('Error with accept application provider: ${e.toString()}');
+      return Left('Error with accept application provider: ${e.toString()}');
+    }
+  }
+
+  /// REJECT JOB
+  Future<Either<String, void>> rejectApplication({
+    required String applicationId,
+  }) async {
+    try {
+      isLoading = true;
+      final result = await jobApplicationRepo.rejectApplication(
+        applicationId: applicationId,
+      );
+
+      return result.fold(
+        // handle fail
+        (fail) {
+          isLoading = false;
+          notifyListeners();
+          return Left(fail);
+        },
+
+        // handle success
+        (_) {
+          isLoading = false;
+          notifyListeners();
+          return const Right(null);
+        },
+      );
+    } catch (e) {
+      debugPrint('Error with reject application provider: ${e.toString()}');
+      return Left('Error with reject application provider: ${e.toString()}');
+    }
+  }
+
   /// FETCH CLIENT DETAILS
   Future<Either<String, Map<String, dynamic>>> getClientDetails({
     required String clientId,
@@ -121,7 +183,6 @@ class JobApplicationProvider extends ChangeNotifier {
       getPendingApplicationsWithJobs() async {
     try {
       isLoading = true;
-      // notifyListeners();
 
       final result = await jobApplicationRepo.getPendingApplicationsWithJobs();
 

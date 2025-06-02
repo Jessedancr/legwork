@@ -12,6 +12,16 @@ abstract class JobApplicationRepo {
     required String jobId,
   });
 
+  // * Accecpt job applicaiton
+  Future<Either<String, void>> acceptApplication({
+    required String applicationId,
+  });
+
+  // * Reject job application
+  Future<Either<String, void>> rejectApplication({
+    required String applicationId,
+  });
+
   Future<Either<String, List<Map<String, dynamic>>>>
       getPendingApplicationsWithJobs();
 

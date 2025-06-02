@@ -71,7 +71,6 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
           (dancerData) {
         setState(() {
           dancerDetails = dancerData;
-          debugPrint(dancerData.toString());
         });
       });
     }
@@ -83,11 +82,6 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Extract arguments passed to the screen from the navigation
-    final Map<String, dynamic> args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    debugPrint("Job ID: ${args['jobId']}, Client ID: ${args['clientId']}");
-
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
 
@@ -99,8 +93,8 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
         backgroundColor: context.colorScheme.surface,
         title: Text(
           "Job Applicants",
-          style: context.headingXs?.copyWith(
-            fontWeight: FontWeight.w400,
+          style: context.heading2Xs?.copyWith(
+            fontWeight: FontWeight.bold,
             color: context.colorScheme.onSurface,
           ),
         ),
@@ -171,6 +165,10 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
   Widget _buildApplicantsList(JobApplicationProvider provider) {
     return LiquidPullToRefresh(
       onRefresh: fetchJobApplicationsAndDancerDetails,
+      color: context.colorScheme.primary,
+      backgroundColor: context.colorScheme.surface,
+      animSpeedFactor: 3.0,
+      showChildOpacityTransition: false,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: provider.allApplications.length,

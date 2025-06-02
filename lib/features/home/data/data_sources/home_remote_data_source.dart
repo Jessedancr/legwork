@@ -25,7 +25,6 @@ class JobService {
       // Get the auto generated doc id
       final String jobId = db.collection('jobs').doc().id;
 
-
       // Use the toMap method to convert the job model to a map
       final data = {
         ...job.toMap(),

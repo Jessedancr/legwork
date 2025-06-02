@@ -235,7 +235,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   /// METHOD TO GET THE USERTYPE FIELD FROM DOCUMENT
-  Future<String> getUserType(uid) async {
+  Future<String> getUserType({required String uid}) async {
     try {
       // Query the two collections at the same time
       final docs = await Future.wait([
@@ -293,19 +293,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
       return 'failed to get users uid';
-    }
-  }
-
-  String getUserEmail() {
-    try {
-      final user = auth.currentUser;
-      if (user == null) {
-        return 'user not logged in';
-      }
-      return user.email!;
-    } catch (e) {
-      debugPrint('failed to get logged in user\'s email: ${e.toString()}');
-      return 'failed to get users email';
     }
   }
 

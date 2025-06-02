@@ -4,23 +4,24 @@ import 'package:lottie/lottie.dart';
 
 class LegworkOutlineButton extends StatelessWidget {
   final void Function()? onPressed;
-  final bool isLoading;
+  final bool _isLoading;
   final Widget? icon;
   final String buttonText;
+
   const LegworkOutlineButton({
     super.key,
     required this.onPressed,
     required this.icon,
-    this.isLoading = false,
+    required bool isLoading,
     required this.buttonText,
-  });
+  }) : _isLoading = isLoading;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: onPressed,
       icon: icon,
-      label: isLoading
+      label: _isLoading
           ? SizedBox(
               height: 30,
               width: 30,

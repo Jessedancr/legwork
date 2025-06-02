@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class StatusTag extends StatelessWidget {
   final String status;
@@ -10,8 +11,7 @@ class StatusTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final chipData = _getTagData(status, theme);
+    final tagData = _getTagData(status: status);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -19,10 +19,10 @@ class StatusTag extends StatelessWidget {
         vertical: 5,
       ),
       decoration: BoxDecoration(
-        color: chipData.backgroundColor,
+        color: tagData.backgroundColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: chipData.borderColor,
+          color: tagData.borderColor,
           // width: 2.0,
         ),
       ),
@@ -30,15 +30,15 @@ class StatusTag extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(
-            chipData.icon,
+            tagData.icon,
             size: 14,
-            color: chipData.iconColor,
+            color: tagData.iconColor,
           ),
           const SizedBox(width: 8),
           Text(
-            chipData.label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: chipData.textColor,
+            tagData.label,
+            style: context.textXs?.copyWith(
+              color: tagData.textColor,
             ),
           ),
         ],
@@ -46,7 +46,9 @@ class StatusTag extends StatelessWidget {
     );
   }
 
-  _TagData _getTagData(String status, ThemeData theme) {
+  _TagData _getTagData({
+    required String status,
+  }) {
     switch (status.toLowerCase()) {
       case 'accepted':
         return _TagData(

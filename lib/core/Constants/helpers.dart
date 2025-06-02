@@ -17,6 +17,8 @@ extension LegworkTextStyles on BuildContext {
   TextStyle? get headingMd => Theme.of(this).textTheme.headlineLarge;
   TextStyle? get headingSm => Theme.of(this).textTheme.headlineMedium;
   TextStyle? get headingXs => Theme.of(this).textTheme.headlineSmall;
+  TextStyle? get heading2Xs => Theme.of(this).textTheme.titleMedium;
+
   TextStyle? get text2Xl => Theme.of(this).textTheme.bodyLarge;
   TextStyle? get textXl => Theme.of(this).textTheme.bodyMedium;
   TextStyle? get textLg => Theme.of(this).textTheme.bodySmall;

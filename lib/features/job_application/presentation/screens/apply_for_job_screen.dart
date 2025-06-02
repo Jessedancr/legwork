@@ -204,7 +204,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           ),
           title: Text(
             "Let's get you hired!",
-            style: context.headingXs?.copyWith(
+            style: context.heading2Xs?.copyWith(
               color: context.colorScheme.surface,
               fontWeight: FontWeight.w500,
             ),
