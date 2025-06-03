@@ -12,10 +12,7 @@ class LocalJobService {
       debugPrint('Saving job: ${job.toMap()}');
       final box = Hive.box<JobModel>(boxName);
       await box.put(job.jobId, job);
-      debugPrint('Saving job: ${job.toMap()}');
       debugPrint('Job saved to hive! Current jobs: ${box.values.toList()}');
-      debugPrint(
-          'Current jobs in Hive: ${box.values.map((job) => job.toMap()).toList()}');
       return const Right(null);
     } catch (e) {
       debugPrint(

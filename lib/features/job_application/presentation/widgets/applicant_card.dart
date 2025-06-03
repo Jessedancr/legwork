@@ -1,31 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
 
 import 'status_tag.dart';
 
 class ApplicantCard extends StatelessWidget {
-  final dynamic app; // Your application model type
-  final Map<String, dynamic> dancer;
-  final ColorScheme colorScheme;
-  final TextTheme textTheme;
+  final JobApplicationEntity jobApplication;
+  final UserEntity dancerEntity;
 
   const ApplicantCard({
     super.key,
-    required this.app,
-    required this.dancer,
-    required this.colorScheme,
-    required this.textTheme,
+    required this.jobApplication,
+    required this.dancerEntity,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Inside ApplicantCard's build method:
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    final dancerImage = dancer['profileImage'];
-    final dancerUserName = dancer['username'] ?? 'Loading...';
-    final dancerEmail = dancer['email'] ?? 'example@gmail.com';
-    final dancerPhoneNum = dancer['phoneNumber'] ?? '1234567890';
-    final applicationStatus = app.applicationStatus;
+    final dancerImage = dancerEntity.profilePicture;
+    final dancerUserName = dancerEntity.username;
+    final dancerEmail = dancerEntity.email;
+    final dancerPhoneNum = dancerEntity.phoneNumber;
+    final applicationStatus = jobApplication.applicationStatus;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -34,16 +30,16 @@ class ApplicantCard extends StatelessWidget {
           Navigator.pushNamed(
             context,
             '/job_application_detail',
-            arguments: app,
+            arguments: jobApplication,
           );
         },
         child: Container(
           decoration: BoxDecoration(
-            color: colorScheme.surface,
+            color: context.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: context.colorScheme.onSurface.withOpacity(0.2),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -55,61 +51,75 @@ class ApplicantCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // * PROFILE PICTURE
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: colorScheme.surfaceContainer,
-                      backgroundImage: dancerImage != null
-                          ? NetworkImage(dancerImage)
-                          : const AssetImage(
-                              'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                            ) as ImageProvider,
-                    ),
-                    const SizedBox(width: 12),
-
-                    // * STATUS TAG AND USERNAME
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(
-                          dancerUserName,
-                          style: textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: context.colorScheme.surfaceContainer,
+                          child: ClipOval(
+                            child:
+                                dancerImage != null && dancerImage!.isNotEmpty
+                                    ? Image.network(
+                                        dancerImage!,
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.asset(
+                                        'images/depictions/dancer_dummy_default_profile_picture.jpg',
+                                        width: 60,
+                                        height: 60,
+                                        fit: BoxFit.cover,
+                                      ),
                           ),
                         ),
-                        const SizedBox(height: 2),
-                        StatusTag(
-                          status: applicationStatus,
+                        const SizedBox(width: 12),
+
+                        // * STATUS TAG AND USERNAME
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              dancerUserName,
+                              style: context.textMd?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            StatusTag(
+                              status: applicationStatus,
+                            ),
+                          ],
                         ),
                       ],
                     ),
 
                     // * ARROW ICON
-                    // const Icon(
-                    //   Icons.arrow_forward_ios,
-                    //   size: 16,
-                    //   color: Color(0xFFBDBDBD),
-                    // ),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Color(0xFFBDBDBD),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 Text(
                   "Proposal",
-                  style: textTheme.labelLarge?.copyWith(
+                  style: context.textMd?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  app.proposal.length > 20
-                      ? "${app.proposal.substring(0, 20)}..."
-                      : app.proposal,
-                  style: textTheme.bodyMedium?.copyWith(),
+                  jobApplication.proposal.length > 20
+                      ? "${jobApplication.proposal.substring(0, 20)}..."
+                      : jobApplication.proposal,
+                  style: context.textXl?.copyWith(),
                 ),
                 const SizedBox(height: 8),
 
@@ -119,16 +129,14 @@ class ApplicantCard extends StatelessWidget {
                   children: [
                     Text(
                       'email: $dancerEmail',
-                      style: textTheme.labelSmall?.copyWith(
+                      style: context.text2Xs?.copyWith(
                         fontStyle: FontStyle.italic,
-                        fontSize: 8,
                       ),
                     ),
                     Text(
                       'Phone number: +234 $dancerPhoneNum',
-                      style: textTheme.labelSmall?.copyWith(
+                      style: context.text2Xs?.copyWith(
                         fontStyle: FontStyle.italic,
-                        fontSize: 8,
                       ),
                     ),
                   ],

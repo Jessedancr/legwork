@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
-import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_tabs/open_jobs.dart';
@@ -45,28 +45,23 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   // BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    //SCREEN SIZE
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
     // PROVIDER
     final jobProvider = Provider.of<JobProvider>(context);
     // METHOD TO POST JOB TO FIREBASE
-    void postJob({required String jobId, required String clientId}) async {
-      Navigator.of(context).pop();
-      showLoadingIndicator(context);
-      // post job to firebase and display a snack bar with a success message
-      try {
-        final result = await jobProvider.postJob(
-            job: JobEntity(
+    void postJob() async {
+      if (formKey.currentState!.validate()) {
+        Navigator.of(context).pop();
+        showLoadingIndicator(context);
+        final jobEntity = JobEntity(
           jobTitle: widget.titleController.text,
           jobLocation: widget.locationController.text,
           pay: widget.payController.text,
           amtOfDancers: widget.amtOfDancersController.text,
           jobDuration: widget.jobDurationController.text,
           jobDescr: widget.jobDescrController.text,
-          jobType: widget.searchController.text,
-          jobId: jobId,
-          clientId: clientId,
+          jobType: selectedJobType ?? 'N/A',
+          jobId: 'jobId',
+          clientId: 'clientId',
           status: true,
           prefDanceStyles: widget.danceStylesController.text
               .trim()
@@ -75,97 +70,68 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                   .isNotEmpty) // Remove empty entries => entries that meet the condition will stay
               .toList(),
           createdAt: DateTime.now(),
-        ));
-
-        result.fold(
-            // Handle fail
-            (fail) {
-          debugPrint('Posting job to firebase failed: $fail');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 5),
-              content: LegWorkSnackBarContent(
-                screenHeight: screenHeight,
-                context: context,
-                screenWidth: screenWidth,
-                title: 'Omo!',
-                subTitle: fail,
-                contentColor: Theme.of(context).colorScheme.error,
-                imageColor: Theme.of(context).colorScheme.onError,
-              ),
-            ),
-          );
-        },
-
-            // Handle success
-            (success) async {
-          debugPrint('Successfully posted job');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 5),
-              content: LegWorkSnackBarContent(
-                screenHeight: screenHeight,
-                context: context,
-                screenWidth: screenWidth,
-                title: 'Nice!',
-                subTitle: 'Job posted successfully',
-                contentColor: Theme.of(context).colorScheme.primary,
-                imageColor: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-          );
-          // Clear controllers
-          widget.titleController.clear();
-          widget.locationController.clear();
-          widget.danceStylesController.clear();
-          widget.payController.clear();
-          widget.jobDurationController.clear();
-          widget.amtOfDancersController.clear();
-          widget.jobDescrController.clear();
-          widget.searchController.clear();
-
-          // Refresh job list
-          await jobProvider.fetchJobs();
-        });
-
-        hideLoadingIndicator(context);
-      } catch (e) {
-        debugPrint('Error posting job: $e');
-        hideLoadingIndicator(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to post job: $e')),
         );
+
+        try {
+          final result = await jobProvider.postJob(job: jobEntity);
+
+          result.fold(
+              // Handle fail
+              (fail) {
+            debugPrint('Posting job to firebase failed: $fail');
+            LegworkSnackbar(
+              title: 'Omo!',
+              subTitle: fail,
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
+            ).show(context);
+          },
+              // Handle success
+              (success) async {
+            debugPrint('Successfully posted job');
+            LegworkSnackbar(
+              title: 'Sharp guy!',
+              subTitle: 'Job posted successfuly',
+              imageColor: context.colorScheme.onPrimary,
+              contentColor: context.colorScheme.primary,
+            ).show(context);
+            // Clear controllers
+            widget.titleController.clear();
+            widget.locationController.clear();
+            widget.danceStylesController.clear();
+            widget.payController.clear();
+            widget.jobDurationController.clear();
+            widget.amtOfDancersController.clear();
+            widget.jobDescrController.clear();
+            widget.searchController.clear();
+            selectedJobType = null;
+
+            // Refresh job list
+            await jobProvider.fetchJobs();
+          });
+
+          hideLoadingIndicator(context);
+        } catch (e) {
+          debugPrint('Error posting job: $e');
+          hideLoadingIndicator(context);
+          LegworkSnackbar(
+            title: 'Omo!',
+            subTitle: 'Unexpected error occured',
+            imageColor: context.colorScheme.onError,
+            contentColor: context.colorScheme.error,
+          ).show(context);
+        }
       }
     }
 
     // METHOD TO POST NEW JOB
     void openJobModalSheet() {
       showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (context) {
           return PostJobBottomSheet(
-            onPressed: () async {
-              // Generate jobId and get clientId
-              final String jobId =
-                  Provider.of<JobProvider>(context, listen: false)
-                      .jobRepo
-                      .jobService
-                      .db
-                      .collection('jobs')
-                      .doc()
-                      .id;
-              final String clientId =
-                  FirebaseAuth.instance.currentUser?.uid ?? '';
-
-              // Call postJob with jobId and clientId
-              postJob(jobId: jobId, clientId: clientId);
-            },
+            onPressed: postJob,
             titleController: widget.titleController,
             locationController: widget.locationController,
             danceStylesController: widget.danceStylesController,
@@ -188,14 +154,14 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         //* Floating action button
         floatingActionButton: FloatingActionButton(
           onPressed: openJobModalSheet,
-          backgroundColor:
-              Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+          backgroundColor: context.colorScheme.primary.withOpacity(0.8),
           child: const Icon(Icons.add),
         ),
 
         //* AppBar
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          scrolledUnderElevation: 0.0,
+          backgroundColor: context.colorScheme.surface,
           elevation: 0,
           centerTitle: true,
           title: const TabBar(
@@ -211,7 +177,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
               },
               icon: Icon(
                 Icons.menu,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),
@@ -224,9 +190,9 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: Lottie.asset(
-                  'assets/lottie/loading.json',
-                  width: 100,
-                  height: 100,
+                  'assets/lottie/loadingList.json',
+                  width: 200,
+                  height: 200,
                   fit: BoxFit.contain,
                 ),
               );

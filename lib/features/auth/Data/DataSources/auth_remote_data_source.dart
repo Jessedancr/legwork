@@ -27,8 +27,15 @@ abstract class AuthRemoteDataSource {
   /// USER LOGOUT METHOD
   Future<Either<String, void>> logout();
 
+  /// GET CURRENLY LOGGED IN USER'S ID
+  String getUserId();
+
   /// METHOD TO GET THE USERNAME FROM DOCUMENT
   Future<Either<String, String>> getUsername({required String userId});
+
+  Future<String> getDeviceToken({required String userId});
+
+  Future<Either<String, UserEntity>> getUserDetails({required String uid});
 }
 
 /**
@@ -228,7 +235,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   /// METHOD TO GET THE USERTYPE FIELD FROM DOCUMENT
-  Future<String> getUserType(uid) async {
+  Future<String> getUserType({required String uid}) async {
     try {
       // Query the two collections at the same time
       final docs = await Future.wait([
@@ -275,6 +282,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   // GET CURRENTLY LOGGED IN USER
+  @override
   String getUserId() {
     try {
       final user = auth.currentUser;
@@ -288,19 +296,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  String getUserEmail() {
-    try {
-      final user = auth.currentUser;
-      if (user == null) {
-        return 'user not logged in';
-      }
-      return user.email!;
-    } catch (e) {
-      debugPrint('failed to get logged in user\'s email: ${e.toString()}');
-      return 'failed to get users email';
-    }
-  }
-
+  @override
   Future<String> getDeviceToken({required String userId}) async {
     try {
       final results = await Future.wait([
@@ -321,7 +317,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
-  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+  @override
+  Future<Either<String, UserEntity>> getUserDetails({
+    required String uid,
+  }) async {
     try {
       // Query the two collections at the same time
       final docs = await Future.wait([

@@ -51,20 +51,20 @@ class JobEntity {
     }
 
     return JobEntity(
-      jobId: map['jobId'] as String,
-      jobTitle: map['jobTitle'] as String,
-      jobLocation: map['jobLocation'] as String,
-      prefDanceStyles: map['prefDanceStyles'] as List? ?? [],
-      clientId: map['clientId'] as String,
-      amtOfDancers: map['amtOfDancers'] as String,
-      jobDuration: map['jobDuration'] as String,
-      jobDescr: map['jobDescr'] as String,
-      jobType: map['jobType'] as String,
+      jobId: map['jobId'],
+      jobTitle: map['jobTitle'],
+      jobLocation: map['jobLocation'],
+      prefDanceStyles: map['prefDanceStyles'],
+      clientId: map['clientId'],
+      amtOfDancers: map['amtOfDancers'],
+      jobDuration: map['jobDuration'],
+      jobDescr: map['jobDescr'],
+      jobType: map['jobType'],
       createdAt: (map['createdAt'] is Timestamp)
           ? (map['createdAt'] as Timestamp).toDate()
           : map['createdAt'] as DateTime,
-      pay: map['pay'] as String,
-      status: map['status'] as bool,
+      pay: map['pay'],
+      status: map['status'],
     );
   }
 

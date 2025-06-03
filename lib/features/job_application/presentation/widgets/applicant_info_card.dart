@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 import 'status_tag.dart';
 
@@ -19,7 +20,7 @@ class ApplicantInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: colorScheme.surfaceContainer,
+      color: context.colorScheme.surfaceContainer,
       elevation: 1,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -31,12 +32,23 @@ class ApplicantInfoCard extends StatelessWidget {
             //* Profile image or placeholder
             CircleAvatar(
               radius: 30,
-              backgroundColor: Colors.grey[200],
-              backgroundImage: dancerProfileImage != null
-                  ? NetworkImage(dancerProfileImage!)
-                  : const AssetImage(
-                      'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                    ),
+              backgroundColor: context.colorScheme.surface,
+              child: ClipOval(
+                child:
+                    dancerProfileImage != null && dancerProfileImage!.isNotEmpty
+                        ? Image.network(
+                            dancerProfileImage!,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'images/depictions/dancer_dummy_default_profile_picture.jpg',
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
+              ),
             ),
             const SizedBox(width: 16),
 
@@ -46,9 +58,8 @@ class ApplicantInfoCard extends StatelessWidget {
               children: [
                 Text(
                   dancerUserName ?? 'Unknown Dancer',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: context.textMd?.copyWith(
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 4),

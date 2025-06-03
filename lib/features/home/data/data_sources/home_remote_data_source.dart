@@ -21,28 +21,18 @@ class JobService {
         debugPrint('User not found');
         return const Left('User not found');
       }
-      final String uid = user.uid;
 
       // Get the auto generated doc id
       final String jobId = db.collection('jobs').doc().id;
 
-      // store job date in firebase
-      final jobData = {
-        'jobTitle': job.jobTitle,
-        'jobLocation': job.jobLocation,
-        'prefDanceStyles': job.prefDanceStyles,
-        'pay': job.pay,
-        'amtOfDancers': job.amtOfDancers,
-        'jobDuration': job.jobDuration,
-        'jobDescr': job.jobDescr,
+      // Use the toMap method to convert the job model to a map
+      final data = {
+        ...job.toMap(),
         'jobId': jobId,
-        'clientId': uid,
-        'jobType': job.jobType,
-        'createdAt': FieldValue.serverTimestamp(), // Timestamp
-        'status': true,
+        'clientId': user.uid,
       };
 
-      await db.collection('jobs').doc(jobId).set(jobData);
+      await db.collection('jobs').doc(jobId).set(data);
 
       DocumentSnapshot jobDoc = await db.collection('jobs').doc(jobId).get();
       final jobModel = JobModel.fromDocument(jobDoc);

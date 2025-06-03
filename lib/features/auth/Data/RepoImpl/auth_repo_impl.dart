@@ -146,16 +146,10 @@ class AuthRepoImpl implements AuthRepo {
     }
   }
 
-  String getUserEmail() {
-    try {
-      final result = _authRemoteDataSource.getUserEmail();
-      return result;
-    } catch (e) {
-      return 'error getting user email';
-    }
-  }
-
-  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+  @override
+  Future<Either<String, UserEntity>> getUserDetails({
+    required String uid,
+  }) async {
     try {
       final result = await _authRemoteDataSource.getUserDetails(uid: uid);
       return result.fold(

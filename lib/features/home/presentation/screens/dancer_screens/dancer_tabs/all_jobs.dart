@@ -49,14 +49,12 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
 
   // Method to apply for job
   void applyForJob({
-    required String jobId,
-    required String clientId,
-    required String jobDescr,
+    required JobEntity jobEntity,
   }) {
     Navigator.pushNamed(
       context,
       '/applyForJob',
-      arguments: {'jobId': jobId, 'clientId': clientId, 'jobDescr': jobDescr},
+      arguments: jobEntity,
     );
   }
 
@@ -120,9 +118,7 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
           // Display it in UI
           return LegworkJobContainer(
             onJobTap: () => applyForJob(
-              clientId: job.clientId,
-              jobId: job.jobId,
-              jobDescr: job.jobDescr,
+              jobEntity: job,
             ),
             jobTitle: job.jobTitle,
             pay: job.pay,

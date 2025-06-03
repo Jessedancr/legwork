@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class LegWorkSnackBarContent extends StatelessWidget {
   final BuildContext context;
@@ -36,30 +37,29 @@ class LegWorkSnackBarContent extends StatelessWidget {
             ),
             child: Row(
               children: [
-                SizedBox(width: screenWidth * 0.13),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title text
-                      Text(
-                        title,
-                        style: GoogleFonts.robotoSlab(
-                          fontSize: 20,
-                        ),
+                SizedBox(width: screenWidth * 0.15),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title text
+                    Text(
+                      title,
+                      style: context.text2Xl?.copyWith(
+                        color: context.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
 
-                      // Subtitle text
-                      Text(
-                        subTitle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.robotoCondensed(
-                          fontSize: 16,
-                        ),
+                    // Subtitle text
+                    Text(
+                      subTitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textXl?.copyWith(
+                        color: context.colorScheme.onPrimary,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -68,12 +68,12 @@ class LegWorkSnackBarContent extends StatelessWidget {
 
         // Bubble
         Positioned(
-          bottom: screenHeight * 0.02,
-          left: screenWidth * 0.02,
+          top: screenHeight * 0.02,
+          left: screenWidth * 0.03,
           child: Image.asset(
             'images/icons/bubble.png',
-            height: screenHeight * 0.06,
-            width: screenWidth * 0.09,
+            height: screenHeight * 0.05,
+            width: screenWidth * 0.08,
             color: imageColor,
             fit: BoxFit.contain,
           ),

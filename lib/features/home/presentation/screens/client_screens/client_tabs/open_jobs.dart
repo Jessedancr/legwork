@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_job_container.dart';
@@ -70,18 +71,15 @@ class _OpenJobsState extends State<OpenJobs>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Lottie.asset(
-                  'assets/lottie/loading.json',
-                  width: 100,
-                  height: 100,
+                  'assets/lottie/loadingList.json',
+                  width: 200,
+                  height: 200,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'Fetching jobs please wait...',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
+                  style: context.text2Xl?.copyWith(fontWeight: FontWeight.bold),
                 )
               ],
             ),
@@ -116,11 +114,10 @@ class _OpenJobsState extends State<OpenJobs>
 
   // BUILD JOBS LIST
   Widget buildJobList(List<JobEntity> jobs) {
-    final colorScheme = Theme.of(context).colorScheme;
     return LiquidPullToRefresh(
       onRefresh: _refresh,
-      color: colorScheme.primary,
-      backgroundColor: colorScheme.surface,
+      color: context.colorScheme.primary,
+      backgroundColor: context.colorScheme.surface,
       animSpeedFactor: 3.0,
       showChildOpacityTransition: false,
       child: ListView.builder(

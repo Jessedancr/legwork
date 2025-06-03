@@ -196,17 +196,21 @@ class MyAuthProvider extends ChangeNotifier {
     return result;
   }
 
-  /// GET USER EMAIL
-  String getUserEmail() {
-    final result = authRepo.getUserEmail();
-    return result;
-  }
-
-  Future<Either<String, dynamic>> getUserDetails({required String uid}) async {
+  Future<Either<String, UserEntity>> getUserDetails({
+    required String uid,
+  }) async {
     try {
-      final result = authRepo.getUserDetails(uid: uid);
+      final result = await authRepo.getUserDetails(uid: uid);
 
-      return result;
+      return result.fold(
+          // handle fail
+          (fail) => Left(fail),
+
+          // handle success
+          (userEntity) {
+        _currentUser = userEntity;
+        return Right(userEntity);
+      });
     } catch (e) {
       debugPrint('Provider Error: error with getUserDetails: ${e.toString()}');
       return Left(e.toString());

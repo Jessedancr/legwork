@@ -3,30 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:legwork/features/home/data/repo_impl/job_repo_impl.dart';
 import 'package:legwork/features/home/domain/business_logic/post_job_business_logic.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/domain/repos/job_repo.dart';
 
 class JobProvider extends ChangeNotifier {
   // Instance of job repo
-  final JobRepoImpl jobRepo;
+  final JobRepo jobRepo = JobRepoImpl();
+
+  PostJobBusinessLogic postJobBusinessLogic = PostJobBusinessLogic();
 
   bool isLoading = false;
   Map<String, List<JobEntity>> allJobs = {}; // Cached jobs
-
-  // Constructor
-  JobProvider({required this.jobRepo});
 
   // POST JOB METHOD
   Future<Either<String, JobEntity>> postJob({
     required JobEntity job,
   }) async {
-    PostJobBusinessLogic postJobBusinessLogic =
-        PostJobBusinessLogic(jobRepo: jobRepo);
-
     isLoading = true;
     notifyListeners();
 
     try {
-      final result = await postJobBusinessLogic.postJobExecute(
-          job: JobEntity(
+      final jobEntity = JobEntity(
         jobTitle: job.jobTitle,
         jobLocation: job.jobLocation,
         prefDanceStyles: job.prefDanceStyles,
@@ -39,7 +35,8 @@ class JobProvider extends ChangeNotifier {
         clientId: job.clientId,
         status: job.status,
         createdAt: job.createdAt,
-      ));
+      );
+      final result = await postJobBusinessLogic.postJobExecute(job: jobEntity);
 
       isLoading = false;
       notifyListeners();
@@ -47,7 +44,7 @@ class JobProvider extends ChangeNotifier {
       return result.fold(
         (fail) => Left(fail),
         (jobEntity) {
-          clearCachedJobs(); // Clear cached jobs when a new job is posted
+          allJobs.clear();
           return Right(jobEntity);
         },
       );
@@ -57,12 +54,6 @@ class JobProvider extends ChangeNotifier {
       debugPrint('Error with job provider: $e');
       return Left(e.toString());
     }
-  }
-
-  // Method to clear cached jobs
-  void clearCachedJobs() {
-    allJobs.clear();
-    notifyListeners();
   }
 
   // FETCH JOB METHOD

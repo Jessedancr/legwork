@@ -1,13 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/features/home/data/repo_impl/job_repo_impl.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/domain/repos/job_repo.dart';
 
 class PostJobBusinessLogic {
-  final JobRepo jobRepo;
-
-  // constructor
-  PostJobBusinessLogic({required this.jobRepo});
+  final JobRepo jobRepo = JobRepoImpl();
 
   Future<Either<String, JobEntity>> postJobExecute({
     required JobEntity job,
@@ -15,8 +13,7 @@ class PostJobBusinessLogic {
     // TODO: Add some validations for posted jobs
 
     try {
-      final result = await jobRepo.createJob(
-          job: JobEntity(
+      final jobModel = JobEntity(
         jobTitle: job.jobTitle,
         jobLocation: job.jobLocation,
         prefDanceStyles: job.prefDanceStyles,
@@ -25,11 +22,12 @@ class PostJobBusinessLogic {
         jobDuration: job.jobDuration,
         jobDescr: job.jobDescr,
         jobType: job.jobType,
-        jobId: job.jobId,
-        clientId: job.clientId,
         status: job.status,
+        clientId: job.clientId,
+        jobId: job.jobId,
         createdAt: job.createdAt,
-      ));
+      );
+      final result = await jobRepo.createJob(job: jobModel);
 
       return result.fold(
         // Handle fail

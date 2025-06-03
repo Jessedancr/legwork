@@ -17,12 +17,16 @@ extension LegworkTextStyles on BuildContext {
   TextStyle? get headingMd => Theme.of(this).textTheme.headlineLarge;
   TextStyle? get headingSm => Theme.of(this).textTheme.headlineMedium;
   TextStyle? get headingXs => Theme.of(this).textTheme.headlineSmall;
+  TextStyle? get heading2Xs => Theme.of(this).textTheme.titleMedium;
+
   TextStyle? get text2Xl => Theme.of(this).textTheme.bodyLarge;
   TextStyle? get textXl => Theme.of(this).textTheme.bodyMedium;
   TextStyle? get textLg => Theme.of(this).textTheme.bodySmall;
   TextStyle? get textMd => Theme.of(this).textTheme.labelLarge;
   TextStyle? get textSm => Theme.of(this).textTheme.labelMedium;
   TextStyle? get textXs => Theme.of(this).textTheme.labelSmall;
+  TextStyle? get text2Xs =>
+      Theme.of(this).textTheme.labelSmall?.copyWith(fontSize: 8);
 }
 
 // Extension to get the color scheme of the app
@@ -31,6 +35,9 @@ extension LegworkColorScheme on BuildContext {
 }
 
 // Extension to get the current theme of the app
-extension LegwrokTheme on BuildContext {
+extension LegworkTheme on BuildContext {
   ThemeData get theme => Theme.of(this);
 }
+
+const defaultDancerProfileImage =
+    'images/depictions/dancer_dummy_default_profile_picture.jpg';
