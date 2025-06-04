@@ -2,9 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/chat/data/repo_impl/chat_repo_impl.dart';
-import 'package:legwork/features/chat/domain/business_logic/get_conversations_business_logic.dart';
-import 'package:legwork/features/chat/domain/business_logic/get_messages_business_logic.dart';
-import 'package:legwork/features/chat/domain/business_logic/send_message_business_logic.dart';
 import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
@@ -14,10 +11,6 @@ class ChatProvider extends ChangeNotifier {
   // INSTANCE OF CHAT REPO IMPL
   final chatRepo = ChatRepoImpl();
 
-  // BUSINESS LOGIC INSTANCES
-  late final GetConversationsBusinessLogic getConversationsBusinessLogic;
-  late final GetMessagesBusinessLogic getMessagesBusinessLogic;
-  late final SendMessageBusinessLogic sendMessageBusinessLogic;
   final notificationRepo = NotificationRepoImpl();
   final notificationRemoteDataSource = NotificationRemoteDataSourceImpl();
   final _authRemoteDataSource = AuthRemoteDataSourceImpl();
@@ -29,12 +22,6 @@ class ChatProvider extends ChangeNotifier {
   Map<String, List<MessageEntity>> messages = {};
 
   // CONSTRUCTOR
-  ChatProvider() {
-    getConversationsBusinessLogic =
-        GetConversationsBusinessLogic(chatRepo: chatRepo);
-    getMessagesBusinessLogic = GetMessagesBusinessLogic(chatRepo: chatRepo);
-    sendMessageBusinessLogic = SendMessageBusinessLogic(chatRepo: chatRepo);
-  }
 
   // LOAD CONVO FOR USER
   Future<void> loadConversation({
@@ -42,9 +29,8 @@ class ChatProvider extends ChangeNotifier {
   }) async {
     isLoading = true;
     error = null;
-    // notifyListeners();
 
-    final result = await getConversationsBusinessLogic.execute(userId: userId);
+    final result = await chatRepo.getConversations(userId: userId);
 
     result.fold(
       // handle fail
@@ -73,8 +59,7 @@ class ChatProvider extends ChangeNotifier {
     error = null;
     notifyListeners();
 
-    final result =
-        await getMessagesBusinessLogic.execute(conversationId: conversationId);
+    final result = await chatRepo.getMessages(conversationId: conversationId);
 
     result.fold(
       // Handle fail
@@ -97,41 +82,38 @@ class ChatProvider extends ChangeNotifier {
 
   // SEND A MESSAGE
   Future<Either<String, MessageEntity>> sendMessage({
-    required String conversationId,
-    required String senderId,
-    required String receiverId,
-    required String content,
+    required MessageEntity message,
   }) async {
     isLoading = true;
     error = null;
     notifyListeners();
 
     debugPrint(
-        'ChatProvider: Sending message to conversation: $conversationId');
+      'ChatProvider: Sending message to conversation: ${message.convoId}',
+    );
 
     try {
       // MESSGAE ENTITY
       final newMessage = MessageEntity(
-        id: conversationId,
-        senderId: senderId,
-        receiverId: receiverId,
-        content: content,
+        messageId: message.messageId,
+        convoId: message.convoId,
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+        content: message.content,
         timeStamp: DateTime.now(),
         isRead: false,
       );
 
-      final result =
-          await sendMessageBusinessLogic.execute(message: newMessage);
+      final result = await chatRepo.sendMessage(message: newMessage);
 
-      // SEND NOTIFICATION TO RECEIVER
-      // final receiverDeviceToken = await notificationRepo.getDeviceToken();
-      final receiverDeviceToken =
-          await _authRemoteDataSource.getDeviceToken(userId: receiverId);
+      final receiverDeviceToken = await _authRemoteDataSource.getDeviceToken(
+        userId: message.receiverId,
+      );
 
       await notificationRepo.sendNotification(
         deviceToken: receiverDeviceToken,
         title: 'New message',
-        body: 'New message from $senderId',
+        body: 'New message from ${message.senderId}',
       );
 
       isLoading = false;
@@ -175,14 +157,17 @@ class ChatProvider extends ChangeNotifier {
 
   // CREATE A NEW CONVERSATION
   Future<Either<String, ConversationEntity>> createConversation({
-    required List<String> participants,
+    // required List<String> participants,
+    required ConversationEntity convoEntity,
   }) async {
     isLoading = true;
     error = null;
     notifyListeners();
 
-    final result =
-        await chatRepo.createConversation(participants: participants);
+    final result = await chatRepo.createConversation(
+      // participants: participants,
+      convoEntity: convoEntity,
+    );
 
     isLoading = false;
     notifyListeners();

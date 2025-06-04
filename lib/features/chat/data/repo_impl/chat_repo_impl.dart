@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:legwork/features/chat/data/data_sources/chat_remote_data_source.dart';
+import 'package:legwork/features/chat/data/models/conversation_model.dart';
 import 'package:legwork/features/chat/data/models/message_model.dart';
 import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
@@ -53,7 +54,8 @@ class ChatRepoImpl implements ChatRepo {
     try {
       // Convert entity to model
       final messageModel = MessageModel(
-        id: message.id,
+        messageId: message.messageId,
+        convoId: message.convoId,
         senderId: message.senderId,
         receiverId: message.receiverId,
         content: message.content,
@@ -109,11 +111,20 @@ class ChatRepoImpl implements ChatRepo {
 
   @override
   Future<Either<String, ConversationEntity>> createConversation({
-    required List<String> participants,
+    required ConversationEntity convoEntity,
   }) async {
     try {
-      final result =
-          await remoteDataSource.createConversation(participants: participants);
+      final convoModel = ConversationModel(
+        convoId: convoEntity.convoId,
+        participants: convoEntity.participants,
+        lastMessage: convoEntity.lastMessage,
+        lastMessageTime: convoEntity.lastMessageTime,
+        lastMessageSenderId: convoEntity.lastMessageSenderId,
+        hasUnreadMessages: convoEntity.hasUnreadMessages,
+      );
+      final result = await remoteDataSource.createConversation(
+        conversationModel: convoModel,
+      );
       return result.fold(
         // handle fail
         (fail) => Left(fail),

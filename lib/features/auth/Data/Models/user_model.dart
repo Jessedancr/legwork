@@ -32,6 +32,8 @@ class DancerModel extends DancerEntity {
 
   /// Convert firebase doc to user profile so we can use in the app
   factory DancerModel.fromDocument(DocumentSnapshot doc) {
+    // final data = doc.data() as Map<String, dynamic>;
+
     return DancerModel(
       firstName: doc['firstName'] ?? '',
       lastName: doc['lastName'] ?? '',

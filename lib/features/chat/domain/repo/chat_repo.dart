@@ -14,8 +14,9 @@ abstract class ChatRepo {
   });
 
   // SEND A MESSAGE
-  Future<Either<String, MessageEntity>> sendMessage(
-      {required MessageEntity message});
+  Future<Either<String, MessageEntity>> sendMessage({
+    required MessageEntity message,
+  });
 
   // MARK MESSAGE AS READ
   Future<Either<String, void>> markMessageAsRead({required String messageId});
@@ -28,6 +29,7 @@ abstract class ChatRepo {
 
   // CREATE A NEW CONVO
   Future<Either<String, ConversationEntity>> createConversation({
-    required List<String> participants,
+    // required List<String> participants,
+    required ConversationEntity convoEntity,
   });
 }

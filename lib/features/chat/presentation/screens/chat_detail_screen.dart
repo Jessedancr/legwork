@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/widgets/chat_app_bar.dart';
 import 'package:legwork/features/chat/presentation/widgets/date_header.dart';
@@ -123,12 +124,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     final currentUserId = _authProvider.getUserId();
 
-    final result = await _chatProvider.sendMessage(
-      conversationId: widget.conversationId,
+    MessageEntity message = MessageEntity(
+      messageId: widget.conversationId,
+      convoId: widget.conversationId,
       senderId: currentUserId,
       receiverId: widget.otherParticipantId,
       content: content,
+      timeStamp: DateTime.now(),
+      isRead: false,
     );
+
+    final result = await _chatProvider.sendMessage(message: message);
 
     result.fold(
       (fail) {

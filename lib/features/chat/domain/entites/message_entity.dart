@@ -1,5 +1,6 @@
 class MessageEntity {
-  final String id;
+  final String messageId;
+  final String convoId;
   final String senderId;
   final String receiverId;
   final String content;
@@ -10,7 +11,8 @@ class MessageEntity {
 
   // CONSTRUCTOR
   MessageEntity({
-    required this.id,
+    required this.messageId,
+    required this.convoId,
     required this.senderId,
     required this.receiverId,
     required this.content,

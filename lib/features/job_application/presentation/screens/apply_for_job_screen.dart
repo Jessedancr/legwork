@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
@@ -6,6 +7,8 @@ import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicato
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
@@ -50,14 +53,23 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
     final clientId = widget.jobEntity.clientId;
 
     try {
+      ConversationEntity convoEntity = ConversationEntity(
+        convoId: 'convoId',
+        participants: [dancerId, clientId],
+        lastMessageTime: DateTime.now(),
+        lastMessage: 'lastMessage',
+        lastMessageSenderId: 'lastMessageSenderId',
+        hasUnreadMessages: true,
+      );
+
       setState(() {
         _isChatLoading = true;
       });
 
       // Create a conversation ID
       final result = await context.read<ChatProvider>().createConversation(
-        participants: [dancerId, clientId],
-      );
+            convoEntity: convoEntity,
+          );
 
       result.fold(
           // handle fail
@@ -75,13 +87,21 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
 
           // handle success
           (conversation) async {
-        // Send an initial message
-        await context.read<ChatProvider>().sendMessage(
-              conversationId: conversation.id,
-              senderId: dancerId,
-              receiverId: clientId,
-              content: "Hi, I'm interested in discussing this job opportunity.",
-            );
+        // MessageEntity message = MessageEntity(
+        //   messageId: conversation.convoId,
+        //   convoId: conversation.convoId,
+        //   senderId: dancerId,
+        //   receiverId: clientId,
+        //   content: "Hi, I'm interested in discussing this job opportunity.",
+        //   timeStamp: DateTime.now(),
+        //   isRead: false,
+        // );
+        // // Send an initial message
+        // await context.read<ChatProvider>().sendMessage(
+        //       conversationId: conversation.convoId,
+        //       message: message,
+        //     );
+        // debugPrint('Message ID from screen: ${conversation.convoId}');
 
         // Reset loading state
         setState(() {
@@ -94,7 +114,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           context,
           '/chatDetailScreen',
           arguments: {
-            'conversationId': conversation.id,
+            'conversationId': conversation.convoId,
             'otherParticipantId': clientId,
           },
         );

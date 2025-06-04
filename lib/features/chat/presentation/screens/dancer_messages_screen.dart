@@ -114,7 +114,7 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
                     onTap: () {
                       Navigator.pushNamed(context, '/chatDetailScreen',
                           arguments: {
-                            'conversationId': conversation.id,
+                            'conversationId': conversation.convoId,
                             'otherParticipantId':
                                 conversation.participants.firstWhere(
                               (id) => id != userId,
