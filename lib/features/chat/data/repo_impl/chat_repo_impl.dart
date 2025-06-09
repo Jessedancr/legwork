@@ -112,13 +112,6 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Stream<List<ConversationEntity>> conversationStream({
-    required String userId,
-  }) {
-    return remoteDataSource.conversationsStream(userId: userId);
-  }
-
-  @override
   Future<Either<String, ConversationEntity>> createConversation({
     required ConversationEntity convoEntity,
   }) async {

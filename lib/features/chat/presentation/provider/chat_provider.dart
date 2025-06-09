@@ -75,7 +75,6 @@ class ChatProvider extends ChangeNotifier {
         messages[conversationId] = messagesList;
         isLoading = false;
         notifyListeners();
-        debugPrint('Loaded messages for conversation: $conversationId');
       },
     );
   }
@@ -140,18 +139,10 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  // START LISTENING TO CONVERSATION STREAM
-  Stream<List<ConversationEntity>> listenToConversations({
-    required String userId,
-  }) {
-    return _chatRepo.conversationStream(userId: userId);
-  }
-
   // START LISTENING TO MESSAGE STREAM
-  Stream<List<MessageEntity>> listenToMessages({
+  Stream<List<MessageEntity>> messageStrean({
     required String conversationId,
   }) {
-    debugPrint('Listening to messages for conversation: $conversationId');
     return _chatRepo.messageStream(conversationId: conversationId);
   }
 

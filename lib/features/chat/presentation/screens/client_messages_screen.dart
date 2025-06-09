@@ -130,20 +130,32 @@ class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
                 final userId =
                     Provider.of<MyAuthProvider>(context, listen: false)
                         .getUserId();
+                void handleConvoCardTap() async {
+                  // Get other participant ID
+                  final otherParticipantId =
+                      conversation.participants.firstWhere(
+                    (id) => id != userId,
+                  );
+                  // Navigate to chat detail screen first
+                  if (!mounted) return;
+                  await Navigator.pushNamed(
+                    context,
+                    '/chatDetailScreen',
+                    arguments: {
+                      'conversationId': conversation.convoId,
+                      'otherParticipantId': otherParticipantId,
+                    },
+                  );
+                  // After returning from chat detail screen, refresh conversations
+                  if (mounted) {
+                    await _refreshConversations();
+                  }
+                }
 
                 return ConversationCard(
                   conversation: conversation,
                   currentUserId: userId,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/chatDetailScreen',
-                        arguments: {
-                          'conversationId': conversation.convoId,
-                          'otherParticipantId':
-                              conversation.participants.firstWhere(
-                            (id) => id != userId,
-                          )
-                        });
-                  },
+                  onTap: handleConvoCardTap,
                 );
               },
             ),

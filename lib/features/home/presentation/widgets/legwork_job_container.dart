@@ -241,7 +241,7 @@ class LegworkJobContainer extends StatelessWidget {
                       onPressed: onJobTap,
                       icon: SvgPicture.asset(
                         'assets/svg/briefcase.svg',
-                        color: context.colorScheme.onSurface,
+                        color: context.colorScheme.primary,
                         height: 20,
                       ),
                       buttonText: 'View Details',

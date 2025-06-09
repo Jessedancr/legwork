@@ -34,14 +34,8 @@ abstract class ChatRemoteDataSource {
     required String conversationId,
   });
 
-  // CONVERSATIONS STREAM
-  Stream<List<ConversationModel>> conversationsStream({
-    required String userId,
-  });
-
   // CREATE CONVERSATION
   Future<Either<String, ConversationModel>> createConversation({
-    // required List<String> participants,
     required ConversationModel conversationModel,
   });
 }
@@ -214,32 +208,10 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           .map((snapshot) {
         final messages =
             snapshot.docs.map((doc) => MessageModel.fromDocument(doc)).toList();
-        debugPrint('Received ${messages.length} messages');
         return messages;
       });
     } catch (e) {
       debugPrint('Error with message stream: ${e.toString()}');
-      return Stream.value([]);
-    }
-  }
-
-  @override
-  Stream<List<ConversationModel>> conversationsStream({
-    required String userId,
-  }) {
-    try {
-      return db
-          .collection('conversations')
-          .where('participants', arrayContains: userId)
-          .orderBy('lastMessageTime', descending: true)
-          .snapshots()
-          .map((snapshot) {
-        return snapshot.docs
-            .map((doc) => ConversationModel.fromDocument(doc))
-            .toList();
-      });
-    } catch (e) {
-      debugPrint('Error with conversation stream');
       return Stream.value([]);
     }
   }

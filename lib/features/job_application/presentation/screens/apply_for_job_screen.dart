@@ -55,7 +55,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
         convoId: 'convoId',
         participants: [dancerId, clientId],
         lastMessageTime: DateTime.now(),
-        lastMessage: 'lastMessage',
+        lastMessage: '',
         lastMessageSenderId: 'lastMessageSenderId',
         hasUnreadMessages: true,
       );
@@ -218,12 +218,13 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
         body: Consumer<JobApplicationProvider>(
           builder: (context, provider, child) {
             final clientName =
-                provider.clientDetails?['firstName'] ?? 'Client name';
+                provider.clientDetails?['username'] ?? 'Client name';
             final email = provider.clientDetails?['email'] ?? 'client email';
             final phoneNum =
                 provider.clientDetails?['phoneNumber'] ?? '123456789';
             final organisationName =
-                provider.clientDetails?['organisationName'] ?? 'clientName';
+                provider.clientDetails?['organisationName'] ??
+                    'organisation name';
 
             final clientProfilePicture =
                 provider.clientDetails?['profilePicture'];
@@ -311,29 +312,31 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                   children: [
                                     const SizedBox(height: 8),
                                     CircleAvatar(
-                                        radius: 30,
-                                        child: ClipOval(
-                                          child: clientProfilePicture != null &&
-                                                  clientProfilePicture!
-                                                      .isNotEmpty
-                                              ? Image.network(
-                                                  clientProfilePicture!,
-                                                  width: 60,
-                                                  height: 60,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Image.asset(
-                                                  'images/depictions/img_depc1.jpg',
-                                                  width: 60,
-                                                  height: 60,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                        )),
+                                      radius: 30,
+                                      child: ClipOval(
+                                        child: clientProfilePicture != null &&
+                                                clientProfilePicture!.isNotEmpty
+                                            ? Image.network(
+                                                clientProfilePicture!,
+                                                width: 60,
+                                                height: 60,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.asset(
+                                                'images/depictions/img_depc1.jpg',
+                                                width: 60,
+                                                height: 60,
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
+                                    ),
                                     const SizedBox(height: 8),
 
                                     // * Client name
                                     Text(
-                                      organisationName ?? clientName,
+                                      organisationName == ''
+                                          ? clientName
+                                          : organisationName,
                                       style: context.textLg?.copyWith(
                                         color: context.colorScheme.onSurface,
                                         fontWeight: FontWeight.w500,
@@ -414,9 +417,9 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                   color: context.colorScheme.primary,
                                 ),
                                 isLoading: _isChatLoading,
-                                buttonText: organisationName != null
-                                    ? 'Message $organisationName'
-                                    : 'Message $clientName',
+                                buttonText: organisationName == ''
+                                    ? 'Message $clientName'
+                                    : 'Message $organisationName',
                               ),
                               const SizedBox(height: 16),
 

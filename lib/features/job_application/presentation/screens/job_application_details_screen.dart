@@ -411,6 +411,7 @@ class _JobApplicationDetailScreenState
                               onPressed: chatWithDancer,
                               icon: SvgPicture.asset(
                                 'assets/svg/chat_icon.svg',
+                                color: context.colorScheme.primary,
                               ),
                               buttonText: 'Message dancer',
                             ),

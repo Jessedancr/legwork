@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
+import 'package:lottie/lottie.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final ThemeData theme;
   final bool _isLoading;
-  final ColorScheme colorScheme;
   final String _otherUsername;
   final ChatProvider _chatProvider;
   final ChatDetailScreen widget;
@@ -14,9 +14,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   // CONSTRUCTOR
   const ChatAppBar({
     super.key,
-    required this.theme,
     required bool isLoading,
-    required this.colorScheme,
     required String otherUsername,
     required ChatProvider chatProvider,
     required this.widget,
@@ -27,28 +25,29 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      elevation: 1,
-      backgroundColor: theme.colorScheme.surface,
-      foregroundColor: theme.primaryColor,
+      scrolledUnderElevation: 0.0,
+      backgroundColor: context.colorScheme.surface,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios, size: 20),
         onPressed: () => Navigator.pop(context),
       ),
       title: _isLoading
-          ? const Text('Loading...')
+          ? Lottie.asset(
+              'assets/lottie/loading.json',
+              height: 30,
+              fit: BoxFit.cover,
+            )
           : Row(
               children: [
-                // * Circle avatar, should ideally be the other user's profile picture
-                // Todo: Turn this to a reusable widget
                 CircleAvatar(
                   radius: 18,
-                  backgroundColor: colorScheme.primary.withOpacity(0.2),
+                  backgroundColor: context.colorScheme.secondary,
                   child: Text(
                     _otherUsername.isNotEmpty
                         ? _otherUsername[0].toUpperCase()
                         : '?',
                     style: TextStyle(
-                      color: theme.primaryColor,
+                      color: context.colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -61,19 +60,19 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                   children: [
                     Text(
                       _otherUsername,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: context.textMd?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: context.colorScheme.onSurface,
                       ),
                     ),
                     StreamBuilder<List<MessageEntity>>(
-                      stream: _chatProvider.listenToMessages(
+                      stream: _chatProvider.messageStrean(
                         conversationId: widget.conversationId,
                       ),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) return const SizedBox();
 
-                        final online = snapshot.data?.any(
+                        final isOnline = snapshot.data?.any(
                               (msg) =>
                                   msg.senderId == widget.otherParticipantId &&
                                   DateTime.now()
@@ -84,10 +83,9 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                             false;
 
                         return Text(
-                          online ? 'Online' : 'Offline',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: online ? Colors.green : Colors.grey,
+                          isOnline ? 'Online' : 'Offline',
+                          style: context.textXs?.copyWith(
+                            color: isOnline ? Colors.teal : Colors.grey,
                           ),
                         );
                       },

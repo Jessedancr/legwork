@@ -131,33 +131,34 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
                   final userId =
                       Provider.of<MyAuthProvider>(context, listen: false)
                           .getUserId();
+                  void handleConvoCardTap() async {
+                    // Get other participant ID
+                    final otherParticipantId =
+                        conversation.participants.firstWhere(
+                      (id) => id != userId,
+                    );
+
+                    // Navigate to chat detail screen first
+                    if (!mounted) return;
+                    await Navigator.pushNamed(
+                      context,
+                      '/chatDetailScreen',
+                      arguments: {
+                        'conversationId': conversation.convoId,
+                        'otherParticipantId': otherParticipantId,
+                      },
+                    );
+
+                    // After returning from chat detail screen, refresh conversations
+                    if (mounted) {
+                      await _refreshConversations();
+                    }
+                  }
 
                   return ConversationCard(
                     conversation: conversation,
                     currentUserId: userId,
-                    onTap: () {
-                      // navigate to chat detail screen
-                      Navigator.pushNamed(
-                        context,
-                        '/chatDetailScreen',
-                        arguments: {
-                          'conversationId': conversation.convoId,
-                          'otherParticipantId':
-                              conversation.participants.firstWhere(
-                            (id) => id != userId,
-                          )
-                        },
-                      );
-
-                      // Attempt to mark messages as read
-                      final messages =
-                          chatProvider.messages[conversation.convoId];
-                      if (messages != null && messages.isNotEmpty) {
-                        final unreadMsg =
-                            messages.firstWhere((msg) => msg.isRead == false);
-                        chatProvider.markMessageAsRead(message: unreadMsg);
-                      }
-                    },
+                    onTap: handleConvoCardTap,
                   );
                 },
               ),

@@ -1,33 +1,43 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/widgets/message_bubble.dart';
+import 'package:lottie/lottie.dart';
+
 import 'package:provider/provider.dart';
 
 class MessageList extends StatelessWidget {
   final String conversationId;
   final String otherParticipantId;
+  final ScrollController scrollController;
 
   const MessageList({
     super.key,
     required this.conversationId,
     required this.otherParticipantId,
+    required this.scrollController,
   });
 
   @override
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
 
     return StreamBuilder<List<MessageEntity>>(
-      stream: chatProvider.listenToMessages(conversationId: conversationId),
+      stream: chatProvider.messageStrean(conversationId: conversationId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
             !snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(
+            child: Lottie.asset(
+              'assets/lottie/loading.json',
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          );
         }
 
         if (snapshot.hasError) {
@@ -35,13 +45,16 @@ class MessageList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline,
-                    size: 48, color: theme.colorScheme.error),
+                Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: context.colorScheme.error,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'Error loading messages',
                   style: TextStyle(
-                    color: theme.colorScheme.error,
+                    color: context.colorScheme.error,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -58,21 +71,24 @@ class MessageList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.chat_bubble_outline,
-                    size: 64, color: colorScheme.inverseSurface),
+                SvgPicture.asset(
+                  'assets/svg/chat_icon.svg',
+                  height: 70,
+                  color: context.colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   'No messages yet',
-                  style: textTheme.headlineMedium?.copyWith(
-                    color: colorScheme.onSurface,
+                  style: context.headingXs?.copyWith(
+                    color: context.colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Send a message to start the conversation',
-                  style: textTheme.labelLarge
-                      ?.copyWith(color: colorScheme.onSurface),
+                  style: context.textXs
+                      ?.copyWith(color: context.colorScheme.onSurface),
                 ),
               ],
             ),
@@ -80,13 +96,14 @@ class MessageList extends StatelessWidget {
         }
 
         return ListView.builder(
+          controller: scrollController,
           reverse: true,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           itemCount: messages.length,
           itemBuilder: (context, index) {
+            final currentUserId = authProvider.getUserId();
             final message = messages[index];
-            final isMe =
-                message.senderId == FirebaseAuth.instance.currentUser?.uid;
+            final isMe = message.senderId == currentUserId;
             final showTimestamp = index == 0 ||
                 messages[index]
                         .timeStamp
@@ -101,8 +118,10 @@ class MessageList extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       _formatTime(message.timeStamp),
-                      style: textTheme.labelSmall
-                          ?.copyWith(color: colorScheme.onSurfaceVariant),
+                      style: context.textSm?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 MessageBubble(message: message, isMe: isMe),

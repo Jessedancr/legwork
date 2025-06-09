@@ -26,8 +26,6 @@ abstract class ChatRepo {
   // STREAM FOR REAL-TIME MESSAGES IN A CONVO
   Stream<List<MessageEntity>> messageStream({required String conversationId});
 
-  // STREAM FOR REAL TIME CONVO LIST
-  Stream<List<ConversationEntity>> conversationStream({required String userId});
 
   // CREATE A NEW CONVO
   Future<Either<String, ConversationEntity>> createConversation({

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
@@ -24,15 +24,11 @@ class ChatDetailScreen extends StatefulWidget {
   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
 }
 
-/**
- * STATE CLASS
- */
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late ChatProvider _chatProvider;
   late MyAuthProvider _authProvider;
-  final _authRepo = AuthRepoImpl();
   bool _isTyping = false;
   bool _showScrollButton = false;
   String _otherUsername = '';
@@ -50,21 +46,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     // Load messages when the screen has fully initialised
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final currentUserId = _authProvider.getUserId();
-      _chatProvider.loadMessages(conversationId: widget.conversationId);
+
+      // Load messages and mark them as read
+      await _chatProvider.loadMessages(conversationId: widget.conversationId);
+      final messages = _chatProvider.messages[widget.conversationId];
+      if (messages != null && messages.isNotEmpty) {
+        for (final message in messages) {
+          if (!message.isRead && message.senderId != currentUserId) {
+            await _chatProvider.markMessageAsRead(message: message);
+          }
+        }
+      }
+
       if (currentUserId.isNotEmpty) {
         _chatProvider.loadConversation(userId: currentUserId);
       }
 
-      // Fetch the other participant's username
       final result =
-          await _authRepo.getUsername(userId: widget.otherParticipantId);
+          await _authProvider.getUserDetails(uid: widget.otherParticipantId);
       result.fold(
         (error) => setState(() {
           _otherUsername = "User";
           _isLoading = false;
         }),
-        (username) => setState(() {
-          _otherUsername = username;
+        (userEntity) => setState(() {
+          _otherUsername = userEntity.username;
           _isLoading = false;
         }),
       );
@@ -122,7 +128,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     final currentUserId = _authProvider.getUserId();
 
     MessageEntity message = MessageEntity(
-      messageId: widget.conversationId,
+      messageId: '',
       convoId: widget.conversationId,
       senderId: currentUserId,
       receiverId: widget.otherParticipantId,
@@ -138,11 +144,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         LegworkSnackbar(
           title: 'Oopes',
           subTitle: fail,
-          imageColor: Theme.of(context).colorScheme.onError,
-          contentColor: Theme.of(context).colorScheme.error,
+          imageColor: context.colorScheme.onError,
+          contentColor: context.colorScheme.error,
         ).show(context);
       },
-      (message) {
+      (_) {
         _scrollToBottom();
       },
     );
@@ -151,17 +157,25 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   /// ** BUILD METHOD
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: context.colorScheme.surface,
+      floatingActionButton: _showScrollButton
+          ? Align(
+              alignment: const Alignment(1, 0.7),
+              child: FloatingActionButton(
+                onPressed: _scrollToBottom,
+                backgroundColor: context.colorScheme.onSurface.withOpacity(0.8),
+                child: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: context.colorScheme.onPrimary,
+                ),
+              ),
+            )
+          : null,
 
       // * Appbar
       appBar: ChatAppBar(
-        theme: theme,
         isLoading: _isLoading,
-        colorScheme: colorScheme,
         otherUsername: _otherUsername,
         chatProvider: _chatProvider,
         widget: widget,
@@ -171,11 +185,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       body: Column(
         children: [
           // Date header
-          DateHeader(theme: theme),
+          const DateHeader(),
 
           // Messages list
           Expanded(
             child: MessageList(
+              scrollController: _scrollController,
               conversationId: widget.conversationId,
               otherParticipantId: widget.otherParticipantId,
             ),
