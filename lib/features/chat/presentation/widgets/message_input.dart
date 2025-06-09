@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class MessageInput extends StatelessWidget {
   final TextEditingController messageController;
@@ -14,41 +15,44 @@ class MessageInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
+        color: context.colorScheme.surface,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           // Text input
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainer,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: colorScheme.outline,
+            child: TextField(
+              controller: messageController,
+              decoration: InputDecoration(
+                hintText: 'Type a message',
+                hintStyle:
+                    TextStyle(color: context.colorScheme.onSurfaceVariant),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
                 ),
-              ),
-              child: TextField(
-                controller: messageController,
-                decoration: InputDecoration(
-                  hintText: 'Type a message',
-                  hintStyle: TextStyle(color: Colors.grey[400]),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
+                border: InputBorder.none,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: context.colorScheme.onSurfaceVariant,
                   ),
-                  border: InputBorder.none,
                 ),
-                minLines: 1,
-                maxLines: 5,
-                textCapitalization: TextCapitalization.sentences,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide(
+                    color: context.colorScheme.primary,
+                    width: 2.0,
+                  ),
+                ),
               ),
+              minLines: 1,
+              maxLines: 5,
+              textCapitalization: TextCapitalization.sentences,
             ),
           ),
           const SizedBox(width: 8),
@@ -56,53 +60,19 @@ class MessageInput extends StatelessWidget {
           // Send button
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: 45,
-            height: 45,
             decoration: BoxDecoration(
+              shape: BoxShape.circle,
               color: isTyping
-                  ? colorScheme.primary
-                  : colorScheme.secondary.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(30),
+                  ? context.colorScheme.primary
+                  : context.colorScheme.secondary.withOpacity(0.5),
             ),
             child: IconButton(
               icon: const Icon(Icons.send),
-              color: isTyping ? colorScheme.onPrimary : colorScheme.primary,
+              color: isTyping
+                  ? context.colorScheme.onPrimary
+                  : context.colorScheme.onSecondary,
               onPressed: isTyping ? onSendMessage : null,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _attachmentOption({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    required BuildContext context,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: colorScheme.primary,
-              size: 28,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 14),
           ),
         ],
       ),

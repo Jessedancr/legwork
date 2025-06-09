@@ -1,5 +1,5 @@
 class ConversationEntity {
-  final String id;
+  final String convoId;
   final List<String> participants;
   final DateTime lastMessageTime; // Timestamp of last message
   final String lastMessageSenderId;
@@ -8,7 +8,7 @@ class ConversationEntity {
 
   // CONSTRUCTOR
   ConversationEntity({
-    required this.id,
+    required this.convoId,
     required this.participants,
     required this.lastMessageTime,
     required this.lastMessage,

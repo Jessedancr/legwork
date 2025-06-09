@@ -6,7 +6,7 @@ import 'package:legwork/features/chat/data/models/conversation_model.dart';
 import 'package:legwork/features/chat/data/models/message_model.dart';
 
 /**
- * THIS ABSTRACY CLASS DEFINES WHAT OPERATIONS IT'S IMPLEMENTATION CAN CARRY OUT
+ * THIS ABSTRACT CLASS DEFINES WHAT OPERATIONS IT'S IMPLEMENTATION CAN CARRY OUT
  */
 abstract class ChatRemoteDataSource {
   // GET CONVERSATIONS FOR A SPECIFIC USER
@@ -26,7 +26,7 @@ abstract class ChatRemoteDataSource {
 
   // MARK MESSAGE AS READ
   Future<Either<String, void>> markMessageAsRead({
-    required String messageId,
+    required MessageModel message,
   });
 
   // MESSAGE STREAM
@@ -34,14 +34,9 @@ abstract class ChatRemoteDataSource {
     required String conversationId,
   });
 
-  // CONVERSATIONS STREAM
-  Stream<List<ConversationModel>> conversationsStream({
-    required String userId,
-  });
-
   // CREATE CONVERSATION
   Future<Either<String, ConversationModel>> createConversation({
-    required List<String> participants,
+    required ConversationModel conversationModel,
   });
 }
 
@@ -56,13 +51,15 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     required String userId,
   }) async {
     try {
-      final snapShot = await db
+      // Query the db to get the list of convos for user
+      final convoSnapshot = await db
           .collection('conversations')
           .where('participants', arrayContains: userId)
           .orderBy('lastMessageTime', descending: true)
           .get();
 
-      final conversations = snapShot.docs
+      // Map each convo to Conversation model using the fromDocument method
+      final conversations = convoSnapshot.docs
           .map((doc) => ConversationModel.fromDocument(doc))
           .toList();
 
@@ -79,15 +76,18 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     required String conversationId,
   }) async {
     try {
-      final snapShot = await db
+      // Query the db to get the list of messages for a specific convo
+      final messagesSnapshot = await db
           .collection('conversations')
           .doc(conversationId)
           .collection('messages')
           .orderBy('timeStamp', descending: true)
           .get();
 
-      final messages =
-          snapShot.docs.map((doc) => MessageModel.fromDocument(doc)).toList();
+      // Map each message to message model using the fromDocument method
+      final messages = messagesSnapshot.docs
+          .map((doc) => MessageModel.fromDocument(doc))
+          .toList();
 
       return Right(messages);
     } catch (e) {
@@ -100,30 +100,51 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<Either<String, MessageModel>> sendMessage({
     required MessageModel message,
-    // required String deviceToken,
   }) async {
     try {
-      // Get conversation ID directly from the parameter
-      String conversationId = message.id;
+      // * Get conversation ID directly from the parameter
+      String conversationId = message.convoId;
+      debugPrint('convo ID: $conversationId');
 
-      // Create a new message doc without specifiying an ID
-      final messageRef = await db
+      /// * Get the conversation's doc ref
+      // * go into it's messages collection and generate an ID
+      final convoDocRef = db.collection('conversations').doc(conversationId);
+      final messageDocId = convoDocRef.collection('messages').doc().id;
+
+      // * Update the message doc with the ID
+      final updatedMessageDoc = {
+        ...message.toMap(),
+        'messageId': messageDocId,
+      };
+
+      await db
           .collection('conversations')
           .doc(conversationId)
           .collection('messages')
-          .add(message.toMap());
+          .doc(messageDocId)
+          .set(updatedMessageDoc);
 
       // Update conversation with the last message info
-      await db.collection('conversations').doc(conversationId).update({
+      final latestMessageInfo = {
         'lastMessage': message.content,
         'lastMessageTime': Timestamp.fromDate(message.timeStamp),
         'lastMessageSenderId': message.senderId,
         'hasUnreadMessages': true,
-      });
+      };
+      await db
+          .collection('conversations')
+          .doc(conversationId)
+          .update(latestMessageInfo);
 
       // Get the crested message with ID
-      final messageDoc = await messageRef.get();
-      return Right(MessageModel.fromDocument(messageDoc));
+      final messageDocRef = db
+          .collection('conversations')
+          .doc(conversationId)
+          .collection('messages')
+          .doc(messageDocId);
+
+      final messageDocSnapshot = await messageDocRef.get();
+      return Right(MessageModel.fromDocument(messageDocSnapshot));
     } catch (e) {
       debugPrint('Error sending message: ${e.toString()}');
       return Left('Error sending message: ${e.toString()}');
@@ -132,40 +153,37 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Either<String, void>> markMessageAsRead({
-    required String messageId,
+    required MessageModel message,
   }) async {
     try {
-      // Extract conversation ID and message ID from the message path
-      final parts = messageId.split('/');
-      final conversationId = parts[0];
-      final msgId = parts[1];
       debugPrint(
-        'Marking message as read - ConversationId: $conversationId, MessageId: $msgId',
+        'Marking message as read - ConversationId: ${message.convoId}, MessageId: ${message.messageId}',
       );
-      // MessageId is the actual document ID of the message
+
+      // Update the message's isRead field to true
       await db
           .collection('conversations')
-          .doc(conversationId) // Get conversation ID from path
+          .doc(message.convoId)
           .collection('messages')
-          .doc(msgId)
+          .doc(message.messageId)
           .update({'isRead': true});
 
-      // Also update the conversation's hasUnreadMessages if needed
-      final conversationRef =
-          db.collection('conversations').doc(conversationId);
-      final conversationDoc = await conversationRef.get();
+      // Also update the conversation's hasUnreadMessages
+      final convoDocRef = db.collection('conversations').doc(message.convoId);
+      final convoDoc = await convoDocRef.get();
 
-      if (conversationDoc.exists) {
+      if (convoDoc.exists) {
         final messages = await db
             .collection('conversations')
-            .doc(conversationId)
+            .doc(message.convoId)
             .collection('messages')
-            .where('isRead', isEqualTo: false)
+            .where('isRead', isEqualTo: true)
             .get();
 
-        if (messages.docs.isEmpty) {
-          await conversationRef.update({'hasUnreadMessages': false});
+        if (messages.docs.isNotEmpty) {
+          await convoDocRef.update({'hasUnreadMessages': false});
         }
+        debugPrint('Marked message as read: ${message.messageId}');
       }
 
       return const Right(null);
@@ -190,7 +208,6 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           .map((snapshot) {
         final messages =
             snapshot.docs.map((doc) => MessageModel.fromDocument(doc)).toList();
-        debugPrint('Received ${messages.length} messages');
         return messages;
       });
     } catch (e) {
@@ -200,53 +217,38 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Stream<List<ConversationModel>> conversationsStream({
-    required String userId,
-  }) {
-    try {
-      return db
-          .collection('conversations')
-          .where('participants', arrayContains: userId)
-          .orderBy('lastMessageTime', descending: true)
-          .snapshots()
-          .map((snapshot) {
-        return snapshot.docs
-            .map((doc) => ConversationModel.fromDocument(doc))
-            .toList();
-      });
-    } catch (e) {
-      debugPrint('Error with conversation stream');
-      return Stream.value([]);
-    }
-  }
-
-  @override
   Future<Either<String, ConversationModel>> createConversation({
-    required List<String> participants,
+    // required List<String> participants,
+    required ConversationModel conversationModel,
   }) async {
     try {
       // Check if conversation already exists
       final existingConversation = await db
           .collection('conversations')
-          .where('participants', isEqualTo: participants)
+          .where('participants', isEqualTo: conversationModel.participants)
           .get();
 
       if (existingConversation.docs.isNotEmpty) {
         return Right(
-            ConversationModel.fromDocument(existingConversation.docs.first));
+          ConversationModel.fromDocument(existingConversation.docs.first),
+        );
       }
 
-      // Create new conversation
-      final conversationData = {
-        'participants': participants,
-        'lastMessage': '',
-        'lastMessageTime': Timestamp.now(),
-        'lastMessageSenderId': '',
-        'hasUnreadMessages': false,
+      // Generate unique convo ID
+      final String convoId = db.collection('conversations').doc().id;
+      debugPrint('Created convo ID: $convoId');
+
+      final updatedConvoData = {
+        ...conversationModel.toMap(),
+        'convoId': convoId,
       };
 
-      final docRef = await db.collection('conversations').add(conversationData);
-      final docSnapshot = await docRef.get();
+      // Save created convo with explicir convoId field
+      await db.collection('conversations').doc(convoId).set(updatedConvoData);
+
+      final docSnapshot =
+          await db.collection('conversations').doc(convoId).get();
+      // final docSnapshot = await docRef.get();
 
       return Right(ConversationModel.fromDocument(docSnapshot));
     } catch (e) {

@@ -32,8 +32,8 @@ class LegworkOutlineButton extends StatelessWidget {
           : Text(
               buttonText,
               style: context.textLg?.copyWith(
-                color: context.colorScheme.primary,
                 fontWeight: FontWeight.w400,
+                color: context.colorScheme.primary,
               ),
             ),
       style: OutlinedButton.styleFrom(

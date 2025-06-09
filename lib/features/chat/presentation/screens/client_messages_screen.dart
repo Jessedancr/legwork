@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/widgets/conversation_card.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ClientMessagesScreen extends StatefulWidget {
@@ -44,32 +48,43 @@ class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: context.colorScheme.surface,
+
+      // * Appbar
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: false,
-        centerTitle: false,
+        centerTitle: true,
         title: Text(
           'Messages',
-          style: TextStyle(
+          style: context.heading2Xs?.copyWith(
+            color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
-            fontSize: 24,
           ),
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: context.colorScheme.surface,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: Theme.of(context).primaryColor),
+            icon: Icon(
+              Icons.refresh,
+              color: context.colorScheme.onSurface,
+            ),
             onPressed: _refreshConversations,
           ),
         ],
       ),
+
+      // * Body
       body: Consumer<ChatProvider>(
         builder: (context, chatProvider, child) {
           if (chatProvider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: Lottie.asset(
+                'assets/lottie/loading.json',
+                height: 100,
+                fit: BoxFit.cover,
+              ),
             );
           }
 
@@ -82,13 +97,32 @@ class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
           final conversations = chatProvider.conversations;
 
           if (conversations.isEmpty) {
-            return const Center(
-              child: Text('No conversations yet'),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    'assets/svg/chat_icon.svg',
+                    height: 70,
+                  ),
+                  const SizedBox(height: 25),
+                  Text(
+                    'No conversations yet',
+                    style: context.textLg?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
-          return RefreshIndicator(
+          return LiquidPullToRefresh(
             onRefresh: _refreshConversations,
+            color: context.colorScheme.primary,
+            backgroundColor: context.colorScheme.surface,
+            animSpeedFactor: 3.0,
+            showChildOpacityTransition: false,
             child: ListView.builder(
               itemCount: conversations.length,
               itemBuilder: (context, index) {
@@ -96,20 +130,32 @@ class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
                 final userId =
                     Provider.of<MyAuthProvider>(context, listen: false)
                         .getUserId();
+                void handleConvoCardTap() async {
+                  // Get other participant ID
+                  final otherParticipantId =
+                      conversation.participants.firstWhere(
+                    (id) => id != userId,
+                  );
+                  // Navigate to chat detail screen first
+                  if (!mounted) return;
+                  await Navigator.pushNamed(
+                    context,
+                    '/chatDetailScreen',
+                    arguments: {
+                      'conversationId': conversation.convoId,
+                      'otherParticipantId': otherParticipantId,
+                    },
+                  );
+                  // After returning from chat detail screen, refresh conversations
+                  if (mounted) {
+                    await _refreshConversations();
+                  }
+                }
 
                 return ConversationCard(
                   conversation: conversation,
                   currentUserId: userId,
-                  onTap: () {
-                    Navigator.pushNamed(context, '/chatDetailScreen',
-                        arguments: {
-                          'conversationId': conversation.id,
-                          'otherParticipantId':
-                              conversation.participants.firstWhere(
-                            (id) => id != userId,
-                          )
-                        });
-                  },
+                  onTap: handleConvoCardTap,
                 );
               },
             ),

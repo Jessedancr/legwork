@@ -21,11 +21,11 @@ abstract class AuthRepo {
   /// LOGOUT METHOD
   Future<Either<String, void>> userLogout();
 
-  /// METHOD TO GET THE USERNAME FROM DOCUMENT
-  Future<Either<String, String>> getUsername({required String userId});
-
   // GET UID
   String getUserId();
+
+  // Get device token
+  Future<String> getDeviceToken({required String userId});
 
   /// GET USER DETAILS
   Future<Either<String, UserEntity>> getUserDetails({

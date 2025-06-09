@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -24,11 +25,13 @@ class MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: isMe ? Theme.of(context).primaryColor : Colors.grey[300],
+          color: isMe
+              ? context.colorScheme.primary
+              : context.colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(16),
         ),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
+          maxWidth: screenWidth(context) * 0.7,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +39,9 @@ class MessageBubble extends StatelessWidget {
             Text(
               message.content,
               style: TextStyle(
-                color: isMe ? Colors.white : Colors.black,
+                color: isMe
+                    ? context.colorScheme.onPrimary
+                    : context.colorScheme.onPrimaryContainer,
               ),
             ),
             const SizedBox(height: 4),
@@ -45,17 +50,19 @@ class MessageBubble extends StatelessWidget {
               children: [
                 Text(
                   timeString,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: isMe ? Colors.white70 : Colors.black54,
+                  style: context.textXs?.copyWith(
+                    color: isMe
+                        ? context.colorScheme.onPrimary
+                        : context.colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
                 if (isMe) ...[
                   const SizedBox(width: 4),
                   Icon(
                     message.isRead ? Icons.done_all : Icons.done,
-                    size: 12,
-                    color: Colors.white70,
+                    size: 15,
+                    color: message.isRead ? Colors.teal : Colors.grey,
                   ),
                 ],
               ],

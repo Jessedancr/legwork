@@ -4,7 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class MessageModel extends MessageEntity {
   // Constructor
   MessageModel({
-    required super.id,
+    required super.messageId,
+    required super.convoId,
     required super.senderId,
     required super.receiverId,
     required super.content,
@@ -17,9 +18,9 @@ class MessageModel extends MessageEntity {
   // CONVERT FIREBASE DOC TO CHAT SO WE CAN USE IN THE APP
   factory MessageModel.fromDocument(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-
     return MessageModel(
-      id: '${doc.reference.parent.parent?.id}/${doc.id}', // Include both conversation and message IDs
+      messageId: doc.id,
+      convoId: doc.reference.parent.parent!.id,
       senderId: data['senderId'] ?? '',
       receiverId: data['receiverId'] ?? '',
       content: data['content'] ?? '',
@@ -40,6 +41,7 @@ class MessageModel extends MessageEntity {
       'isRead': isRead,
       'attachementUrl': attachmentUrl,
       'attachmentType': attachmentType,
+      'messageId': messageId,
     };
   }
 }
