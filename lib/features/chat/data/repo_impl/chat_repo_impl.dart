@@ -78,11 +78,20 @@ class ChatRepoImpl implements ChatRepo {
 
   @override
   Future<Either<String, void>> markMessageAsRead({
-    required String messageId,
+    required MessageEntity message,
   }) async {
     try {
+      final messageModel = MessageModel(
+        messageId: message.messageId,
+        convoId: message.convoId,
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+        content: message.content,
+        timeStamp: message.timeStamp,
+        isRead: message.isRead,
+      );
       final result =
-          await remoteDataSource.markMessageAsRead(messageId: messageId);
+          await remoteDataSource.markMessageAsRead(message: messageModel);
       return result.fold(
         // Handle fail
         (fail) => Left(fail),

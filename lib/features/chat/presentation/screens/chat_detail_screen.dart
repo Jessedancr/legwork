@@ -8,7 +8,6 @@ import 'package:legwork/features/chat/presentation/widgets/date_header.dart';
 import 'package:legwork/features/chat/presentation/widgets/message_input.dart';
 import 'package:legwork/features/chat/presentation/widgets/messages_list.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
-import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
 import 'package:provider/provider.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -38,7 +37,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   bool _showScrollButton = false;
   String _otherUsername = '';
   bool _isLoading = true;
-  final _notificationRepo = NotificationRepoImpl();
 
   // THIS METHOD RUNS WHEN THE SCREEN IS FIRST CREATED
   @override
@@ -49,13 +47,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     _scrollController.addListener(_scrollPosition);
 
-    // Load messages when the screen initializes
+    // Load messages when the screen has fully initialised
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final currentUserId = _authProvider.getUserId();
       _chatProvider.loadMessages(conversationId: widget.conversationId);
-      final userId = currentUserId;
-      if (userId.isNotEmpty) {
-        _chatProvider.loadConversation(userId: userId);
+      if (currentUserId.isNotEmpty) {
+        _chatProvider.loadConversation(userId: currentUserId);
       }
 
       // Fetch the other participant's username

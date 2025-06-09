@@ -160,4 +160,14 @@ class AuthRepoImpl implements AuthRepo {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<String> getDeviceToken({required String userId}) async {
+    try {
+      final result = await _authRemoteDataSource.getDeviceToken(userId: userId);
+      return result;
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }

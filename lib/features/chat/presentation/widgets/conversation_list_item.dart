@@ -1,8 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:provider/provider.dart';
 
 class ConversationListItem extends StatelessWidget {
   final ConversationEntity conversation;
@@ -10,7 +13,7 @@ class ConversationListItem extends StatelessWidget {
   final String? currentUserUsername;
   final VoidCallback onTap;
 
-  ConversationListItem({
+  const ConversationListItem({
     super.key,
     required this.conversation,
     required this.currentUserId,
@@ -18,11 +21,12 @@ class ConversationListItem extends StatelessWidget {
     this.currentUserUsername,
   });
 
-  // instance of auth repo
-  final AuthRepoImpl _authRepo = AuthRepoImpl();
-
   @override
   Widget build(BuildContext context) {
+    // Instance of auth provider
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+
+    // Get the other participant's ID
     final otherParticipantId = conversation.participants
         .firstWhere((id) => id != currentUserId, orElse: () => 'Unknown');
 
@@ -34,33 +38,33 @@ class ConversationListItem extends StatelessWidget {
     final isLastMessageFromMe =
         conversation.lastMessageSenderId == currentUserId;
 
-    return FutureBuilder<Either<String, String>>(
-      future: _authRepo.getUsername(userId: otherParticipantId),
+    return FutureBuilder<Either<String, UserEntity>>(
+      future: authProvider.getUserDetails(uid: otherParticipantId),
       builder: (context, snapshot) {
-        // final username = snapshot.data as String;
-        String username = 'loadin...';
+        String username = 'loading...';
 
         if (snapshot.hasData) {
           username = snapshot.data!.fold(
             (error) => error,
-            (success) => success,
+            (userEntity) => userEntity.username,
           );
         } else if (snapshot.hasError) {
           username = 'Error';
         }
 
         return ListTile(
+          onTap: onTap,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(30),
           ),
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+            backgroundColor: context.colorScheme.onPrimaryContainer,
             child: Text(
               username != 'Loading...' && username.isNotEmpty
                   ? username[0].toUpperCase()
                   : '?',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.surface,
+                color: context.colorScheme.surface,
               ),
             ),
           ),
@@ -81,7 +85,7 @@ class ConversationListItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(timeString, style: const TextStyle(fontSize: 12)),
+              Text(timeString, style: context.textSm),
               const SizedBox(height: 4),
               if (conversation.hasUnreadMessages && !isLastMessageFromMe)
                 Container(
@@ -89,12 +93,11 @@ class ConversationListItem extends StatelessWidget {
                   height: 10,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Theme.of(context).primaryColor,
+                    color: context.colorScheme.primary,
                   ),
                 ),
             ],
           ),
-          onTap: onTap,
         );
       },
     );

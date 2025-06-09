@@ -19,7 +19,9 @@ abstract class ChatRepo {
   });
 
   // MARK MESSAGE AS READ
-  Future<Either<String, void>> markMessageAsRead({required String messageId});
+  Future<Either<String, void>> markMessageAsRead({
+    required MessageEntity message,
+  });
 
   // STREAM FOR REAL-TIME MESSAGES IN A CONVO
   Stream<List<MessageEntity>> messageStream({required String conversationId});
@@ -29,7 +31,6 @@ abstract class ChatRepo {
 
   // CREATE A NEW CONVO
   Future<Either<String, ConversationEntity>> createConversation({
-    // required List<String> participants,
     required ConversationEntity convoEntity,
   });
 }

@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/chat/data/repo_impl/chat_repo_impl.dart';
 import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
@@ -9,19 +9,19 @@ import 'package:legwork/features/notifications/data/repo_impl/nottification_repo
 
 class ChatProvider extends ChangeNotifier {
   // INSTANCE OF CHAT REPO IMPL
-  final chatRepo = ChatRepoImpl();
+  final _chatRepo = ChatRepoImpl();
+  final _authRepo = AuthRepoImpl();
 
   final notificationRepo = NotificationRepoImpl();
   final notificationRemoteDataSource = NotificationRemoteDataSourceImpl();
-  final _authRemoteDataSource = AuthRemoteDataSourceImpl();
 
   // State variables
   bool isLoading = false;
   String? error;
+
+  // * Locally stored conversations and messages to avoid fetching conversations and messages multiple times
   List<ConversationEntity> conversations = [];
   Map<String, List<MessageEntity>> messages = {};
-
-  // CONSTRUCTOR
 
   // LOAD CONVO FOR USER
   Future<void> loadConversation({
@@ -30,7 +30,7 @@ class ChatProvider extends ChangeNotifier {
     isLoading = true;
     error = null;
 
-    final result = await chatRepo.getConversations(userId: userId);
+    final result = await _chatRepo.getConversations(userId: userId);
 
     result.fold(
       // handle fail
@@ -59,7 +59,7 @@ class ChatProvider extends ChangeNotifier {
     error = null;
     notifyListeners();
 
-    final result = await chatRepo.getMessages(conversationId: conversationId);
+    final result = await _chatRepo.getMessages(conversationId: conversationId);
 
     result.fold(
       // Handle fail
@@ -104,9 +104,9 @@ class ChatProvider extends ChangeNotifier {
         isRead: false,
       );
 
-      final result = await chatRepo.sendMessage(message: newMessage);
+      final result = await _chatRepo.sendMessage(message: newMessage);
 
-      final receiverDeviceToken = await _authRemoteDataSource.getDeviceToken(
+      final receiverDeviceToken = await _authRepo.getDeviceToken(
         userId: message.receiverId,
       );
 
@@ -144,7 +144,7 @@ class ChatProvider extends ChangeNotifier {
   Stream<List<ConversationEntity>> listenToConversations({
     required String userId,
   }) {
-    return chatRepo.conversationStream(userId: userId);
+    return _chatRepo.conversationStream(userId: userId);
   }
 
   // START LISTENING TO MESSAGE STREAM
@@ -152,22 +152,18 @@ class ChatProvider extends ChangeNotifier {
     required String conversationId,
   }) {
     debugPrint('Listening to messages for conversation: $conversationId');
-    return chatRepo.messageStream(conversationId: conversationId);
+    return _chatRepo.messageStream(conversationId: conversationId);
   }
 
   // CREATE A NEW CONVERSATION
   Future<Either<String, ConversationEntity>> createConversation({
-    // required List<String> participants,
     required ConversationEntity convoEntity,
   }) async {
     isLoading = true;
     error = null;
     notifyListeners();
 
-    final result = await chatRepo.createConversation(
-      // participants: participants,
-      convoEntity: convoEntity,
-    );
+    final result = await _chatRepo.createConversation(convoEntity: convoEntity);
 
     isLoading = false;
     notifyListeners();
@@ -177,14 +173,11 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // MARK MESSAGE AS READ
-  Future<void> markMessageAsRead({required String messageId}) async {
+  Future<void> markMessageAsRead({
+    required MessageEntity message,
+  }) async {
     try {
-      debugPrint('Chat provider: Marking message as read: $messageId');
-      final result = await chatRepo.markMessageAsRead(messageId: messageId);
-      result.fold(
-        (fail) => debugPrint('Error with markMessageAsRead Provider: $fail'),
-        (success) => debugPrint('Successfully marked message as read'),
-      );
+      await _chatRepo.markMessageAsRead(message: message);
     } catch (e) {
       debugPrint('Error with markMessageAsRead Provider: $e');
     }

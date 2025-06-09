@@ -409,8 +409,9 @@ class _JobApplicationDetailScreenState
                             LegworkOutlineButton(
                               isLoading: _isChatLoading,
                               onPressed: chatWithDancer,
-                              icon:
-                                  SvgPicture.asset('assets/svg/chat_icon.svg'),
+                              icon: SvgPicture.asset(
+                                'assets/svg/chat_icon.svg',
+                              ),
                               buttonText: 'Message dancer',
                             ),
                             const SizedBox(height: 16),

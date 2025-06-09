@@ -27,6 +27,9 @@ abstract class AuthRepo {
   // GET UID
   String getUserId();
 
+  // Get device token
+  Future<String> getDeviceToken({required String userId});
+
   /// GET USER DETAILS
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,

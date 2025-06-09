@@ -26,7 +26,7 @@ abstract class ChatRemoteDataSource {
 
   // MARK MESSAGE AS READ
   Future<Either<String, void>> markMessageAsRead({
-    required String messageId,
+    required MessageModel message,
   });
 
   // MESSAGE STREAM
@@ -159,40 +159,37 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Either<String, void>> markMessageAsRead({
-    required String messageId,
+    required MessageModel message,
   }) async {
     try {
-      // Extract conversation ID and message ID from the message path
-      final parts = messageId.split('/');
-      final conversationId = parts[0];
-      final msgId = parts[1];
       debugPrint(
-        'Marking message as read - ConversationId: $conversationId, MessageId: $msgId',
+        'Marking message as read - ConversationId: ${message.convoId}, MessageId: ${message.messageId}',
       );
-      // MessageId is the actual document ID of the message
+
+      // Update the message's isRead field to true
       await db
           .collection('conversations')
-          .doc(conversationId) // Get conversation ID from path
+          .doc(message.convoId)
           .collection('messages')
-          .doc(msgId)
+          .doc(message.messageId)
           .update({'isRead': true});
 
-      // Also update the conversation's hasUnreadMessages if needed
-      final conversationRef =
-          db.collection('conversations').doc(conversationId);
-      final conversationDoc = await conversationRef.get();
+      // Also update the conversation's hasUnreadMessages
+      final convoDocRef = db.collection('conversations').doc(message.convoId);
+      final convoDoc = await convoDocRef.get();
 
-      if (conversationDoc.exists) {
+      if (convoDoc.exists) {
         final messages = await db
             .collection('conversations')
-            .doc(conversationId)
+            .doc(message.convoId)
             .collection('messages')
-            .where('isRead', isEqualTo: false)
+            .where('isRead', isEqualTo: true)
             .get();
 
-        if (messages.docs.isEmpty) {
-          await conversationRef.update({'hasUnreadMessages': false});
+        if (messages.docs.isNotEmpty) {
+          await convoDocRef.update({'hasUnreadMessages': false});
         }
+        debugPrint('Marked message as read: ${message.messageId}');
       }
 
       return const Right(null);
