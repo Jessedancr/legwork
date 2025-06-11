@@ -218,7 +218,6 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Either<String, ConversationModel>> createConversation({
-    // required List<String> participants,
     required ConversationModel conversationModel,
   }) async {
     try {
@@ -248,7 +247,6 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
       final docSnapshot =
           await db.collection('conversations').doc(convoId).get();
-      // final docSnapshot = await docRef.get();
 
       return Right(ConversationModel.fromDocument(docSnapshot));
     } catch (e) {

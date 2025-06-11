@@ -52,7 +52,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
 
     try {
       ConversationEntity convoEntity = ConversationEntity(
-        convoId: 'convoId',
+        convoId: '',
         participants: [dancerId, clientId],
         lastMessageTime: DateTime.now(),
         lastMessage: '',

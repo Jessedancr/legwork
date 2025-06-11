@@ -171,7 +171,7 @@ class _JobApplicationDetailScreenState
         if (!mounted) return;
         LegworkSnackbar(
           title: 'Omo!',
-          subTitle: 'An unexpected error occurred. Please try again.',
+          subTitle: 'An unexpected error occurred.',
           imageColor: context.colorScheme.onError,
           contentColor: context.colorScheme.error,
         ).show(context);
