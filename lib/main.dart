@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:legwork/core/Constants/theme_provider.dart';
 import 'package:legwork/core/network/online_payment_info.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
@@ -120,6 +121,10 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+          child: MyApp(isOnboardingComplete: await isOnboardingComplete),
+        ),
+        ChangeNotifierProvider(
           create: (context) => MyAuthProvider(authRepo: authRepo),
         ),
         ChangeNotifierProvider(
@@ -166,7 +171,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: seedScheme,
+      theme: Provider.of<ThemeProvider>(context).themeData,
+      darkTheme: seedSchemeDark,
       home: isOnboardingComplete
           ? AuthStatus()
           : Onboarding(
