@@ -188,6 +188,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
     return Scaffold(
       // * APP BAR
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: colorScheme.surface,
@@ -196,8 +197,8 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
           dancerDetails?.username != null
               ? dancerDetails!.username
               : 'Your Profile',
-          style: TextStyle(
-            color: colorScheme.onSurface,
+          style: context.heading2Xs?.copyWith(
+            color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
