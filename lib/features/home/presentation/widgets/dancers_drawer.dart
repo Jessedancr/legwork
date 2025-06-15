@@ -66,9 +66,8 @@ class _DancersDrawerState extends State<DancersDrawer> {
                 backgroundImage: (user.profilePicture != null &&
                         user.profilePicture!.isNotEmpty)
                     ? NetworkImage(user.profilePicture!)
-                    : const AssetImage(
-                        'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                      ) as ImageProvider,
+                    : const AssetImage(defaultDancerProfileImage)
+                        as ImageProvider,
               ),
             ),
             const SizedBox(height: 10),
@@ -88,22 +87,6 @@ class _DancersDrawerState extends State<DancersDrawer> {
               ),
               title: Text(
                 'Notifications',
-                style: context.textLg?.copyWith(
-                  color: context.colorScheme.surface,
-                ),
-              ),
-              onTap: () {},
-            ),
-            SizedBox(height: screenHeight(context) * 0.05),
-
-            // Gig history
-            LegworkListTile(
-              leading: SvgPicture.asset(
-                'assets/svg/history_icon.svg',
-                color: context.colorScheme.surface,
-              ),
-              title: Text(
-                'Gig history',
                 style: context.textLg?.copyWith(
                   color: context.colorScheme.surface,
                 ),

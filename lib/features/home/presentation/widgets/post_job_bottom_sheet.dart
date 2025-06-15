@@ -148,12 +148,14 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                             children: [
                               SvgPicture.asset(
                                 'assets/svg/briefcase.svg',
+                                color: context.colorScheme.onSurface,
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 "Selected: $selectedJobType",
                                 style: context.textXs?.copyWith(
                                   fontWeight: FontWeight.bold,
+                                  color: context.colorScheme.onSurface,
                                 ),
                               ),
                             ],
@@ -168,6 +170,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                         controller: widget.titleController,
                         icon: SvgPicture.asset(
                           'assets/svg/brand.svg',
+                          color: context.colorScheme.onPrimaryContainer,
                           fit: BoxFit.scaleDown,
                         ),
                         helperText: 'Ex: Dancers for TV commercial',
@@ -187,6 +190,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                         controller: widget.locationController,
                         icon: SvgPicture.asset(
                           'assets/svg/location.svg',
+                          color: context.colorScheme.onPrimaryContainer,
                           fit: BoxFit.scaleDown,
                         ),
                         helperText: 'Ex: Lekki phase 1',
@@ -206,6 +210,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                         controller: widget.danceStylesController,
                         icon: SvgPicture.asset(
                           'assets/svg/disco_ball.svg',
+                          color: context.colorScheme.onPrimaryContainer,
                           fit: BoxFit.scaleDown,
                         ),
                         validator: (value) {
@@ -227,6 +232,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                         controller: widget.amtOfDancersController,
                         icon: SvgPicture.asset(
                           'assets/svg/hashtag_icon.svg',
+                          color: context.colorScheme.onPrimaryContainer,
                           fit: BoxFit.scaleDown,
                         ),
                         validator: (value) {
@@ -246,6 +252,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                         controller: widget.payController,
                         icon: SvgPicture.asset(
                           'assets/svg/naira_icon.svg',
+                          color: context.colorScheme.onPrimaryContainer,
                           fit: BoxFit.scaleDown,
                         ),
                         validator: (value) {
@@ -265,6 +272,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                         controller: widget.jobDurationController,
                         icon: SvgPicture.asset(
                           'assets/svg/clock_icon.svg',
+                          color: context.colorScheme.onPrimaryContainer,
                           fit: BoxFit.scaleDown,
                         ),
                         validator: (value) {
@@ -282,6 +290,7 @@ class _PostJobBottomSheetState extends State<PostJobBottomSheet> {
                         controller: widget.jobDescrController,
                         icon: SvgPicture.asset(
                           'assets/svg/description_icon.svg',
+                          color: context.colorScheme.onPrimaryContainer,
                           fit: BoxFit.scaleDown,
                         ),
                         validator: (value) {

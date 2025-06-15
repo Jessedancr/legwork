@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
   final UserEntity user;
-  final ColorScheme colorScheme;
-  final TextTheme textTheme;
   final void Function()? onTap;
   final String defaultProfileImagePath;
   const ProfileHeaderSection({
     super.key,
     required this.user,
-    required this.colorScheme,
-    required this.textTheme,
     required this.onTap,
     required this.defaultProfileImagePath,
   });
@@ -26,7 +23,7 @@ class ProfileHeaderSection extends StatelessWidget {
             : null;
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.primaryContainer.withOpacity(0.4),
+        color: context.colorScheme.primaryContainer.withOpacity(0.4),
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.all(12),
@@ -45,12 +42,12 @@ class ProfileHeaderSection extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: colorScheme.primary,
+                        color: context.colorScheme.primary,
                         width: 3,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: colorScheme.primary.withOpacity(0.3),
+                          color: context.colorScheme.primary.withOpacity(0.3),
                           blurRadius: 15,
                           spreadRadius: 2,
                         ),
@@ -58,7 +55,7 @@ class ProfileHeaderSection extends StatelessWidget {
                     ),
                     child: CircleAvatar(
                       radius: 50,
-                      backgroundColor: colorScheme.primaryContainer,
+                      backgroundColor: context.colorScheme.primaryContainer,
                       backgroundImage: (user.profilePicture != null &&
                               user.profilePicture!.isNotEmpty)
                           ? NetworkImage(user.profilePicture!)
@@ -79,17 +76,17 @@ class ProfileHeaderSection extends StatelessWidget {
                     // Name
                     Text(
                       '${user.firstName} ${user.lastName}',
-                      style: textTheme.headlineSmall?.copyWith(
+                      style: context.headingXs?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: colorScheme.onPrimaryContainer,
+                        color: context.colorScheme.onPrimaryContainer,
                       ),
                     ),
 
                     // Username
                     Text(
                       '@${user.username}',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onPrimaryContainer,
+                      style: context.heading2Xs?.copyWith(
+                        color: context.colorScheme.onPrimaryContainer,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -97,9 +94,9 @@ class ProfileHeaderSection extends StatelessWidget {
                     // Professional title
                     Text(
                       resume!['professionalTitle'] ?? 'No professional title',
-                      style: textTheme.labelSmall?.copyWith(
+                      style: context.textXs?.copyWith(
                         fontWeight: FontWeight.w300,
-                        color: colorScheme.onPrimaryContainer,
+                        color: context.colorScheme.onPrimaryContainer,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.clip,
@@ -122,12 +119,12 @@ class ProfileHeaderSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: colorScheme.secondaryContainer,
+                      color: context.colorScheme.secondaryContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: SvgPicture.asset(
                       'assets/svg/mail.svg',
-                      color: colorScheme.onSecondaryContainer,
+                      color: context.colorScheme.onSecondaryContainer,
                       height: 12,
                     ),
                   ),
@@ -135,7 +132,7 @@ class ProfileHeaderSection extends StatelessWidget {
                   // Actual email
                   Text(
                     user.email,
-                    style: textTheme.labelSmall?.copyWith(
+                    style: context.textXs?.copyWith(
                       fontWeight: FontWeight.w200,
                       fontSize: 10.0,
                     ),
@@ -151,12 +148,12 @@ class ProfileHeaderSection extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: colorScheme.secondaryContainer,
+                        color: context.colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: SvgPicture.asset(
                         'assets/svg/briefcase.svg',
-                        color: colorScheme.onSecondaryContainer,
+                        color: context.colorScheme.onSecondaryContainer,
                         height: 12,
                       ),
                     ),
@@ -165,7 +162,7 @@ class ProfileHeaderSection extends StatelessWidget {
                     // Actual organisation name
                     Text(
                       (user as ClientEntity).organisationName ?? '',
-                      style: textTheme.labelSmall?.copyWith(
+                      style: context.textXs?.copyWith(
                         fontWeight: FontWeight.w200,
                         fontSize: 10.0,
                       ),
@@ -180,12 +177,12 @@ class ProfileHeaderSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: colorScheme.secondaryContainer,
+                      color: context.colorScheme.secondaryContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: SvgPicture.asset(
                       'assets/svg/address_book.svg',
-                      color: colorScheme.onSecondaryContainer,
+                      color: context.colorScheme.onSecondaryContainer,
                       height: 12,
                     ),
                   ),
@@ -193,7 +190,7 @@ class ProfileHeaderSection extends StatelessWidget {
                   // Actual email
                   Text(
                     user.phoneNumber.toString(),
-                    style: textTheme.labelSmall?.copyWith(
+                    style: context.textXs?.copyWith(
                       fontWeight: FontWeight.w200,
                       fontSize: 10.0,
                     ),

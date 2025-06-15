@@ -280,8 +280,6 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
                         // Header Section with Profile Picture
                         ProfileHeaderSection(
                           user: dancerDetails!,
-                          colorScheme: colorScheme,
-                          textTheme: textTheme,
                           onTap: () {
                             Navigator.push(
                               context,

@@ -60,7 +60,7 @@ class _DancersNavBarState extends State<DancersNavBar> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
-              textStyle: context.textMd?.copyWith(
+              textStyle: context.textSm?.copyWith(
                 color: context.colorScheme.surface,
                 fontWeight: FontWeight.w600,
               ),

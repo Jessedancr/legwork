@@ -155,7 +155,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         floatingActionButton: FloatingActionButton(
           onPressed: openJobModalSheet,
           backgroundColor: context.colorScheme.primary.withOpacity(0.8),
-          child: const Icon(Icons.add),
+          child: Icon(Icons.add, color: context.colorScheme.onPrimary),
         ),
 
         //* AppBar

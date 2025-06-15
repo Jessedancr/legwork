@@ -280,8 +280,7 @@ class _JobApplicationDetailScreenState
             Navigator.pop(context); // Close loading indicator
             LegworkSnackbar(
               title: 'Application Rejected',
-              subTitle:
-                  "You've rejected this application! That's so sad for the dancer",
+              subTitle: "You've rejected this application!",
               imageColor: context.colorScheme.onPrimary,
               contentColor: context.colorScheme.primary,
             ).show(context);
@@ -307,21 +306,29 @@ class _JobApplicationDetailScreenState
 
       floatingActionButton: status.toLowerCase() == 'accepted'
           ? FloatingActionButton(
+              backgroundColor: context.colorScheme.primary,
               onPressed: () async {
                 final email = await fetchClientDetails();
-                Navigator.of(context).pushNamed('/paymentScreen', arguments: {
-                  'dancerId': dancerId,
-                  'clientId': clientId,
-                  'amount': 100.0,
-                  'email': email,
-                });
+                Navigator.of(context).pushNamed(
+                  '/paymentScreen',
+                  arguments: {
+                    'dancerId': dancerId,
+                    'clientId': clientId,
+                    'amount': 100.0,
+                    'email': email,
+                  },
+                );
               },
-              child: const Icon(Icons.payment),
+              child: SvgPicture.asset(
+                'assets/svg/wallet_out_icon.svg',
+                color: context.colorScheme.onPrimary,
+              ),
             )
           : null,
 
       // * APPBAR
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         elevation: 0,
         backgroundColor: context.colorScheme.surface,
         centerTitle: true,
@@ -333,7 +340,10 @@ class _JobApplicationDetailScreenState
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: context.colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -464,6 +474,7 @@ class _JobApplicationDetailScreenState
                                 onPressed: chatWithDancer,
                                 icon: SvgPicture.asset(
                                   'assets/svg/chat_icon.svg',
+                                  color: context.colorScheme.primary,
                                 ),
                                 buttonText: 'Message dancer',
                               ),
