@@ -192,22 +192,22 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
 
         // * App bar
         appBar: AppBar(
-          backgroundColor: Colors.black,
+          backgroundColor: context.colorScheme.surface,
           scrolledUnderElevation: 0.0,
           elevation: 0.0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: context.colorScheme.surface),
+          iconTheme: IconThemeData(color: context.colorScheme.onSurface),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios,
-              color: context.colorScheme.surface,
+              color: context.colorScheme.onSurface,
             ),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             "Let's get you hired!",
             style: context.heading2Xs?.copyWith(
-              color: context.colorScheme.surface,
+              color: context.colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -266,7 +266,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                     Text(
                                       'Job Description',
                                       style: context.text2Xl?.copyWith(
-                                        color: context.colorScheme.surface,
+                                        color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -274,7 +274,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                     Text(
                                       widget.jobEntity.jobDescr,
                                       style: context.textXl?.copyWith(
-                                        color: context.colorScheme.surface,
+                                        color: Colors.white,
                                         height: 1.5,
                                       ),
                                       textAlign: TextAlign.center,

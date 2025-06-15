@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/all_jobs.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
@@ -22,7 +23,7 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
 
         //* AppBar
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: context.colorScheme.surface,
           elevation: 0,
           centerTitle: true,
           title: const TabBar(
@@ -38,7 +39,7 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
               },
               icon: Icon(
                 Icons.menu,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: context.colorScheme.onSurface,
               ),
             ),
           ),

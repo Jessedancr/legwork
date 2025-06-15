@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 class BioCard extends StatelessWidget {
@@ -30,6 +31,7 @@ class BioCard extends StatelessWidget {
               children: [
                 SvgPicture.asset(
                   'assets/svg/user.svg',
+                  color: context.colorScheme.onSurface,
                 ),
                 const SizedBox(width: 8),
                 Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
 class JobPreferencesCard extends StatelessWidget {
@@ -29,6 +30,7 @@ class JobPreferencesCard extends StatelessWidget {
               children: [
                 SvgPicture.asset(
                   'assets/svg/info.svg',
+                  color: context.colorScheme.onSurface,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -50,6 +52,7 @@ class JobPreferencesCard extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     'assets/svg/disco_ball.svg',
+                    color: context.colorScheme.onSurface,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -102,6 +105,7 @@ class JobPreferencesCard extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     'assets/svg/briefcase.svg',
+                    color: context.colorScheme.onSurface,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -150,7 +154,10 @@ class JobPreferencesCard extends StatelessWidget {
                 childrenPadding: const EdgeInsets.only(bottom: 8),
                 title: Row(
                   children: [
-                    SvgPicture.asset('assets/svg/location.svg'),
+                    SvgPicture.asset(
+                      'assets/svg/location.svg',
+                      color: context.colorScheme.onSurface,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'Preferred Job Locations',

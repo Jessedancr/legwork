@@ -13,111 +13,65 @@ class JobApplicationsScreen extends StatefulWidget {
 
 class _JobApplicationsScreenState extends State<JobApplicationsScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
   final List<String> _tabLabels = const ['Pending', 'Accepted', 'Rejected'];
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: _tabLabels.length, vsync: this);
-    _tabController.addListener(_handleTabSelection);
-  }
-
-  void _handleTabSelection() {
-    if (_tabController.indexIsChanging) {
-      setState(() {});
-    }
-  }
-
-  @override
-  void dispose() {
-    _tabController.removeListener(_handleTabSelection);
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.colorScheme.surface,
-
-      // * AppBar
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        toolbarHeight: 40.0,
-        elevation: 0,
+    return DefaultTabController(
+      length: _tabLabels.length,
+      child: Scaffold(
         backgroundColor: context.colorScheme.surface,
-        centerTitle: true,
-        title: Text(
-          'Job Applications',
-          style: context.heading2Xs?.copyWith(
-            color: context.colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: Container(
-            decoration: BoxDecoration(
-              color: context.colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.grey.shade200,
-                  width: 1.0,
-                ),
-              ),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: Colors.deepPurple.shade500,
-              indicatorWeight: 3,
-              labelColor: Colors.deepPurple.shade500,
-              unselectedLabelColor: Colors.grey.shade600,
-              labelStyle: context.textSm?.copyWith(
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
-              unselectedLabelStyle: context.textSm?.copyWith(
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.5,
-              ),
-              tabs: _buildTabs(),
-            ),
-          ),
-        ),
-      ),
 
-      // * Body
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          PendingApplications(),
-          AcceptedApplications(),
-          RejectedApplications(),
-        ],
+        // * AppBar
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          toolbarHeight: 40.0,
+          elevation: 0,
+          backgroundColor: context.colorScheme.surface,
+          centerTitle: true,
+          title: Text(
+            'Job Applications',
+            style: context.heading2Xs?.copyWith(
+              color: context.colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Container(
+              decoration: BoxDecoration(
+                color: context.colorScheme.surface,
+              ),
+              child: TabBar(
+                indicatorColor: context.colorScheme.primary,
+                indicatorWeight: 3,
+                labelColor: context.colorScheme.secondary,
+                unselectedLabelColor: context.colorScheme.secondary,
+                labelStyle: context.textSm?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: context.textSm?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+                tabs: [
+                  Tab(text: _tabLabels[0]),
+                  Tab(text: _tabLabels[1]),
+                  Tab(text: _tabLabels[2])
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // * Body
+        body: const TabBarView(
+          children: [
+            PendingApplications(),
+            AcceptedApplications(),
+            RejectedApplications(),
+          ],
+        ),
       ),
     );
-  }
-
-  List<Widget> _buildTabs() {
-    return _tabLabels
-        .map((label) => Tab(
-              child: AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                style: TextStyle(
-                  fontSize: _tabController.index == _tabLabels.indexOf(label)
-                      ? 14
-                      : 11,
-                  fontWeight: _tabController.index == _tabLabels.indexOf(label)
-                      ? FontWeight.w600
-                      : FontWeight.w300,
-                  color: _tabController.index == _tabLabels.indexOf(label)
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface,
-                ),
-                child: Text(label),
-              ),
-            ))
-        .toList();
   }
 }

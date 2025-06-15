@@ -79,6 +79,7 @@ class _ProfileCompletionScreen5State extends State<ProfileCompletionScreen5> {
     // METHOD THAT SHOWS BOTTOM SHEET TO ADD WORK EXPERIENCE
     void addWorkExperience() {
       showModalBottomSheet(
+        isScrollControlled: true,
         backgroundColor: context.colorScheme.surfaceContainer,
         context: context,
         builder: (context) {
@@ -119,6 +120,8 @@ class _ProfileCompletionScreen5State extends State<ProfileCompletionScreen5> {
                   ),
                   child: Center(
                     child: BlurEffect(
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
                       height: screenHeight(context) * 0.2,
                       width: screenWidth(context) * 0.8,
                       child: Center(
@@ -176,6 +179,7 @@ class _ProfileCompletionScreen5State extends State<ProfileCompletionScreen5> {
                           controller: widget.professonalTitleController,
                           icon: SvgPicture.asset(
                             'assets/svg/brand.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                         ),
@@ -185,9 +189,9 @@ class _ProfileCompletionScreen5State extends State<ProfileCompletionScreen5> {
                         LegworkElevatedButton(
                           onPressed: addWorkExperience,
                           buttonText: 'work experience',
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.add,
-                            color: Colors.white,
+                            color: context.colorScheme.onPrimary,
                           ),
                           maximumSize: Size(
                             screenWidth(context) * 0.55,

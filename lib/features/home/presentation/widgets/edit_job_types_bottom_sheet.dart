@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_filled_icon_button.dart';
 
 class EditJobTypesBottomSheet extends StatefulWidget {
-  final ColorScheme colorScheme;
-  final TextTheme textTheme;
   final List<String> availableJobTypes;
   final List selectedJobTypes;
   final dynamic editProfileScreen;
@@ -12,8 +11,6 @@ class EditJobTypesBottomSheet extends StatefulWidget {
   // Constructor
   const EditJobTypesBottomSheet({
     super.key,
-    required this.colorScheme,
-    required this.textTheme,
     required this.availableJobTypes,
     required this.selectedJobTypes,
     required this.editProfileScreen,
@@ -31,7 +28,7 @@ class _EditJobTypesBottomSheetState extends State<EditJobTypesBottomSheet> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: widget.colorScheme.surface,
+        color: context.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: SingleChildScrollView(
@@ -40,8 +37,8 @@ class _EditJobTypesBottomSheetState extends State<EditJobTypesBottomSheet> {
           children: [
             Text(
               'Job Types',
-              style: widget.textTheme.titleMedium?.copyWith(
-                color: widget.colorScheme.primary,
+              style: context.textMd?.copyWith(
+                color: context.colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -57,8 +54,8 @@ class _EditJobTypesBottomSheetState extends State<EditJobTypesBottomSheet> {
                 return FilterChip(
                   label: Text(type),
                   selected: isSelectedd,
-                  selectedColor: widget.colorScheme.primaryContainer,
-                  checkmarkColor: widget.colorScheme.primary,
+                  selectedColor: context.colorScheme.primaryContainer,
+                  checkmarkColor: context.colorScheme.primary,
                   onSelected: (selected) {
                     setState(() {
                       if (selected) {
@@ -78,17 +75,15 @@ class _EditJobTypesBottomSheetState extends State<EditJobTypesBottomSheet> {
               children: [
                 // CLose button
                 LegworkFilledIconButton(
-                  colorScheme: widget.colorScheme,
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.of(context).pop(),
-                  backgroundColor: widget.colorScheme.error,
+                  backgroundColor: context.colorScheme.error,
                 ),
                 // Check button
                 LegworkFilledIconButton(
-                  colorScheme: widget.colorScheme,
                   icon: const Icon(Icons.check),
                   onPressed: widget.onPressed,
-                  backgroundColor: widget.colorScheme.primary,
+                  backgroundColor: context.colorScheme.primary,
                 ),
               ],
             )

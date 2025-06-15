@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
@@ -219,7 +220,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
           : FloatingActionButton(
               backgroundColor: colorScheme.primary,
               onPressed: addWorkExperience,
-              child: const Icon(Icons.add),
+              child: Icon(Icons.add, color: context.colorScheme.onPrimary),
             ),
 
       // * BODY

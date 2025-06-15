@@ -41,8 +41,8 @@ class WorkExperienceTile extends StatelessWidget {
           child: BlurEffect(
             sigmaX: 2.0,
             sigmaY: 2.0,
-            firstGradientColor: Colors.black.withOpacity(0.9),
-            secondGradientColor: Colors.black.withOpacity(0.7),
+            firstGradientColor: context.colorScheme.surface.withOpacity(0.7),
+            secondGradientColor: context.colorScheme.surface.withOpacity(0.9),
             begin: Alignment.topLeft,
             end: Alignment.bottomCenter,
             height: null,
@@ -56,7 +56,7 @@ class WorkExperienceTile extends StatelessWidget {
                   RichText(
                     text: TextSpan(
                       style: context.text2Xl?.copyWith(
-                        color: context.colorScheme.surface,
+                        color: context.colorScheme.onSurface,
                       ),
                       children: [
                         // Job title

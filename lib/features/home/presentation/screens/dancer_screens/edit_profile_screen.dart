@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/core/Constants/entities.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
@@ -144,12 +145,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    //SCREEN SIZE
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // * JOB TYPES BOTTOM SHEET
     void openJobTypesBottomSheet() {
       if (widget.dancerDetails!.jobPrefs != null &&
@@ -161,8 +156,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           context: context,
           builder: (context) {
             return EditJobTypesBottomSheet(
-              colorScheme: colorScheme,
-              textTheme: textTheme,
               availableJobTypes: availableJobTypes,
               selectedJobTypes: selectedJobTypes,
               editProfileScreen: widget,
@@ -184,9 +177,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         isScrollControlled: true,
         builder: (context) {
           return StatefulBuilder(
-            // TODO!: COME BACK AND FIX THE FILTERED LIST NOT UPDATING STATE
             builder: (context, setModalState) {
               return Container(
+                height: screenHeight(context) * 0.8,
                 padding: const EdgeInsets.all(10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -207,51 +200,54 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         }).toList();
 
                         return [
-                          SizedBox(
-                            height: 400,
-                            child: ListView.builder(
-                              itemCount: filtered.length,
-                              itemBuilder: (context, index) {
-                                return LegworkCheckboxTile(
-                                  title: filtered[index].name,
-                                  checkedValue: filtered[index].isSelected,
-                                  onChanged: (value) {
-                                    setModalState(() {
-                                      // Update the original location's state
-                                      final originalIndex =
-                                          locations.indexWhere((l) =>
-                                              l.name == filtered[index].name);
+                          StatefulBuilder(
+                            builder: (context, setBuilderState) {
+                              return SizedBox(
+                                height: 400,
+                                child: ListView.builder(
+                                  itemCount: filtered.length,
+                                  itemBuilder: (context, index) {
+                                    return LegworkCheckboxTile(
+                                      title: filtered[index].name,
+                                      checkedValue: filtered[index].isSelected,
+                                      onChanged: (value) {
+                                        setBuilderState(() {});
+                                        setModalState(() {
+                                          // Update the original location's state
+                                          final originalIndex =
+                                              locations.indexWhere((l) =>
+                                                  l.name ==
+                                                  filtered[index].name);
 
-                                      // If a match is found(originalIndex != -1),
-                                      // update the isSelected value of that item to true/false
-                                      if (originalIndex != -1) {
-                                        locations[originalIndex].isSelected =
-                                            value!;
-                                        filtered[index].isSelected = true;
-                                      }
+                                          // If a match is found(originalIndex != -1),
+                                          // update the isSelected value of that item to true/false
+                                          if (originalIndex != -1) {
+                                            locations[originalIndex]
+                                                .isSelected = value!;
+                                            filtered[index].isSelected = true;
+                                          }
 
-                                      // // Update filtered list
-                                      // filtered[index].isSelected = value!;
-
-                                      /// * Update selectedLocations list
-                                      /// * If the checkbox is ticked and the selectedLocations list
-                                      /// * does not already contain the location from the
-                                      /// * filteredLocations list then add it to the selectedLocations
-                                      /// * else, remove it
-                                      if (value! &&
-                                          !selectedLocations
-                                              .contains(filtered[index].name)) {
-                                        selectedLocations
-                                            .add(filtered[index].name);
-                                      } else {
-                                        selectedLocations
-                                            .remove(filtered[index].name);
-                                      }
-                                    });
+                                          /// * Update selectedLocations list
+                                          /// * If the checkbox is ticked and the selectedLocations list
+                                          /// * does not already contain the location from the
+                                          /// * filteredLocations list then add it to the selectedLocations
+                                          /// * else, remove it
+                                          if (value! &&
+                                              !selectedLocations.contains(
+                                                  filtered[index].name)) {
+                                            selectedLocations
+                                                .add(filtered[index].name);
+                                          } else {
+                                            selectedLocations
+                                                .remove(filtered[index].name);
+                                          }
+                                        });
+                                      },
+                                    );
                                   },
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
                           ),
                         ];
                       },
@@ -302,19 +298,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Scaffold(
       // * APPBAR
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         centerTitle: true,
         title: Text(
           'Edit Profile',
-          style: textTheme.headlineSmall?.copyWith(
-            color: colorScheme.onSurface,
+          style: context.heading2Xs?.copyWith(
+            color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: colorScheme.onSurface,
+            color: context.colorScheme.onSurface,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -334,7 +331,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: colorScheme.primaryContainer,
+                      backgroundColor: context.colorScheme.primaryContainer,
                       backgroundImage: (widget.dancerDetails?.profilePicture !=
                                   null &&
                               widget.dancerDetails!.profilePicture!.isNotEmpty)
@@ -348,16 +345,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       right: 0,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: colorScheme.primary,
+                          color: context.colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           icon: SvgPicture.asset(
                             'assets/svg/camera.svg',
                             fit: BoxFit.scaleDown,
-                            color: colorScheme.onPrimary,
+                            color: context.colorScheme.onPrimary,
                           ),
-                          color: colorScheme.onPrimary,
+                          color: context.colorScheme.onPrimary,
                           onPressed: () {},
                         ),
                       ),
@@ -381,8 +378,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     Text(
                       'Basic Information',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.primary,
+                      style: context.textMd?.copyWith(
+                        color: context.colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -393,22 +390,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AuthTextFormField(
-                          width: screenWidth * 0.37,
+                          width: screenWidth(context) * 0.37,
                           obscureText: false,
                           controller: _firstNameController,
                           labelText: 'First name',
                           icon: SvgPicture.asset(
                             'assets/svg/user.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                         ),
                         AuthTextFormField(
-                          width: screenWidth * 0.37,
+                          width: screenWidth(context) * 0.37,
                           obscureText: false,
                           controller: _lastNameController,
                           labelText: 'Last name',
                           icon: SvgPicture.asset(
                             'assets/svg/user.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                         ),
@@ -421,6 +420,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       label: 'Username',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/username.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -432,6 +432,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       label: 'Phone Number',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/hashtag_icon.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                       // keyboardType: TextInputType.phone,
@@ -444,6 +445,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       label: 'Email',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/mail.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -457,6 +459,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: _bioController,
                       icon: SvgPicture.asset(
                         'assets/svg/description_icon.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -479,8 +482,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     Text(
                       'Professional Title',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.primary,
+                      style: context.textMd?.copyWith(
+                        color: context.colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -492,6 +495,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           'Professional title should be brief and concise',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/brand.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -514,8 +518,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     Text(
                       'Dance Styles',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.primary,
+                      style: context.textMd?.copyWith(
+                        color: context.colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -526,6 +530,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       helperText: 'Separate each dance style with a comma',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/disco_ball.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -539,14 +544,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             LegworkListTile(
               leading: SvgPicture.asset(
                 'assets/svg/briefcase.svg',
-                color: colorScheme.onPrimary,
+                color: context.colorScheme.onPrimary,
                 fit: BoxFit.scaleDown,
               ),
               title: Text(
                 'Job types',
-                style: textTheme.labelSmall?.copyWith(
+                style: context.textSm?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: colorScheme.onPrimary,
+                  color: context.colorScheme.onPrimary,
                 ),
               ),
               onTap: openJobTypesBottomSheet,
@@ -557,14 +562,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             LegworkListTile(
               leading: SvgPicture.asset(
                 'assets/svg/location.svg',
-                color: colorScheme.onPrimary,
+                color: context.colorScheme.onPrimary,
                 fit: BoxFit.scaleDown,
               ),
               title: Text(
                 'Job locations',
-                style: textTheme.labelSmall?.copyWith(
+                style: context.textXs?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: colorScheme.onPrimary,
+                  color: context.colorScheme.onPrimary,
                 ),
               ),
               onTap: openJobLocationsBottomSheet,

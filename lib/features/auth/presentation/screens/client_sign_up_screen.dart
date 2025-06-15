@@ -130,6 +130,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
           ? const Icon(Icons.remove_red_eye_outlined)
           : SvgPicture.asset(
               'assets/svg/crossed_eye.svg',
+              color: context.colorScheme.onPrimaryContainer,
               fit: BoxFit.scaleDown,
             ),
     );
@@ -144,6 +145,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
           ? const Icon(Icons.remove_red_eye_outlined)
           : SvgPicture.asset(
               'assets/svg/crossed_eye.svg',
+              color: context.colorScheme.onPrimaryContainer,
               fit: BoxFit.scaleDown,
             ),
     );
@@ -212,6 +214,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                               controller: firstNameController,
                               icon: SvgPicture.asset(
                                 'assets/svg/user.svg',
+                                color: context.colorScheme.onPrimaryContainer,
                                 fit: BoxFit.scaleDown,
                               ),
                               keyboardType: TextInputType.name,
@@ -231,6 +234,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                               controller: lastNameController,
                               icon: SvgPicture.asset(
                                 'assets/svg/user.svg',
+                                color: context.colorScheme.onPrimaryContainer,
                                 fit: BoxFit.scaleDown,
                               ),
                               keyboardType: TextInputType.name,
@@ -252,6 +256,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           controller: usernameController,
                           icon: SvgPicture.asset(
                             'assets/svg/username.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.name,
@@ -271,6 +276,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           controller: organisationNameController,
                           icon: SvgPicture.asset(
                             'assets/svg/username.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.name,
@@ -286,6 +292,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           controller: emailController,
                           icon: SvgPicture.asset(
                             'assets/svg/mail.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.emailAddress,
@@ -305,6 +312,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           controller: phoneNumberController,
                           icon: SvgPicture.asset(
                             'assets/svg/address_book.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.phone,
@@ -325,6 +333,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           controller: pwController,
                           icon: SvgPicture.asset(
                             'assets/svg/open_padlock.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.visiblePassword,
@@ -348,6 +357,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
                           controller: pwConfirmController,
                           icon: SvgPicture.asset(
                             'assets/svg/lock-hashtag.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.name,

@@ -48,6 +48,8 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                   ),
                   child: Center(
                     child: BlurEffect(
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
                       height: screenHeight(context) * 0.18,
                       width: screenWidth(context) * 0.8,
                       child: Center(
@@ -99,7 +101,7 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                           ),
                         ),
                         maximumSize: Size(
-                          screenWidth(context) * 0.55,
+                          screenWidth(context) * 0.60,
                           screenHeight(context) * 0.1,
                         ),
                         onPressed: _uploadHiringHistory,

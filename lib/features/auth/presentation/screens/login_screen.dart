@@ -157,6 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ? const Icon(Icons.remove_red_eye_outlined)
           : SvgPicture.asset(
               'assets/svg/crossed_eye.svg',
+              color: context.colorScheme.onPrimaryContainer,
               fit: BoxFit.scaleDown,
             ),
     );
@@ -230,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: userTypecontroller,
                           icon: SvgPicture.asset(
                             'assets/svg/user.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           validator: (value) {
@@ -249,6 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: emailController,
                           icon: SvgPicture.asset(
                             'assets/svg/mail.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           helperText: 'Ex: johndoe@gmail.com',
@@ -270,6 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: pwController,
                           icon: SvgPicture.asset(
                             'assets/svg/lock-hashtag.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           validator: (value) {

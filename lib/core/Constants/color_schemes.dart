@@ -12,9 +12,17 @@ ThemeData lightMode = ThemeData(
   ),
 );
 
-ThemeData seedScheme = ThemeData(
+ThemeData seedSchemeLight = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.deepPurple,
     brightness: Brightness.light,
+  ),
+);
+
+
+ThemeData seedSchemeDark = ThemeData(
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: Colors.deepPurple,
+    brightness: Brightness.dark,
   ),
 );
