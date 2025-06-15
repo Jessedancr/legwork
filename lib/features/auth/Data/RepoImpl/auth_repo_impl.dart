@@ -121,20 +121,6 @@ class AuthRepoImpl implements AuthRepo {
     }
   }
 
-  // GET USERNAME
-  @override
-  Future<Either<String, String>> getUsername({required String userId}) async {
-    try {
-      final result = await _authRemoteDataSource.getUsername(userId: userId);
-      return result.fold(
-        (fail) => Left(fail.toString()),
-        (username) => Right(username),
-      );
-    } catch (e) {
-      return Left(e.toString());
-    }
-  }
-
   // GET UID
   @override
   String getUserId() {
@@ -158,6 +144,16 @@ class AuthRepoImpl implements AuthRepo {
       );
     } catch (e) {
       return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<String> getDeviceToken({required String userId}) async {
+    try {
+      final result = await _authRemoteDataSource.getDeviceToken(userId: userId);
+      return result;
+    } catch (e) {
+      return e.toString();
     }
   }
 }

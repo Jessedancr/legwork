@@ -6,6 +6,7 @@ import 'package:legwork/core/widgets/legwork_text_button.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_elevated_button.dart';
+import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
@@ -114,14 +115,22 @@ class _JobApplicationDetailScreenState
     // CHAT WITH JOB APPLICANT(DANCER)
     void chatWithDancer() async {
       try {
+        ConversationEntity convoEntity = ConversationEntity(
+          convoId: '',
+          participants: [dancerId, clientId],
+          lastMessageTime: DateTime.now(),
+          lastMessage: '',
+          lastMessageSenderId: '',
+          hasUnreadMessages: true,
+        );
         setState(() {
           _isChatLoading = true;
         });
 
         // Create a conversation ID (or fetch existing)
-        final result = await context.read<ChatProvider>().createConversation(
-          participants: [clientId, dancerId],
-        );
+        final result = await context
+            .read<ChatProvider>()
+            .createConversation(convoEntity: convoEntity);
 
         result.fold(
             // Handle fail
@@ -147,7 +156,7 @@ class _JobApplicationDetailScreenState
             context,
             MaterialPageRoute(
               builder: (context) => ChatDetailScreen(
-                conversationId: conversation.id,
+                conversationId: conversation.convoId,
                 otherParticipantId: dancerId,
               ),
             ),
@@ -162,7 +171,7 @@ class _JobApplicationDetailScreenState
         if (!mounted) return;
         LegworkSnackbar(
           title: 'Omo!',
-          subTitle: 'An unexpected error occurred. Please try again.',
+          subTitle: 'An unexpected error occurred.',
           imageColor: context.colorScheme.onError,
           contentColor: context.colorScheme.error,
         ).show(context);
@@ -271,8 +280,7 @@ class _JobApplicationDetailScreenState
             Navigator.pop(context); // Close loading indicator
             LegworkSnackbar(
               title: 'Application Rejected',
-              subTitle:
-                  "You've rejected this application! That's so sad for the dancer",
+              subTitle: "You've rejected this application!",
               imageColor: context.colorScheme.onPrimary,
               contentColor: context.colorScheme.primary,
             ).show(context);
@@ -298,21 +306,29 @@ class _JobApplicationDetailScreenState
 
       floatingActionButton: status.toLowerCase() == 'accepted'
           ? FloatingActionButton(
+              backgroundColor: context.colorScheme.primary,
               onPressed: () async {
                 final email = await fetchClientDetails();
-                Navigator.of(context).pushNamed('/paymentScreen', arguments: {
-                  'dancerId': dancerId,
-                  'clientId': clientId,
-                  'amount': 100.0,
-                  'email': email,
-                });
+                Navigator.of(context).pushNamed(
+                  '/paymentScreen',
+                  arguments: {
+                    'dancerId': dancerId,
+                    'clientId': clientId,
+                    'amount': 100.0,
+                    'email': email,
+                  },
+                );
               },
-              child: const Icon(Icons.payment),
+              child: SvgPicture.asset(
+                'assets/svg/wallet_out_icon.svg',
+                color: context.colorScheme.onPrimary,
+              ),
             )
           : null,
 
       // * APPBAR
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         elevation: 0,
         backgroundColor: context.colorScheme.surface,
         centerTitle: true,
@@ -324,7 +340,10 @@ class _JobApplicationDetailScreenState
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: context.colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -400,8 +419,10 @@ class _JobApplicationDetailScreenState
                             LegworkOutlineButton(
                               isLoading: _isChatLoading,
                               onPressed: chatWithDancer,
-                              icon:
-                                  SvgPicture.asset('assets/svg/chat_icon.svg'),
+                              icon: SvgPicture.asset(
+                                'assets/svg/chat_icon.svg',
+                                color: context.colorScheme.primary,
+                              ),
                               buttonText: 'Message dancer',
                             ),
                             const SizedBox(height: 16),
@@ -453,6 +474,7 @@ class _JobApplicationDetailScreenState
                                 onPressed: chatWithDancer,
                                 icon: SvgPicture.asset(
                                   'assets/svg/chat_icon.svg',
+                                  color: context.colorScheme.primary,
                                 ),
                                 buttonText: 'Message dancer',
                               ),

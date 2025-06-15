@@ -19,7 +19,7 @@ class LegworkCheckboxTile extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          color: context.colorScheme.scrim,
+          color: context.colorScheme.onSurface,
           borderRadius: BorderRadius.circular(30),
         ),
         width: double.infinity,
@@ -29,9 +29,9 @@ class LegworkCheckboxTile extends StatelessWidget {
             Checkbox(
               value: checkedValue,
               onChanged: onChanged,
-              fillColor: WidgetStatePropertyAll(context.colorScheme.surface),
+              fillColor: WidgetStatePropertyAll(context.colorScheme.onSurface),
               activeColor: context.colorScheme.primary,
-              checkColor: Colors.black,
+              checkColor: context.colorScheme.surface,
               shape: const CircleBorder(),
             ),
             Text(

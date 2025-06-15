@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
@@ -72,9 +73,6 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     // DATE PICKER
     Future<void> datePicker() async {
       DateTime? pickedDate = await showDatePicker(
@@ -125,8 +123,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
             LegworkSnackbar(
               title: 'Omo!',
               subTitle: fail,
-              imageColor: colorScheme.onError,
-              contentColor: colorScheme.error,
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
             ).show(context);
 
             // Clear controllers
@@ -156,8 +154,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
             LegworkSnackbar(
               title: 'Sharp guy!',
               subTitle: 'Hiring history added',
-              imageColor: colorScheme.onPrimary,
-              contentColor: colorScheme.primary,
+              imageColor: context.colorScheme.onPrimary,
+              contentColor: context.colorScheme.primary,
             ).show(context);
 
             // Clear controllers
@@ -176,6 +174,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
     // METHOD THAT SHOWS BOTTOM SHEET TO ADD HIRING HISTORY
     void addHiringHistory() {
       showModalBottomSheet(
+        isScrollControlled: true,
         context: context,
         builder: (context) {
           return HiringHistoryBottomSheet(
@@ -195,16 +194,17 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
     return Scaffold(
       // * APP BAR
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: false,
         centerTitle: true,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         elevation: 0,
         title: Text(
           clientDetails?.username != null
               ? clientDetails!.username
               : 'Your Profile',
-          style: TextStyle(
-            color: colorScheme.onSurface,
+          style: context.heading2Xs?.copyWith(
+            color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -212,7 +212,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
           IconButton(
             icon: SvgPicture.asset(
               'assets/svg/pen_circle.svg',
-              color: colorScheme.onSurface,
+              color: context.colorScheme.onSurface,
               width: 24,
               height: 24,
             ),
@@ -220,12 +220,14 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
           )
         ],
       ),
+
+      // * FLOATING ACTION BUTTON
       floatingActionButton: isLoading
           ? null
           : FloatingActionButton(
-              backgroundColor: colorScheme.primary,
+              backgroundColor: context.colorScheme.primary,
               onPressed: addHiringHistory,
-              child: const Icon(Icons.add),
+              child: Icon(Icons.add, color: context.colorScheme.onPrimary),
             ),
       body: isLoading
           ? Center(
@@ -244,13 +246,13 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                       Icon(
                         Icons.error_outline,
                         size: 48,
-                        color: colorScheme.error,
+                        color: context.colorScheme.error,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'Failed to load profile data',
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.error,
+                        style: context.text2Xl?.copyWith(
+                          color: context.colorScheme.error,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -266,8 +268,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
               // PULL TO REFRESH
               : LiquidPullToRefresh(
                   onRefresh: _fetchClientDetails,
-                  color: colorScheme.primary,
-                  backgroundColor: colorScheme.surface,
+                  color: context.colorScheme.primary,
+                  backgroundColor: context.colorScheme.surface,
                   animSpeedFactor: 3.0,
                   showChildOpacityTransition: false,
                   child: SingleChildScrollView(
@@ -277,8 +279,6 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                         // Header Section with Profile Picture
                         ProfileHeaderSection(
                           user: clientDetails!,
-                          colorScheme: colorScheme,
-                          textTheme: textTheme,
                           onTap: () {
                             Navigator.push(
                               context,

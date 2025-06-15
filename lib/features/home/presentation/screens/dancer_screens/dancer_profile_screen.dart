@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
@@ -187,6 +188,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
     return Scaffold(
       // * APP BAR
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: false,
         centerTitle: true,
         backgroundColor: colorScheme.surface,
@@ -195,8 +197,8 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
           dancerDetails?.username != null
               ? dancerDetails!.username
               : 'Your Profile',
-          style: TextStyle(
-            color: colorScheme.onSurface,
+          style: context.heading2Xs?.copyWith(
+            color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -219,7 +221,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
           : FloatingActionButton(
               backgroundColor: colorScheme.primary,
               onPressed: addWorkExperience,
-              child: const Icon(Icons.add),
+              child: Icon(Icons.add, color: context.colorScheme.onPrimary),
             ),
 
       // * BODY
@@ -279,8 +281,6 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
                         // Header Section with Profile Picture
                         ProfileHeaderSection(
                           user: dancerDetails!,
-                          colorScheme: colorScheme,
-                          textTheme: textTheme,
                           onTap: () {
                             Navigator.push(
                               context,

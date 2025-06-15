@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/show_applications_card.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class AcceptedApplications extends StatefulWidget {
@@ -45,7 +47,12 @@ class _AcceptedApplicationsState extends State<AcceptedApplications> {
       body: Consumer<JobApplicationProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+                child: Lottie.asset(
+              'assets/lottie/loading.json',
+              height: 100,
+              fit: BoxFit.cover,
+            ));
           }
 
           // Check if we have accepted applications with jobs data
@@ -63,8 +70,8 @@ class _AcceptedApplicationsState extends State<AcceptedApplications> {
 
   Widget _buildAcceptedApplicationsWithJobs(JobApplicationProvider provider) {
     return LiquidPullToRefresh(
-      color: Theme.of(context).colorScheme.primary,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      color: context.colorScheme.primary,
+      backgroundColor: context.colorScheme.surface,
       animSpeedFactor: 3.0,
       showChildOpacityTransition: false,
       onRefresh: _refresh,

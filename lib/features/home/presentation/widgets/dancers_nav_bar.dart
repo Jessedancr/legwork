@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 
 class NavBarIcons {
   static const String _fontFamily = 'LegworkNavBarIcons';
@@ -35,7 +36,7 @@ class _DancersNavBarState extends State<DancersNavBar> {
         borderRadius: BorderRadius.circular(40),
         child: Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: context.colorScheme.onSurface,
             borderRadius: BorderRadius.circular(40),
           ),
           child: Padding(
@@ -46,23 +47,22 @@ class _DancersNavBarState extends State<DancersNavBar> {
             child: GNav(
               tabMargin: const EdgeInsets.only(top: 10, bottom: 10),
               gap: 8,
-              backgroundColor: Theme.of(context).colorScheme.onSurface,
-              color: Theme.of(context).colorScheme.surface,
-              activeColor: Theme.of(context).colorScheme.surface,
-              tabBackgroundColor: Theme.of(context).colorScheme.secondary,
-              rippleColor: Theme.of(context).colorScheme.primaryFixedDim,
+              backgroundColor: context.colorScheme.onSurface,
+              color: context.colorScheme.surface,
+              activeColor: context.colorScheme.surface,
+              tabBackgroundColor: context.colorScheme.secondary,
+              rippleColor: context.colorScheme.primaryFixedDim,
               tabBackgroundGradient: LinearGradient(
                 colors: [
-                  Theme.of(context).colorScheme.primary,
-                  Theme.of(context).colorScheme.onPrimaryContainer,
+                  context.colorScheme.primary,
+                  context.colorScheme.onPrimaryContainer,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
-              textStyle: TextStyle(
-                color: Theme.of(context).colorScheme.surface,
+              textStyle: context.textSm?.copyWith(
+                color: context.colorScheme.surface,
                 fontWeight: FontWeight.w600,
-                fontSize: 12,
               ),
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
               selectedIndex: widget.selectedIndex,

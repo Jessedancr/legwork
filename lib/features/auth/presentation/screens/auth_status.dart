@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_app.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 import 'account_type_screen.dart';
 /**
@@ -17,9 +19,11 @@ class AuthStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Instance of auth provider
+    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
     return Scaffold(
       body: StreamBuilder(
-        stream: auth.authStateChanges(),
+        stream: authRemoteDataSource.authStateChanges(),
         builder: (context, snapShot) {
           // If no user is logged in, show the AccountTypeScreen
           if (!snapShot.hasData) {
@@ -29,7 +33,7 @@ class AuthStatus extends StatelessWidget {
           else {
             final user = snapShot.data;
             return FutureBuilder(
-              future: authRemoteDataSource.getUserType(uid: user!.uid),
+              future: authProvider.getUserDetails(uid: user!.uid),
               builder: (context, snapshot) {
                 // Show a loading indicator while fetching user type
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -41,7 +45,13 @@ class AuthStatus extends StatelessWidget {
                     ),
                   );
                 }
-                final userType = snapshot.data;
+                final userType = snapshot.data!.fold(
+                  (fail) {
+                    debugPrint('Error fetching user type: $fail');
+                    return fail;
+                  },
+                  (userEntity) => userEntity.userType,
+                );
                 if (userType == 'dancer') {
                   return const DancerApp();
                 } else if (userType == 'client') {

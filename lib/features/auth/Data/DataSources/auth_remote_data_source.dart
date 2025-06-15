@@ -7,20 +7,17 @@ import 'package:legwork/features/auth/Data/Models/resume_model.dart';
 import 'package:legwork/features/auth/Data/Models/user_model.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 
-final auth = FirebaseAuth.instance;
-final db = FirebaseFirestore.instance;
-
 /**
  * AUTH ABSTRACT CLASS
  */
 abstract class AuthRemoteDataSource {
   /// USER SIGN UP METHOD
-  Future<Either<String, dynamic>> userSignUp({
+  Future<Either<String, UserEntity>> userSignUp({
     required UserEntity userEntity,
   });
 
   /// USER LOGIN METHOD
-  Future<Either<String, dynamic>> userLogin({
+  Future<Either<String, UserEntity>> userLogin({
     required UserEntity userEntity,
   });
 
@@ -30,12 +27,12 @@ abstract class AuthRemoteDataSource {
   /// GET CURRENLY LOGGED IN USER'S ID
   String getUserId();
 
-  /// METHOD TO GET THE USERNAME FROM DOCUMENT
-  Future<Either<String, String>> getUsername({required String userId});
-
   Future<String> getDeviceToken({required String userId});
 
   Future<Either<String, UserEntity>> getUserDetails({required String uid});
+
+  /// LISTEN TO AUTH STATE CHANGES
+  Stream<User?> authStateChanges();
 }
 
 /**
@@ -48,7 +45,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// USER SIGN UP METHOD
   @override
-  Future<Either<String, dynamic>> userSignUp({
+  Future<Either<String, UserEntity>> userSignUp({
     required UserEntity userEntity,
   }) async {
     try {
@@ -142,7 +139,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   /// USER LOGIN METHOD
   @override
-  Future<Either<String, dynamic>> userLogin({
+  Future<Either<String, UserEntity>> userLogin({
     required UserEntity userEntity,
   }) async {
     try {
@@ -223,61 +220,36 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Either<String, void>> logout() async {
     try {
+      final user = auth.currentUser;
+      if (user == null) {
+        return const Left('No user is currently logged in');
+      }
+      final uid = user.uid;
+
+      // Fetch both documents
+      final docs = await Future.wait([
+        db.collection('dancers').doc(uid).get(),
+        db.collection('clients').doc(uid).get(),
+      ]);
+      final dancersDoc = docs[0];
+      final clientsDoc = docs[1];
+
+      // Only update deviceToken if the document exists
+      if (dancersDoc.exists) {
+        await db.collection('dancers').doc(uid).update({'deviceToken': ''});
+      }
+      if (clientsDoc.exists) {
+        await db.collection('clients').doc(uid).update({'deviceToken': ''});
+      }
+
       await auth.signOut();
       return const Right(null);
     } on FirebaseAuthException catch (e) {
       debugPrint('Error logging out: $e');
       return Left(e.code.toString());
     } catch (e) {
-      debugPrint('An unknown error occurred while logging out');
+      debugPrint('An unknown error occurred while logging out: $e');
       return Left(e.toString());
-    }
-  }
-
-  /// METHOD TO GET THE USERTYPE FIELD FROM DOCUMENT
-  Future<String> getUserType({required String uid}) async {
-    try {
-      // Query the two collections at the same time
-      final docs = await Future.wait([
-        db.collection('dancers').doc(uid).get(),
-        db.collection('clients').doc(uid).get()
-      ]);
-      final dancersDoc = docs[0];
-      final clientsDoc = docs[1];
-
-      if (dancersDoc.exists && dancersDoc.data() != null) {
-        return dancersDoc.data()!['userType'];
-        //return dancersDoc['userType'] as String;
-      } else if (clientsDoc.exists && clientsDoc.data() != null) {
-        return clientsDoc.data()!['userType'];
-      }
-      return 'no user found';
-    } catch (e) {
-      debugPrint('Error getting user type on app launch: $e');
-      return e.toString();
-    }
-  }
-
-  @override
-  Future<Either<String, String>> getUsername({required String userId}) async {
-    try {
-      // the Future.wait method checks both collections at the same time
-      final results = await Future.wait([
-        db.collection('dancers').doc(userId).get(),
-        db.collection('clients').doc(userId).get()
-      ]);
-      final dancersDoc = results[0];
-      final clientsDoc = results[1];
-
-      if (dancersDoc.exists) {
-        return Right(dancersDoc.data()?['username'] ?? 'Unknown dancer');
-      } else if (clientsDoc.exists) {
-        return Right(clientsDoc.data()?['username'] ?? 'Unknown client');
-      }
-      return const Left('User not found');
-    } catch (e) {
-      debugPrint('Error getting username: $e');
-      return const Left('Error getting username');
     }
   }
 
@@ -317,6 +289,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
+  /// GET USER DETAILS METHOD
   @override
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,
@@ -341,6 +314,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       debugPrint('Error getting all of users details: ${e.toString()}');
       return Left(e.toString());
     }
+  }
+
+  /// LISTEN TO AUTH STATE CHANGES
+  @override
+  Stream<User?> authStateChanges() {
+    return auth.authStateChanges();
   }
 }
 

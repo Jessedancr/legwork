@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/Constants/jobs_list.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
@@ -126,12 +127,6 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    //SCREEN SIZE
-    final screenWidth = MediaQuery.of(context).size.width;
-
     // * JOB TYPES BOTTOM SHEET
     void openJobTypesBottomSheet() {
       if (widget.clientDetails.jobOfferings!.isNotEmpty) {
@@ -142,8 +137,6 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
           context: context,
           builder: (context) {
             return EditJobTypesBottomSheet(
-              colorScheme: colorScheme,
-              textTheme: textTheme,
               availableJobTypes: availableJobTypes,
               selectedJobTypes: selectedJobTypes,
               editProfileScreen: widget,
@@ -161,16 +154,16 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
         centerTitle: true,
         title: Text(
           'Edit Profile',
-          style: textTheme.headlineSmall?.copyWith(
-            color: colorScheme.onSurface,
+          style: context.heading2Xs?.copyWith(
+            color: context.colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios,
-            color: colorScheme.onSurface,
+            color: context.colorScheme.onSurface,
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -189,30 +182,29 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: colorScheme.primaryContainer,
+                      backgroundColor: context.colorScheme.primaryContainer,
                       backgroundImage: (widget.clientDetails.profilePicture !=
                                   null &&
                               widget.clientDetails.profilePicture!.isNotEmpty)
                           ? NetworkImage(widget.clientDetails.profilePicture!)
-                          : const AssetImage(
-                              'images/depictions/img_depc1.jpg',
-                            ) as ImageProvider,
+                          : const AssetImage(defaultClientProfileImage)
+                              as ImageProvider,
                     ),
                     Positioned(
                       bottom: 0,
                       right: 0,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: colorScheme.primary,
+                          color: context.colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           icon: SvgPicture.asset(
                             'assets/svg/camera.svg',
                             fit: BoxFit.scaleDown,
-                            color: colorScheme.onPrimary,
+                            color: context.colorScheme.onPrimary,
                           ),
-                          color: colorScheme.onPrimary,
+                          color: context.colorScheme.onPrimary,
                           onPressed: () {},
                         ),
                       ),
@@ -236,8 +228,8 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                   children: [
                     Text(
                       'Basic Information',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.primary,
+                      style: context.heading2Xs?.copyWith(
+                        color: context.colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -248,22 +240,24 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AuthTextFormField(
-                          width: screenWidth * 0.37,
+                          width: screenWidth(context) * 0.37,
                           obscureText: false,
                           controller: _firstNameController,
                           labelText: 'First name',
                           icon: SvgPicture.asset(
                             'assets/svg/user.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                         ),
                         AuthTextFormField(
-                          width: screenWidth * 0.37,
+                          width: screenWidth(context) * 0.37,
                           obscureText: false,
                           controller: _lastNameController,
                           labelText: 'Last name',
                           icon: SvgPicture.asset(
                             'assets/svg/user.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                         ),
@@ -277,6 +271,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       label: 'Username',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/username.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -288,6 +283,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       label: 'Organisation name',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/briefcase.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -299,9 +295,10 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       label: 'Phone Number',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/hashtag_icon.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
-                      // keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.phone,
                     ),
                     const SizedBox(height: 16),
 
@@ -311,6 +308,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       label: 'Email',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/mail.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -324,6 +322,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       controller: _bioController,
                       icon: SvgPicture.asset(
                         'assets/svg/description_icon.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -346,8 +345,8 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                   children: [
                     Text(
                       'Professional title',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.primary,
+                      style: context.heading2Xs?.copyWith(
+                        color: context.colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -359,6 +358,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                           'Professional title should be brief and concise',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/brand.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -381,8 +381,8 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                   children: [
                     Text(
                       'Dance Styles',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.primary,
+                      style: context.heading2Xs?.copyWith(
+                        color: context.colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -393,6 +393,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       helperText: 'Separate each dance style with a comma',
                       prefixIcon: SvgPicture.asset(
                         'assets/svg/disco_ball.svg',
+                        color: context.colorScheme.onPrimaryContainer,
                         fit: BoxFit.scaleDown,
                       ),
                     ),
@@ -406,14 +407,14 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
             LegworkListTile(
               leading: SvgPicture.asset(
                 'assets/svg/briefcase.svg',
-                color: colorScheme.onPrimary,
+                color: context.colorScheme.onPrimary,
                 fit: BoxFit.scaleDown,
               ),
               title: Text(
                 'Job types',
-                style: textTheme.labelSmall?.copyWith(
+                style: context.textXs?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: colorScheme.onPrimary,
+                  color: context.colorScheme.onPrimary,
                 ),
               ),
               onTap: openJobTypesBottomSheet,

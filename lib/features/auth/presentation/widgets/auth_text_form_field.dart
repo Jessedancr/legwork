@@ -57,8 +57,7 @@ class AuthTextFormField extends StatelessWidget {
               helper: Text(
                 helperText ?? '',
                 style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  color: context.colorScheme.onSurface.withOpacity(0.5),
                   fontSize: 10,
                 ),
               ),

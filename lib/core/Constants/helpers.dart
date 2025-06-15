@@ -41,3 +41,5 @@ extension LegworkTheme on BuildContext {
 
 const defaultDancerProfileImage =
     'images/depictions/dancer_dummy_default_profile_picture.jpg';
+
+const defaultClientProfileImage = 'images/depictions/img_depc1.jpg';

@@ -44,6 +44,8 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                   ),
                   child: Center(
                     child: BlurEffect(
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
                       height: screenHeight(context) * 0.18,
                       width: screenWidth(context) * 0.8,
                       child: Center(

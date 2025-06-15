@@ -4,7 +4,7 @@ import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 class ConversationModel extends ConversationEntity {
   // Constructor
   ConversationModel({
-    required super.id,
+    required super.convoId,
     required super.participants,
     required super.lastMessage,
     required super.lastMessageTime,
@@ -17,7 +17,7 @@ class ConversationModel extends ConversationEntity {
     final data = doc.data() as Map<String, dynamic>;
 
     return ConversationModel(
-      id: doc.id,
+      convoId: doc.id,
       participants: List<String>.from(data['participants'] ?? []),
       lastMessage: data['lastMessage'] ?? '',
       lastMessageTime:
@@ -35,6 +35,7 @@ class ConversationModel extends ConversationEntity {
       'lastMessageTime': Timestamp.fromDate(lastMessageTime),
       'lastMessageSenderId': lastMessageSenderId,
       'hasUnreadMessages': hasUnreadMessages,
+      'convoId': convoId,
     };
   }
 }

@@ -80,6 +80,7 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
     // METHOD THAT SHOWS BOTTOM SHEET TO ADD WORK EXPERIENCE
     void addWorkExperience() {
       showModalBottomSheet(
+        isScrollControlled: true,
         backgroundColor: context.colorScheme.surfaceContainer,
         context: context,
         builder: (context) {
@@ -121,6 +122,8 @@ class _ProfileCompletionScreen4State extends State<ProfileCompletionScreen4> {
                   ),
                   child: Center(
                     child: BlurEffect(
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
                       height: screenHeight(context) * 0.2,
                       width: screenWidth(context) * 0.8,
                       child: Center(

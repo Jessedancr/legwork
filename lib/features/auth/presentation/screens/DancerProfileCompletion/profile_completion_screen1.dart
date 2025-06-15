@@ -48,7 +48,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         body: Center(
           child: Column(
             children: [
@@ -69,6 +69,8 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                   child: Center(
                     // TEXT CONTAINER
                     child: BlurEffect(
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
                       width: screenWidth(context) * 0.8,
                       height: screenHeight(context) * 0.18,
                       child: Column(
@@ -78,7 +80,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                             'WELCOME TO LEGWORK!',
                             style: context.text2Xl?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: context.colorScheme.onPrimary,
+                              color: context.colorScheme.surface,
                             ),
                           ),
                           Text(
@@ -86,7 +88,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                             textAlign: TextAlign.center,
                             style: context.textXl?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: context.colorScheme.onPrimary,
+                              color: context.colorScheme.surface,
                             ),
                           ),
                           Row(
@@ -96,14 +98,14 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 'Signed in as: ',
                                 style: context.textLg?.copyWith(
                                   fontWeight: FontWeight.w400,
-                                  color: context.colorScheme.onPrimary,
+                                  color: context.colorScheme.surface,
                                 ),
                               ),
                               Text(
                                 widget.email ?? 'email not available',
                                 style: context.textLg?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: context.colorScheme.onPrimary,
+                                  color: context.colorScheme.surface,
                                 ),
                               ),
                             ],
@@ -122,7 +124,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                   child: Container(
                     height: screenHeight(context) * 0.7,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+                      color: context.colorScheme.surface,
                     ),
                     child: Center(
                       child: Padding(
@@ -144,6 +146,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                         context.colorScheme.surfaceContainer,
                                     child: SvgPicture.asset(
                                       'assets/svg/user.svg',
+                                      color: context.colorScheme.onSurface,
                                       height: 50,
                                     ),
                                   ),
@@ -159,6 +162,8 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                             .colorScheme.primaryContainer,
                                         child: SvgPicture.asset(
                                           'assets/svg/pen_circle.svg',
+                                          color: context
+                                              .colorScheme.onPrimaryContainer,
                                         ),
                                       ),
                                     ),
@@ -189,6 +194,8 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                             .colorScheme.primaryContainer,
                                         child: SvgPicture.asset(
                                           'assets/svg/pen_circle.svg',
+                                          color: context
+                                              .colorScheme.onPrimaryContainer,
                                         ),
                                       ),
                                     ),
@@ -205,6 +212,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                               controller: widget.bioController,
                               icon: SvgPicture.asset(
                                 'assets/svg/pen_circle.svg',
+                                color: context.colorScheme.onPrimaryContainer,
                                 fit: BoxFit.scaleDown,
                               ),
                             ),
@@ -219,6 +227,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                               controller: widget.danceStylesController,
                               icon: SvgPicture.asset(
                                 'assets/svg/disco_ball.svg',
+                                color: context.colorScheme.onPrimaryContainer,
                                 fit: BoxFit.scaleDown,
                               ),
                               validator: (value) {

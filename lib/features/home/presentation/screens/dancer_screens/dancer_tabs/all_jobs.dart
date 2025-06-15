@@ -68,8 +68,10 @@ class _AllJobsState extends State<AllJobs> with AutomaticKeepAliveClientMixin {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: Lottie.asset(
-              'assets/lottie/loading.json',
-              height: 100,
+              'assets/lottie/loadingList.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain,
             ),
           );
         }

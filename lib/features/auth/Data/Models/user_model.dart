@@ -69,18 +69,19 @@ class DancerModel extends DancerEntity {
   // Convert user profile to entity for business logic use
   DancerEntity toDancerEntity() {
     return DancerEntity(
-        username: username,
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-        phoneNumber: phoneNumber,
-        jobPrefs: jobPrefs,
-        resume: resume,
-        userType: userType,
-        profilePicture: profilePicture,
-        bio: bio,
-        deviceToken: deviceToken);
+      username: username,
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber,
+      jobPrefs: jobPrefs,
+      resume: resume,
+      userType: userType,
+      profilePicture: profilePicture,
+      bio: bio,
+      deviceToken: deviceToken,
+    );
   }
 }
 
