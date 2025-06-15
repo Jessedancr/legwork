@@ -142,8 +142,7 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
           context: context,
           builder: (context) {
             return EditJobTypesBottomSheet(
-              colorScheme: colorScheme,
-              textTheme: textTheme,
+           
               availableJobTypes: availableJobTypes,
               selectedJobTypes: selectedJobTypes,
               editProfileScreen: widget,

@@ -122,6 +122,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
           ? const Icon(Icons.remove_red_eye_outlined)
           : SvgPicture.asset(
               'assets/svg/crossed_eye.svg',
+              color: context.colorScheme.onPrimaryContainer,
               fit: BoxFit.scaleDown,
             ),
     );
@@ -136,6 +137,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
           ? const Icon(Icons.remove_red_eye_outlined)
           : SvgPicture.asset(
               'assets/svg/crossed_eye.svg',
+              color: context.colorScheme.onPrimaryContainer,
               fit: BoxFit.scaleDown,
             ),
     );
@@ -205,6 +207,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                               icon: SvgPicture.asset(
                                 'assets/svg/user.svg',
                                 fit: BoxFit.scaleDown,
+                                color: context.colorScheme.onPrimaryContainer,
                               ),
                               keyboardType: TextInputType.name,
                               validator: (value) {
@@ -224,6 +227,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                               controller: lastNameController,
                               icon: SvgPicture.asset(
                                 'assets/svg/user.svg',
+                                color: context.colorScheme.onPrimaryContainer,
                                 fit: BoxFit.scaleDown,
                               ),
                               keyboardType: TextInputType.name,
@@ -245,6 +249,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           controller: usernameController,
                           icon: SvgPicture.asset(
                             'assets/svg/username.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.name,
@@ -265,6 +270,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           controller: emailController,
                           icon: SvgPicture.asset(
                             'assets/svg/mail.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.emailAddress,
@@ -284,6 +290,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           controller: phoneNumberController,
                           icon: SvgPicture.asset(
                             'assets/svg/address_book.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.phone,
@@ -304,6 +311,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           controller: pwController,
                           icon: SvgPicture.asset(
                             'assets/svg/open_padlock.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           keyboardType: TextInputType.visiblePassword,
@@ -328,6 +336,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
                           keyboardType: TextInputType.visiblePassword,
                           icon: SvgPicture.asset(
                             'assets/svg/lock-hashtag.svg',
+                            color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
                           validator: (value) {

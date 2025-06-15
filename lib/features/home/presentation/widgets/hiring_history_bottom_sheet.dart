@@ -41,132 +41,143 @@ class _HiringHistoryBottomSheetState extends State<HiringHistoryBottomSheet> {
     // RETURNED WIDGET
     return SingleChildScrollView(
       child: Container(
-        height: screenHeight(context) * 1.25,
+        height: screenHeight(context) * 0.8,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 25.0,
-            vertical: 20,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Form(
             key: formKey,
-            child: Column(
-              children: [
-                // Job Title text field
-                AuthTextFormField(
-                  labelText: 'Title/Type of Job',
-                  obscureText: false,
-                  controller: widget.jobTitleController,
-                  icon: SvgPicture.asset(
-                    'assets/svg/brand.svg',
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fit: BoxFit.scaleDown,
-                  ),
-                  helperText: 'Ex: TV commercial',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please fill in the type of job you offered';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
+            child: SingleChildScrollView(
+              child: SizedBox(
+                height: screenHeight(context) * 1.5,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Column(
+                    children: [
+                      // Job Title text field
+                      AuthTextFormField(
+                        labelText: 'Title/Type of Job',
+                        obscureText: false,
+                        controller: widget.jobTitleController,
+                        icon: SvgPicture.asset(
+                          'assets/svg/brand.svg',
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fit: BoxFit.scaleDown,
+                        ),
+                        helperText: 'Ex: TV commercial',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please fill in the type of job you offered';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
 
-                // Location textfield
-                AuthTextFormField(
-                  labelText: 'Location',
-                  obscureText: false,
-                  controller: widget.locationController,
-                  icon: SvgPicture.asset(
-                    'assets/svg/location.svg',
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fit: BoxFit.scaleDown,
-                  ),
-                  helperText: 'Ex: Lekki phase 1',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please fill in location abi the work wey you do no get location??';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
+                      // Location textfield
+                      AuthTextFormField(
+                        labelText: 'Location',
+                        obscureText: false,
+                        controller: widget.locationController,
+                        icon: SvgPicture.asset(
+                          'assets/svg/location.svg',
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fit: BoxFit.scaleDown,
+                        ),
+                        helperText: 'Ex: Lekki phase 1',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please fill in location abi the work wey you do no get location??';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
 
-                // Date textfield
-                AuthTextFormField(
-                  labelText: 'date',
-                  obscureText: false,
-                  controller: widget.dateController,
-                  icon: SvgPicture.asset(
-                    'assets/svg/calendar.svg',
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fit: BoxFit.scaleDown,
-                  ),
-                  onTap: widget.showDatePicker,
-                ),
-                const SizedBox(height: 20),
+                      // Date textfield
+                      AuthTextFormField(
+                        labelText: 'date',
+                        obscureText: false,
+                        controller: widget.dateController,
+                        icon: SvgPicture.asset(
+                          'assets/svg/calendar.svg',
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fit: BoxFit.scaleDown,
+                        ),
+                        onTap: widget.showDatePicker,
+                      ),
+                      const SizedBox(height: 20),
 
-                // Number of dancers hired
-                AuthTextFormField(
-                  keyboardType: TextInputType.number,
-                  labelText: 'Number of dancers hired',
-                  obscureText: false,
-                  controller: widget.numOfDancersController,
-                  icon: SvgPicture.asset(
-                    'assets/svg/hashtag_icon.svg',
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fit: BoxFit.scaleDown,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please fill in the number of dancers you employed or worked with';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
+                      // Number of dancers hired
+                      AuthTextFormField(
+                        keyboardType: TextInputType.number,
+                        labelText: 'Number of dancers hired',
+                        obscureText: false,
+                        controller: widget.numOfDancersController,
+                        icon: SvgPicture.asset(
+                          'assets/svg/hashtag_icon.svg',
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fit: BoxFit.scaleDown,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please fill in the number of dancers you employed or worked with';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
 
-                // Payment offered
-                AuthTextFormField(
-                  helperText: 'Ex: 50000',
-                  keyboardType: TextInputType.number,
-                  labelText: 'payment offered on job',
-                  obscureText: false,
-                  controller: widget.paymentController,
-                  icon: SvgPicture.asset(
-                    'assets/svg/naira_icon.svg',
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fit: BoxFit.scaleDown,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'How much did you pay the dancers you worked with?';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 20),
+                      // Payment offered
+                      AuthTextFormField(
+                        helperText: 'Ex: 50000',
+                        keyboardType: TextInputType.number,
+                        labelText: 'payment offered on job',
+                        obscureText: false,
+                        controller: widget.paymentController,
+                        icon: SvgPicture.asset(
+                          'assets/svg/naira_icon.svg',
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fit: BoxFit.scaleDown,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'How much did you pay the dancers you worked with?';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
 
-                // Job Description
-                LargeTextField(
-                  labelText: 'Job description',
-                  obscureText: false,
-                  controller: widget.jobDescrController,
-                  icon: SvgPicture.asset(
-                    'assets/svg/description_icon.svg',
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    fit: BoxFit.scaleDown,
+                      // Job Description
+                      LargeTextField(
+                        labelText: 'Job description',
+                        obscureText: false,
+                        controller: widget.jobDescrController,
+                        icon: SvgPicture.asset(
+                          'assets/svg/description_icon.svg',
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+
+                      // Save button
+                      AuthButton(
+                        onPressed: widget.onPressed,
+                        buttonText: 'Save',
+                      ),
+                    ],
                   ),
                 ),
-
-                // Save button
-                AuthButton(
-                  onPressed: widget.onPressed,
-                  buttonText: 'Save',
-                ),
-              ],
+              ),
             ),
           ),
         ),

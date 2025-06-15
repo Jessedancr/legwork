@@ -44,7 +44,7 @@ class LegworkJobContainer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // * HEADER SECTION WITH GRADIENT BACKGROUND
-            InkWell(
+            GestureDetector(
               onTap: onJobTap,
               child: Container(
                 decoration: BoxDecoration(
@@ -216,6 +216,7 @@ class LegworkJobContainer extends StatelessWidget {
                             Icons.access_time,
                             size: 16,
                             color: context.colorScheme.onSurface,
+                            weight: 10,
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -230,7 +231,7 @@ class LegworkJobContainer extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 16),
-                  const Divider(),
+                  Divider(color: context.colorScheme.outline),
                   const SizedBox(height: 16),
 
                   // View Details button

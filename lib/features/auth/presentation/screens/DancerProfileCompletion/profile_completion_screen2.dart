@@ -71,7 +71,9 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                   ),
                   child: Center(
                     child: BlurEffect(
-                      height: screenHeight(context) * 0.18,
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
+                      height: screenHeight(context) * 0.2,
                       width: screenWidth(context) * 0.8,
                       child: Center(
                         child: Column(
@@ -82,14 +84,14 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                               textAlign: TextAlign.center,
                               style: context.text2Xl?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: context.colorScheme.onPrimary,
+                                color: context.colorScheme.surface,
                               ),
                             ),
                             Text(
                               'Search for skills you have',
                               style: context.textXl?.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: context.colorScheme.onPrimary,
+                                color: context.colorScheme.surface,
                               ),
                             )
                           ],

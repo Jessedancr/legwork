@@ -6,13 +6,10 @@ class LegworkFilledIconButton extends StatelessWidget {
   final Widget icon;
   const LegworkFilledIconButton({
     super.key,
-    required this.colorScheme,
     this.backgroundColor,
     required this.onPressed,
     required this.icon,
   });
-
-  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {

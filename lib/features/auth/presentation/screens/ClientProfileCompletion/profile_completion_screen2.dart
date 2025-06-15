@@ -72,6 +72,8 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                   ),
                   child: Center(
                     child: BlurEffect(
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
                       height: screenHeight(context) * 0.18,
                       width: screenWidth(context) * 0.8,
                       child: Center(
@@ -83,14 +85,14 @@ class _ProfileCompletionScreen2State extends State<ProfileCompletionScreen2> {
                               textAlign: TextAlign.end,
                               style: context.text2Xl?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: context.colorScheme.onPrimary,
+                                color: context.colorScheme.surface,
                               ),
                             ),
                             Text(
                               'Search for jobs you would be posting',
                               style: context.textXl?.copyWith(
                                 fontWeight: FontWeight.w400,
-                                color: context.colorScheme.onPrimary,
+                                color: context.colorScheme.surface,
                               ),
                             )
                           ],

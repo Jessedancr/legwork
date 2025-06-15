@@ -72,37 +72,41 @@ class _ProfileCompletionScreen3State extends State<ProfileCompletionScreen3> {
                   ),
                   child: Center(
                     child: BlurEffect(
+                      secondGradientColor:
+                          context.colorScheme.primary.withOpacity(0.5),
                       height: screenHeight(context) * 0.2,
                       width: screenWidth(context) * 0.8,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              'What are your preferred locations for jobs',
-                              textAlign: TextAlign.center,
-                              style: context.text2Xl?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.colorScheme.surface,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                'What are your preferred job locations',
+                                textAlign: TextAlign.center,
+                                style: context.text2Xl?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: context.colorScheme.surface,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'This would help us better recommend jobs to you',
-                              textAlign: TextAlign.center,
-                              style: context.textXl?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: context.colorScheme.surface,
+                              Text(
+                                'This would help us better recommend jobs to you',
+                                textAlign: TextAlign.center,
+                                style: context.textXl?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: context.colorScheme.surface,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Search for locations in Lagos',
-                              style: context.textSm?.copyWith(
-                                fontWeight: FontWeight.w400,
-                                color: context.colorScheme.surface,
-                              ),
-                            )
-                          ],
+                              Text(
+                                'Search for locations in Lagos',
+                                style: context.textSm?.copyWith(
+                                  fontWeight: FontWeight.w400,
+                                  color: context.colorScheme.surface,
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),

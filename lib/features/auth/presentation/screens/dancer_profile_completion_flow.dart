@@ -9,7 +9,6 @@ import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompleti
 import 'package:legwork/features/auth/presentation/Screens/DancerProfileCompletion/profile_completion_screen3.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
-import 'package:legwork/features/auth/presentation/Widgets/legwork_snackbar_content.dart';
 import 'package:legwork/features/onboarding/presentation/widgets/page_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -142,7 +141,7 @@ class _DancerProfileCompletionFlowState
     // * Profile ocmpletition screens
     List<Widget> profileCompletionScreens = [
       ProfileCompletionScreen1(
-        email: widget.dancerDetails.email,
+        email: 'widget.dancerDetails.email',
         bioController: bioController,
         danceStylesController: danceStylesController,
       ),
