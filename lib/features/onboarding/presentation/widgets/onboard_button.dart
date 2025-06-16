@@ -40,7 +40,7 @@ class OnboardButton extends StatelessWidget {
               buttonText,
               style: context.textXs?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: context.colorScheme.onPrimary,
+                color: Colors.white,
               ),
             ),
           ),

@@ -41,7 +41,7 @@ class OnboardingScreen2 extends StatelessWidget {
                     Text(
                       'Discover Opportunities!',
                       style: context.headingSm?.copyWith(
-                        color: context.colorScheme.surface,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -56,7 +56,7 @@ class OnboardingScreen2 extends StatelessWidget {
                         'Connect with top gigs and showcase your talent effortlessly',
                         textAlign: TextAlign.center,
                         style: context.textXl?.copyWith(
-                          color: context.colorScheme.surface,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

@@ -6,6 +6,7 @@ import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.d
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
 
 class JobApplicationRemoteDataSource {
   final auth = FirebaseAuth.instance;
@@ -154,12 +155,12 @@ class JobApplicationRemoteDataSource {
       userEntity.fold(
         (fail) => Left(fail),
         (user) async {
-          // Extract device token from user entity object and send notification
-          await notificationRemoteDataSource.sendNotification(
+          NotifEntity notif = NotifEntity(
             deviceToken: user.deviceToken,
-            title: 'Application Accepted',
-            body: 'Congratulations! Your application has been accepted.',
+            body: 'Application Accepted',
+            title: 'Sharp guy! your application has been accepted',
           );
+          await notificationRemoteDataSource.sendNotification(notif: notif);
         },
       );
 
@@ -200,12 +201,12 @@ class JobApplicationRemoteDataSource {
       userEntity.fold(
         (fail) => Left(fail),
         (user) async {
-          // Extract device token from user entity object and send notification
-          await notificationRemoteDataSource.sendNotification(
+          NotifEntity notif = NotifEntity(
             deviceToken: user.deviceToken,
-            title: 'Application rejected',
-            body: 'Unfortunately, your application has been rejected',
+            body: 'Application rejected',
+            title: 'Unfortunately, your application has been rejected',
           );
+          await notificationRemoteDataSource.sendNotification(notif: notif);
         },
       );
 
