@@ -40,7 +40,7 @@ class OnboardingScreen3 extends StatelessWidget {
                     Text(
                       'Safe and Secure Payments',
                       style: context.headingSm?.copyWith(
-                        color: context.colorScheme.surface,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -55,7 +55,7 @@ class OnboardingScreen3 extends StatelessWidget {
                         'Get swift payments on every dance gig',
                         textAlign: TextAlign.center,
                         style: context.textXl?.copyWith(
-                          color: context.colorScheme.surface,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

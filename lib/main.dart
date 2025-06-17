@@ -116,12 +116,18 @@ void main() async {
     });
   }
 
+  // Instance of theme provider
+  final themeProvider = ThemeProvider();
+
+  // Load the theme prefs
+  await themeProvider.loadThemePrefs();
+
   // THIS FUNCTION IS CALLED WHEN THE APP IS LAUNCHED
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => ThemeProvider(),
+          create: (context) => themeProvider,
           child: MyApp(isOnboardingComplete: await isOnboardingComplete),
         ),
         ChangeNotifierProvider(
@@ -149,9 +155,7 @@ void main() async {
           ),
         ),
       ],
-      child: MyApp(
-        isOnboardingComplete: await isOnboardingComplete,
-      ),
+      child: MyApp(isOnboardingComplete: await isOnboardingComplete),
     ),
   );
 }

@@ -1,34 +1,31 @@
 import 'dart:convert';
-import 'package:dartz/dartz.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:googleapis_auth/auth_io.dart';
 
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<String?> getDeviceToken();
-  Future<void> setupFirebaseListeners();
-  Future<void> sendNotification({
-    required String deviceToken,
-    required String title,
-    required String body,
-  });
+  Future<void> sendNotification({required NotifEntity notif});
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   final firebaseMessaging = FirebaseMessaging.instance;
 
-  // GET THE DEVICE TOKEN
+  /**
+   * ASK USER FOR PERMISSION TO SEND NOTIFICATIONS AND GET THE DEVICE TOKEN
+   */
   @override
   Future<String?> getDeviceToken() async {
     try {
-      await firebaseMessaging.requestPermission();
+      // await firebaseMessaging.requestPermission();
       return await firebaseMessaging.getToken();
     } catch (e) {
       debugPrint("Error getting device token: $e");
@@ -36,27 +33,10 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     }
   }
 
-  // SETTING UP FIREBASE LISTENERS
-  @override
-  Future<void> setupFirebaseListeners() async {
-    FirebaseMessaging.onMessage.listen((message) {
-      debugPrint("Foreground message: ${message.notification?.title}");
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      debugPrint("Message clicked: ${message.notification?.title}");
-    });
-  }
-
   // SEND NOTIFICATION
   @override
-  Future<void> sendNotification({
-    required String deviceToken,
-    required String title,
-    required String body,
-  }) async {
-    const String fcmUrl =
-        'https://fcm.googleapis.com/v1/projects/legwork-jessedancr/messages:send';
+  Future<void> sendNotification({required NotifEntity notif}) async {
+    String fcmUrl = dotenv.env['FCM_URL']!;
 
     try {
       // Load service account from asset file
@@ -82,45 +62,19 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       // Construct notification payload
       final payload = {
         'message': {
-          'token': deviceToken,
+          'token': notif.deviceToken,
           'notification': {
-            'title': title,
-            'body': body,
+            'title': notif.title,
+            'body': notif.body,
           },
           'android': {
             'notification': {
-              'channel_id': 'high_importance_channel',
-              'notification_priority': 'PRIORITY_MAX',
-              'visibility': 'PUBLIC',
               'default_sound': true,
-              'default_vibrate_timings': true,
               'icon': '@mipmap/ic_launcher',
-              'color': '#FF0000',
               'sound': 'default'
             },
             'priority': 'HIGH'
           },
-          'apns': {
-            'headers': {'apns-priority': '10', 'apns-push-type': 'alert'},
-            'payload': {
-              'aps': {
-                'alert': {
-                  'title': title,
-                  'body': body,
-                },
-                'badge': 1,
-                'sound': 'default',
-                'content-available': 1,
-                'mutable-content': 1
-              }
-            }
-          },
-          'data': {
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-            'id': '1',
-            'status': 'done',
-            'notification_count': '1'
-          }
         }
       };
 
@@ -139,89 +93,65 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         debugPrint('Notification sent successfully: ${response.body}');
       }
     } catch (e) {
-      debugPrint('Error sending notification(NRDS): $e');
+      debugPrint('Error sending notification: $e');
     }
   }
 
   // SET UP FLUTTER NOTIFICATION
   Future<void> setupFlutterNotifications() async {
-    final messaging = FirebaseMessaging.instance;
-
-    await messaging.requestPermission(
+    // * Permission configs
+    await firebaseMessaging.requestPermission(
       alert: true,
       announcement: true,
       badge: true,
-      carPlay: true,
-      criticalAlert: true,
-      provisional: false,
       sound: true,
     );
 
     if (!kIsWeb && io.Platform.isAndroid) {
+      // * Channel definition
+      // TODO: Add multiple channels for different types of notifs
       const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'high_importance_channel',
-        'High Importance Notifications',
-        description: 'This channel is used for important notifications.',
+        'legwork_notifications',
+        'Legwork Notifications',
+        description: 'Notifications from Legwork app.',
         importance: Importance.max,
         enableLights: true,
         ledColor: Colors.deepPurple,
-        enableVibration: true,
-        playSound: true,
-        showBadge: true,
       );
 
-      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-          FlutterLocalNotificationsPlugin();
+      // * Instance of notif package
+      final flutterLocalNotif = FlutterLocalNotificationsPlugin();
 
-      await flutterLocalNotificationsPlugin
+      // * Create notif channel
+      await flutterLocalNotif
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(channel);
 
-      // Listen to foreground messages
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        RemoteNotification? notification = message.notification;
-        AndroidNotification? android = message.notification?.android;
+      // * Listen to foreground messages
+      FirebaseMessaging.onMessage.listen(
+        (RemoteMessage message) {
+          RemoteNotification? notification = message.notification;
 
-        if (notification != null && android != null) {
-          flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channelDescription: channel.description,
-                icon: android.smallIcon ?? '@mipmap/ic_launcher',
-                importance: Importance.max,
-                priority: Priority.high,
-                number: int.parse(message.data['notification_count'] ??
-                    '1'), // Set badge number
-                showWhen: true,
-                enableLights: true,
-                color: const Color.fromARGB(255, 255, 0, 0),
-                visibility: NotificationVisibility.public,
-                playSound: true,
-                enableVibration: true,
+          if (notification != null) {
+            flutterLocalNotif.show(
+              notification.hashCode,
+              notification.title,
+              notification.body,
+              NotificationDetails(
+                android: AndroidNotificationDetails(
+                  channel.id,
+                  channel.name,
+                  channelDescription: channel.description,
+                  icon: '@mipmap/ic_launcher',
+                  importance: Importance.max,
+                  priority: Priority.high,
+                ),
               ),
-            ),
-          );
-        }
-      });
+            );
+          }
+        },
+      );
     }
-
-    // Set badge number when app is in background
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
-}
-
-// Add this outside the class
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Initialize Firebase if needed
-  await Firebase.initializeApp();
-
-  // Handle background messages
-  debugPrint('Handling background message: ${message.messageId}');
 }
