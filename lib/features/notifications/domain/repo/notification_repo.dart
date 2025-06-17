@@ -1,9 +1,7 @@
+import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
+
 abstract class NotificationRepo {
   Future<String?> getDeviceToken();
 
-  Future<void> sendNotification({
-    required String deviceToken,
-    required String title,
-    required String body,
-  });
+  Future<void> sendNotification({required NotifEntity notif});
 }

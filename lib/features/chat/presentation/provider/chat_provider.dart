@@ -6,6 +6,7 @@ import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
 import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
+import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
 
 class ChatProvider extends ChangeNotifier {
   // INSTANCE OF CHAT REPO IMPL
@@ -103,17 +104,31 @@ class ChatProvider extends ChangeNotifier {
         isRead: false,
       );
 
+      final receiverDeviceToken =
+          await _authRepo.getDeviceToken(userId: message.receiverId);
+      String senderUsername = '';
+
+      // EXTRACT SENDER USERNAME FROM USING SENDER ID IN MESSAGE ENTITY
+      final senderDetails =
+          await _authRepo.getUserDetails(uid: message.senderId);
+      senderDetails.fold(
+        // handle fail
+        (fail) => Left(fail),
+        (user) {
+          senderUsername = user.username;
+        },
+      );
+
+      // NOTIFICATION ENTITY
+      NotifEntity notif = NotifEntity(
+        deviceToken: receiverDeviceToken,
+        body: message.content,
+        title: senderUsername,
+      );
+
       final result = await _chatRepo.sendMessage(message: newMessage);
 
-      final receiverDeviceToken = await _authRepo.getDeviceToken(
-        userId: message.receiverId,
-      );
-
-      await notificationRepo.sendNotification(
-        deviceToken: receiverDeviceToken,
-        title: 'New message',
-        body: 'New message from ${message.senderId}',
-      );
+      await notificationRepo.sendNotification(notif: notif);
 
       isLoading = false;
       result.fold(

@@ -1,4 +1,5 @@
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
+import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
 import 'package:legwork/features/notifications/domain/repo/notification_repo.dart';
 
 class NotificationRepoImpl implements NotificationRepo {
@@ -13,17 +14,9 @@ class NotificationRepoImpl implements NotificationRepo {
   }
 
   @override
-  Future<void> sendNotification({
-    required String deviceToken,
-    required String title,
-    required String body,
-  }) async {
+  Future<void> sendNotification({required NotifEntity notif}) async {
     try {
-      return _remoteDataSource.sendNotification(
-        deviceToken: deviceToken,
-        title: title,
-        body: body,
-      );
+      return _remoteDataSource.sendNotification(notif: notif);
     } catch (e) {
       return;
     }

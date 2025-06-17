@@ -220,27 +220,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Either<String, void>> logout() async {
     try {
-      final user = auth.currentUser;
-      if (user == null) {
-        return const Left('No user is currently logged in');
-      }
-      final uid = user.uid;
+      // final user = auth.currentUser;
+      // if (user == null) {
+      //   return const Left('No user is currently logged in');
+      // }
+      // final uid = user.uid;
 
-      // Fetch both documents
-      final docs = await Future.wait([
-        db.collection('dancers').doc(uid).get(),
-        db.collection('clients').doc(uid).get(),
-      ]);
-      final dancersDoc = docs[0];
-      final clientsDoc = docs[1];
+      // // Fetch both documents
+      // final docs = await Future.wait([
+      //   db.collection('dancers').doc(uid).get(),
+      //   db.collection('clients').doc(uid).get(),
+      // ]);
+      // final dancersDoc = docs[0];
+      // final clientsDoc = docs[1];
 
-      // Only update deviceToken if the document exists
-      if (dancersDoc.exists) {
-        await db.collection('dancers').doc(uid).update({'deviceToken': ''});
-      }
-      if (clientsDoc.exists) {
-        await db.collection('clients').doc(uid).update({'deviceToken': ''});
-      }
+      // // Only update deviceToken if the document exists
+      // if (dancersDoc.exists) {
+      //   await db.collection('dancers').doc(uid).update({'deviceToken': ''});
+      // }
+      // if (clientsDoc.exists) {
+      //   await db.collection('clients').doc(uid).update({'deviceToken': ''});
+      // }
 
       await auth.signOut();
       return const Right(null);

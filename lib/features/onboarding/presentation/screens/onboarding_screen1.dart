@@ -40,7 +40,7 @@ class OnboardingScreen1 extends StatelessWidget {
                     Text(
                       'Welcome To Legwork!',
                       style: context.headingSm?.copyWith(
-                        color: context.colorScheme.surface,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -55,7 +55,7 @@ class OnboardingScreen1 extends StatelessWidget {
                         'Empowering Nigerian dancers: Join the platform that puts your talents to work',
                         textAlign: TextAlign.center,
                         style: context.textXl?.copyWith(
-                          color: context.colorScheme.surface,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
