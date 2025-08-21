@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:legwork/core/enums/user_type.dart';
+import 'package:legwork/core/network/api_client.dart';
 import 'package:legwork/features/auth/Data/Models/resume_model.dart';
 import 'package:legwork/features/auth/Data/Models/user_model.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// * API CLIENT
+final ApiClient apiClient = ApiClient();
 
 /**
  * AUTH ABSTRACT CLASS
@@ -49,29 +56,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required UserEntity userEntity,
   }) async {
     try {
-      // Sign Useer in
-      final userCred = await auth.createUserWithEmailAndPassword(
-        email: userEntity.email,
-        password: userEntity.password,
-      );
-
-      final user = userCred.user;
-
-      // Check if user is null
-      if (user == null) {
-        return const Left('User not found');
-      }
-      final uid = user.uid;
-
-      // if user is client
       if (userEntity.userType == UserType.client.name) {
-        // Store client data
+        // * Store client data
         final clientData = {
           'firstName': userEntity.firstName,
           'lastName': userEntity.lastName,
           'username': userEntity.username,
           'organisationName': userEntity.asClient?.organisationName ?? '',
           'password': userEntity.password,
+          'password2': userEntity.password,
           'email': userEntity.email,
           'phoneNumber': userEntity.phoneNumber,
           'userType': UserType.client.name, // Store the userType
@@ -83,11 +76,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'deviceToken': userEntity.deviceToken, // Save device token
         };
 
-        await db.collection('clients').doc(uid).set(clientData);
-        DocumentSnapshot userDoc =
-            await db.collection('clients').doc(uid).get();
-        final clientModel = ClientModel.fromDocument(userDoc);
-        return Right(clientModel);
+        // * Call the API
+        final result = await apiClient.post(
+          endpoint: 'auth/signup',
+          body: clientData,
+        );
+
+        debugPrint('API response: ' '${result.statusCode} - ${result.body}');
+        if (result.statusCode == 201) {
+          final resBody = jsonDecode(result.body);
+          final token = resBody['token'];
+          final clientData = resBody['client'];
+          final userId = clientData['_id'];
+          debugPrint('userId: $userId');
+          // ! Save the token to secure storage
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('jwtToken', token);
+          await prefs.setString('userId', userId);
+          final clientModel = ClientModel.fromDoc(clientData);
+          return Right(clientModel);
+        } else {
+          debugPrint('Sign up error: ${result.body}');
+          final error = jsonDecode(result.body)['message'] ?? 'Unknown error';
+          return Left(error);
+        }
       }
 
       // If user is dancer
@@ -102,38 +114,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'jobPrefs': userEntity.asDancer?.jobPrefs ?? {},
           'resume': userEntity.asDancer?.resume ?? {},
           'password': userEntity.password,
+          'password2': userEntity.password,
           'profilePicture': userEntity.profilePicture,
           'bio': userEntity.bio ?? '',
           'userType': UserType.dancer.name, // Store the userType
           'deviceToken': userEntity.deviceToken, // Save device token
         };
 
-        await db.collection('dancers').doc(uid).set(dancerData);
+        final result = await apiClient.authPost(
+          endpoint: 'auth/signup',
+          body: dancerData,
+        );
 
-        // Fetch additional info like username
-        DocumentSnapshot userDoc =
-            await db.collection('dancers').doc(uid).get();
-
-        // Convert firebase doc to user profile do we can use in the app
-        final dancerModel = DancerModel.fromDocument(userDoc);
-        return Right(dancerModel);
+        debugPrint('API response: ' '${result.statusCode} - ${result.body}');
+        if (result.statusCode == 201) {
+          final resBody = jsonDecode(result.body);
+          final token = resBody['token'];
+          final dancerData = resBody['dancer'];
+          final userId = dancerData['_id'];
+          // ! Save the token to secure storage
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('jwtToken', token);
+          await prefs.setString('userId', userId);
+          final dancerModel = DancerModel.fromDoc(dancerData);
+          return Right(dancerModel);
+        } else {
+          debugPrint('Sign up error: ${result.body}');
+          final error = jsonDecode(result.body)['message'] ?? 'Unknown error';
+          return Left(error);
+        }
       }
       return const Left('Invalid user type');
-    } on FirebaseAuthException catch (e) {
-      debugPrint("Firebase Signup error: $e");
-      if (e.code == 'user-not-found') {
-        return const Left('No user found for this email.');
-      } else if (e.code == 'wrong-password') {
-        return const Left('Incorrect password. Please try again.');
-      } else if (e.code == 'invalid-credential') {
-        return const Left('Invalid email or password.');
-      } else if (e.code == 'network-request-failed') {
-        return const Left('Check your internet connection and try again');
-      } else if (e.code == 'email-already-in-use') {
-        return const Left('Email already in use by another user');
-      } else {
-        return const Left('An unexpected error occurred.');
-      }
+    } catch (e) {
+      return const Left('An unexpected error occurred.');
     }
   }
 
@@ -143,110 +156,59 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required UserEntity userEntity,
   }) async {
     try {
-      // sign User in using the sign in method in firebase auth
-      final userCred = await auth.signInWithEmailAndPassword(
-        email: userEntity.email,
-        password: userEntity.password,
+      final loginBody = {
+        'usernameOrEmail': userEntity.username,
+        'password': userEntity.password
+      };
+      final response = await apiClient.authPost(
+        endpoint: 'auth/login',
+        body: loginBody,
       );
-      final user = userCred.user;
 
-      // Check if user is null or if user exists
-      if (user == null) {
-        return const Left('User not found');
-      }
-      // get uid of current user
-      final uid = user.uid;
-
-      // Check the collection based on the user type
-      String collection =
-          userEntity.userType == UserType.dancer.name ? 'dancers' : 'clients';
-
-      // Query the relevant collection
-      final docSnapshot = await db.collection(collection).doc(uid).get();
-
-      if (!docSnapshot.exists) {
-        return const Left('User profile not found');
+      if (response.statusCode != 200) {
+        final resBody = jsonDecode(response.body);
+        final message = resBody['message'];
+        debugPrint(message);
+        return Left(message);
       }
 
-      // Casting the document snapshot to Map so we can extract the user type
-      final userData = docSnapshot.data() as Map<String, dynamic>;
-      final storedUserType = userData['userType'];
-
-      // Verify the user type matches
-      if (storedUserType != userEntity.userType) {
-        return const Left('Invalid user type');
-      }
-
-      // Update device token of relevant collection
-      await db
-          .collection(collection)
-          .doc(uid)
-          .update({'deviceToken': userEntity.deviceToken});
-      debugPrint('FCM Token: ${userEntity.deviceToken}');
+      final resBody = jsonDecode(response.body);
+      final Map<String, dynamic> user = resBody['user'];
+      final String userType = user['userType'];
+      final String userId = user['_id'];
+      final String token = resBody['token'];
+      debugPrint('Full API Response: $resBody');
+      // ! Save the token to secure storage
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwtToken', token);
+      await prefs.setString('userId', userId);
 
       // Convert to appropriate user model
-      if (userEntity.userType == UserType.dancer.name) {
-        final dancerModel = DancerModel.fromDocument(docSnapshot);
+      if (userType == UserType.dancer.name) {
+        final dancerModel = DancerModel.fromDoc(user);
         return Right(dancerModel);
       } else {
-        final clientModel = ClientModel.fromDocument(docSnapshot);
+        final clientModel = ClientModel.fromDoc(user);
         return Right(clientModel);
-      }
-    } on FirebaseAuthException catch (e) {
-      debugPrint("Firebase Login error: $e");
-      if (e.code == 'user-not-found') {
-        return const Left('No user found for this email.');
-      } else if (e.code == 'wrong-password') {
-        return const Left('Incorrect password. Please try again.');
-      } else if (e.code == 'invalid-credential') {
-        return const Left('Invalid email or password.');
-      } else if (e.code == 'network-request-failed') {
-        return const Left('Check your internet connection and try again');
-      } else if (e.code == 'user-disabled') {
-        return const Left('This account has been disabled.');
-      } else if (e.code == 'too-many-requests') {
-        return const Left(
-            'Too many failed login attempts. Please try again later.');
-      } else {
-        return const Left('An unexpected error occurred.');
       }
     } catch (e) {
       debugPrint("Unexpected error during login: $e");
-      return Left('An unexpected error occurred: ${e.toString()}');
+      return const Left('An unexpected error occurred');
     }
   }
 
   /// USER LOGOUT METHOD
   @override
-  Future<Either<String, void>> logout() async {
+  Future<Either<String, String>> logout() async {
     try {
-      // final user = auth.currentUser;
-      // if (user == null) {
-      //   return const Left('No user is currently logged in');
-      // }
-      // final uid = user.uid;
-
-      // // Fetch both documents
-      // final docs = await Future.wait([
-      //   db.collection('dancers').doc(uid).get(),
-      //   db.collection('clients').doc(uid).get(),
-      // ]);
-      // final dancersDoc = docs[0];
-      // final clientsDoc = docs[1];
-
-      // // Only update deviceToken if the document exists
-      // if (dancersDoc.exists) {
-      //   await db.collection('dancers').doc(uid).update({'deviceToken': ''});
-      // }
-      // if (clientsDoc.exists) {
-      //   await db.collection('clients').doc(uid).update({'deviceToken': ''});
-      // }
-
-      await auth.signOut();
-      return const Right(null);
-    } on FirebaseAuthException catch (e) {
-      debugPrint('Error logging out: $e');
-      return Left(e.code.toString());
+      final response = await apiClient.get(endpoint: 'auth/logout');
+      if (response.statusCode == 200) {
+        final resBody = jsonDecode(response.body);
+        final message = resBody['message'];
+        debugPrint(message);
+        return Right(message);
+      }
+      return const Left('Error logging out');
     } catch (e) {
       debugPrint('An unknown error occurred while logging out: $e');
       return Left(e.toString());
@@ -382,42 +344,29 @@ class UpdateProfile {
     required Map<String, dynamic> data,
   }) async {
     try {
-      // Get current user and check if null
-      final user = auth.currentUser;
-      if (user == null) {
-        debugPrint('User not found');
-        return const Left('User not found');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? userId = prefs.getString('userId');
+
+      if (userId != null) {
+        final result = await apiClient.patch(
+          endpoint: 'users/$userId/update-user-details',
+          body: data,
+        );
+        debugPrint('Update response: ${result.statusCode} - ${result.body}');
+
+        if (result.statusCode == 200) {
+          jsonDecode(result.body);
+          return const Right(null);
+        }
+        if (result.statusCode == 404) {
+          final resBody = jsonDecode(result.body);
+          final errMessage = resBody['message'];
+          debugPrint('Update failed: $errMessage');
+          return Left(errMessage);
+        }
       }
 
-      // Get current user's uid and check both the dancers and clients collections
-      final String uid = user.uid;
-      final results = await Future.wait([
-        db.collection('dancers').doc(uid).get(),
-        db.collection('clients').doc(uid).get()
-      ]);
-
-      final dancersDoc = results[0];
-      final clientsDoc = results[1];
-
-      // IF DOCUMENT IS IN DANCERS COLLECTION
-      if (dancersDoc.exists) {
-        await db.collection('dancers').doc(uid).update(data);
-        DocumentSnapshot userDoc =
-            await db.collection('dancers').doc(uid).get();
-        final dancerModel = DancerModel.fromDocument(userDoc);
-        return Right(dancerModel);
-      }
-
-      // IF DOCUMENT IS IN CLIENTS COLLECTION
-      else if (clientsDoc.exists) {
-        await db.collection('clients').doc(uid).update(data);
-        DocumentSnapshot userDoc =
-            await db.collection('clients').doc(uid).get();
-        final clientModel = ClientModel.fromDocument(userDoc);
-        return Right(clientModel);
-      } else {
-        return const Left('User not found');
-      }
+      return const Left('User ID not available');
     } catch (e) {
       debugPrint('error updating profile to firebaseeeeeeeee');
       return Left(e.toString());

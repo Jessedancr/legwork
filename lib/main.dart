@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:legwork/core/Constants/theme_provider.dart';
+import 'package:legwork/core/network/api_client.dart';
 import 'package:legwork/core/network/online_payment_info.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/resume_repo_impl.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
@@ -98,6 +99,10 @@ void main() async {
     secretKey: dotenv.env['PAYSTACK_TEST_SECRET_KEY']!,
   );
 
+  // * MY BACKEND API CLIENT
+  final apiClient = ApiClient();
+  debugPrint('API Client Base URL: ${dotenv.env['NODE_API_BASE_URL']}');
+
   // INSTANCE OF PAYMENT REMOTE DATA SOURCE
   final paymentRemoteDataSource = PaymentRemoteDataSource(
     onlinePaymentInfo: onlinePaymentInfo,
@@ -154,6 +159,8 @@ void main() async {
                 VerifyTransactionBusinessLogic(repo: paymentRepo),
           ),
         ),
+        // Add ApiClient as provider
+        Provider<ApiClient>(create: (context) => apiClient)
       ],
       child: MyApp(isOnboardingComplete: await isOnboardingComplete),
     ),

@@ -92,7 +92,7 @@ class _ClientProfileCompletionFlowState
               subTitle: fail,
               contentColor: context.colorScheme.error,
               imageColor: context.colorScheme.onError,
-            );
+            ).show(context);
           },
           // handle success
           (success) {

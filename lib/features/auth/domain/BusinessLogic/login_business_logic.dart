@@ -15,9 +15,6 @@ class LoginBusinessLogic {
     required UserEntity userEntity,
   }) async {
     // VALIDATIONS
-    if (!userEntity.email.contains('@')) {
-      return const Left('Invalid email format.');
-    }
     if (userEntity.password.isEmpty) {
       return const Left('Password cannot be empty.');
     }

@@ -19,7 +19,7 @@ abstract class AuthRepo {
   });
 
   /// LOGOUT METHOD
-  Future<Either<String, void>> userLogout();
+  Future<Either<String, String>> userLogout();
 
   // GET UID
   String getUserId();

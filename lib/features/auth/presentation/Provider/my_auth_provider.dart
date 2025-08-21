@@ -106,7 +106,7 @@ class MyAuthProvider extends ChangeNotifier {
   }
 
   /// USER LOGIN METHOD
-  Future<Either<String, dynamic>> userlogin({
+  Future<Either<String, UserEntity>> userlogin({
     required UserEntity userEntity,
   }) async {
     LoginBusinessLogic loginBusinessLogic =
@@ -174,7 +174,7 @@ class MyAuthProvider extends ChangeNotifier {
   }
 
   /// USER LOGOUT METHOD
-  Future<Either<String, void>> logout() async {
+  Future<Either<String, String>> logout() async {
     LogoutBusinessLogic logoutBusinessLogic =
         LogoutBusinessLogic(authRepo: authRepo);
 
@@ -182,8 +182,11 @@ class MyAuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await logoutBusinessLogic.logoutExecute();
-      return const Right(null);
+      final result = await logoutBusinessLogic.logoutExecute();
+      return result.fold(
+        (fail) => Left(fail),
+        (msg) => Right(msg),
+      );
     } catch (e) {
       debugPrint('Error with logout: $e');
       return Left(e.toString());

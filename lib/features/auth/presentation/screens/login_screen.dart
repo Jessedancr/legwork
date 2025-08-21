@@ -49,49 +49,16 @@ class _LoginScreenState extends State<LoginScreen> {
           // Retrieve the device token
           final deviceToken = await _notificationRepoImpl.getDeviceToken();
 
-          // Create appropriate user entity based on user type
-          final userType = userTypecontroller.text.trim().toLowerCase();
-          UserEntity userEntity;
-
-          // If dancer, create dancer entity
-          if (userType == UserType.dancer.name) {
-            userEntity = DancerEntity(
-              email: emailController.text.trim(),
-              password: pwController.text.trim(),
-              userType: UserType.dancer.name,
-              deviceToken: deviceToken!,
-              firstName: '',
-              lastName: '',
-              phoneNumber: '',
-              username: '',
-            );
-          }
-
-          // If client, create client entity
-          else if (userType == UserType.client.name) {
-            userEntity = ClientEntity(
-              email: emailController.text.trim(),
-              password: pwController.text.trim(),
-              userType: UserType.client.name,
-              deviceToken: deviceToken!,
-              firstName: '',
-              lastName: '',
-              phoneNumber: '',
-              username: '',
-            );
-          }
-
-          // Show error message if user type is invalid
-          else {
-            hideLoadingIndicator(context);
-            LegworkSnackbar(
-              title: "Invalid user type",
-              subTitle: 'Please enter either "dancer" or "client"',
-              imageColor: context.colorScheme.onError,
-              contentColor: context.colorScheme.error,
-            ).show(context);
-            return;
-          }
+          UserEntity userEntity = UserEntity(
+            username: emailController.text,
+            email: emailController.text,
+            password: pwController.text,
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            userType: '',
+            deviceToken: deviceToken ?? '',
+          );
 
           final result = await authProvider.userlogin(userEntity: userEntity);
 
@@ -125,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
               } else {
                 LegworkSnackbar(
                   title: "Omo!",
-                  subTitle: 'Invalid user type',
+                  subTitle: 'Invalid user type gotten from server',
                   imageColor: context.colorScheme.onError,
                   contentColor: context.colorScheme.error,
                 ).show(context);
@@ -224,29 +191,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 15),
 
-                        // Dancer or Client
-                        AuthTextFormField(
-                          labelText: 'Are you a dancer or a client',
-                          obscureText: false,
-                          controller: userTypecontroller,
-                          icon: SvgPicture.asset(
-                            'assets/svg/user.svg',
-                            color: context.colorScheme.onPrimaryContainer,
-                            fit: BoxFit.scaleDown,
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Please enter 'dancer' or 'client'";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
-
                         // Email text field
                         AuthTextFormField(
                           keyboardType: TextInputType.emailAddress,
-                          labelText: 'Email',
+                          labelText: 'Username or Email',
                           obscureText: false,
                           controller: emailController,
                           icon: SvgPicture.asset(
@@ -254,11 +202,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
-                          helperText: 'Ex: johndoe@gmail.com',
                           validator: (value) {
-                            if (!value!.contains('@gmail.com') ||
-                                value.isEmpty) {
-                              return 'Please enter a valid email address';
+                            if (value!.isEmpty) {
+                              return 'Please enter your username or email';
                             }
                             return null;
                           },

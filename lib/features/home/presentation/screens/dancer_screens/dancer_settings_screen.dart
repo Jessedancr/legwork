@@ -43,10 +43,9 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
             ).show(context);
           },
           // handle successful logout
-          (success) {
+          (msg) {
             Navigator.of(context)
                 .pushNamedAndRemoveUntil('/acctType', (route) => false);
-            debugPrint('Logout successful');
           },
         );
       } catch (e) {
