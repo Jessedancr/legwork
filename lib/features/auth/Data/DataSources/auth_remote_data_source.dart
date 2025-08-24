@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/core/network/api_client.dart';
 import 'package:legwork/features/auth/Data/Models/resume_model.dart';
@@ -49,6 +51,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   // Instance of firebase auth and firestore
   final auth = FirebaseAuth.instance;
   final db = FirebaseFirestore.instance;
+  final storage = const FlutterSecureStorage();
 
   /// USER SIGN UP METHOD
   @override
@@ -77,21 +80,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         };
 
         // * Call the API
-        final result = await apiClient.post(
+        final result = await apiClient.authPost(
           endpoint: 'auth/signup',
           body: clientData,
         );
 
         debugPrint('API response: ' '${result.statusCode} - ${result.body}');
         if (result.statusCode == 201) {
+          // * Decode the response body using jsonDecode
           final resBody = jsonDecode(result.body);
-          final token = resBody['token'];
+
+          // * Extract the necessary info from body
+          final accessToken = resBody['accessToken'];
+          final refreshToken = resBody['refreshToken'];
           final clientData = resBody['client'];
           final userId = clientData['_id'];
+
           debugPrint('userId: $userId');
+
           // ! Save the token to secure storage
           final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('jwtToken', token);
+          await storage.write(key: 'accessToken', value: accessToken);
+          await storage.write(key: 'refreshToken', value: refreshToken);
+
+          // ! USING SHARED PREFS FOR FLUTTER WEB
+          await prefs.setString('accessToken', accessToken);
           await prefs.setString('userId', userId);
           final clientModel = ClientModel.fromDoc(clientData);
           return Right(clientModel);
@@ -128,13 +141,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         debugPrint('API response: ' '${result.statusCode} - ${result.body}');
         if (result.statusCode == 201) {
+          // * Decode the response body using jsonDecode
           final resBody = jsonDecode(result.body);
-          final token = resBody['token'];
+
+          // * Extract neccessary data from response body
+          final accessToken = resBody['accessToken'];
+          final refreshToken = resBody['refreshToken'];
           final dancerData = resBody['dancer'];
           final userId = dancerData['_id'];
+
           // ! Save the token to secure storage
           final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setString('jwtToken', token);
+          await storage.write(key: 'accessToken', value: accessToken);
+          await storage.write(key: 'refreshToken', value: refreshToken);
+
+          // ! USING SHARED PREFS FOR FLUTTER WEB
+          await prefs.setString('accessToken', accessToken);
           await prefs.setString('userId', userId);
           final dancerModel = DancerModel.fromDoc(dancerData);
           return Right(dancerModel);
@@ -176,11 +198,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final Map<String, dynamic> user = resBody['user'];
       final String userType = user['userType'];
       final String userId = user['_id'];
-      final String token = resBody['token'];
+      final String accessToken = resBody['accessToken'];
+      final refreshToken = resBody['refreshToken'];
+
       debugPrint('Full API Response: $resBody');
       // ! Save the token to secure storage
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('jwtToken', token);
+      await storage.write(key: 'accessToken', value: accessToken);
+      await storage.write(key: 'refreshToken', value: refreshToken);
+
+      // ! USING SHARED PREFS FOR FLUTTER WEB
+      await prefs.setString('accessToken', accessToken);
       await prefs.setString('userId', userId);
 
       // Convert to appropriate user model
@@ -201,10 +229,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Either<String, String>> logout() async {
     try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
       final response = await apiClient.get(endpoint: 'auth/logout');
       if (response.statusCode == 200) {
         final resBody = jsonDecode(response.body);
         final message = resBody['message'];
+        await storage.delete(key: 'accessToken');
+        await storage.delete(key: 'refreshToken');
+        await prefs.remove('userId');
+        debugPrint('tokens and user ID removed from secure storage');
         debugPrint(message);
         return Right(message);
       }
@@ -354,22 +387,28 @@ class UpdateProfile {
         );
         debugPrint('Update response: ${result.statusCode} - ${result.body}');
 
-        if (result.statusCode == 200) {
-          jsonDecode(result.body);
-          return const Right(null);
-        }
-        if (result.statusCode == 404) {
-          final resBody = jsonDecode(result.body);
-          final errMessage = resBody['message'];
-          debugPrint('Update failed: $errMessage');
+        if (result.statusCode != 200) {
+          String errMessage;
+          try {
+            final resBody = jsonDecode(result.body);
+            errMessage = resBody['message'] ?? 'Update failed';
+          } catch (e) {
+            errMessage = result.body.isNotEmpty ? result.body : 'update failed';
+          }
+          debugPrint('Update failed fam: $errMessage');
           return Left(errMessage);
         }
+
+        final resBody = jsonDecode(result.body);
+        final message = resBody['message'];
+
+        return Right(message);
       }
 
       return const Left('User ID not available');
     } catch (e) {
-      debugPrint('error updating profile to firebaseeeeeeeee');
-      return Left(e.toString());
+      debugPrint('error updating profile: ${e.toString()}');
+      return const Left('Error updating profile');
     }
   }
 }

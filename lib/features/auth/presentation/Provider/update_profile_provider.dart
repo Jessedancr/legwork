@@ -19,7 +19,6 @@ class UpdateProfileProvider extends ChangeNotifier {
       return result.fold(
         (fail) => Left(fail.toString()),
         (success) {
-          debugPrint('Profile updated successfully');
           return Right(success);
         },
       );

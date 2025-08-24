@@ -14,11 +14,11 @@ final formKey = GlobalKey<FormState>();
 class ProfileCompletionScreen1 extends StatefulWidget {
   final TextEditingController bioController;
   final TextEditingController danceStylePrefsController;
-  final String? email;
+  final String? username;
   const ProfileCompletionScreen1({
     super.key,
     required this.bioController,
-    required this.email,
+    required this.username,
     required this.danceStylePrefsController,
   });
 
@@ -100,7 +100,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                 ),
                               ),
                               Text(
-                                widget.email ?? 'email not available',
+                                widget.username ?? 'username not available',
                                 style: context.textLg?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: context.colorScheme.surface,

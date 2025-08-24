@@ -141,7 +141,7 @@ class _DancerProfileCompletionFlowState
     // * Profile ocmpletition screens
     List<Widget> profileCompletionScreens = [
       ProfileCompletionScreen1(
-        email: widget.dancerDetails.email,
+        username: widget.dancerDetails.username,
         bioController: bioController,
         danceStylesController: danceStylesController,
       ),

@@ -80,8 +80,8 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             LegworkSnackbar(
               title: 'Omo!',
               subTitle: fail,
-              imageColor: context.colorScheme.error,
-              contentColor: context.colorScheme.onError,
+              imageColor: context.colorScheme.onError,
+              contentColor: context.colorScheme.error,
             ).show(context);
           }, (user) {
             // Handle success

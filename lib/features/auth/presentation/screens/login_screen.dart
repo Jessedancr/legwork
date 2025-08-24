@@ -198,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: false,
                           controller: emailController,
                           icon: SvgPicture.asset(
-                            'assets/svg/mail.svg',
+                            'assets/svg/user.svg',
                             color: context.colorScheme.onPrimaryContainer,
                             fit: BoxFit.scaleDown,
                           ),
