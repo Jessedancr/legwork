@@ -43,7 +43,8 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
   // FETCH DANCER DETAILS FROM BACKEND USING AUTH PROVIDER
   Future<void> _fetchDancerDetails() async {
     final uid = authProvider.getUserId();
-    final result = await authProvider.getUserDetails(uid: uid);
+    final userId = await authProvider.getUid();
+    final result = await authProvider.getUserDetails(uid: userId);
 
     result.fold(
       (fail) {

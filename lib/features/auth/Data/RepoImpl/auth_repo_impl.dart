@@ -135,6 +135,15 @@ class AuthRepoImpl implements AuthRepo {
     }
   }
 
+  Future<String> getUid() async {
+    try {
+      final result = await _authRemoteDataSource.getUid();
+      return result;
+    } catch (e) {
+      return 'Error getting user ID';
+    }
+  }
+
   @override
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,

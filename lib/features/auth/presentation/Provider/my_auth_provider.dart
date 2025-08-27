@@ -199,6 +199,11 @@ class MyAuthProvider extends ChangeNotifier {
     return result;
   }
 
+  Future<String> getUid() async {
+    final result = await authRepo.getUid();
+    return result;
+  }
+
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,
   }) async {

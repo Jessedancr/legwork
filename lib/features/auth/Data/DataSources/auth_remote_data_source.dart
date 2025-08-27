@@ -263,6 +263,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
+  // @override
+  Future<String> getUid() async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? userId = prefs.getString('userId');
+      return userId!;
+    } catch (e) {
+      debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
+      return 'failed to get users uid';
+    }
+  }
+
   @override
   Future<String> getDeviceToken({required String userId}) async {
     try {
@@ -290,21 +302,43 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String uid,
   }) async {
     try {
-      // Query the two collections at the same time
-      final docs = await Future.wait([
-        db.collection('dancers').doc(uid).get(),
-        db.collection('clients').doc(uid).get()
-      ]);
-      final dancersDoc = docs[0];
-      final clientsDoc = docs[1];
+      final result =
+          await apiClient.get(endpoint: 'users/$uid/get-user-details');
 
-      if (dancersDoc.exists && dancersDoc.data() != null) {
-        return Right(DancerModel.fromDocument(dancersDoc));
-      } else if (clientsDoc.exists && clientsDoc.data() != null) {
-        return Right(ClientModel.fromDocument(clientsDoc));
-      } else {
-        return const Left('No user found');
+      if (result.statusCode != 200) {
+        final resBody = jsonDecode(result.body);
+        final message = resBody['message'];
+        debugPrint(message);
+        return Left(message);
       }
+
+      final resBody = jsonDecode(result.body);
+      final user = resBody['user'];
+      final userType = user['userType'];
+
+      if (userType == UserType.dancer.name) {
+        final dancerModel = DancerModel.fromDoc(user);
+        return Right(dancerModel);
+      }
+
+      final clientModel = ClientModel.fromDoc(user);
+      return Right(clientModel);
+
+      // // Query the two collections at the same time
+      // final docs = await Future.wait([
+      //   db.collection('dancers').doc(uid).get(),
+      //   db.collection('clients').doc(uid).get()
+      // ]);
+      // final dancersDoc = docs[0];
+      // final clientsDoc = docs[1];
+
+      // if (dancersDoc.exists && dancersDoc.data() != null) {
+      //   return Right(DancerModel.fromDocument(dancersDoc));
+      // } else if (clientsDoc.exists && clientsDoc.data() != null) {
+      //   return Right(ClientModel.fromDocument(clientsDoc));
+      // } else {
+      //   return const Left('No user found');
+      // }
     } catch (e) {
       debugPrint('Error getting all of users details: ${e.toString()}');
       return Left(e.toString());

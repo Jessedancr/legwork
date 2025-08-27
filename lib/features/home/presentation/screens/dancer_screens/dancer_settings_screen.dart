@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/Constants/theme_provider.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
@@ -17,6 +18,8 @@ class DancerSettingsScreen extends StatefulWidget {
 }
 
 class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
+  final storage = const FlutterSecureStorage();
+
   @override
   Widget build(BuildContext context) {
     // Auth Provider
@@ -101,7 +104,14 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
                 backgroundColor: context.colorScheme.error,
                 icon: Icon(Icons.logout, color: context.colorScheme.onError),
                 maximumSize: Size(screenWidth(context) * 0.4, 50),
-              )
+              ),
+              LegworkElevatedButton(
+                onPressed: () async {
+                  final token = await storage.read(key: 'jwtToken');
+                  debugPrint('JWT token: $token');
+                },
+                buttonText: 'View JWT token',
+              ),
             ],
           ),
         ),
