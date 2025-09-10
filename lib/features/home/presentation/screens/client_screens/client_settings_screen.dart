@@ -5,7 +5,6 @@ import 'package:legwork/core/Constants/theme_provider.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
-import 'package:legwork/features/auth/presentation/widgets/auth_button.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_elevated_button.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_list_tile.dart';
 import 'package:provider/provider.dart';
@@ -44,13 +43,11 @@ class _ClientSettingsScreenState extends State<ClientSettingsScreen> {
             ).show(context);
           },
           // handle successful logout
-          (success) {
+          (msg) {
             Navigator.of(context)
                 .pushNamedAndRemoveUntil('/acctType', (route) => false);
-            debugPrint('Logout successful');
           },
         );
-        debugPrint('Logout successful');
       } catch (e) {
         debugPrint('Logout failed: $e');
       }

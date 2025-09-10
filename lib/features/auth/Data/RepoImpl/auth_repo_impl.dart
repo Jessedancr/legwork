@@ -60,49 +60,49 @@ class AuthRepoImpl implements AuthRepo {
       final result =
           await _authRemoteDataSource.userLogin(userEntity: userEntity);
 
-      // User type check
-      if (userEntity.userType == UserType.dancer.name) {
-        return result.fold(
-          (fail) => Left(fail.toString()),
-          (userEntity) => Right(
+      return result.fold((fail) => Left(fail.toString()),
+
+          // Handle success
+          (returnedUser) {
+        // * Return dancer
+        if (returnedUser.userType == UserType.dancer.name) {
+          return Right(
             DancerEntity(
-              firstName: userEntity.firstName ?? '',
-              lastName: userEntity.lastName ?? '',
-              username: userEntity.username ?? '',
-              email: userEntity.email,
-              password: userEntity.password,
-              phoneNumber: userEntity.phoneNumber ?? '',
-              resume: resume,
-              bio: userEntity.bio,
-              profilePicture: userEntity.profilePicture,
+              firstName: returnedUser.firstName,
+              lastName: returnedUser.lastName,
+              username: returnedUser.username,
+              email: returnedUser.email,
+              password: returnedUser.password,
+              phoneNumber: returnedUser.phoneNumber,
               userType: UserType.dancer.name,
-              deviceToken: userEntity.deviceToken,
+              deviceToken: returnedUser.deviceToken,
+              resume: resume,
             ),
-          ),
-        );
-      } else {
-        return result.fold(
-          (fail) => Left(fail.toString()),
-          (userEntity) => Right(
+          );
+        }
+
+        // * Return client
+        else if (returnedUser.userType == UserType.client.name) {
+          return Right(
             ClientEntity(
-              firstName: userEntity.firstName ?? '',
-              lastName: userEntity.lastName ?? '',
-              username: userEntity.username ?? '',
-              email: userEntity.email,
-              phoneNumber: userEntity.phoneNumber ?? '',
-              password: userEntity.password,
-              bio: userEntity.bio,
-              profilePicture: userEntity.profilePicture,
+              firstName: returnedUser.firstName,
+              lastName: returnedUser.lastName,
+              username: returnedUser.username,
+              email: returnedUser.email,
+              phoneNumber: returnedUser.phoneNumber,
+              password: returnedUser.password,
               userType: UserType.client.name,
+              deviceToken: returnedUser.deviceToken,
               danceStylePrefs: danceStylePrefs,
               organisationName: organisationName,
               jobOfferings: jobOfferings,
               hiringHistory: hiringHistory,
-              deviceToken: userEntity.deviceToken,
             ),
-          ),
-        );
-      }
+          );
+        } else {
+          return const Left('Unknown user type returned from server');
+        }
+      });
     } catch (e) {
       debugPrint('Auth repo impl error: $e');
       return Left(e.toString());
@@ -111,10 +111,13 @@ class AuthRepoImpl implements AuthRepo {
 
   // USER LOG OUT
   @override
-  Future<Either<String, void>> userLogout() async {
+  Future<Either<String, String>> userLogout() async {
     try {
-      await _authRemoteDataSource.logout();
-      return const Right(null);
+      final result = await _authRemoteDataSource.logout();
+      return result.fold(
+        (fail) => Left(fail),
+        (msg) => Right(msg),
+      );
     } catch (e) {
       debugPrint('Auth repo error logging out: $e');
       return Left(e.toString());
@@ -129,6 +132,15 @@ class AuthRepoImpl implements AuthRepo {
       return result;
     } catch (e) {
       return 'error getting user id';
+    }
+  }
+
+  Future<String> getUid() async {
+    try {
+      final result = await _authRemoteDataSource.getUid();
+      return result;
+    } catch (e) {
+      return 'Error getting user ID';
     }
   }
 

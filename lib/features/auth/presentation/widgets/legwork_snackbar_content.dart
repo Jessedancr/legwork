@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 
 class LegWorkSnackBarContent extends StatelessWidget {
@@ -10,6 +9,7 @@ class LegWorkSnackBarContent extends StatelessWidget {
   final String subTitle;
   final Color contentColor;
   final Color imageColor;
+  final Color? textColor;
   const LegWorkSnackBarContent({
     super.key,
     required this.screenHeight,
@@ -19,6 +19,7 @@ class LegWorkSnackBarContent extends StatelessWidget {
     required this.subTitle,
     required this.contentColor,
     required this.imageColor,
+    this.textColor,
   });
 
   @override
@@ -45,7 +46,7 @@ class LegWorkSnackBarContent extends StatelessWidget {
                     Text(
                       title,
                       style: context.text2Xl?.copyWith(
-                        color: context.colorScheme.onPrimary,
+                        color: textColor ?? context.colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -56,7 +57,7 @@ class LegWorkSnackBarContent extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: context.textXl?.copyWith(
-                        color: context.colorScheme.onPrimary,
+                        color: textColor ?? context.colorScheme.onPrimary,
                       ),
                     ),
                   ],

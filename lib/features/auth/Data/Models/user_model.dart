@@ -48,6 +48,23 @@ class DancerModel extends DancerEntity {
     );
   }
 
+  factory DancerModel.fromDoc(Map<String, dynamic> doc) {
+    return DancerModel(
+      firstName: doc['firstName'] ?? '',
+      lastName: doc['lastName'] ?? '',
+      resume: doc['resume'] ?? {},
+      jobPrefs: doc['jobPrefs'] ?? {},
+      email: doc['email'] ?? '',
+      password: doc['password'] ?? '',
+      phoneNumber: doc['phoneNumber'] ?? '',
+      username: doc['username'] ?? '',
+      userType: doc['userType'] ?? 'dancer',
+      profilePicture: doc['profilePicture'] ?? '',
+      bio: doc['bio'] ?? '',
+      deviceToken: doc['deviceToken'] ?? '',
+    );
+  }
+
   /// Convert user profile to firebase doc to store in firebase
   Map<String, dynamic> toMap() {
     return {
@@ -109,6 +126,25 @@ class ClientModel extends ClientEntity {
 
   /// Convert firebase doc to user profile so we can use in the app
   factory ClientModel.fromDocument(DocumentSnapshot doc) {
+    return ClientModel(
+      email: doc['email'] ?? '',
+      password: doc['password'] ?? '',
+      firstName: doc['firstName'] ?? '',
+      lastName: doc['lastName'] ?? '',
+      phoneNumber: doc['phoneNumber'] ?? 0,
+      username: doc['username'] ?? '',
+      organisationName: doc['organisationName'] ?? '',
+      profilePicture: doc['profilePicture'],
+      userType: doc['userType'] ?? 'client',
+      bio: doc['bio'] ?? '',
+      danceStylePrefs: doc['danceStylePrefs'] ?? [],
+      jobOfferings: doc['jobOfferings'] ?? [],
+      hiringHistory: doc['hiringHistory'] ?? {},
+      deviceToken: doc['deviceToken'] ?? '',
+    );
+  }
+
+  factory ClientModel.fromDoc(Map<String, dynamic> doc) {
     return ClientModel(
       email: doc['email'] ?? '',
       password: doc['password'] ?? '',

@@ -99,7 +99,7 @@ class _DancerProfileCompletionFlowState
               subTitle: fail,
               contentColor: context.colorScheme.error,
               imageColor: context.colorScheme.onError,
-            );
+            ).show(context);
           },
           // handle success
           (success) {
@@ -141,7 +141,7 @@ class _DancerProfileCompletionFlowState
     // * Profile ocmpletition screens
     List<Widget> profileCompletionScreens = [
       ProfileCompletionScreen1(
-        email: 'widget.dancerDetails.email',
+        username: widget.dancerDetails.username,
         bioController: bioController,
         danceStylesController: danceStylesController,
       ),

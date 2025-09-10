@@ -30,6 +30,7 @@ class LegworkElevatedButton extends StatelessWidget {
         elevation: 2.0,
         splashFactory: InkSplash.splashFactory,
         enableFeedback: true,
+        shadowColor: context.colorScheme.onSurface,
       ),
       onPressed: onPressed,
       child: Row(

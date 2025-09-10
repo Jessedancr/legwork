@@ -8,7 +8,7 @@ class LogoutBusinessLogic {
   // Constructor
   LogoutBusinessLogic({required this.authRepo});
 
-  Future<Either<String, void>> logoutExecute() async {
+  Future<Either<String, String>> logoutExecute() async {
     // Call the logout method from auth repo
     return await authRepo.userLogout();
   }
