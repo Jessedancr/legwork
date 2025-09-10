@@ -53,11 +53,14 @@ class DancerModel extends DancerEntity {
       firstName: doc['firstName'] ?? '',
       lastName: doc['lastName'] ?? '',
       resume: doc['resume'] ?? {},
+      jobPrefs: doc['jobPrefs'] ?? {},
       email: doc['email'] ?? '',
       password: doc['password'] ?? '',
       phoneNumber: doc['phoneNumber'] ?? '',
       username: doc['username'] ?? '',
-      userType: doc['userType'] ?? '',
+      userType: doc['userType'] ?? 'dancer',
+      profilePicture: doc['profilePicture'] ?? '',
+      bio: doc['bio'] ?? '',
       deviceToken: doc['deviceToken'] ?? '',
     );
   }

@@ -22,47 +22,50 @@ class AuthStatus extends StatelessWidget {
     // Instance of auth provider
     final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
     return Scaffold(
-      body: StreamBuilder(
-        stream: authRemoteDataSource.authStateChanges(),
-        builder: (context, snapShot) {
-          // If no user is logged in, show the AccountTypeScreen
-          if (!snapShot.hasData) {
-            return const AccountTypeScreen();
-          }
-          // if user is logged in, show the appropriate home screen
-          else {
-            final user = snapShot.data;
-            return FutureBuilder(
-              future: authProvider.getUserDetails(uid: user!.uid),
-              builder: (context, snapshot) {
-                // Show a loading indicator while fetching user type
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: Lottie.asset(
-                      'assets/lottie/loading.json',
-                      height: 100,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                }
-                final userType = snapshot.data!.fold(
-                  (fail) {
-                    debugPrint('Error fetching user type: $fail');
-                    return fail;
-                  },
-                  (userEntity) => userEntity.userType,
-                );
-                if (userType == 'dancer') {
-                  return const DancerApp();
-                } else if (userType == 'client') {
-                  return const ClientApp();
-                } else {
-                  // If userType is unknown, default to AccountTypeScreen
-                  return const AccountTypeScreen();
-                }
-              },
+      body: FutureBuilder(
+        future: authProvider.getUid(),
+        builder: (context, uidSnapshot) {
+          if (uidSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Lottie.asset(
+                'assets/lottie/loading.json',
+                height: 100,
+                fit: BoxFit.cover,
+              ),
             );
           }
+          final uid = uidSnapshot.data;
+          return FutureBuilder(
+            future: authProvider.getUserDetails(uid: uid!),
+            builder: (context, userDetailsSnapshot) {
+              // Show a loading indicator while fetching user type
+              if (userDetailsSnapshot.connectionState ==
+                  ConnectionState.waiting) {
+                return Center(
+                  child: Lottie.asset(
+                    'assets/lottie/loading.json',
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                );
+              }
+              final userType = userDetailsSnapshot.data!.fold(
+                (fail) {
+                  debugPrint('Error fetching user type: $fail');
+                  return fail;
+                },
+                (userEntity) => userEntity.userType,
+              );
+              if (userType == 'dancer') {
+                return const DancerApp();
+              } else if (userType == 'client') {
+                return const ClientApp();
+              } else {
+                // If userType is unknown, default to AccountTypeScreen
+                return const AccountTypeScreen();
+              }
+            },
+          );
         },
       ),
     );

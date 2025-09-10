@@ -5,7 +5,6 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/core/network/api_client.dart';
 import 'package:legwork/features/auth/Data/Models/resume_model.dart';
@@ -33,15 +32,15 @@ abstract class AuthRemoteDataSource {
   /// USER LOGOUT METHOD
   Future<Either<String, void>> logout();
 
-  /// GET CURRENLY LOGGED IN USER'S ID
+  /// GET CURRENLY LOGGED IN USER'S ID FROM FIREBASE AUTH
   String getUserId();
+
+  /// GET CURRENTLY LOGGED IN USER'S ID FROM SHARED PREFS
+  Future<String> getUid();
 
   Future<String> getDeviceToken({required String userId});
 
   Future<Either<String, UserEntity>> getUserDetails({required String uid});
-
-  /// LISTEN TO AUTH STATE CHANGES
-  Stream<User?> authStateChanges();
 }
 
 /**
@@ -201,7 +200,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final String accessToken = resBody['accessToken'];
       final refreshToken = resBody['refreshToken'];
 
-      debugPrint('Full API Response: $resBody');
+      debugPrint('Login API Response: $resBody');
       // ! Save the token to secure storage
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await storage.write(key: 'accessToken', value: accessToken);
@@ -258,12 +257,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
       return user.uid;
     } catch (e) {
-      debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
       return 'failed to get users uid';
     }
   }
 
-  // @override
+  @override
   Future<String> getUid() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -323,32 +321,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final clientModel = ClientModel.fromDoc(user);
       return Right(clientModel);
-
-      // // Query the two collections at the same time
-      // final docs = await Future.wait([
-      //   db.collection('dancers').doc(uid).get(),
-      //   db.collection('clients').doc(uid).get()
-      // ]);
-      // final dancersDoc = docs[0];
-      // final clientsDoc = docs[1];
-
-      // if (dancersDoc.exists && dancersDoc.data() != null) {
-      //   return Right(DancerModel.fromDocument(dancersDoc));
-      // } else if (clientsDoc.exists && clientsDoc.data() != null) {
-      //   return Right(ClientModel.fromDocument(clientsDoc));
-      // } else {
-      //   return const Left('No user found');
-      // }
     } catch (e) {
       debugPrint('Error getting all of users details: ${e.toString()}');
       return Left(e.toString());
     }
-  }
-
-  /// LISTEN TO AUTH STATE CHANGES
-  @override
-  Stream<User?> authStateChanges() {
-    return auth.authStateChanges();
   }
 }
 
@@ -404,9 +380,6 @@ class ResumeUploadRemoteDataSourceImpl extends ResumeUploadRemoteDataSource {
  * UPDATE PROFILE CLASS
  */
 class UpdateProfile {
-  final auth = FirebaseAuth.instance;
-  final db = FirebaseFirestore.instance;
-
   Future<Either<String, dynamic>> updateUserProfile({
     required Map<String, dynamic> data,
   }) async {
