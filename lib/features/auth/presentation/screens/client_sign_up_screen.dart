@@ -76,7 +76,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
 
           result.fold((fail) {
             // Handle failure
-            debugPrint(fail.toString());
+            debugPrint(fail);
             LegworkSnackbar(
               title: 'Omo!',
               subTitle: fail,
@@ -93,8 +93,6 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             );
           });
         } catch (e) {
-          // Hide loading circle after failed sign up
-          // and display snackbar with error message
           if (mounted) {
             hideLoadingIndicator(context);
             LegworkSnackbar(
@@ -107,15 +105,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
           debugPrint('SIGN-UP ERROR: $e');
         }
       }
-      if (pwController.text != pwConfirmController.text) {
-        LegworkSnackbar(
-          title: 'Oh Snap!',
-          subTitle: 'Your passwords no match o!',
-          contentColor: Theme.of(context).colorScheme.error,
-          imageColor: Theme.of(context).colorScheme.onError,
-        );
-        return;
-      }
+      
     }
 
     // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS

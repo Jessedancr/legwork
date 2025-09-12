@@ -95,8 +95,6 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             },
           );
         } catch (e) {
-          // Hide loading circle after failed sign up
-          // and display snackbar with error message
           if (mounted) {
             LegworkSnackbar(
               title: 'Omo!',

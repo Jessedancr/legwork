@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
-
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 
 // ignore: must_be_immutable

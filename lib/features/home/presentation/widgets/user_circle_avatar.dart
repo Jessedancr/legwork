@@ -4,11 +4,11 @@ import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:lottie/lottie.dart';
 
-class DancerCircleAvatar extends StatelessWidget {
+class UserCircleAvatar extends StatelessWidget {
   final UserEntity user;
   final String defaultProfileImagePath;
 
-  const DancerCircleAvatar({
+  const UserCircleAvatar({
     super.key,
     required this.user,
     required this.defaultProfileImagePath,

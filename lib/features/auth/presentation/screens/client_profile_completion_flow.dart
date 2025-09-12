@@ -1,8 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Provider/update_profile_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
@@ -28,7 +30,7 @@ class ClientProfileCompletionFlow extends StatefulWidget {
 
 class _ClientProfileCompletionFlowState
     extends State<ClientProfileCompletionFlow> {
-  final auth = FirebaseAuth.instance;
+  late MyAuthProvider authProvider;
 
   // CONTROLLERS
   final PageController pageController = PageController();
@@ -43,9 +45,15 @@ class _ClientProfileCompletionFlowState
   final TextEditingController professionalTitleController =
       TextEditingController();
   final TextEditingController paymentController = TextEditingController();
+  File? selectedImage;
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
+  @override
+  void initState() {
+    super.initState();
+    authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+  }
 
   // BUILD METHOD
   @override
@@ -79,10 +87,33 @@ class _ClientProfileCompletionFlowState
                 .toList(),
           }
         };
-        final result =
-            await updateProfileProvider.updateProfileExecute(data: data);
 
-        result.fold(
+        final results = await Future.wait([
+          updateProfileProvider.updateProfileExecute(data: data),
+          updateProfileProvider.uploadProfileImage(imageFile: selectedImage!),
+        ]);
+
+        final updateProfile = results[0];
+        final uploadProfileImage = results[1];
+
+        uploadProfileImage.fold(
+          (fail) {
+            hideLoadingIndicator(context);
+            debugPrint(fail);
+            LegworkSnackbar(
+              title: 'Omo!',
+              subTitle: fail,
+              contentColor: context.colorScheme.error,
+              imageColor: context.colorScheme.onError,
+            ).show(context);
+          },
+          (success) {
+            hideLoadingIndicator(context);
+            debugPrint('Image upload successful: $success');
+          },
+        );
+
+        updateProfile.fold(
           // handle failure
           (fail) {
             hideLoadingIndicator(context);
@@ -116,22 +147,15 @@ class _ClientProfileCompletionFlowState
         debugPrint('Error updating profile: $e');
         LegworkSnackbar(
           title: 'Omo!',
-          subTitle: 'Failed to update profile: $e',
+          subTitle: 'An unknown error occured',
           imageColor: context.colorScheme.onError,
           contentColor: context.colorScheme.error,
         ).show(context);
       }
     }
 
-    // TODO: Implement conditional navigation if pref dance styles is empty
     // NAVIGATE TO NEXT PAGE
     void nextPage() {
-      // if (formKey.currentState!.validate()) {
-      //   pageController.nextPage(
-      //     duration: const Duration(milliseconds: 500),
-      //     curve: Curves.easeInOut,
-      //   );
-      // }
       pageController.nextPage(
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
@@ -144,6 +168,12 @@ class _ClientProfileCompletionFlowState
         username: widget.clientDetails.username,
         bioController: bioController,
         danceStylePrefsController: danceStylePrefsController,
+        selectedImage: selectedImage,
+        onImageSelected: (File image) {
+          setState(() {
+            selectedImage = image;
+          });
+        },
       ),
       const ProfileCompletionScreen2(),
       ProfileCompletionScreen3(
@@ -177,9 +207,6 @@ class _ClientProfileCompletionFlowState
                 setState(() {
                   isLastPage = (value == profileCompletitionScreen.length - 1);
                 });
-                if (isLastPage) {
-                  debugPrint('Cliemt profile completiton Last page');
-                }
               },
               children: profileCompletitionScreen,
             ),

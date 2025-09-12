@@ -2,28 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/home/presentation/widgets/user_circle_avatar.dart';
 
 import 'legwork_list_tile.dart';
 
 class ClientsDrawer extends StatefulWidget {
-  const ClientsDrawer({super.key});
+  final UserEntity user;
+
+  const ClientsDrawer({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<ClientsDrawer> createState() => _ClientsDrawerState();
 }
 
 class _ClientsDrawerState extends State<ClientsDrawer> {
-  UserEntity user = UserEntity(
-    username: '',
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    userType: '',
-    deviceToken: '',
-  );
-
   @override
   Widget build(BuildContext context) {
     // RETRUNED UI
@@ -60,19 +55,14 @@ class _ClientsDrawerState extends State<ClientsDrawer> {
                   ),
                 ],
               ),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: context.colorScheme.primaryContainer,
-                backgroundImage: (user.profilePicture != null &&
-                        user.profilePicture!.isNotEmpty)
-                    ? NetworkImage(user.profilePicture!)
-                    : const AssetImage(defaultClientProfileImage)
-                        as ImageProvider,
+              child: UserCircleAvatar(
+                user: widget.user,
+                defaultProfileImagePath: defaultClientProfileImage,
               ),
             ),
             const SizedBox(height: 10),
             Divider(
-              color: Theme.of(context).colorScheme.outline,
+              color: context.colorScheme.outline,
               thickness: 1.5,
             ),
             SizedBox(height: screenHeight(context) * 0.05),

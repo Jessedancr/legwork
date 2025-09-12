@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
-import 'package:legwork/features/home/presentation/widgets/dancer_circle_avatar.dart';
+import 'package:legwork/features/home/presentation/widgets/user_circle_avatar.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_list_tile.dart';
 
 class DancersDrawer extends StatefulWidget {
@@ -53,7 +53,7 @@ class _DancersDrawerState extends State<DancersDrawer> {
                   ),
                 ],
               ),
-              child: DancerCircleAvatar(
+              child: UserCircleAvatar(
                 user: widget.user,
                 defaultProfileImagePath: defaultDancerProfileImage,
               ),

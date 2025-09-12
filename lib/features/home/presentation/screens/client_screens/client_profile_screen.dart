@@ -43,9 +43,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
   }
 
   Future<void> _fetchClientDetails() async {
-    final uid = authProvider.getUserId();
-
-    final result = await authProvider.getUserDetails(uid: uid);
+    final userId = await authProvider.getUid();
+    final result = await authProvider.getUserDetails(uid: userId);
 
     result.fold(
       (fail) {
@@ -56,7 +55,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
       },
       (data) {
         setState(() {
-          clientDetails = data as ClientEntity; // Cast to ClientEntity
+          clientDetails = data as ClientEntity;
           isLoading = false;
         });
       },

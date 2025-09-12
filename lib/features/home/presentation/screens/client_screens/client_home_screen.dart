@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
@@ -30,11 +32,46 @@ class ClientHomeScreen extends StatefulWidget {
 
 class _ClientHomeScreenState extends State<ClientHomeScreen> {
   late Future<void> _fetchJobsFuture;
+  UserEntity? clientDetails = UserEntity(
+    username: '',
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    userType: '',
+    deviceToken: '',
+  );
+  late MyAuthProvider authProvider;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    _fetchClientDetails();
+
     _fetchJobsFuture = loadAllJobs();
+  }
+
+  Future<void> _fetchClientDetails() async {
+    final userId = await authProvider.getUid();
+    final result = await authProvider.getUserDetails(uid: userId);
+
+    result.fold(
+      (fail) {
+        debugPrint('Failed to fetch client details: $fail');
+        if (mounted) setState(() => isLoading = false);
+      },
+      (data) {
+        if (mounted) {
+          setState(() {
+            clientDetails = data as ClientEntity;
+            isLoading = false;
+          });
+        }
+      },
+    );
   }
 
   Future<void> loadAllJobs() async {
@@ -149,7 +186,9 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       length: 2,
       child: Scaffold(
         //* Drawer
-        drawer: const ClientsDrawer(),
+        drawer: ClientsDrawer(
+          user: clientDetails!,
+        ),
 
         //* Floating action button
         floatingActionButton: FloatingActionButton(

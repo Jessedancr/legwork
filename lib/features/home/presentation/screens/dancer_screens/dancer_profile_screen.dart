@@ -42,7 +42,6 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
 
   // FETCH DANCER DETAILS FROM BACKEND USING AUTH PROVIDER
   Future<void> _fetchDancerDetails() async {
-    final uid = authProvider.getUserId();
     final userId = await authProvider.getUid();
     final result = await authProvider.getUserDetails(uid: userId);
 
@@ -72,8 +71,8 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    // final colorScheme = Theme.of(context).colorScheme;
+    // final textTheme = Theme.of(context).textTheme;
 
     // DATE PICKER
     Future<void> datePicker() async {
@@ -123,8 +122,8 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
           LegworkSnackbar(
             title: 'Omo!',
             subTitle: fail,
-            imageColor: colorScheme.onError,
-            contentColor: colorScheme.error,
+            imageColor: context.colorScheme.onError,
+            contentColor: context.colorScheme.error,
           ).show(context);
 
           // Clear controllers
@@ -153,8 +152,8 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
           LegworkSnackbar(
             title: 'Sharp guy!',
             subTitle: 'Work experience added',
-            imageColor: colorScheme.onPrimary,
-            contentColor: colorScheme.primary,
+            imageColor: context.colorScheme.onPrimary,
+            contentColor: context.colorScheme.primary,
           ).show(context);
 
           // Clear controllers
@@ -192,7 +191,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
         scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: false,
         centerTitle: true,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: context.colorScheme.surface,
         elevation: 0,
         title: Text(
           dancerDetails?.username != null
@@ -207,7 +206,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
           IconButton(
             icon: SvgPicture.asset(
               'assets/svg/pen_circle.svg',
-              color: colorScheme.onSurface,
+              color: context.colorScheme.onSurface,
               width: 24,
               height: 24,
             ),
@@ -220,7 +219,7 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
       floatingActionButton: isLoading
           ? null
           : FloatingActionButton(
-              backgroundColor: colorScheme.primary,
+              backgroundColor: context.colorScheme.primary,
               onPressed: addWorkExperience,
               child: Icon(Icons.add, color: context.colorScheme.onPrimary),
             ),
@@ -243,13 +242,13 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
                       Icon(
                         Icons.error_outline,
                         size: 48,
-                        color: colorScheme.error,
+                        color: context.colorScheme.error,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         'Failed to load profile data',
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.error,
+                        style: context.text2Xl!.copyWith(
+                          color: context.colorScheme.error,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -271,8 +270,8 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
               // LIQUID PULL TO REFRESH
               : LiquidPullToRefresh(
                   onRefresh: _fetchDancerDetails,
-                  color: colorScheme.primary,
-                  backgroundColor: colorScheme.surface,
+                  color: context.colorScheme.primary,
+                  backgroundColor: context.colorScheme.surface,
                   animSpeedFactor: 3.0,
                   showChildOpacityTransition: false,
                   child: SingleChildScrollView(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
-import 'package:legwork/features/home/presentation/widgets/dancer_circle_avatar.dart';
+import 'package:legwork/features/home/presentation/widgets/user_circle_avatar.dart';
 
 class ProfileHeaderSection extends StatelessWidget {
   final UserEntity user;
@@ -54,7 +54,7 @@ class ProfileHeaderSection extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: DancerCircleAvatar(
+                    child: UserCircleAvatar(
                       user: user,
                       defaultProfileImagePath: defaultProfileImagePath,
                     ),
@@ -199,5 +199,3 @@ class ProfileHeaderSection extends StatelessWidget {
     );
   }
 }
-
-
