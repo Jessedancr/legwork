@@ -91,9 +91,6 @@ class ApiClient {
   }) async {
     try {
       final accessToken = await storage.read(key: 'accessToken');
-      // final SharedPreferences prefs = await SharedPreferences.getInstance();
-      // final accessToken = prefs.getString('accessToken');
-
       final url = Uri.parse('$baseUrl/$endpoint');
 
       final response = await http.get(
@@ -128,7 +125,6 @@ class ApiClient {
       final accessToken = await storage.read(key: 'accessToken');
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('userId');
-      // final accessToken = prefs.getString('accessToken');
       if (accessToken == null || userId == null) {
         debugPrint('Token or user ID null');
         final response = http.Response(
@@ -203,6 +199,41 @@ class ApiClient {
     } catch (e) {
       debugPrint('Error refreshing tokens');
       return false;
+    }
+  }
+
+// * Upload File
+  Future<http.Response> uploadFile({
+    required String endpoint,
+    required String filePath,
+    required String fieldName,
+  }) async {
+    try {
+      final accessToken = await storage.read(key: 'accessToken');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId');
+
+      if (accessToken == null || userId == null) {
+        debugPrint('Token or user ID is null');
+        throw Exception('Unauthorised, no token or user ID found');
+      }
+
+      final url = Uri.parse('$baseUrl/$endpoint');
+      final request = http.MultipartRequest('POST', url)
+        ..headers['Authorization'] = 'Bearer $accessToken'
+        ..files.add(await http.MultipartFile.fromPath(fieldName, filePath));
+
+      final streamedResponse = await request.send();
+      final responseBody = await streamedResponse.stream.bytesToString();
+
+      return http.Response(
+        responseBody,
+        streamedResponse.statusCode,
+        headers: {'Content-Type': 'application/json'},
+      );
+    } catch (e) {
+      debugPrint('File upload error: ${e.toString()}');
+      rethrow;
     }
   }
 }

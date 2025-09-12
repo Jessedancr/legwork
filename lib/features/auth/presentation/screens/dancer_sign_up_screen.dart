@@ -87,7 +87,6 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             },
             (user) {
               // Handle success
-              debugPrint('Sign-up successful: ${user.username}');
               Navigator.of(context).pushNamedAndRemoveUntil(
                 '/dancerProfileCompletionFlow',
                 (route) => false,

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/home/presentation/widgets/dancer_circle_avatar.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_list_tile.dart';
 
 class DancersDrawer extends StatefulWidget {
+  final UserEntity user;
   const DancersDrawer({
     super.key,
+    required this.user,
   });
 
   @override
@@ -14,16 +17,6 @@ class DancersDrawer extends StatefulWidget {
 }
 
 class _DancersDrawerState extends State<DancersDrawer> {
-  UserEntity user = UserEntity(
-    username: '',
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    userType: '',
-    deviceToken: '',
-  );
   @override
   Widget build(BuildContext context) {
     // RETRUNED UI
@@ -60,14 +53,9 @@ class _DancersDrawerState extends State<DancersDrawer> {
                   ),
                 ],
               ),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: context.colorScheme.primaryContainer,
-                backgroundImage: (user.profilePicture != null &&
-                        user.profilePicture!.isNotEmpty)
-                    ? NetworkImage(user.profilePicture!)
-                    : const AssetImage(defaultDancerProfileImage)
-                        as ImageProvider,
+              child: DancerCircleAvatar(
+                user: widget.user,
+                defaultProfileImagePath: defaultDancerProfileImage,
               ),
             ),
             const SizedBox(height: 10),

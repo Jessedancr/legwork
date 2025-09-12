@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 // Screen Size
 double screenHeight(BuildContext context) {
@@ -43,3 +46,10 @@ const defaultDancerProfileImage =
     'images/depictions/dancer_dummy_default_profile_picture.jpg';
 
 const defaultClientProfileImage = 'images/depictions/img_depc1.jpg';
+
+Future<File> pickImage() async {
+  final returnedImage =
+      await ImagePicker().pickImage(source: ImageSource.gallery);
+  if (returnedImage == null) return File('');
+  return File(returnedImage.path);
+}

@@ -85,7 +85,6 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             ).show(context);
           }, (user) {
             // Handle success
-            debugPrint('Sign-up successful: ${user.username}');
             Navigator.pushNamedAndRemoveUntil(
               context,
               '/clientProfileCompletionFlow',

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
@@ -43,6 +44,7 @@ class _DancerProfileCompletionFlowState
   final TextEditingController jobDescrController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
   final TextEditingController danceStylesController = TextEditingController();
+  File? selectedImage;
 
   // This keeps track on if we are on the lasr page
   bool isLastPage = false;
@@ -84,13 +86,36 @@ class _DancerProfileCompletionFlowState
                       'jobDescription': experience[4],
                     })
                 .toList(),
-          }
+          },
         };
-        final result =
-            await updateProfileProvider.updateProfileExecute(data: data);
 
-        result.fold(
-          // handle failure
+        // Run both futures simultaneously
+        final results = await Future.wait([
+          updateProfileProvider.updateProfileExecute(data: data),
+          updateProfileProvider.uploadProfileImage(imageFile: selectedImage!),
+        ]);
+
+        final updateProfile = results[0];
+        final uploadProfileImage = results[1];
+
+        uploadProfileImage.fold(
+          (fail) {
+            hideLoadingIndicator(context);
+            debugPrint(fail);
+            LegworkSnackbar(
+              title: 'Omo!',
+              subTitle: fail,
+              contentColor: context.colorScheme.error,
+              imageColor: context.colorScheme.onError,
+            ).show(context);
+          },
+          (success) {
+            hideLoadingIndicator(context);
+            debugPrint('Image upload successful: $success');
+          },
+        );
+
+        updateProfile.fold(
           (fail) {
             hideLoadingIndicator(context);
             debugPrint(fail.toString());
@@ -101,9 +126,7 @@ class _DancerProfileCompletionFlowState
               imageColor: context.colorScheme.onError,
             ).show(context);
           },
-          // handle success
           (success) {
-            debugPrint('Profile completion successful');
             hideLoadingIndicator(context);
             Navigator.of(context).pushNamedAndRemoveUntil(
               '/dancerApp',
@@ -144,6 +167,12 @@ class _DancerProfileCompletionFlowState
         username: widget.dancerDetails.username,
         bioController: bioController,
         danceStylesController: danceStylesController,
+        selectedImage: selectedImage,
+        onImageSelected: (File image) {
+          setState(() {
+            selectedImage = image;
+          });
+        },
       ),
       const ProfileCompletionScreen2(),
       const ProfileCompletionScreen3(),
@@ -176,9 +205,6 @@ class _DancerProfileCompletionFlowState
                 setState(() {
                   isLastPage = (value == profileCompletionScreens.length - 1);
                 });
-                if (isLastPage) {
-                  debugPrint('Dancer profile completiton Last page');
-                }
               },
               children: profileCompletionScreens,
             ),

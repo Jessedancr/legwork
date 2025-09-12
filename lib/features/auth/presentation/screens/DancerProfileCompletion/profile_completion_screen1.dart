@@ -2,26 +2,28 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_text_form_field.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 
-//TODO: IMPLEMENT UPLOADING USER'S PROFILE PICTURE TO FIREBASE STORAGE
-
+// ignore: must_be_immutable
 class ProfileCompletionScreen1 extends StatefulWidget {
   // CONTROLLERS
   final TextEditingController danceStylesController;
   final TextEditingController bioController;
   final String? username;
+  File? selectedImage;
+  final Function(File) onImageSelected;
 
-  const ProfileCompletionScreen1({
+  ProfileCompletionScreen1({
     super.key,
     required this.username,
     required this.bioController,
     required this.danceStylesController,
+    this.selectedImage,
+    required this.onImageSelected,
   });
 
   @override
@@ -30,18 +32,13 @@ class ProfileCompletionScreen1 extends StatefulWidget {
 }
 
 class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
-  // Seleced image
-  File? selectedImage;
-
   // This function picks an image from the gallery
-  Future _pickImageFromGallery() async {
-    final returnedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (returnedImage == null) return;
-
+  _pickImageFromGallery() async {
+    File image = await pickImage();
     setState(() {
-      selectedImage = File(returnedImage.path);
+      widget.selectedImage = image;
     });
+    widget.onImageSelected(image);
   }
 
   @override
@@ -135,7 +132,7 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                         child: Column(
                           children: [
                             // PROFILE PICTURE
-                            if (selectedImage == null)
+                            if (widget.selectedImage == null)
                               // EMPTY PROFILE PICTURE
                               Stack(
                                 clipBehavior: Clip.none,
@@ -179,7 +176,8 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                     radius: 50,
                                     backgroundColor:
                                         context.colorScheme.surfaceContainer,
-                                    backgroundImage: FileImage(selectedImage!),
+                                    backgroundImage:
+                                        FileImage(widget.selectedImage!),
                                   ),
 
                                   // Edit icon
@@ -189,13 +187,36 @@ class _ProfileCompletionScreen1State extends State<ProfileCompletionScreen1> {
                                     child: GestureDetector(
                                       onTap: _pickImageFromGallery,
                                       child: CircleAvatar(
-                                        radius: 17,
+                                        radius: 15,
                                         backgroundColor: context
                                             .colorScheme.primaryContainer,
                                         child: SvgPicture.asset(
                                           'assets/svg/pen_circle.svg',
                                           color: context
                                               .colorScheme.onPrimaryContainer,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  // Delete icon
+                                  Positioned(
+                                    bottom: -3,
+                                    right: -3,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          widget.selectedImage = null;
+                                        });
+                                        widget.onImageSelected(File(''));
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: context
+                                            .colorScheme.primaryContainer,
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: context.colorScheme.error,
                                         ),
                                       ),
                                     ),

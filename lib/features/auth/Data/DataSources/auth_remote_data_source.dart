@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
@@ -84,7 +85,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           body: clientData,
         );
 
-        debugPrint('API response: ' '${result.statusCode} - ${result.body}');
+        debugPrint('Sign up API response: ${result.statusCode}');
         if (result.statusCode == 201) {
           // * Decode the response body using jsonDecode
           final resBody = jsonDecode(result.body);
@@ -138,7 +139,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           body: dancerData,
         );
 
-        debugPrint('API response: ' '${result.statusCode} - ${result.body}');
+        debugPrint('Sign up API response: ' '${result.statusCode}');
         if (result.statusCode == 201) {
           // * Decode the response body using jsonDecode
           final resBody = jsonDecode(result.body);
@@ -200,7 +201,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final String accessToken = resBody['accessToken'];
       final refreshToken = resBody['refreshToken'];
 
-      debugPrint('Login API Response: $resBody');
+      debugPrint('Login API Response: ${response.statusCode}');
       // ! Save the token to secure storage
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await storage.write(key: 'accessToken', value: accessToken);
@@ -392,7 +393,7 @@ class UpdateProfile {
           endpoint: 'users/$userId/update-user-details',
           body: data,
         );
-        debugPrint('Update response: ${result.statusCode} - ${result.body}');
+        debugPrint('Update profile response: ${result.statusCode}');
 
         if (result.statusCode != 200) {
           String errMessage;
@@ -416,6 +417,40 @@ class UpdateProfile {
     } catch (e) {
       debugPrint('error updating profile: ${e.toString()}');
       return const Left('Error updating profile');
+    }
+  }
+
+  Future<Either<String, Map<String, dynamic>>> uploadProfileImage({
+    required File imageFile,
+  }) async {
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? userId = prefs.getString('userId');
+
+      if (userId == null) {
+        return const Left('User ID not available');
+      }
+
+      final response = await apiClient.uploadFile(
+        endpoint: 'users/$userId/upload-profile-image',
+        filePath: imageFile.path,
+        fieldName: 'profileImage',
+      );
+
+      debugPrint('Upload profile picture response: ${response.statusCode}');
+
+      if (response.statusCode != 200) {
+        final resBody = jsonDecode(response.body);
+        final error = resBody['message'];
+        return Left(error);
+      }
+
+      final resBody = jsonDecode(response.body);
+      final Map<String, dynamic> result = resBody['result'];
+      return Right(result);
+    } catch (e) {
+      debugPrint('Error uploading profile picture: ${e.toString()}');
+      return const Left('Error uploading profile picture');
     }
   }
 }

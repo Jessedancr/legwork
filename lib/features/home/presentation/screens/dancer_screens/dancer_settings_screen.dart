@@ -105,13 +105,6 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
                 icon: Icon(Icons.logout, color: context.colorScheme.onError),
                 maximumSize: Size(screenWidth(context) * 0.4, 50),
               ),
-              LegworkElevatedButton(
-                onPressed: () async {
-                  final token = await storage.read(key: 'jwtToken');
-                  debugPrint('JWT token: $token');
-                },
-                buttonText: 'View JWT token',
-              ),
             ],
           ),
         ),

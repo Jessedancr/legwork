@@ -78,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
             // Handle successful login
             (user) {
               debugPrint('Login successful: ${user.toString()}');
-              debugPrint('Retrieved userType: ${user.userType}');
               if (user.userType == UserType.dancer.name) {
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   '/dancerApp',
