@@ -13,7 +13,7 @@ class JobEntity {
   final String jobDuration;
   final String jobDescr;
   final String jobType;
-  final String jobId; // Unique Job ID
+  String jobId; // Unique Job ID
   final String clientId; // ID of the client who posted the job
   final DateTime createdAt; // Date and time when the job was created
   final bool status;
@@ -70,6 +70,6 @@ class JobEntity {
 
   @override
   String toString() {
-    return 'JobEntity(jobTitle: $jobTitle, jobLocation: $jobLocation)';
+    return 'JobEntity(jobTitle: $jobTitle, jobLocation: $jobLocation, jobId: $jobId)';
   }
 }

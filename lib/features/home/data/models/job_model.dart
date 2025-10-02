@@ -104,6 +104,23 @@ class JobModel extends JobEntity {
     );
   }
 
+  factory JobModel.fromDoc(Map<String, dynamic> doc) {
+    return JobModel(
+      jobTitle: doc['jobTitle'] ?? '',
+      jobLocation: doc['jobLocation'] ?? '',
+      prefDanceStyles: doc['prefDanceStyles'] ?? [],
+      pay: doc['pay'] ?? '',
+      amtOfDancers: doc['amtOfDancers'] ?? '',
+      jobDuration: doc['jobDuration'] ?? '',
+      jobDescr: doc['jobDescr'] ?? '',
+      jobType: doc['jobType'],
+      jobId: doc['_id'] ?? '',
+      clientId: doc['clientId'] ?? '',
+      status: doc['status'] ?? true,
+      createdAt: DateTime.parse(doc['createdAt']),
+    );
+  }
+
   /// Convert Job to firebase doc to store in firebase
   Map<String, dynamic> toMap() {
     return {
@@ -118,7 +135,7 @@ class JobModel extends JobEntity {
       'jobId': jobId,
       'status': status,
       'clientId': clientId,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': createdAt,
     };
   }
 

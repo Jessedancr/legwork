@@ -267,7 +267,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? userId = prefs.getString('userId');
-      return userId!;
+      return userId ?? '';
     } catch (e) {
       debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
       return 'failed to get users uid';

@@ -34,6 +34,15 @@ class ApiClient {
       debugPrint('Token found: $accessToken');
       debugPrint('User ID: $userId');
 
+      final cleanedBody = body!.map(
+        (key, value) {
+          if (value is DateTime) {
+            return MapEntry(key, value.toIso8601String());
+          }
+          return MapEntry(key, value);
+        },
+      );
+
       final url = Uri.parse('$baseUrl/$endpoint');
       final response = await http.post(
         url,
@@ -41,7 +50,7 @@ class ApiClient {
           'Authorization': 'Bearer $accessToken',
           'Content-Type': 'application/json'
         },
-        body: jsonEncode(body),
+        body: jsonEncode(cleanedBody),
       );
       return response;
     } catch (e) {

@@ -35,8 +35,13 @@ class AuthStatus extends StatelessWidget {
             );
           }
           final uid = uidSnapshot.data;
+          if (uid == null || uid.isEmpty) {
+            debugPrint('No user ID found, redirecting to account type screen');
+            return const AccountTypeScreen();
+          }
+
           return FutureBuilder(
-            future: authProvider.getUserDetails(uid: uid!),
+            future: authProvider.getUserDetails(uid: uid),
             builder: (context, userDetailsSnapshot) {
               // Show a loading indicator while fetching user type
               if (userDetailsSnapshot.connectionState ==

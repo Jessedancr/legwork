@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/applicant_card.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -82,6 +83,7 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final jobProvider = Provider.of<JobProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
 
@@ -127,6 +129,12 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
 
           return _buildApplicantsList(provider);
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          jobProvider.updateJobStatus(jobId: widget.jobId, status: false);
+        },
+        child: const Icon(Icons.change_circle),
       ),
     );
   }

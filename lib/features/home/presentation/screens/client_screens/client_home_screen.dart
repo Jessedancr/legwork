@@ -6,11 +6,10 @@ import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dar
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
+import 'package:legwork/features/home/presentation/screens/client_screens/client_tabs/closed_jobs.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_tabs/open_jobs.dart';
-import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
 import 'package:legwork/features/home/presentation/widgets/clients_drawer.dart';
 import 'package:legwork/features/home/presentation/widgets/post_job_bottom_sheet.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ClientHomeScreen extends StatefulWidget {
@@ -31,7 +30,6 @@ class ClientHomeScreen extends StatefulWidget {
 }
 
 class _ClientHomeScreenState extends State<ClientHomeScreen> {
-  late Future<void> _fetchJobsFuture;
   UserEntity? clientDetails = UserEntity(
     username: '',
     email: '',
@@ -49,9 +47,14 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
   void initState() {
     super.initState();
     authProvider = Provider.of<MyAuthProvider>(context, listen: false);
-    _fetchClientDetails();
 
-    _fetchJobsFuture = loadAllJobs();
+    if (authProvider.currentUser != null) {
+      setState(() {
+        clientDetails = authProvider.currentUser as ClientEntity;
+        isLoading = false;
+      });
+    }
+    _fetchClientDetails();
   }
 
   Future<void> _fetchClientDetails() async {
@@ -72,11 +75,6 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         }
       },
     );
-  }
-
-  Future<void> loadAllJobs() async {
-    final jobProvider = Provider.of<JobProvider>(context, listen: false);
-    await jobProvider.fetchJobs();
   }
 
   // BUILD METHOD
@@ -223,33 +221,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         ),
 
         //* Body
-        body: FutureBuilder(
-          future: _fetchJobsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: Lottie.asset(
-                  'assets/lottie/loadingList.json',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
-              );
-            }
-
-            if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            }
-
-            return const TabBarView(
-              children: [
-                OpenJobs(),
-                JobsForYou(),
-              ],
-            );
-          },
+        body: const TabBarView(
+          children: [
+            OpenJobs(),
+            ClosedJobs(),
+          ],
         ),
       ),
     );

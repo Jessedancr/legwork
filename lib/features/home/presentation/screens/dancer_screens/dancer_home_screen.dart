@@ -33,6 +33,12 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
   void initState() {
     super.initState();
     authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    if (authProvider.currentUser != null) {
+      setState(() {
+        dancerDetails = authProvider.currentUser as DancerEntity;
+        isLoading = false;
+      });
+    }
     _fetchDancerDetails();
   }
 

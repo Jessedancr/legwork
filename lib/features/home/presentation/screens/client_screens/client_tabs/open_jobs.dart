@@ -28,13 +28,12 @@ class _OpenJobsState extends State<OpenJobs>
     setState(() {
       isLoading = true;
     });
-    await loadAllJobs();
+    await jobProvider.fetchJobs();
     setState(() {
       isLoading = false;
     });
   }
 
-  // ON STARTUP
   @override
   void initState() {
     super.initState();
@@ -67,21 +66,11 @@ class _OpenJobsState extends State<OpenJobs>
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Lottie.asset(
-                  'assets/lottie/loadingList.json',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Fetching jobs please wait...',
-                  style: context.text2Xl?.copyWith(fontWeight: FontWeight.bold),
-                )
-              ],
+            child: Lottie.asset(
+              'assets/lottie/loadingList.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain,
             ),
           );
         }

@@ -71,4 +71,25 @@ class JobRepoImpl implements JobRepo {
       return Left(e.toString());
     }
   }
+
+  @override
+  Future<Either<String, JobEntity>> updateJobStatus({
+    required String jobId,
+    required bool status,
+  }) async {
+    try {
+      final res = await jobService.updateJobStatus(
+        status: status,
+        jobId: jobId,
+      );
+
+      return res.fold(
+        (fail) => Left(fail),
+        (job) => Right(job),
+      );
+    } catch (e) {
+      debugPrint('Error with updateJobStatus repo impl: ${e.toString()}');
+      return Left(e.toString());
+    }
+  }
 }
