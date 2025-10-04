@@ -92,7 +92,9 @@ class _DancerProfileCompletionFlowState
         // Run both futures simultaneously
         final results = await Future.wait([
           updateProfileProvider.updateProfileExecute(data: data),
-          updateProfileProvider.uploadProfileImage(imageFile: selectedImage!),
+          updateProfileProvider.uploadProfileImage(
+            imageFile: selectedImage ?? File(''),
+          ),
         ]);
 
         final updateProfile = results[0];
@@ -118,7 +120,7 @@ class _DancerProfileCompletionFlowState
         updateProfile.fold(
           (fail) {
             hideLoadingIndicator(context);
-            debugPrint(fail.toString());
+            debugPrint(fail);
             LegworkSnackbar(
               title: 'Omo!',
               subTitle: fail,

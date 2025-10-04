@@ -206,8 +206,9 @@ class MyAuthProvider extends ChangeNotifier {
 
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,
+    bool forceRefresh = false,
   }) async {
-    if (_currentUser != null) {
+    if (_currentUser != null && !forceRefresh) {
       return Right(_currentUser!);
     }
 

@@ -69,8 +69,8 @@ class _ClientProfileCompletionFlowState
           'bio': bioController.text,
           'danceStylePrefs': danceStylePrefsController.text
               .trim()
-              .replaceAll(RegExp(r'[,;\s|/]+'), ',')
-              .split(',')
+              .split(RegExp(r'(\s*,\s)+'))
+              .where((style) => style.isNotEmpty)
               .toList(),
           'jobOfferings': selectedJobTypes,
           'hiringHistory': {

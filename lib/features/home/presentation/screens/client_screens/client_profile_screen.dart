@@ -44,7 +44,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
 
   Future<void> _fetchClientDetails() async {
     final userId = await authProvider.getUid();
-    final result = await authProvider.getUserDetails(uid: userId);
+    final result = await authProvider.getUserDetails(uid: userId, forceRefresh: true);
 
     result.fold(
       (fail) {
