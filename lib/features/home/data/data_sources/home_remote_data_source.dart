@@ -57,7 +57,6 @@ class JobService {
       final Map<String, dynamic> resBody = jsonDecode(res.body);
       final String message = resBody['message'];
       final List jobs = resBody['jobs'];
-      debugPrint(message);
 
       if (message == 'Jobs found') {
         List<JobModel> allJobs =
@@ -84,7 +83,7 @@ class JobService {
     }
   }
 
-  Future<Either<String, JobModel>> updateJobStatus({
+  Future<Either<String, Map<String, dynamic>>> updateJobStatus({
     required bool status,
     required String jobId,
   }) async {
@@ -96,28 +95,18 @@ class JobService {
       debugPrint('Update Job status res: ${res.statusCode} - ${res.body}');
 
       if (res.statusCode != 200) {
-        try {
-          final resBody = jsonDecode(res.body);
-          final message = resBody['message'];
-          debugPrint(message);
-          return Left(message);
-        } catch (e) {
-          debugPrint('Error parsing error response: $e');
-          return const Left('Error parsing error response');
-        }
-      }
-
-      try {
         final resBody = jsonDecode(res.body);
         final message = resBody['message'];
-        final Map<String, dynamic> result = resBody['result'];
         debugPrint(message);
-        final jobModel = JobModel.fromDoc(result);
-        return Right(jobModel);
-      } catch (e) {
-        debugPrint('Error parsing success response: $e');
-        return const Left('Error parsing success response');
+        return Left(message);
       }
+
+      final resBody = jsonDecode(res.body);
+      final message = resBody['message'];
+      final Map<String, dynamic> result = resBody['result'];
+      debugPrint(message);
+      final jobModel = JobModel.fromDoc(result);
+      return Right({'message': message, 'job': jobModel});
     } catch (e) {
       debugPrint('Error updating job status');
       return const Left('Error updating job status');

@@ -73,7 +73,7 @@ class JobRepoImpl implements JobRepo {
   }
 
   @override
-  Future<Either<String, JobEntity>> updateJobStatus({
+  Future<Either<String, Map<String, dynamic>>> updateJobStatus({
     required String jobId,
     required bool status,
   }) async {
@@ -85,7 +85,7 @@ class JobRepoImpl implements JobRepo {
 
       return res.fold(
         (fail) => Left(fail),
-        (job) => Right(job),
+        (data) => Right(data),
       );
     } catch (e) {
       debugPrint('Error with updateJobStatus repo impl: ${e.toString()}');

@@ -1,22 +1,26 @@
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
-import 'package:legwork/features/job_application/presentation/widgets/applicant_card.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:legwork/features/job_application/presentation/widgets/job_applicants_empty_state.dart';
+import 'package:legwork/features/job_application/presentation/widgets/job_applicants_list.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 class ViewJobApplicantsScreen extends StatefulWidget {
   final String jobId;
   final String clientId;
+  final bool status;
 
   const ViewJobApplicantsScreen({
     super.key,
     required this.jobId,
     required this.clientId,
+    required this.status,
   });
 
   @override
@@ -38,6 +42,7 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
   );
 
   bool isLoadingDancerDetails = true; // Track loading state for dancer details
+  bool _isLoading = false; // For closing the job
 
   // Init state to fetch all job applications when the screen loads
   @override
@@ -84,6 +89,90 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
   @override
   Widget build(BuildContext context) {
     final jobProvider = Provider.of<JobProvider>(context, listen: false);
+
+    // * Update job stats
+    void updateJobStatus() async {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final res = await jobProvider.updateJobStatus(
+        jobId: widget.jobId,
+        status: false,
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      res.fold((fail) {
+        return Left(fail);
+      }, (data) {
+        final String message = data['message'];
+        LegworkSnackbar(
+          title: 'Nice!',
+          subTitle: message,
+          imageColor: context.colorScheme.onPrimary,
+          contentColor: context.colorScheme.primary,
+        ).show(context);
+      });
+    }
+
+    Future<dynamic> closeJobDialogBox() {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: SizedBox(
+              height: 159,
+              width: 100,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Are you sure you want to close this job?\nTHIS CAN NOT BE UNDONE',
+                    style: context.heading2Xs?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: context.colorScheme.error,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // * Yes
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            updateJobStatus();
+                          },
+                          child: Text(
+                            'Yes',
+                            style: context.text2Xl?.copyWith(
+                              color: context.colorScheme.error,
+                            ),
+                          )),
+
+                      // * No
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'No',
+                          style: context.text2Xl?.copyWith(
+                            color: context.colorScheme.primary,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     return Scaffold(
       backgroundColor: context.colorScheme.surface,
 
@@ -124,68 +213,19 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
           }
 
           if (provider.allApplications.isEmpty) {
-            return _buildEmptyState();
+            return JobApplicantsEmptyState(
+              jobStatus: widget.status,
+              isLoading: _isLoading,
+              onPressed: closeJobDialogBox,
+            );
           }
 
-          return _buildApplicantsList(provider);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          jobProvider.updateJobStatus(jobId: widget.jobId, status: false);
-        },
-        child: const Icon(Icons.change_circle),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.person_off_outlined,
-            size: 80,
-            color: Color(0xFFBDBDBD),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            "No applicants yet",
-            style: context.text2Xl?.copyWith(
-              color: context.colorScheme.onSurface,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "When dancers apply for this job, they'll appear here.",
-            textAlign: TextAlign.center,
-            style: context.textSm?.copyWith(
-              color: context.colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildApplicantsList(JobApplicationProvider provider) {
-    return LiquidPullToRefresh(
-      onRefresh: fetchJobApplicationsAndDancerDetails,
-      color: context.colorScheme.primary,
-      backgroundColor: context.colorScheme.surface,
-      animSpeedFactor: 3.0,
-      showChildOpacityTransition: false,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: provider.allApplications.length,
-        itemBuilder: (context, index) {
-          final jobApplication = provider.allApplications[index];
-
-          return ApplicantCard(
-            jobApplication: jobApplication,
-            dancerEntity: dancerDetails,
+          // * JOB APPLICANTS LIST
+          return JobApplicantsList(
+            onRefresh: fetchJobApplicationsAndDancerDetails,
+            dancerDetails: dancerDetails,
+            onCloseJob: closeJobDialogBox,
+            isLoading: _isLoading,
           );
         },
       ),

@@ -85,7 +85,7 @@ class JobProvider extends ChangeNotifier {
   }
 
   // UPDATE JOB STATUS
-  Future<Either<String, JobEntity>> updateJobStatus({
+  Future<Either<String, Map<String, dynamic>>> updateJobStatus({
     required String jobId,
     required bool status,
   }) async {
@@ -103,7 +103,11 @@ class JobProvider extends ChangeNotifier {
           notifyListeners();
           return Left(fail);
         },
-        (job) => Right(job),
+        (data) {
+          isLoading = false;
+          notifyListeners();
+          return Right(data);
+        },
       );
     } catch (e) {
       isLoading = false;

@@ -71,9 +71,6 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final colorScheme = Theme.of(context).colorScheme;
-    // final textTheme = Theme.of(context).textTheme;
-
     // DATE PICKER
     Future<void> datePicker() async {
       DateTime? pickedDate = await showDatePicker(

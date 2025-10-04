@@ -48,11 +48,19 @@ class _OpenJobsState extends State<OpenJobs>
     });
   }
 
-  void viewJobApplicants({required String jobId, required String clientId}) {
+  void viewJobApplicants({
+    required String jobId,
+    required String clientId,
+    required bool status,
+  }) {
     Navigator.pushNamed(
       context,
       '/viewJobApplicantsScreen',
-      arguments: {'jobId': jobId, 'clientId': clientId},
+      arguments: {
+        'jobId': jobId,
+        'clientId': clientId,
+        'status': status,
+      },
     );
   }
 
@@ -120,6 +128,7 @@ class _OpenJobsState extends State<OpenJobs>
             onJobTap: () => viewJobApplicants(
               clientId: job.clientId,
               jobId: job.jobId,
+              status: job.status,
             ),
             jobTitle: job.jobTitle,
             pay: job.pay,
