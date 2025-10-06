@@ -119,7 +119,7 @@ class _ViewProfilePictureState extends State<ViewProfilePicture> {
                         backgroundColor: colorScheme.surface,
                         backgroundImage: (userDetails!.profilePicture != null &&
                                 userDetails!.profilePicture!.isNotEmpty)
-                            ? NetworkImage(userDetails!.profilePicture!)
+                            ? NetworkImage(userDetails!.profilePicture?['url'])
                             : AssetImage(
                                 widget.defaultImagePath,
                               ) as ImageProvider,

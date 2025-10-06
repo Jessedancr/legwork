@@ -9,7 +9,7 @@ class UpdateProfileProvider extends ChangeNotifier {
   bool isLoading = false;
 
   /// UPDATE PROFILE METHOD
-  Future<Either<String, dynamic>> updateProfileExecute({
+  Future<Either<String, Map<String, dynamic>>> updateProfileExecute({
     required Map<String, dynamic> data,
   }) async {
     isLoading = true;
@@ -20,8 +20,8 @@ class UpdateProfileProvider extends ChangeNotifier {
       notifyListeners();
       return result.fold(
         (fail) => Left(fail.toString()),
-        (success) {
-          return Right(success);
+        (userData) {
+          return Right(userData);
         },
       );
     } catch (e) {

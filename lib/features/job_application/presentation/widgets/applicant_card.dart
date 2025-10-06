@@ -64,7 +64,7 @@ class ApplicantCard extends StatelessWidget {
                             child:
                                 dancerImage != null && dancerImage!.isNotEmpty
                                     ? Image.network(
-                                        dancerImage!,
+                                        dancerImage['url'],
                                         width: 60,
                                         height: 60,
                                         fit: BoxFit.cover,

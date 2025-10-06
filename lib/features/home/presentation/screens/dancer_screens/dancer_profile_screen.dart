@@ -37,13 +37,22 @@ class _DancerProfileScreenState extends State<DancerProfileScreen> {
   void initState() {
     super.initState();
     authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    if (authProvider.currentUser != null) {
+      setState(() {
+        dancerDetails = authProvider.currentUser as DancerEntity;
+        isLoading = false;
+      });
+    }
     _fetchDancerDetails();
   }
 
   // FETCH DANCER DETAILS FROM BACKEND USING AUTH PROVIDER
   Future<void> _fetchDancerDetails() async {
     final userId = await authProvider.getUid();
-    final result = await authProvider.getUserDetails(uid: userId, forceRefresh: true);
+    final result = await authProvider.getUserDetails(
+      uid: userId,
+      forceRefresh: true,
+    );
 
     result.fold(
       (fail) {

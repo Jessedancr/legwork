@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dartz/dartz.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/job_application/data/data_sources/job_application_remote_data_source.dart';
 
@@ -11,6 +13,7 @@ class JobApplicationProvider extends ChangeNotifier {
   final JobApplicationRepoImpl jobApplicationRepo = JobApplicationRepoImpl();
 
   final remoteDataSource = JobApplicationRemoteDataSource();
+  final authrepo = AuthRepoImpl();
 
   // Local list of job applications
   // Used by client when viewing all applications to his job
@@ -22,7 +25,7 @@ class JobApplicationProvider extends ChangeNotifier {
   Map<JobApplicationEntity, JobEntity> rejectedAppsWithJobs = {};
 
   // Client details
-  Map<String, dynamic>? clientDetails;
+  UserEntity? clientDetails;
 
   // Dancer details
   Map<String, dynamic>? dancerDetails;
@@ -153,12 +156,11 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// FETCH CLIENT DETAILS
-  Future<Either<String, Map<String, dynamic>>> getClientDetails({
+  Future<Either<String, UserEntity>> getClientDetails({
     required String clientId,
   }) async {
     try {
-      final result =
-          await jobApplicationRepo.getClientDetails(clientId: clientId);
+      final result = await authrepo.getUserDetails(uid: clientId);
 
       return result.fold(
           // handle fail

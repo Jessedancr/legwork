@@ -57,7 +57,7 @@ class _JobApplicationDetailScreenState
       (data) {
         setState(() {
           dancerUserName = data.username;
-          dancerProfileImage = data.profilePicture;
+          dancerProfileImage = data.profilePicture?['url'];
           isLoading = false;
         });
       },

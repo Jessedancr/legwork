@@ -38,8 +38,9 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
         dancerDetails = authProvider.currentUser as DancerEntity;
         isLoading = false;
       });
+    } else {
+      _fetchDancerDetails();
     }
-    _fetchDancerDetails();
   }
 
   Future<void> _fetchDancerDetails() async {

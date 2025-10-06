@@ -53,8 +53,9 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         clientDetails = authProvider.currentUser as ClientEntity;
         isLoading = false;
       });
+    } else {
+      _fetchClientDetails();
     }
-    _fetchClientDetails();
   }
 
   Future<void> _fetchClientDetails() async {
