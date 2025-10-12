@@ -25,7 +25,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
     );
 
     // Save to remote data storage
-    return await remoteDataSource.applyForJob(application: applicationModel);
+    return await remoteDataSource.applyForJob(app: applicationModel);
   }
 
   // GET APPLICATION

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
-import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/job_applicants_empty_state.dart';
@@ -53,7 +52,6 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
 
   // FETCH JOB APPLICATIONS AND DANCER DETAILS
   Future<void> fetchJobApplicationsAndDancerDetails() async {
-    final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
     final jobApplicationProvider =
         Provider.of<JobApplicationProvider>(context, listen: false);
 
@@ -64,8 +62,9 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
     final applications = jobApplicationProvider.allApplications;
     for (var application in applications) {
       // Get the dancer's details
-      final result =
-          await authProvider.getUserDetails(uid: application.dancerId);
+      final result = await jobApplicationProvider.getUserDetails(
+        uid: application.dancerId,
+      );
 
       result.fold(
           // handle fail

@@ -31,9 +31,6 @@ class ApiClient {
         return response;
       }
 
-      debugPrint('Token found: $accessToken');
-      debugPrint('User ID: $userId');
-
       final cleanedBody = body!.map(
         (key, value) {
           if (value is DateTime) {

@@ -26,6 +26,10 @@ class JobApplicationProvider extends ChangeNotifier {
 
   // Client details
   UserEntity? clientDetails;
+  UserEntity? _dancer;
+
+  // Getter to retrieve the currently logged in user
+  UserEntity? get dancer => _dancer;
 
   // Dancer details
   Map<String, dynamic>? dancerDetails;
@@ -42,6 +46,34 @@ class JobApplicationProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error with getUserId provider: ${e.toString()}');
       return Left('Error with getUserId provider: ${e.toString()}');
+    }
+  }
+
+  Future<Either<String, UserEntity>> getUserDetails({
+    required String uid,
+    bool forceRefresh = false,
+  }) async {
+    if (_dancer != null && !forceRefresh) {
+      return Right(_dancer!);
+    }
+    isLoading = true;
+    try {
+      final result = await authrepo.getUserDetails(uid: uid);
+
+      return result.fold(
+          // handle fail
+          (fail) => Left(fail),
+
+          // handle success
+          (userEntity) {
+        _dancer = userEntity;
+        isLoading = false;
+        return Right(userEntity);
+      });
+    } catch (e) {
+      isLoading = false;
+      debugPrint('Provider Error: error with getUserDetails: ${e.toString()}');
+      return Left(e.toString());
     }
   }
 

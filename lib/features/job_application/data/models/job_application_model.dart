@@ -61,6 +61,18 @@ class JobApplicationModel extends JobApplicationEntity {
     );
   }
 
+  factory JobApplicationModel.fromDoc(Map<String, dynamic> doc) {
+    return JobApplicationModel(
+      applicationId: doc['_id'],
+      jobId: doc['jobId'],
+      dancerId: doc['dancerId'],
+      clientId: doc['clientId'],
+      applicationStatus: doc['applicationStatus'],
+      proposal: doc['proposal'],
+      appliedAt: DateTime.parse(doc['createdAt']),
+    );
+  }
+
   /// Convert job application to firebase doc to store in firebase
   Map<String, dynamic> toMap() {
     return {
@@ -70,7 +82,7 @@ class JobApplicationModel extends JobApplicationEntity {
       'clientId': clientId,
       'applicationStatus': applicationStatus,
       'proposal': proposal,
-      'appliedAt': FieldValue.serverTimestamp(),
+      'appliedAt': appliedAt,
     };
   }
 

@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/home/presentation/widgets/user_circle_avatar.dart';
 
 import 'status_tag.dart';
 
 class ApplicantInfoCard extends StatelessWidget {
+  final String status;
+  final UserEntity dancerDetails;
   const ApplicantInfoCard({
     super.key,
-    required this.colorScheme,
-    required this.dancerProfileImage,
-    required this.dancerUserName,
     required this.status,
+    required this.dancerDetails,
   });
-
-  final ColorScheme colorScheme;
-  final String? dancerProfileImage;
-  final String? dancerUserName;
-  final String status;
 
   @override
   Widget build(BuildContext context) {
@@ -30,25 +27,10 @@ class ApplicantInfoCard extends StatelessWidget {
         child: Row(
           children: [
             //* Profile image or placeholder
-            CircleAvatar(
+            UserCircleAvatar(
+              user: dancerDetails,
+              defaultProfileImagePath: defaultDancerProfileImage,
               radius: 30,
-              backgroundColor: context.colorScheme.surface,
-              child: ClipOval(
-                child:
-                    dancerProfileImage != null && dancerProfileImage!.isNotEmpty
-                        ? Image.network(
-                            dancerProfileImage!,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-              ),
             ),
             const SizedBox(width: 16),
 
@@ -57,7 +39,7 @@ class ApplicantInfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  dancerUserName ?? 'Unknown Dancer',
+                  dancerDetails.username,
                   style: context.textMd?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),

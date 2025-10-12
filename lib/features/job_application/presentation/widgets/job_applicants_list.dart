@@ -24,34 +24,38 @@ class JobApplicantsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final jobProvider =
         Provider.of<JobApplicationProvider>(context, listen: false);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        LiquidPullToRefresh(
-          onRefresh: onRefresh,
-          color: context.colorScheme.primary,
-          backgroundColor: context.colorScheme.surface,
-          animSpeedFactor: 3.0,
-          showChildOpacityTransition: false,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: jobProvider.allApplications.length,
-            itemBuilder: (context, index) {
-              final jobApplication = jobProvider.allApplications[index];
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: LiquidPullToRefresh(
+              onRefresh: onRefresh,
+              color: context.colorScheme.primary,
+              backgroundColor: context.colorScheme.surface,
+              animSpeedFactor: 3.0,
+              showChildOpacityTransition: false,
+              child: ListView.builder(
+                itemCount: jobProvider.allApplications.length,
+                itemBuilder: (context, index) {
+                  final jobApplication = jobProvider.allApplications[index];
 
-              return ApplicantCard(
-                jobApplication: jobApplication,
-                dancerEntity: dancerDetails,
-              );
-            },
+                  return ApplicantCard(
+                    jobApplication: jobApplication,
+                    dancerEntity: dancerDetails.asDancer!,
+                  );
+                },
+              ),
+            ),
           ),
-        ),
-        LegworkElevatedButton(
-          onPressed: onCloseJob,
-          buttonText: 'Close this job?',
-          isLoading: isLoading,
-        )
-      ],
+          LegworkElevatedButton(
+            onPressed: onCloseJob,
+            buttonText: 'Close this job?',
+            isLoading: isLoading,
+          )
+        ],
+      ),
     );
   }
 }

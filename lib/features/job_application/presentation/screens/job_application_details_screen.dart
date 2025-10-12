@@ -35,33 +35,13 @@ class _JobApplicationDetailScreenState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _fetchDancerDetails();
-  }
-
-  // Method to fetch dancer's details
-  Future<void> _fetchDancerDetails() async {
-    final JobApplicationModel app =
-        ModalRoute.of(context)!.settings.arguments as JobApplicationModel;
-
-    final provider = Provider.of<MyAuthProvider>(context, listen: false);
-
-    final result = await provider.getUserDetails(uid: app.dancerId);
-    if (!mounted) return;
-    result.fold(
-      (fail) {
-        debugPrint('Failed to fetch dancer: $fail');
-        setState(() {
-          isLoading = false;
-        });
-      },
-      (data) {
-        setState(() {
-          dancerUserName = data.username;
-          dancerProfileImage = data.profilePicture?['url'];
-          isLoading = false;
-        });
-      },
-    );
+    final provider =
+        Provider.of<JobApplicationProvider>(context, listen: false);
+    setState(() {
+      dancerUserName = provider.dancer!.username;
+      dancerProfileImage = provider.dancer!.profilePicture?['url'];
+      isLoading = false;
+    });
   }
 
   @override
@@ -364,10 +344,8 @@ class _JobApplicationDetailScreenState
                 children: [
                   //* APPLICANT CARD INFO
                   ApplicantInfoCard(
-                    colorScheme: context.colorScheme,
-                    dancerProfileImage: dancerProfileImage,
-                    dancerUserName: dancerUserName,
                     status: status,
+                    dancerDetails: jobAppProvider.dancer!,
                   ),
 
                   const SizedBox(height: 24),
@@ -423,7 +401,7 @@ class _JobApplicationDetailScreenState
                                 'assets/svg/chat_icon.svg',
                                 color: context.colorScheme.primary,
                               ),
-                              buttonText: 'Message dancer',
+                              buttonText: 'Message $dancerUserName',
                             ),
                             const SizedBox(height: 16),
 
@@ -476,7 +454,7 @@ class _JobApplicationDetailScreenState
                                   'assets/svg/chat_icon.svg',
                                   color: context.colorScheme.primary,
                                 ),
-                                buttonText: 'Message dancer',
+                                buttonText: 'Message $dancerUserName',
                               ),
                               const SizedBox(height: 32),
 

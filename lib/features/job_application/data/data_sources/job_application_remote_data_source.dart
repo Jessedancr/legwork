@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -47,62 +49,30 @@ class JobApplicationRemoteDataSource {
 
   // * APPLY FOR JOB
   Future<Either<String, JobApplicationModel>> applyForJob({
-    required JobApplicationModel application,
+    required JobApplicationModel app,
   }) async {
     try {
-      final user = auth.currentUser;
-      if (user == null) {
-        debugPrint('User not found');
-        return const Left('User not found');
+      final jobId = app.jobId;
+
+      final res = await apiClient.post(
+        endpoint: 'job-applications/$jobId/apply-for-job',
+        body: app.toMap(),
+      );
+
+      if (res.statusCode != 201) {
+        final resBody = jsonDecode(res.body);
+        final message = resBody['message'];
+        debugPrint(message);
+        return Left(message);
       }
-
-      final uid = user.uid;
-
-      // Fetch job details
-      final jobSnapshot =
-          await db.collection('jobs').doc(application.jobId).get();
-
-      // If job does not exist
-      if (!jobSnapshot.exists) return const Left('Job not found');
-
-      // Gwt the client ID from the job document
-      final String clientId = jobSnapshot['clientId'];
-
-      // ✅ Check for duplicate application
-      final duplicateCheck = await db
-          .collection('jobApplications')
-          .where('jobId', isEqualTo: application.jobId)
-          .where('dancerId', isEqualTo: uid)
-          .limit(1)
-          .get();
-
-      if (duplicateCheck.docs.isNotEmpty) {
-        return const Left('You have already applied for this job');
-      }
-
-      // generate unique job ID
-      final String applicationId = db.collection('jobApplications').doc().id;
-
-      final updatedApplication = {
-        ...application.toMap(),
-        'dancerId': uid,
-        'clientId': clientId,
-        'applicationId': applicationId,
-      };
-
-      // Save application with explicit applicationId field
-      await db
-          .collection('jobApplications')
-          .doc(applicationId)
-          .set(updatedApplication);
-
-      final jobApplicationDoc =
-          await db.collection('jobApplications').doc(applicationId).get();
-      final jobApplicationModel =
-          JobApplicationModel.fromDocument(jobApplicationDoc);
-      return Right(jobApplicationModel);
-
-      // return Right(applicationId);
+      final Map<String, dynamic> resBody = jsonDecode(res.body);
+      final Map<String, dynamic> applicationDoc = resBody['application'];
+      final String applicationId = applicationDoc['_id'];
+      final applicationModel = JobApplicationModel.fromDoc({
+        ...applicationDoc,
+        app.applicationId: applicationId,
+      });
+      return Right(applicationModel);
     } catch (e) {
       return Left("Failed to apply for job: $e");
     }
@@ -113,16 +83,22 @@ class JobApplicationRemoteDataSource {
     required String jobId,
   }) async {
     try {
-      final snapshot = await db
-          .collection('jobApplications')
-          .where('jobId', isEqualTo: jobId)
-          .get();
+      final res = await apiClient.get(
+        endpoint: 'job-applications/$jobId/applications',
+      );
 
-      final applications = snapshot.docs
-          .map((doc) => JobApplicationModel.fromDocument(doc))
-          .toList();
+      if (res.statusCode != 200) {
+        final Map<String, dynamic> resBody = jsonDecode(res.body);
+        final String message = resBody['message'];
+        debugPrint(message);
+        return Left(message);
+      }
+      final Map<String, dynamic> resBody = jsonDecode(res.body);
+      final List applications = resBody['applications'];
+      final jobApplications =
+          applications.map((app) => JobApplicationModel.fromDoc(app)).toList();
 
-      return Right(applications);
+      return Right(jobApplications);
     } catch (e) {
       return Left("Failed to fetch job applications: $e");
     }

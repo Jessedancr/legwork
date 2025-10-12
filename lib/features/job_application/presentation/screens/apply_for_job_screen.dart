@@ -43,7 +43,6 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<JobApplicationProvider>(context, listen: false)
           .getClientDetails(clientId: widget.jobEntity.clientId);
-
     });
   }
 
@@ -226,7 +225,6 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
             final phoneNum = provider.clientDetails?.phoneNumber;
             final organisationName =
                 provider.clientDetails?.asClient?.organisationName;
-
 
             return Column(
               children: [
