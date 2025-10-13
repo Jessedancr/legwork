@@ -48,19 +48,6 @@ class JobApplicationModel extends JobApplicationEntity {
           appliedAt: appliedAt,
         );
 
-  /// Convert firebase doc to job application so we can use in the app
-  factory JobApplicationModel.fromDocument(DocumentSnapshot doc) {
-    return JobApplicationModel(
-      applicationId: doc['applicationId'],
-      jobId: doc['jobId'],
-      dancerId: doc['dancerId'],
-      clientId: doc['clientId'],
-      applicationStatus: doc['applicationStatus'],
-      proposal: doc['proposal'],
-      appliedAt: (doc['appliedAt'] as Timestamp).toDate(),
-    );
-  }
-
   factory JobApplicationModel.fromDoc(Map<String, dynamic> doc) {
     return JobApplicationModel(
       applicationId: doc['_id'],
@@ -84,18 +71,5 @@ class JobApplicationModel extends JobApplicationEntity {
       'proposal': proposal,
       'appliedAt': appliedAt,
     };
-  }
-
-  /// Convert job application to entity for business logic use
-  JobApplicationEntity toJobApplicationEntity() {
-    return JobApplicationEntity(
-      jobId: jobId,
-      dancerId: dancerId,
-      clientId: clientId,
-      applicationId: applicationId,
-      applicationStatus: applicationStatus,
-      proposal: proposal,
-      appliedAt: appliedAt,
-    );
   }
 }

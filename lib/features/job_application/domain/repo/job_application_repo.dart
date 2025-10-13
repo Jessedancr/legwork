@@ -22,16 +22,5 @@ abstract class JobApplicationRepo {
     required String applicationId,
   });
 
-  Future<Either<String, List<Map<String, dynamic>>>>
-      getPendingApplicationsWithJobs();
-
-  Future<Either<String, List<Map<String, dynamic>>>>
-      getRejectedApplicationsWithJobs();
-
-  Future<Either<String, List<Map<String, dynamic>>>>
-      getAcceptedApplicationsWithJobs();
-
-  Future<Either<String, Map<String, dynamic>>> getClientDetails({
-    required String clientId,
-  });
+  Future<Either<String, List<Map<String, dynamic>>>> getApplicationsWithJobs();
 }

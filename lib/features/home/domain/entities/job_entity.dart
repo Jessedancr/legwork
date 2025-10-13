@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 /**
  * JOB ENTITY TO BE USED IN THE APP
  */
@@ -33,40 +31,6 @@ class JobEntity {
     required this.status,
     required this.createdAt,
   });
-
-  // Factory method to create an instance from a map
-  factory JobEntity.fromMap(Map<String, dynamic> map) {
-    if (map['jobId'] == null ||
-        map['jobTitle'] == null ||
-        map['jobLocation'] == null ||
-        map['clientId'] == null ||
-        map['amtOfDancers'] == null ||
-        map['jobDuration'] == null ||
-        map['jobDescr'] == null ||
-        map['jobType'] == null ||
-        map['createdAt'] == null ||
-        map['pay'] == null ||
-        map['status'] == null) {
-      throw ArgumentError('Missing required fields in JobEntity');
-    }
-
-    return JobEntity(
-      jobId: map['jobId'],
-      jobTitle: map['jobTitle'],
-      jobLocation: map['jobLocation'],
-      prefDanceStyles: map['prefDanceStyles'],
-      clientId: map['clientId'],
-      amtOfDancers: map['amtOfDancers'],
-      jobDuration: map['jobDuration'],
-      jobDescr: map['jobDescr'],
-      jobType: map['jobType'],
-      createdAt: (map['createdAt'] is Timestamp)
-          ? (map['createdAt'] as Timestamp).toDate()
-          : map['createdAt'] as DateTime,
-      pay: map['pay'],
-      status: map['status'],
-    );
-  }
 
   @override
   String toString() {

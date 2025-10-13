@@ -210,116 +210,24 @@ class JobApplicationRemoteDataSource {
 
   // * GET PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS
   Future<Either<String, List<Map<String, dynamic>>>>
-      getPendingApplicationsWithJobs() async {
+      getApplicationsWithJobs() async {
     try {
-      final user = auth.currentUser;
-      if (user == null) {
-        debugPrint('User not found');
-        return const Left('User not found');
-      }
-
-      // Query the DB to get pending applications for logged in user
-      final pendingApplicationsSnapshot = await db
-          .collection('jobApplications')
-          .where('dancerId', isEqualTo: user.uid)
-          .where('applicationStatus', isEqualTo: 'pending')
-          .get();
-
-      final pendingAppsWithJobs = await Future.wait(
-        pendingApplicationsSnapshot.docs.map(
-          (applicationDoc) async {
-            // Get the corresponding job for each application
-            final jobDoc =
-                await db.collection('jobs').doc(applicationDoc['jobId']).get();
-
-            // Skip if any required field is missing
-            if (!applicationDoc.exists || !jobDoc.exists) {
-              debugPrint('Missing required fields in Firestore document');
-              return null;
-            }
-
-            return {
-              'application': applicationDoc.data(),
-              'job': jobDoc.data()!,
-            };
-          },
-        ).toList(),
+      final res = await apiClient.get(
+        endpoint: 'job-applications/get-dancer-applications',
       );
+      if (res.statusCode != 200) {
+        final Map<String, dynamic> resBody = jsonDecode(res.body);
+        final String message = resBody['message'];
+        debugPrint(message);
+        return Left(message);
+      }
+      final Map<String, dynamic> resBody = jsonDecode(res.body);
+      final appsWithJobs = resBody['appsWithJobs'];
 
-      return Right(pendingAppsWithJobs.cast<Map<String, dynamic>>());
+      final modApps = appsWithJobs.cast<Map<String, dynamic>>();
+      return Right(modApps);
     } catch (e) {
       return Left("Failed to fetch pending applications: $e");
-    }
-  }
-
-  // * GET REJECTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
-  Future<Either<String, List<Map<String, dynamic>>>>
-      getRejectedApplicationsWithJobs() async {
-    try {
-      final user = auth.currentUser;
-      if (user == null) {
-        debugPrint('User not found');
-        return const Left('User not found');
-      }
-
-      final rejectedApplicationsSnapshot = await db
-          .collection('jobApplications')
-          .where('dancerId', isEqualTo: user.uid)
-          .where('applicationStatus', isEqualTo: 'rejected')
-          .get();
-
-      final rejectedAppsWithJobs = await Future.wait(
-        rejectedApplicationsSnapshot.docs.map(
-          (applicationDoc) async {
-            // Get the corresponding job for each application
-            final jobDoc =
-                await db.collection('jobs').doc(applicationDoc['jobId']).get();
-            return {
-              'application': applicationDoc.data(),
-              'job': jobDoc.exists ? jobDoc.data() : null,
-            };
-          },
-        ).toList(),
-      );
-
-      return Right(rejectedAppsWithJobs);
-    } catch (e) {
-      return Left("Failed to fetch rejected applications: $e");
-    }
-  }
-
-  // * GET ACCEPTED APPLICATIONS WITH THEIR CORRESPONDING JOBS
-  Future<Either<String, List<Map<String, dynamic>>>>
-      getAcceptedApplicationsWithJobs() async {
-    try {
-      final user = auth.currentUser;
-      if (user == null) {
-        debugPrint('User not found');
-        return const Left('User not found');
-      }
-
-      final acceptedApplicationsSanpshot = await db
-          .collection('jobApplications')
-          .where('dancerId', isEqualTo: user.uid)
-          .where('applicationStatus', isEqualTo: 'accepted')
-          .get();
-
-      final acceptedAppsWithJobs = await Future.wait(
-        acceptedApplicationsSanpshot.docs.map(
-          (applicationDoc) async {
-            final jobDoc =
-                await db.collection('jobs').doc(applicationDoc['jobId']).get();
-            return {
-              'application': applicationDoc.data(),
-              'job': jobDoc.exists ? jobDoc.data() : null,
-            };
-          },
-        ).toList(),
-      );
-
-      return Right(acceptedAppsWithJobs);
-    } catch (e) {
-      return Left("Failed to fetch accepted applications: $e");
     }
   }
 }

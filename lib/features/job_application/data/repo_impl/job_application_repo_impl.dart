@@ -79,35 +79,11 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
   // GET PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS (FROM FIRESTORE)
   @override
   Future<Either<String, List<Map<String, dynamic>>>>
-      getPendingApplicationsWithJobs() async {
+      getApplicationsWithJobs() async {
     try {
-      return await remoteDataSource.getPendingApplicationsWithJobs();
+      return await remoteDataSource.getApplicationsWithJobs();
     } catch (e) {
       debugPrint('Error with getPendingApplicationsWithJobs: $e');
-      return Left(e.toString());
-    }
-  }
-
-  // GET REJECTED APPLICATIONS WITH THEIR CORRESPONDING JOBS (FROM FIRESTORE)
-  @override
-  Future<Either<String, List<Map<String, dynamic>>>>
-      getRejectedApplicationsWithJobs() async {
-    try {
-      return await remoteDataSource.getRejectedApplicationsWithJobs();
-    } catch (e) {
-      debugPrint('Error with getRejectedApplicationsWithJobs: $e');
-      return Left(e.toString());
-    }
-  }
-
-  // GET ACCEPTED APPLICATIONS WITH THEIR CORRESPONDING JOBS (FROM FIRESTORE)
-  @override
-  Future<Either<String, List<Map<String, dynamic>>>>
-      getAcceptedApplicationsWithJobs() async {
-    try {
-      return await remoteDataSource.getAcceptedApplicationsWithJobs();
-    } catch (e) {
-      debugPrint('Error with getAcceptedApplicationsWithJobs: $e');
       return Left(e.toString());
     }
   }
