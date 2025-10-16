@@ -28,13 +28,12 @@ class _OpenJobsState extends State<OpenJobs>
     setState(() {
       isLoading = true;
     });
-    await loadAllJobs();
+    await jobProvider.fetchJobs();
     setState(() {
       isLoading = false;
     });
   }
 
-  // ON STARTUP
   @override
   void initState() {
     super.initState();
@@ -49,11 +48,19 @@ class _OpenJobsState extends State<OpenJobs>
     });
   }
 
-  void viewJobApplicants({required String jobId, required String clientId}) {
+  void viewJobApplicants({
+    required String jobId,
+    required String clientId,
+    required bool status,
+  }) {
     Navigator.pushNamed(
       context,
       '/viewJobApplicantsScreen',
-      arguments: {'jobId': jobId, 'clientId': clientId},
+      arguments: {
+        'jobId': jobId,
+        'clientId': clientId,
+        'status': status,
+      },
     );
   }
 
@@ -67,21 +74,11 @@ class _OpenJobsState extends State<OpenJobs>
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Lottie.asset(
-                  'assets/lottie/loadingList.json',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Fetching jobs please wait...',
-                  style: context.text2Xl?.copyWith(fontWeight: FontWeight.bold),
-                )
-              ],
+            child: Lottie.asset(
+              'assets/lottie/loadingList.json',
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain,
             ),
           );
         }
@@ -131,6 +128,7 @@ class _OpenJobsState extends State<OpenJobs>
             onJobTap: () => viewJobApplicants(
               clientId: job.clientId,
               jobId: job.jobId,
+              status: job.status,
             ),
             jobTitle: job.jobTitle,
             pay: job.pay,

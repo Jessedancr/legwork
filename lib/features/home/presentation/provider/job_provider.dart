@@ -83,4 +83,37 @@ class JobProvider extends ChangeNotifier {
       return Left(e.toString());
     }
   }
+
+  // UPDATE JOB STATUS
+  Future<Either<String, Map<String, dynamic>>> updateJobStatus({
+    required String jobId,
+    required bool status,
+  }) async {
+    isLoading = true;
+
+    try {
+      final res = await jobRepo.updateJobStatus(
+        jobId: jobId,
+        status: status,
+      );
+
+      return res.fold(
+        (fail) {
+          isLoading = false;
+          notifyListeners();
+          return Left(fail);
+        },
+        (data) {
+          isLoading = false;
+          notifyListeners();
+          return Right(data);
+        },
+      );
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+      debugPrint('Error with update job status provider: $e');
+      return Left(e.toString());
+    }
+  }
 }

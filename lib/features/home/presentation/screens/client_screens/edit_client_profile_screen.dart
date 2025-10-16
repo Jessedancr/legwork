@@ -186,7 +186,8 @@ class _EditClientProfileScreenState extends State<EditClientProfileScreen> {
                       backgroundImage: (widget.clientDetails.profilePicture !=
                                   null &&
                               widget.clientDetails.profilePicture!.isNotEmpty)
-                          ? NetworkImage(widget.clientDetails.profilePicture!)
+                          ? NetworkImage(
+                              widget.clientDetails.profilePicture?['url'])
                           : const AssetImage(defaultClientProfileImage)
                               as ImageProvider,
                     ),

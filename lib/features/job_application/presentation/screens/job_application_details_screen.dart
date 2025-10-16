@@ -35,33 +35,13 @@ class _JobApplicationDetailScreenState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _fetchDancerDetails();
-  }
-
-  // Method to fetch dancer's details
-  Future<void> _fetchDancerDetails() async {
-    final JobApplicationModel app =
-        ModalRoute.of(context)!.settings.arguments as JobApplicationModel;
-
-    final provider = Provider.of<MyAuthProvider>(context, listen: false);
-
-    final result = await provider.getUserDetails(uid: app.dancerId);
-    if (!mounted) return;
-    result.fold(
-      (fail) {
-        debugPrint('Failed to fetch dancer: $fail');
-        setState(() {
-          isLoading = false;
-        });
-      },
-      (data) {
-        setState(() {
-          dancerUserName = data.username;
-          dancerProfileImage = data.profilePicture;
-          isLoading = false;
-        });
-      },
-    );
+    final provider =
+        Provider.of<JobApplicationProvider>(context, listen: false);
+    setState(() {
+      dancerUserName = provider.dancer!.username;
+      dancerProfileImage = provider.dancer!.profilePicture?['url'];
+      isLoading = false;
+    });
   }
 
   @override
@@ -201,13 +181,14 @@ class _JobApplicationDetailScreenState
           },
 
           // Handle success
-          (_) async {
+          (data) async {
             Navigator.pop(context); // Close loading indicator
+            final String message = data['message'];
 
             // Show snackbar
             LegworkSnackbar(
               title: 'Sharp guy!',
-              subTitle: "Application accepted",
+              subTitle: message,
               imageColor: context.colorScheme.onPrimary,
               contentColor: context.colorScheme.primary,
             ).show(context);
@@ -276,10 +257,11 @@ class _JobApplicationDetailScreenState
           },
 
           // handle success
-          (_) {
+          (data) {
             Navigator.pop(context); // Close loading indicator
+            final String message = data['message'];
             LegworkSnackbar(
-              title: 'Application Rejected',
+              title: message,
               subTitle: "You've rejected this application!",
               imageColor: context.colorScheme.onPrimary,
               contentColor: context.colorScheme.primary,
@@ -364,10 +346,8 @@ class _JobApplicationDetailScreenState
                 children: [
                   //* APPLICANT CARD INFO
                   ApplicantInfoCard(
-                    colorScheme: context.colorScheme,
-                    dancerProfileImage: dancerProfileImage,
-                    dancerUserName: dancerUserName,
                     status: status,
+                    dancerDetails: jobAppProvider.dancer!,
                   ),
 
                   const SizedBox(height: 24),
@@ -423,7 +403,7 @@ class _JobApplicationDetailScreenState
                                 'assets/svg/chat_icon.svg',
                                 color: context.colorScheme.primary,
                               ),
-                              buttonText: 'Message dancer',
+                              buttonText: 'Message $dancerUserName',
                             ),
                             const SizedBox(height: 16),
 
@@ -476,7 +456,7 @@ class _JobApplicationDetailScreenState
                                   'assets/svg/chat_icon.svg',
                                   color: context.colorScheme.primary,
                                 ),
-                                buttonText: 'Message dancer',
+                                buttonText: 'Message $dancerUserName',
                               ),
                               const SizedBox(height: 32),
 

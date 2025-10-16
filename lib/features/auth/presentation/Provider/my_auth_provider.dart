@@ -206,7 +206,13 @@ class MyAuthProvider extends ChangeNotifier {
 
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,
+    bool forceRefresh = false,
   }) async {
+    if (_currentUser != null && !forceRefresh) {
+      return Right(_currentUser!);
+    }
+
+    isLoading = true;
     try {
       final result = await authRepo.getUserDetails(uid: uid);
 
@@ -217,9 +223,11 @@ class MyAuthProvider extends ChangeNotifier {
           // handle success
           (userEntity) {
         _currentUser = userEntity;
+        isLoading = false;
         return Right(userEntity);
       });
     } catch (e) {
+      isLoading = false;
       debugPrint('Provider Error: error with getUserDetails: ${e.toString()}');
       return Left(e.toString());
     }

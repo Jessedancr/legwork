@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:dartz/dartz.dart';
+import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/home/data/models/job_model.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/job_application/data/data_sources/job_application_remote_data_source.dart';
+import 'package:legwork/features/job_application/data/models/job_application_model.dart';
 
 import 'package:legwork/features/job_application/data/repo_impl/job_application_repo_impl.dart';
 import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
@@ -11,18 +15,22 @@ class JobApplicationProvider extends ChangeNotifier {
   final JobApplicationRepoImpl jobApplicationRepo = JobApplicationRepoImpl();
 
   final remoteDataSource = JobApplicationRemoteDataSource();
+  final authrepo = AuthRepoImpl();
 
   // Local list of job applications
   // Used by client when viewing all applications to his job
   List<JobApplicationEntity> allApplications = [];
 
-  // Add this to your provider's properties
   Map<JobApplicationEntity, JobEntity> pendingAppsWithJobs = {};
   Map<JobApplicationEntity, JobEntity> acceptedAppsWithJobs = {};
   Map<JobApplicationEntity, JobEntity> rejectedAppsWithJobs = {};
 
   // Client details
-  Map<String, dynamic>? clientDetails;
+  UserEntity? clientDetails;
+  UserEntity? _dancer;
+
+  // Getter to retrieve the currently logged in user
+  UserEntity? get dancer => _dancer;
 
   // Dancer details
   Map<String, dynamic>? dancerDetails;
@@ -39,6 +47,34 @@ class JobApplicationProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error with getUserId provider: ${e.toString()}');
       return Left('Error with getUserId provider: ${e.toString()}');
+    }
+  }
+
+  Future<Either<String, UserEntity>> getUserDetails({
+    required String uid,
+    bool forceRefresh = false,
+  }) async {
+    if (_dancer != null && !forceRefresh) {
+      return Right(_dancer!);
+    }
+    isLoading = true;
+    try {
+      final result = await authrepo.getUserDetails(uid: uid);
+
+      return result.fold(
+          // handle fail
+          (fail) => Left(fail),
+
+          // handle success
+          (userEntity) {
+        _dancer = userEntity;
+        isLoading = false;
+        return Right(userEntity);
+      });
+    } catch (e) {
+      isLoading = false;
+      debugPrint('Provider Error: error with getUserDetails: ${e.toString()}');
+      return Left(e.toString());
     }
   }
 
@@ -91,7 +127,7 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// ACCEPT JOB
-  Future<Either<String, void>> acceptApplication({
+  Future<Either<String, Map<String, dynamic>>> acceptApplication({
     required String applicationId,
   }) async {
     try {
@@ -109,10 +145,10 @@ class JobApplicationProvider extends ChangeNotifier {
         },
 
         // handle success
-        (_) {
+        (data) {
           isLoading = false;
           notifyListeners();
-          return const Right(null);
+          return Right(data);
         },
       );
     } catch (e) {
@@ -122,7 +158,7 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// REJECT JOB
-  Future<Either<String, void>> rejectApplication({
+  Future<Either<String, Map<String, dynamic>>> rejectApplication({
     required String applicationId,
   }) async {
     try {
@@ -140,10 +176,10 @@ class JobApplicationProvider extends ChangeNotifier {
         },
 
         // handle success
-        (_) {
+        (data) {
           isLoading = false;
           notifyListeners();
-          return const Right(null);
+          return Right(data);
         },
       );
     } catch (e) {
@@ -153,12 +189,11 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// FETCH CLIENT DETAILS
-  Future<Either<String, Map<String, dynamic>>> getClientDetails({
+  Future<Either<String, UserEntity>> getClientDetails({
     required String clientId,
   }) async {
     try {
-      final result =
-          await jobApplicationRepo.getClientDetails(clientId: clientId);
+      final result = await authrepo.getUserDetails(uid: clientId);
 
       return result.fold(
           // handle fail
@@ -184,7 +219,7 @@ class JobApplicationProvider extends ChangeNotifier {
     try {
       isLoading = true;
 
-      final result = await jobApplicationRepo.getPendingApplicationsWithJobs();
+      final result = await jobApplicationRepo.getApplicationsWithJobs();
 
       return result.fold(
         // Handle failure
@@ -196,10 +231,14 @@ class JobApplicationProvider extends ChangeNotifier {
         // Handle success
         (pendingAppsWithJobsList) {
           // Update the map with fetched data
+          pendingAppsWithJobsList.removeWhere(
+            (appWithJob) =>
+                appWithJob['application']['applicationStatus'] != 'pending',
+          );
           pendingAppsWithJobs = {
             for (var item in pendingAppsWithJobsList)
-              JobApplicationEntity.fromMap(item['application']):
-                  JobEntity.fromMap(item['job']),
+              JobApplicationModel.fromDoc(item['application']):
+                  JobModel.fromDoc(item['job']),
           };
 
           isLoading = false;
@@ -221,7 +260,7 @@ class JobApplicationProvider extends ChangeNotifier {
     try {
       isLoading = true;
 
-      final result = await jobApplicationRepo.getRejectedApplicationsWithJobs();
+      final result = await jobApplicationRepo.getApplicationsWithJobs();
 
       return result.fold(
         // Handle failure
@@ -232,11 +271,15 @@ class JobApplicationProvider extends ChangeNotifier {
         },
         // Handle success
         (rejectedAppsWithJobsList) {
+          rejectedAppsWithJobsList.removeWhere(
+            (appWithJob) =>
+                appWithJob['application']['applicationStatus'] != 'rejected',
+          );
           // update the map with fetched data
           rejectedAppsWithJobs = {
             for (var item in rejectedAppsWithJobsList)
-              JobApplicationEntity.fromMap(item['application']):
-                  JobEntity.fromMap(item['job']),
+              JobApplicationModel.fromDoc(item['application']):
+                  JobModel.fromDoc(item['job']),
           };
           isLoading = false;
           notifyListeners();
@@ -258,7 +301,7 @@ class JobApplicationProvider extends ChangeNotifier {
       isLoading = true;
       // notifyListeners();
 
-      final result = await jobApplicationRepo.getAcceptedApplicationsWithJobs();
+      final result = await jobApplicationRepo.getApplicationsWithJobs();
 
       return result.fold(
         // Handle failure
@@ -269,11 +312,15 @@ class JobApplicationProvider extends ChangeNotifier {
         },
         // Handle success
         (acceptedAppsWithJobsList) {
+          acceptedAppsWithJobsList.removeWhere(
+            (appWithJob) =>
+                appWithJob['application']['applicationStatus'] != 'accepted',
+          );
           // update the map with fetched data
           acceptedAppsWithJobs = {
             for (var item in acceptedAppsWithJobsList)
-              JobApplicationEntity.fromMap(item['application']):
-                  JobEntity.fromMap(item['job']),
+              JobApplicationModel.fromDoc(item['application']):
+                  JobModel.fromDoc(item['job']),
           };
           isLoading = false;
           notifyListeners();

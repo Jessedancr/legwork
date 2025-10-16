@@ -7,22 +7,24 @@ import 'package:lottie/lottie.dart';
 class UserCircleAvatar extends StatelessWidget {
   final UserEntity user;
   final String defaultProfileImagePath;
+  final double? radius;
 
   const UserCircleAvatar({
     super.key,
     required this.user,
     required this.defaultProfileImagePath,
+    this.radius = 50,
   });
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      radius: 50,
+      radius: radius,
       backgroundColor: context.colorScheme.primaryContainer,
       child: CachedNetworkImage(
-        imageUrl: user.profilePicture['url'] ?? '',
+        imageUrl: user.profilePicture?['url'] ?? '',
         imageBuilder: (context, imageProvider) => CircleAvatar(
-          radius: 50,
+          radius: radius,
           backgroundColor: context.colorScheme.primaryContainer,
           backgroundImage: imageProvider,
         ),

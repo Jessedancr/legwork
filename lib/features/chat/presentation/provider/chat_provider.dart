@@ -39,7 +39,7 @@ class ChatProvider extends ChangeNotifier {
         error = fail;
         isLoading = false;
         notifyListeners();
-        debugPrint('Error with loadConversation Provider: $error');
+        // debugPrint('Error with loadConversation Provider: $error');
       },
 
       // Handle success

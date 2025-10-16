@@ -335,7 +335,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       backgroundImage: (widget.dancerDetails?.profilePicture !=
                                   null &&
                               widget.dancerDetails!.profilePicture!.isNotEmpty)
-                          ? NetworkImage(widget.dancerDetails!.profilePicture!)
+                          ? NetworkImage(
+                              widget.dancerDetails!.profilePicture?['url'])
                           : const AssetImage(
                               'images/depictions/dancer_dummy_default_profile_picture.jpg',
                             ) as ImageProvider,

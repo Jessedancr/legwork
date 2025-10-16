@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
+import 'package:lottie/lottie.dart';
 
 class LegworkElevatedButton extends StatelessWidget {
   final void Function()? onPressed;
@@ -9,6 +10,7 @@ class LegworkElevatedButton extends StatelessWidget {
   final Size? maximumSize;
   final Size? minimumSize;
   final Color? backgroundColor;
+  final bool isLoading;
   LegworkElevatedButton({
     super.key,
     required this.onPressed,
@@ -17,6 +19,7 @@ class LegworkElevatedButton extends StatelessWidget {
     this.maximumSize,
     this.minimumSize,
     this.backgroundColor,
+    this.isLoading = false,
   });
 
   @override
@@ -33,24 +36,32 @@ class LegworkElevatedButton extends StatelessWidget {
         shadowColor: context.colorScheme.onSurface,
       ),
       onPressed: onPressed,
-      child: Row(
-        mainAxisAlignment: icon == null
-            ? MainAxisAlignment.center
-            : MainAxisAlignment.spaceAround,
-        children: [
-          // Button text
-          Text(
-            buttonText,
-            style: context.textXs?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: context.colorScheme.onPrimary,
-            ),
-          ),
+      child: isLoading
+          ? SizedBox(
+              height: 30,
+              width: 30,
+              child: Lottie.asset(
+                'assets/lottie/loading.json',
+              ),
+            )
+          : Row(
+              mainAxisAlignment: icon == null
+                  ? MainAxisAlignment.center
+                  : MainAxisAlignment.spaceAround,
+              children: [
+                // Button text
+                Text(
+                  buttonText,
+                  style: context.textXs?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: context.colorScheme.onPrimary,
+                  ),
+                ),
 
-          // Button Icon
-          if (icon != null) icon,
-        ],
-      ),
+                // Button Icon
+                if (icon != null) icon,
+              ],
+            ),
     );
   }
 }

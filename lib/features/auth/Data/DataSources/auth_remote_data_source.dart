@@ -267,7 +267,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String? userId = prefs.getString('userId');
-      return userId!;
+      return userId ?? '';
     } catch (e) {
       debugPrint('failed to get logged in user\'s ID: ${e.toString()}');
       return 'failed to get users uid';
@@ -381,7 +381,7 @@ class ResumeUploadRemoteDataSourceImpl extends ResumeUploadRemoteDataSource {
  * UPDATE PROFILE CLASS
  */
 class UpdateProfile {
-  Future<Either<String, dynamic>> updateUserProfile({
+  Future<Either<String, Map<String, dynamic>>> updateUserProfile({
     required Map<String, dynamic> data,
   }) async {
     try {
@@ -389,28 +389,28 @@ class UpdateProfile {
       final String? userId = prefs.getString('userId');
 
       if (userId != null) {
-        final result = await apiClient.patch(
+        final res = await apiClient.patch(
           endpoint: 'users/$userId/update-user-details',
           body: data,
         );
-        debugPrint('Update profile response: ${result.statusCode}');
+        debugPrint('Update profile response: ${res.statusCode}');
 
-        if (result.statusCode != 200) {
+        if (res.statusCode != 200) {
           String errMessage;
           try {
-            final resBody = jsonDecode(result.body);
+            final resBody = jsonDecode(res.body);
             errMessage = resBody['message'] ?? 'Update failed';
           } catch (e) {
-            errMessage = result.body.isNotEmpty ? result.body : 'update failed';
+            errMessage = res.body.isNotEmpty ? res.body : 'update failed';
           }
           debugPrint('Update failed fam: $errMessage');
           return Left(errMessage);
         }
 
-        final resBody = jsonDecode(result.body);
-        final message = resBody['message'];
-
-        return Right(message);
+        final resBody = jsonDecode(res.body);
+        final Map<String, dynamic> result = resBody['result'];
+        debugPrint('Updated user data:$result');
+        return Right(result);
       }
 
       return const Left('User ID not available');

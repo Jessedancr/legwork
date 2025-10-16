@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
+import 'package:legwork/features/home/presentation/widgets/user_circle_avatar.dart';
 import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
 
 import 'status_tag.dart';
@@ -17,7 +18,6 @@ class ApplicantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dancerImage = dancerEntity.profilePicture;
     final dancerUserName = dancerEntity.username;
     final dancerEmail = dancerEntity.email;
     final dancerPhoneNum = dancerEntity.phoneNumber;
@@ -57,25 +57,10 @@ class ApplicantCard extends StatelessWidget {
                     // * PROFILE PICTURE
                     Row(
                       children: [
-                        CircleAvatar(
+                        UserCircleAvatar(
+                          defaultProfileImagePath: defaultDancerProfileImage,
+                          user: dancerEntity,
                           radius: 24,
-                          backgroundColor: context.colorScheme.surfaceContainer,
-                          child: ClipOval(
-                            child:
-                                dancerImage != null && dancerImage!.isNotEmpty
-                                    ? Image.network(
-                                        dancerImage!,
-                                        width: 60,
-                                        height: 60,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Image.asset(
-                                        'images/depictions/dancer_dummy_default_profile_picture.jpg',
-                                        width: 60,
-                                        height: 60,
-                                        fit: BoxFit.cover,
-                                      ),
-                          ),
                         ),
                         const SizedBox(width: 12),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
@@ -9,6 +10,7 @@ import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_butt
 import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
+import 'package:legwork/features/home/presentation/widgets/user_circle_avatar.dart';
 import 'package:legwork/features/job_application/domain/entities/job_application_entity.dart';
 import 'package:legwork/features/job_application/presentation/provider/job_application_provider.dart';
 import 'package:legwork/features/job_application/presentation/widgets/legwork_outline_button.dart';
@@ -30,6 +32,7 @@ class ApplyForJobScreen extends StatefulWidget {
 class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   final TextEditingController proposalController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final emptyUserEntity = UserEntity.empty();
 
   bool _isChatLoading = false;
 
@@ -217,17 +220,11 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
         // * Body
         body: Consumer<JobApplicationProvider>(
           builder: (context, provider, child) {
-            final clientName =
-                provider.clientDetails?['username'] ?? 'Client name';
-            final email = provider.clientDetails?['email'] ?? 'client email';
-            final phoneNum =
-                provider.clientDetails?['phoneNumber'] ?? '123456789';
+            final clientName = provider.clientDetails?.username;
+            final email = provider.clientDetails?.email;
+            final phoneNum = provider.clientDetails?.phoneNumber;
             final organisationName =
-                provider.clientDetails?['organisationName'] ??
-                    'organisation name';
-
-            final clientProfilePicture =
-                provider.clientDetails?['profilePicture'];
+                provider.clientDetails?.asClient?.organisationName;
 
             return Column(
               children: [
@@ -311,31 +308,20 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                                 child: Column(
                                   children: [
                                     const SizedBox(height: 8),
-                                    CircleAvatar(
+                                    UserCircleAvatar(
                                       radius: 30,
-                                      child: ClipOval(
-                                        child: clientProfilePicture != null &&
-                                                clientProfilePicture!.isNotEmpty
-                                            ? Image.network(
-                                                clientProfilePicture!,
-                                                width: 60,
-                                                height: 60,
-                                                fit: BoxFit.cover,
-                                              )
-                                            : Image.asset(
-                                                'images/depictions/img_depc1.jpg',
-                                                width: 60,
-                                                height: 60,
-                                                fit: BoxFit.cover,
-                                              ),
-                                      ),
+                                      user: provider.clientDetails ??
+                                          emptyUserEntity,
+                                      defaultProfileImagePath:
+                                          defaultClientProfileImage,
                                     ),
                                     const SizedBox(height: 8),
 
                                     // * Client name
                                     Text(
-                                      organisationName == ''
-                                          ? clientName
+                                      organisationName == null ||
+                                              organisationName == ''
+                                          ? clientName ?? 'Client Name'
                                           : organisationName,
                                       style: context.textLg?.copyWith(
                                         color: context.colorScheme.onSurface,
@@ -433,12 +419,12 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
                               //* Contact Information
                               _buildContactInfo(
                                 icon: Icons.email_outlined,
-                                text: email,
+                                text: email ?? 'N/A',
                               ),
                               const SizedBox(height: 12),
                               _buildContactInfo(
                                 icon: Icons.phone_outlined,
-                                text: phoneNum,
+                                text: phoneNum ?? 'N/A',
                               ),
                               const SizedBox(height: 24),
                             ],

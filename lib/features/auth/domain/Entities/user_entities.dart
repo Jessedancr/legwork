@@ -11,7 +11,7 @@ class UserEntity {
   final String userType;
   final String? bio;
   final String deviceToken;
-  dynamic profilePicture;
+  Map<String, dynamic>? profilePicture;
 
   // Constructor
   UserEntity({
@@ -26,6 +26,21 @@ class UserEntity {
     this.profilePicture,
     this.bio,
   });
+
+  factory UserEntity.empty() {
+    return UserEntity(
+      username: '',
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      userType: '',
+      deviceToken: '',
+      bio: '',
+      profilePicture: {'': ''},
+    );
+  }
 }
 
 /// DANCER ENTITY

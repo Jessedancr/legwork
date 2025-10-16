@@ -13,4 +13,10 @@ abstract class JobRepo {
 
   // FETCH JOBS
   Future<Either<String, Map<String, List<JobEntity>>>> fetchJobs();
+
+  // UPDATE JOB STATUS
+  Future<Either<String, Map<String, dynamic>>> updateJobStatus({
+    required String jobId,
+    required bool status,
+  });
 }

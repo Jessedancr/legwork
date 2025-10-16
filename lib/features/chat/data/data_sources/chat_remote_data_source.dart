@@ -65,7 +65,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
       return Right(conversations);
     } catch (e) {
-      debugPrint('Error getting conversations: ${e.toString()}');
+      // debugPrint('Error getting conversations: ${e.toString()}');
       return left(e.toString());
     }
   }

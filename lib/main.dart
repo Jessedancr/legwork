@@ -222,16 +222,18 @@ class MyApp extends StatelessWidget {
           );
         },
         '/viewJobApplicantsScreen': (context) {
-          final args =
-              ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+          final args = ModalRoute.of(context)!.settings.arguments
+              as Map<String, dynamic>;
 
           // Provide default values if arguments are null or incomplete
           final jobId = args['jobId'] ?? '';
           final clientId = args['clientId'] ?? '';
+          final status = args['status'];
 
           return ViewJobApplicantsScreen(
             jobId: jobId,
             clientId: clientId,
+            status: status,
           );
         },
         '/job_application_detail': (context) =>

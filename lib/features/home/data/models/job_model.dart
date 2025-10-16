@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 
 part 'job_model.g.dart';
@@ -77,17 +75,7 @@ class JobModel extends JobEntity {
           createdAt: createdAt,
         );
 
-  /// Convert firebase doc to user profile so we can use in the app
-  factory JobModel.fromDocument(DocumentSnapshot doc) {
-    // Ensure createdAt is converted to DateTime
-    DateTime createdAtDateTime;
-    if (doc['createdAt'] != null && doc['createdAt'] is Timestamp) {
-      createdAtDateTime = (doc['createdAt'] as Timestamp).toDate();
-    } else {
-      createdAtDateTime = DateTime.now();
-      debugPrint(
-          "Warning: createdAt was not a Timestamp, using default value.");
-    }
+  factory JobModel.fromDoc(Map<String, dynamic> doc) {
     return JobModel(
       jobTitle: doc['jobTitle'] ?? '',
       jobLocation: doc['jobLocation'] ?? '',
@@ -97,10 +85,10 @@ class JobModel extends JobEntity {
       jobDuration: doc['jobDuration'] ?? '',
       jobDescr: doc['jobDescr'] ?? '',
       jobType: doc['jobType'],
-      jobId: doc['jobId'] ?? '',
+      jobId: doc['_id'] ?? '',
       clientId: doc['clientId'] ?? '',
       status: doc['status'] ?? true,
-      createdAt: createdAtDateTime,
+      createdAt: DateTime.parse(doc['createdAt']),
     );
   }
 
@@ -118,7 +106,7 @@ class JobModel extends JobEntity {
       'jobId': jobId,
       'status': status,
       'clientId': clientId,
-      'createdAt': Timestamp.fromDate(createdAt),
+      'createdAt': createdAt,
     };
   }
 
