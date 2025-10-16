@@ -127,7 +127,7 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// ACCEPT JOB
-  Future<Either<String, void>> acceptApplication({
+  Future<Either<String, Map<String, dynamic>>> acceptApplication({
     required String applicationId,
   }) async {
     try {
@@ -145,10 +145,10 @@ class JobApplicationProvider extends ChangeNotifier {
         },
 
         // handle success
-        (_) {
+        (data) {
           isLoading = false;
           notifyListeners();
-          return const Right(null);
+          return Right(data);
         },
       );
     } catch (e) {
@@ -158,7 +158,7 @@ class JobApplicationProvider extends ChangeNotifier {
   }
 
   /// REJECT JOB
-  Future<Either<String, void>> rejectApplication({
+  Future<Either<String, Map<String, dynamic>>> rejectApplication({
     required String applicationId,
   }) async {
     try {
@@ -176,10 +176,10 @@ class JobApplicationProvider extends ChangeNotifier {
         },
 
         // handle success
-        (_) {
+        (data) {
           isLoading = false;
           notifyListeners();
-          return const Right(null);
+          return Right(data);
         },
       );
     } catch (e) {

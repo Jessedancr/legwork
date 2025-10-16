@@ -105,27 +105,27 @@ class JobApplicationRemoteDataSource {
   }
 
   // * ACCEPT JOB APPLICATION
-  Future<Either<String, void>> acceptApplication({
+  Future<Either<String, Map<String, dynamic>>> acceptApplication({
     required String applicationId,
   }) async {
     try {
-      final user = auth.currentUser;
-      if (user == null) {
-        debugPrint('User not found');
-        return const Left('User not found');
+      final res = await apiClient.patch(
+        endpoint: 'job-applications/$applicationId/accept-app',
+        body: {
+          'applicationStatus': 'accepted',
+        },
+      );
+
+      if (res.statusCode != 200) {
+        final Map<String, dynamic> resBody = jsonDecode(res.body);
+        final String message = resBody['message'];
+        debugPrint(message);
+        return Left(message);
       }
-
-      // Get the document reference
-      final applicationDocRef =
-          db.collection('jobApplications').doc(applicationId);
-
-      // Update the application status to 'accepted'
-      await applicationDocRef.update({'applicationStatus': 'accepted'});
-
-      // Fetch dancer ID and device token
-      final applicationDoc = await applicationDocRef.get();
-      final dancerId = applicationDoc.data()?['dancerId'];
-
+      final Map<String, dynamic> resBody = jsonDecode(res.body);
+      final Map<String, dynamic> app = resBody['app'];
+      final String message = resBody['message'];
+      final String dancerId = app['dancerId'];
       final userEntity =
           await _authRemoteDataSource.getUserDetails(uid: dancerId);
       userEntity.fold(
@@ -142,34 +142,34 @@ class JobApplicationRemoteDataSource {
 
       // Delete the application after accepting
       // await docRef.delete();
-
-      debugPrint('Application accepted  successfully');
-      return const Right(null);
+      return Right({'message': message, 'application': app});
     } catch (e) {
       return Left("Failed to accept application: $e");
     }
   }
 
   // * REJECT JOB APPLICATION
-  Future<Either<String, void>> rejectApplication({
+  Future<Either<String, Map<String, dynamic>>> rejectApplication({
     required String applicationId,
   }) async {
     try {
-      final user = auth.currentUser;
-      if (user == null) {
-        debugPrint('User not found');
-        return const Left('User not found');
+      final res = await apiClient.patch(
+        endpoint: 'job-applications/$applicationId/reject-app',
+        body: {
+          'applicationStatus': 'rejected',
+        },
+      );
+
+      if (res.statusCode != 200) {
+        final Map<String, dynamic> resBody = jsonDecode(res.body);
+        final String message = resBody['message'];
+        debugPrint(message);
+        return Left(message);
       }
-
-      // Update the application status to 'rejected'
-      final applicationDocRef =
-          db.collection('jobApplications').doc(applicationId);
-      await applicationDocRef.update({'applicationStatus': 'rejected'});
-      debugPrint('Application rejected successfully');
-
-      // Fetch dancer ID and device token
-      final applicationDoc = await applicationDocRef.get();
-      final dancerId = applicationDoc.data()?['dancerId'];
+      final Map<String, dynamic> resBody = jsonDecode(res.body);
+      final Map<String, dynamic> app = resBody['app'];
+      final String message = resBody['message'];
+      final String dancerId = app['dancerId'];
 
       // Send notification
       final userEntity =
@@ -186,7 +186,7 @@ class JobApplicationRemoteDataSource {
         },
       );
 
-      return const Right(null);
+      return Right({'message': message, 'application': app});
     } catch (e) {
       return Left("Failed to reject application: $e");
     }

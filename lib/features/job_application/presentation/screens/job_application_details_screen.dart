@@ -181,13 +181,14 @@ class _JobApplicationDetailScreenState
           },
 
           // Handle success
-          (_) async {
+          (data) async {
             Navigator.pop(context); // Close loading indicator
+            final String message = data['message'];
 
             // Show snackbar
             LegworkSnackbar(
               title: 'Sharp guy!',
-              subTitle: "Application accepted",
+              subTitle: message,
               imageColor: context.colorScheme.onPrimary,
               contentColor: context.colorScheme.primary,
             ).show(context);
@@ -256,10 +257,11 @@ class _JobApplicationDetailScreenState
           },
 
           // handle success
-          (_) {
+          (data) {
             Navigator.pop(context); // Close loading indicator
+            final String message = data['message'];
             LegworkSnackbar(
-              title: 'Application Rejected',
+              title: message,
               subTitle: "You've rejected this application!",
               imageColor: context.colorScheme.onPrimary,
               contentColor: context.colorScheme.primary,

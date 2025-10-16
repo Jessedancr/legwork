@@ -53,29 +53,6 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
     }
   }
 
-  // Function to get client details using client ID
-  // This func is used to display the clients email, phone etc on the job appl screen
-  @override
-  Future<Either<String, Map<String, dynamic>>> getClientDetails({
-    required String clientId,
-  }) async {
-    try {
-      final clientDetails =
-          await remoteDataSource.getClientDetails(clientId: clientId);
-      return clientDetails.fold(
-          // Handle fail
-          (fail) => Left(fail),
-
-          // Handle success
-          (clientDetails) {
-        return Right(clientDetails);
-      });
-    } catch (e) {
-      debugPrint('An unknown error occured while fetching client details: $e');
-      return Left('An unknown error occured while fetching client details: $e');
-    }
-  }
-
   // GET PENDING APPLICATIONS WITH THEIR CORRESPONDING JOBS (FROM FIRESTORE)
   @override
   Future<Either<String, List<Map<String, dynamic>>>>
@@ -89,7 +66,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
   }
 
   @override
-  Future<Either<String, void>> acceptApplication({
+  Future<Either<String, Map<String, dynamic>>> acceptApplication({
     required String applicationId,
   }) async {
     try {
@@ -100,7 +77,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
       return result.fold(
         // handle fail
         (fail) => Left(fail),
-        (_) => const Right(null),
+        (data) => Right(data),
       );
     } catch (e) {
       debugPrint('Error accepting application: ${e.toString()}');
@@ -109,7 +86,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
   }
 
   @override
-  Future<Either<String, void>> rejectApplication({
+  Future<Either<String, Map<String, dynamic>>> rejectApplication({
     required String applicationId,
   }) async {
     try {
@@ -120,7 +97,7 @@ class JobApplicationRepoImpl implements JobApplicationRepo {
       return result.fold(
         // handle fail
         (fail) => Left(fail),
-        (_) => const Right(null),
+        (data) => Right(data),
       );
     } catch (e) {
       debugPrint('Error rejecting application: ${e.toString()}');
