@@ -12,18 +12,21 @@ class JobApplicantsList extends StatelessWidget {
   final UserEntity dancerDetails;
   final void Function()? onCloseJob;
   final bool isLoading;
+  final bool jobStatus;
   const JobApplicantsList({
     super.key,
     required this.onRefresh,
     required this.dancerDetails,
     required this.onCloseJob,
     required this.isLoading,
+    required this.jobStatus,
   });
 
   @override
   Widget build(BuildContext context) {
-    final jobProvider =
+    final jobApplicationProvider =
         Provider.of<JobApplicationProvider>(context, listen: false);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -37,9 +40,10 @@ class JobApplicantsList extends StatelessWidget {
               animSpeedFactor: 3.0,
               showChildOpacityTransition: false,
               child: ListView.builder(
-                itemCount: jobProvider.allApplications.length,
+                itemCount: jobApplicationProvider.allApplications.length,
                 itemBuilder: (context, index) {
-                  final jobApplication = jobProvider.allApplications[index];
+                  final jobApplication =
+                      jobApplicationProvider.allApplications[index];
 
                   return ApplicantCard(
                     jobApplication: jobApplication,
@@ -49,11 +53,12 @@ class JobApplicantsList extends StatelessWidget {
               ),
             ),
           ),
-          LegworkElevatedButton(
-            onPressed: onCloseJob,
-            buttonText: 'Close this job?',
-            isLoading: isLoading,
-          )
+          if (jobStatus)
+            LegworkElevatedButton(
+              onPressed: onCloseJob,
+              buttonText: 'Close this job?',
+              isLoading: isLoading,
+            )
         ],
       ),
     );

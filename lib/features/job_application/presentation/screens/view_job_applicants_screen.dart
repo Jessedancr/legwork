@@ -225,6 +225,7 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
             dancerDetails: dancerDetails,
             onCloseJob: closeJobDialogBox,
             isLoading: _isLoading,
+            jobStatus: widget.status,
           );
         },
       ),
