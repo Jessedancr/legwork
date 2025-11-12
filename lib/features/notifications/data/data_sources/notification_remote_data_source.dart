@@ -1,14 +1,11 @@
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import 'package:googleapis_auth/auth_io.dart';
 
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:legwork/core/network/api_client.dart';
 import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
 
 abstract class NotificationRemoteDataSource {
@@ -18,6 +15,7 @@ abstract class NotificationRemoteDataSource {
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   final firebaseMessaging = FirebaseMessaging.instance;
+  final apiClient = ApiClient();
 
   /**
    * ASK USER FOR PERMISSION TO SEND NOTIFICATIONS AND GET THE DEVICE TOKEN
@@ -25,7 +23,6 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   @override
   Future<String?> getDeviceToken() async {
     try {
-      // await firebaseMessaging.requestPermission();
       return await firebaseMessaging.getToken();
     } catch (e) {
       debugPrint("Error getting device token: $e");
@@ -36,64 +33,25 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   // SEND NOTIFICATION
   @override
   Future<void> sendNotification({required NotifEntity notif}) async {
-    String fcmUrl = dotenv.env['FCM_URL']!;
-
     try {
-      // Load service account from asset file
-      final String serviceAccountJsonString =
-          await rootBundle.loadString('assets/service-account.json');
-
-      debugPrint("Loading service account from assets file");
-
-      // Parse the JSON directly
-      final Map<String, dynamic> serviceAccountJson =
-          jsonDecode(serviceAccountJsonString);
-
-      // LOAD THE SERVICE ACCOUNT CREDENTIALS
-      final serviceAcctCred =
-          ServiceAccountCredentials.fromJson(serviceAccountJson);
-
-      // Authenticate and get access token
-      final authClient = await clientViaServiceAccount(
-        serviceAcctCred,
-        ['https://www.googleapis.com/auth/firebase.messaging'],
-      );
-
-      // Construct notification payload
-      final payload = {
-        'message': {
-          'token': notif.deviceToken,
-          'notification': {
-            'title': notif.title,
-            'body': notif.body,
-          },
-          'android': {
-            'notification': {
-              'default_sound': true,
-              'icon': '@mipmap/ic_launcher',
-              'sound': 'default'
-            },
-            'priority': 'HIGH'
-          },
-        }
+      final notifBody = {
+        'title': notif.title,
+        'body': notif.body,
+        'deviceToken': notif.deviceToken,
       };
 
-      // Send the notification
-      final response = await authClient.post(
-        Uri.parse(fcmUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(payload),
+      final res = await apiClient.post(
+        endpoint: 'notif/send-notif',
+        body: notifBody,
       );
-
-      if (response.statusCode != 200) {
-        debugPrint('Failed to send notification: ${response.body}');
-      } else {
-        debugPrint('Notification sent successfully: ${response.body}');
+      final Map<String, dynamic> resBody = jsonDecode(res.body);
+      final message = resBody['message'];
+      debugPrint(message);
+      if (res.statusCode != 200) {
+        throw Error();
       }
     } catch (e) {
-      debugPrint('Error sending notification: $e');
+      debugPrint('Error sending notification: $e'); 
     }
   }
 
