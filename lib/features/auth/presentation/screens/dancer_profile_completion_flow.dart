@@ -89,59 +89,91 @@ class _DancerProfileCompletionFlowState
           },
         };
 
-        // Run both futures simultaneously
-        final results = await Future.wait([
-          updateProfileProvider.updateProfileExecute(data: data),
-          updateProfileProvider.uploadProfileImage(
-            imageFile: selectedImage ?? File(''),
-          ),
-        ]);
+        // Run both futures simultaneously if image was selected
+        if (selectedImage != null) {
+          final results = await Future.wait([
+            updateProfileProvider.updateProfileExecute(data: data),
+            updateProfileProvider.uploadProfileImage(
+              imageFile: selectedImage ?? File(''),
+            ),
+          ]);
 
-        final updateProfile = results[0];
-        final uploadProfileImage = results[1];
+          final updateProfile = results[0];
+          final uploadProfileImage = results[1];
 
-        uploadProfileImage.fold(
-          (fail) {
-            hideLoadingIndicator(context);
-            debugPrint(fail);
-            LegworkSnackbar(
-              title: 'Omo!',
-              subTitle: fail,
-              contentColor: context.colorScheme.error,
-              imageColor: context.colorScheme.onError,
-            ).show(context);
-          },
-          (success) {
-            hideLoadingIndicator(context);
-            debugPrint('Image upload successful: $success');
-          },
-        );
+          uploadProfileImage.fold(
+            (fail) {
+              hideLoadingIndicator(context);
+              debugPrint(fail);
+              LegworkSnackbar(
+                title: 'Omo!',
+                subTitle: fail,
+                contentColor: context.colorScheme.error,
+                imageColor: context.colorScheme.onError,
+              ).show(context);
+            },
+            (success) {
+              hideLoadingIndicator(context);
+              debugPrint('Image upload successful: $success');
+            },
+          );
 
-        updateProfile.fold(
-          (fail) {
-            hideLoadingIndicator(context);
-            debugPrint(fail);
-            LegworkSnackbar(
-              title: 'Omo!',
-              subTitle: fail,
-              contentColor: context.colorScheme.error,
-              imageColor: context.colorScheme.onError,
-            ).show(context);
-          },
-          (success) {
-            hideLoadingIndicator(context);
-            Navigator.of(context).pushNamedAndRemoveUntil(
-              '/dancerApp',
-              (route) => false,
-            );
-            LegworkSnackbar(
-              title: 'Sharp guy!',
-              subTitle: 'Welcome to LEGWORK',
-              imageColor: context.colorScheme.onPrimary,
-              contentColor: context.colorScheme.primary,
-            ).show(context);
-          },
-        );
+          updateProfile.fold(
+            (fail) {
+              hideLoadingIndicator(context);
+              debugPrint(fail);
+              LegworkSnackbar(
+                title: 'Omo!',
+                subTitle: fail,
+                contentColor: context.colorScheme.error,
+                imageColor: context.colorScheme.onError,
+              ).show(context);
+            },
+            (success) {
+              hideLoadingIndicator(context);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/dancerApp',
+                (route) => false,
+              );
+              LegworkSnackbar(
+                title: 'Sharp guy!',
+                subTitle: 'Welcome to LEGWORK',
+                imageColor: context.colorScheme.onPrimary,
+                contentColor: context.colorScheme.primary,
+              ).show(context);
+            },
+          );
+        } else {
+          // No image selected: only update the profile
+          final updateProfile =
+              await updateProfileProvider.updateProfileExecute(data: data);
+
+          updateProfile.fold(
+            (fail) {
+              hideLoadingIndicator(context);
+              debugPrint(fail);
+              LegworkSnackbar(
+                title: 'Omo!',
+                subTitle: fail,
+                contentColor: context.colorScheme.error,
+                imageColor: context.colorScheme.onError,
+              ).show(context);
+            },
+            (success) {
+              hideLoadingIndicator(context);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/dancerApp',
+                (route) => false,
+              );
+              LegworkSnackbar(
+                title: 'Sharp guy!',
+                subTitle: 'Welcome to LEGWORK',
+                imageColor: context.colorScheme.onPrimary,
+                contentColor: context.colorScheme.primary,
+              ).show(context);
+            },
+          );
+        }
       } catch (e) {
         debugPrint('error updating profile');
         hideLoadingIndicator(context);
