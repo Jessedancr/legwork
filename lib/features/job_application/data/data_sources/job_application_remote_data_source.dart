@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
@@ -135,6 +136,7 @@ class JobApplicationRemoteDataSource {
             deviceToken: user.deviceToken,
             body: 'Application Accepted',
             title: 'Sharp guy! your application has been accepted',
+            channelId: NotifChannelId.applications_channel.name,
           );
           await notificationRemoteDataSource.sendNotification(notif: notif);
         },
@@ -181,6 +183,7 @@ class JobApplicationRemoteDataSource {
             deviceToken: user.deviceToken,
             body: 'Application rejected',
             title: 'Unfortunately, your application has been rejected',
+            channelId: NotifChannelId.applications_channel.name,
           );
           await notificationRemoteDataSource.sendNotification(notif: notif);
         },

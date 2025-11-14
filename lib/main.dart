@@ -17,6 +17,7 @@ import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/edit_client_profile_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_app.dart';
+import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_notif_settings_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/edit_profile_screen.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
@@ -275,6 +276,9 @@ class MyApp extends StatelessWidget {
 
           return EditClientProfileScreen(clientDetails: clientDetails);
         },
+        '/dancerNotifSettings': (context) {
+          return const DancerNotifSettingsScreen();
+        }
       },
     );
   }

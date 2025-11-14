@@ -6,11 +6,18 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:legwork/core/network/api_client.dart';
+import 'package:legwork/features/notifications/data/data_sources/notif_channels.dart';
 import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<String?> getDeviceToken();
   Future<void> sendNotification({required NotifEntity notif});
+  Future<void> setupFlutterNotifications();
+  void showNotif({
+    required RemoteMessage message,
+    required FlutterLocalNotificationsPlugin flutterLocalNotif,
+  });
 }
 
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
@@ -38,6 +45,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'title': notif.title,
         'body': notif.body,
         'deviceToken': notif.deviceToken,
+        'channelId': notif.channelId,
       };
 
       final res = await apiClient.post(
@@ -51,11 +59,13 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         throw Error();
       }
     } catch (e) {
-      debugPrint('Error sending notification: $e'); 
+      debugPrint('Error sending notification: $e');
+      return;
     }
   }
 
   // SET UP FLUTTER NOTIFICATION
+  @override
   Future<void> setupFlutterNotifications() async {
     // * Permission configs
     await firebaseMessaging.requestPermission(
@@ -66,50 +76,61 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     );
 
     if (!kIsWeb && io.Platform.isAndroid) {
-      // * Channel definition
-      // TODO: Add multiple channels for different types of notifs
-      const AndroidNotificationChannel channel = AndroidNotificationChannel(
-        'legwork_notifications',
-        'Legwork Notifications',
-        description: 'Notifications from Legwork app.',
-        importance: Importance.max,
-        enableLights: true,
-        ledColor: Colors.deepPurple,
-      );
-
-      // * Instance of notif package
       final flutterLocalNotif = FlutterLocalNotificationsPlugin();
-
       // * Create notif channel
-      await flutterLocalNotif
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.createNotificationChannel(channel);
+      final androidImpl =
+          flutterLocalNotif.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      for (var channel in NotifChannels.allChannels) {
+        await androidImpl?.createNotificationChannel(channel);
+        debugPrint('CHANNEL IDs FOR ALL NOTIF CHANNELS: ${channel.id}');
+      }
 
       // * Listen to foreground messages
       FirebaseMessaging.onMessage.listen(
-        (RemoteMessage message) {
-          RemoteNotification? notification = message.notification;
-
-          if (notification != null) {
-            flutterLocalNotif.show(
-              notification.hashCode,
-              notification.title,
-              notification.body,
-              NotificationDetails(
-                android: AndroidNotificationDetails(
-                  channel.id,
-                  channel.name,
-                  channelDescription: channel.description,
-                  icon: '@mipmap/ic_launcher',
-                  importance: Importance.max,
-                  priority: Priority.high,
-                ),
-              ),
-            );
-          }
+        (RemoteMessage message) async {
+          showNotif(
+            flutterLocalNotif: flutterLocalNotif,
+            message: message,
+          );
         },
       );
     }
+  }
+
+// * SHOW NOTIFICATION
+  @override
+  void showNotif({
+    required RemoteMessage message,
+    required FlutterLocalNotificationsPlugin flutterLocalNotif,
+  }) async {
+    RemoteNotification? notification = message.notification;
+    if (notification == null) return;
+    final channelId = message.data['channelId'] ?? 'system_channel';
+
+    final prefs = await SharedPreferences.getInstance();
+    final bool isEnabled = prefs.getBool('$channelId') ?? true;
+
+    if (!isEnabled) return;
+
+    final channel = NotifChannels.allChannels.firstWhere(
+      (ch) => ch.id == channelId,
+      orElse: () => NotifChannels.system,
+    );
+
+    flutterLocalNotif.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channelDescription: channel.description,
+          icon: '@mipmap/ic_launcher',
+        ),
+      ),
+    );
   }
 }

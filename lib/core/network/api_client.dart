@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,6 +36,9 @@ class ApiClient {
         (key, value) {
           if (value is DateTime) {
             return MapEntry(key, value.toIso8601String());
+          }
+          if (value is NotifChannelId) {
+            return MapEntry(key, value.toString());
           }
           return MapEntry(key, value);
         },
