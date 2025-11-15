@@ -69,9 +69,29 @@ class JobApplicationRemoteDataSource {
       final Map<String, dynamic> resBody = jsonDecode(res.body);
       final Map<String, dynamic> applicationDoc = resBody['application'];
       final String applicationId = applicationDoc['_id'];
+      final String clientId = applicationDoc['clientId'];
+
+      // * Send notification
+      final clientEntity =
+          await _authRemoteDataSource.getUserDetails(uid: clientId);
+
+      clientEntity.fold(
+        (fail) => Left(fail),
+        (user) async {
+          NotifEntity notif = NotifEntity(
+            deviceToken: user.deviceToken,
+            body: 'You have received a new application',
+            title: 'New Job Application!',
+            channelId: NotifChannelId.applications_channel.name,
+          );
+          await notificationRemoteDataSource.sendNotification(notif: notif);
+        },
+      );
+
       final applicationModel = JobApplicationModel.fromDoc({
         ...applicationDoc,
         app.applicationId: applicationId,
+        app.clientId: clientId,
       });
       return Right(applicationModel);
     } catch (e) {

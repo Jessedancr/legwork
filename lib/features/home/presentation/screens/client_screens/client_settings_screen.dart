@@ -74,35 +74,50 @@ class _ClientSettingsScreenState extends State<ClientSettingsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              LegworkListTile(
-                leading: Text(
-                  'Dark mode',
-                  style: context.textSm?.copyWith(
-                    color: context.colorScheme.surface,
-                    fontWeight: FontWeight.bold,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                LegworkListTile(
+                  leading: Text(
+                    'Dark mode',
+                    style: context.textSm?.copyWith(
+                      color: context.colorScheme.surface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () {},
+                  trailingWidget: CupertinoSwitch(
+                    value: context.watch<ThemeProvider>().isDarkMode,
+                    onChanged: (value) {
+                      context.read<ThemeProvider>().toggleTheme();
+                    },
                   ),
                 ),
-                onTap: () {},
-                trailingWidget: CupertinoSwitch(
-                  value: context.watch<ThemeProvider>().isDarkMode,
-                  onChanged: (value) {
-                    context.read<ThemeProvider>().toggleTheme();
+                const SizedBox(height: 10),
+                LegworkListTile(
+                  leading: Text(
+                    'Notification Settings',
+                    style: context.textSm?.copyWith(
+                      color: context.colorScheme.surface,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('/dancerNotifSettings');
                   },
-                ),
-              ),
-              LegworkElevatedButton(
-                onPressed: logout,
-                buttonText: 'logout',
-                backgroundColor: context.colorScheme.error,
-                icon: Icon(Icons.logout, color: context.colorScheme.onError),
-                maximumSize: Size(screenWidth(context) * 0.4, 50),
-              )
-            ],
-          ),
+                )
+              ],
+            ),
+            LegworkElevatedButton(
+              onPressed: logout,
+              buttonText: 'logout',
+              backgroundColor: context.colorScheme.error,
+              icon: Icon(Icons.logout, color: context.colorScheme.onError),
+              maximumSize: Size(screenWidth(context) * 0.4, 50),
+            )
+          ],
         ),
       ),
     );

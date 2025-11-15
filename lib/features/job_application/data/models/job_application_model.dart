@@ -1,6 +1,5 @@
 // ignore_for_file: annotate_overrides
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/job_application_entity.dart';
 import 'package:hive/hive.dart';
 
