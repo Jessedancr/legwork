@@ -79,7 +79,7 @@ class _DancersDrawerState extends State<DancersDrawer> {
                   color: context.colorScheme.surface,
                 ),
               ),
-              onTap: () {},
+              onTap: () => Navigator.of(context).pushNamed('/notifScreen'),
             ),
             SizedBox(height: screenHeight(context) * 0.05),
 

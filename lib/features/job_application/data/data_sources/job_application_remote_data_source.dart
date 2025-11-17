@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/Data/DataSources/auth_remote_data_source.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
@@ -68,9 +69,29 @@ class JobApplicationRemoteDataSource {
       final Map<String, dynamic> resBody = jsonDecode(res.body);
       final Map<String, dynamic> applicationDoc = resBody['application'];
       final String applicationId = applicationDoc['_id'];
+      final String clientId = applicationDoc['clientId'];
+
+      // * Send notification
+      final clientEntity =
+          await _authRemoteDataSource.getUserDetails(uid: clientId);
+
+      clientEntity.fold(
+        (fail) => Left(fail),
+        (user) async {
+          NotifEntity notif = NotifEntity(
+            deviceToken: user.deviceToken,
+            body: 'You have received a new application',
+            title: 'New Job Application!',
+            channelId: NotifChannelId.applications_channel.name,
+          );
+          await notificationRemoteDataSource.sendNotification(notif: notif);
+        },
+      );
+
       final applicationModel = JobApplicationModel.fromDoc({
         ...applicationDoc,
         app.applicationId: applicationId,
+        app.clientId: clientId,
       });
       return Right(applicationModel);
     } catch (e) {
@@ -133,8 +154,9 @@ class JobApplicationRemoteDataSource {
         (user) async {
           NotifEntity notif = NotifEntity(
             deviceToken: user.deviceToken,
-            body: 'Application Accepted',
-            title: 'Sharp guy! your application has been accepted',
+            body: 'Sharp guy! your application has been accepted',
+            title: 'Application Accepted',
+            channelId: NotifChannelId.applications_channel.name,
           );
           await notificationRemoteDataSource.sendNotification(notif: notif);
         },
@@ -179,8 +201,9 @@ class JobApplicationRemoteDataSource {
         (user) async {
           NotifEntity notif = NotifEntity(
             deviceToken: user.deviceToken,
-            body: 'Application rejected',
-            title: 'Unfortunately, your application has been rejected',
+            body: 'Unfortunately, your application has been rejected',
+            title: 'Application Rejected',
+            channelId: NotifChannelId.applications_channel.name,
           );
           await notificationRemoteDataSource.sendNotification(notif: notif);
         },

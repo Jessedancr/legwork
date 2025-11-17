@@ -80,23 +80,40 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              LegworkListTile(
-                leading: Text(
-                  'Dark mode',
-                  style: context.textSm?.copyWith(
-                    color: context.colorScheme.surface,
-                    fontWeight: FontWeight.bold,
+              Column(
+                children: [
+                  LegworkListTile(
+                    leading: Text(
+                      'Dark mode',
+                      style: context.textSm?.copyWith(
+                        color: context.colorScheme.surface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onTap: () {},
+                    trailingWidget: CupertinoSwitch(
+                      value: context.watch<ThemeProvider>().isDarkMode,
+                      onChanged: (value) {
+                        context.read<ThemeProvider>().toggleTheme();
+                      },
+                    ),
                   ),
-                ),
-                onTap: () {},
-                trailingWidget: CupertinoSwitch(
-                  value: context.watch<ThemeProvider>().isDarkMode,
-                  onChanged: (value) {
-                    context.read<ThemeProvider>().toggleTheme();
-                  },
-                ),
+                  const SizedBox(height: 10),
+                  LegworkListTile(
+                    leading: Text(
+                      'Notification Settings',
+                      style: context.textSm?.copyWith(
+                        color: context.colorScheme.surface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('/notifSettings');
+                    },
+                  )
+                ],
               ),
               LegworkElevatedButton(
                 onPressed: logout,

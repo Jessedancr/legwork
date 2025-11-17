@@ -41,6 +41,11 @@ abstract class AuthRemoteDataSource {
 
   Future<String> getDeviceToken({required String userId});
 
+  Future<void> updateDeviceToken({
+    required String userId,
+    required String deviceToken,
+  });
+
   Future<Either<String, UserEntity>> getUserDetails({required String uid});
 }
 
@@ -95,6 +100,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           final refreshToken = resBody['refreshToken'];
           final clientData = resBody['client'];
           final userId = clientData['_id'];
+          final deviceToken = userEntity.deviceToken;
 
           debugPrint('userId: $userId');
 
@@ -106,6 +112,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           // ! USING SHARED PREFS FOR FLUTTER WEB
           await prefs.setString('accessToken', accessToken);
           await prefs.setString('userId', userId);
+          await updateDeviceToken(
+            userId: userId,
+            deviceToken: deviceToken,
+          );
           final clientModel = ClientModel.fromDoc(clientData);
           return Right(clientModel);
         } else {
@@ -149,6 +159,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           final refreshToken = resBody['refreshToken'];
           final dancerData = resBody['dancer'];
           final userId = dancerData['_id'];
+          final deviceToken = userEntity.deviceToken;
 
           // ! Save the token to secure storage
           final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -158,6 +169,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           // ! USING SHARED PREFS FOR FLUTTER WEB
           await prefs.setString('accessToken', accessToken);
           await prefs.setString('userId', userId);
+          await updateDeviceToken(
+            userId: userId,
+            deviceToken: deviceToken,
+          );
           final dancerModel = DancerModel.fromDoc(dancerData);
           return Right(dancerModel);
         } else {
@@ -200,6 +215,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final String userId = user['_id'];
       final String accessToken = resBody['accessToken'];
       final refreshToken = resBody['refreshToken'];
+      final deviceToken = userEntity.deviceToken;
 
       debugPrint('Login API Response: ${response.statusCode}');
       // ! Save the token to secure storage
@@ -210,6 +226,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // ! USING SHARED PREFS FOR FLUTTER WEB
       await prefs.setString('accessToken', accessToken);
       await prefs.setString('userId', userId);
+
+      // * UPDATE DEVICE TOKEN
+      if (deviceToken.isNotEmpty && response.statusCode == 200) {
+        debugPrint('FCM Token: ${userEntity.deviceToken}');
+        await updateDeviceToken(
+          userId: userId,
+          deviceToken: deviceToken,
+        );
+      }
 
       // Convert to appropriate user model
       if (userType == UserType.dancer.name) {
@@ -325,6 +350,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       debugPrint('Error getting all of users details: ${e.toString()}');
       return Left(e.toString());
+    }
+  }
+
+  @override
+  Future<void> updateDeviceToken({
+    required String userId,
+    required String deviceToken,
+  }) async {
+    try {
+      final res = await apiClient.patch(
+        endpoint: 'users/$userId/update-user-details',
+        body: {'deviceToken': deviceToken},
+      );
+      final resBody = jsonDecode(res.body);
+      final message = resBody['message'];
+      debugPrint(message);
+
+      if (res.statusCode != 200) {
+        debugPrint("Error updating device token: $message");
+        return;
+      }
+      return;
+    } catch (e) {
+      debugPrint('Error updating device token: $e');
+      return;
     }
   }
 }

@@ -17,6 +17,7 @@ import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_app.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/edit_client_profile_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_app.dart';
+import 'package:legwork/features/home/presentation/screens/notif_settings_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_settings_screen.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/edit_profile_screen.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
@@ -31,6 +32,9 @@ import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Screens/account_type_screen.dart';
 import 'package:legwork/features/auth/presentation/Screens/client_profile_completion_flow.dart';
+import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
+import 'package:legwork/features/notifications/presentation/provider/notif_provider.dart';
+import 'package:legwork/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:legwork/features/payment/data/data_sources/payment_remote_data_source.dart';
 import 'package:legwork/features/payment/data/repo_impl/payment_repo_impl.dart';
 import 'package:legwork/features/payment/domain/business_logic/initialize_transaction_business_logic.dart';
@@ -68,11 +72,16 @@ void main() async {
   // Register JobModel adapter
   Hive.registerAdapter(JobModelAdapter());
 
+  Hive.registerAdapter(NotifEntityAdapter());
+
   // Open job applications Hive box
   await Hive.openBox<JobApplicationModel>('job_applications_box');
 
   // Open jobs hive box
   await Hive.openBox<JobModel>('jobs_box');
+
+  // Open notif hive box
+  await Hive.openBox<NotifEntity>('notif_box');
 
   // Load .env file
   await dotenv.load(fileName: ".env");
@@ -159,6 +168,7 @@ void main() async {
                 VerifyTransactionBusinessLogic(repo: paymentRepo),
           ),
         ),
+        ChangeNotifierProvider(create: (_) => NotifProvider()),
         // Add ApiClient as provider
         Provider<ApiClient>(create: (context) => apiClient)
       ],
@@ -275,6 +285,10 @@ class MyApp extends StatelessWidget {
 
           return EditClientProfileScreen(clientDetails: clientDetails);
         },
+        '/notifSettings': (context) {
+          return const NotifSettingsScreen();
+        },
+        '/notifScreen': (context) => const NotificationsScreen()
       },
     );
   }

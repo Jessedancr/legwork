@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/chat/data/repo_impl/chat_repo_impl.dart';
 import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
@@ -124,6 +125,7 @@ class ChatProvider extends ChangeNotifier {
         deviceToken: receiverDeviceToken,
         body: message.content,
         title: senderUsername,
+        channelId: NotifChannelId.chats_channel.name,
       );
 
       final result = await _chatRepo.sendMessage(message: newMessage);
