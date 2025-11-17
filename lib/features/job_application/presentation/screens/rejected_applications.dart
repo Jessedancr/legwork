@@ -16,7 +16,8 @@ class RejectedApplications extends StatefulWidget {
   State<RejectedApplications> createState() => _RejectedApplicationsState();
 }
 
-class _RejectedApplicationsState extends State<RejectedApplications> {
+class _RejectedApplicationsState extends State<RejectedApplications>
+    with AutomaticKeepAliveClientMixin {
   // INIT STATE
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _RejectedApplicationsState extends State<RejectedApplications> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Consumer<JobApplicationProvider>(
         builder: (context, provider, child) {
@@ -94,4 +96,7 @@ class _RejectedApplicationsState extends State<RejectedApplications> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

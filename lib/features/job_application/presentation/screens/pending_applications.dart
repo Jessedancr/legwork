@@ -14,7 +14,8 @@ class PendingApplications extends StatefulWidget {
   State<PendingApplications> createState() => _PendingApplicationsState();
 }
 
-class _PendingApplicationsState extends State<PendingApplications> {
+class _PendingApplicationsState extends State<PendingApplications>
+    with AutomaticKeepAliveClientMixin {
   // INIT STATE
   @override
   void initState() {
@@ -40,6 +41,7 @@ class _PendingApplicationsState extends State<PendingApplications> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Consumer<JobApplicationProvider>(
         builder: (context, provider, child) {
@@ -92,4 +94,7 @@ class _PendingApplicationsState extends State<PendingApplications> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

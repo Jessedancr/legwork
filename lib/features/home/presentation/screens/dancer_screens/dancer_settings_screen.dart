@@ -110,7 +110,7 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
                       ),
                     ),
                     onTap: () {
-                      Navigator.of(context).pushNamed('/dancerNotifSettings');
+                      Navigator.of(context).pushNamed('/notifSettings');
                     },
                   )
                 ],

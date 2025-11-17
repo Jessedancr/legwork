@@ -154,8 +154,8 @@ class JobApplicationRemoteDataSource {
         (user) async {
           NotifEntity notif = NotifEntity(
             deviceToken: user.deviceToken,
-            body: 'Application Accepted',
-            title: 'Sharp guy! your application has been accepted',
+            body: 'Sharp guy! your application has been accepted',
+            title: 'Application Accepted',
             channelId: NotifChannelId.applications_channel.name,
           );
           await notificationRemoteDataSource.sendNotification(notif: notif);
@@ -201,8 +201,8 @@ class JobApplicationRemoteDataSource {
         (user) async {
           NotifEntity notif = NotifEntity(
             deviceToken: user.deviceToken,
-            body: 'Application rejected',
-            title: 'Unfortunately, your application has been rejected',
+            body: 'Unfortunately, your application has been rejected',
+            title: 'Application Rejected',
             channelId: NotifChannelId.applications_channel.name,
           );
           await notificationRemoteDataSource.sendNotification(notif: notif);

@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:legwork/core/network/api_client.dart';
 import 'package:legwork/features/notifications/data/data_sources/notif_channels.dart';
 import 'package:legwork/features/notifications/domain/entities/notif_entity.dart';
+import 'package:legwork/features/notifications/data/data_sources/notification_local_data_source.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class NotificationRemoteDataSource {
@@ -118,6 +119,21 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       (ch) => ch.id == channelId,
       orElse: () => NotifChannels.system,
     );
+
+    // * Save incoming notification to hive
+    try {
+      final local = NotificationLocalDataSource();
+      final notifEntity = NotifEntity(
+        deviceToken: '',
+        body: notification.body ?? '',
+        title: notification.title ?? '',
+        channelId: channelId,
+        createdAt: DateTime.now(),
+      );
+      await local.saveNotif(notifEntity);
+    } catch (e) {
+      debugPrint('Failed to save incoming notification locally: $e');
+    }
 
     flutterLocalNotif.show(
       notification.hashCode,
