@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/Data/RepoImpl/auth_repo_impl.dart';
 import 'package:legwork/features/chat/data/repo_impl/chat_repo_impl.dart';
-import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/chat_room_entity.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/notifications/data/data_sources/notification_remote_data_source.dart';
 import 'package:legwork/features/notifications/data/repo_impl/nottification_repo_impl.dart';
@@ -22,7 +22,7 @@ class ChatProvider extends ChangeNotifier {
   String? error;
 
   // * Locally stored conversations and messages to avoid fetching conversations and messages multiple times
-  List<ConversationEntity> conversations = [];
+  List<ChatRoomEntity> conversations = [];
   Map<String, List<MessageEntity>> messages = {};
 
   // LOAD CONVO FOR USER
@@ -164,18 +164,23 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // CREATE A NEW CONVERSATION
-  Future<Either<String, ConversationEntity>> createConversation({
-    required ConversationEntity convoEntity,
+  Future<Either<String, ChatRoomEntity>> createConversation({
+    required String dancerId,
+    required String clientId,
+    required String username,
   }) async {
     isLoading = true;
     error = null;
     notifyListeners();
 
-    final result = await _chatRepo.createConversation(convoEntity: convoEntity);
+    final result = await _chatRepo.createConversation(
+      clientId: clientId,
+      dancerId: dancerId,
+      username: username,
+    );
 
     isLoading = false;
     notifyListeners();
-    debugPrint('Created conversation: $result');
 
     return result;
   }

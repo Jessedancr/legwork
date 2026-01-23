@@ -58,6 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
             phoneNumber: '',
             userType: '',
             deviceToken: deviceToken ?? '',
+            userId: '',
           );
 
           final result = await authProvider.userlogin(userEntity: userEntity);

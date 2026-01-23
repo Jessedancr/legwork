@@ -144,7 +144,7 @@ class _DancerMessagesScreenState extends State<DancerMessagesScreen> {
                       context,
                       '/chatDetailScreen',
                       arguments: {
-                        'conversationId': conversation.convoId,
+                        'conversationId': conversation.chatRoomId,
                         'otherParticipantId': otherParticipantId,
                       },
                     );

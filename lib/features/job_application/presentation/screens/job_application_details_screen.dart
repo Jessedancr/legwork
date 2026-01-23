@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/widgets/legwork_text_button.dart';
+import 'package:legwork/features/auth/Data/Models/user_model.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/widgets/legwork_elevated_button.dart';
-import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/chat_room_entity.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/screens/chat_detail_screen.dart';
 import 'package:legwork/features/job_application/data/models/job_application_model.dart';
@@ -56,6 +57,7 @@ class _JobApplicationDetailScreenState
 
     // Auth provider
     final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+    final clientUsername = authProvider.currentUser?.username;
     final clientId = authProvider.getUserId();
 
     String? clientEmail;
@@ -95,22 +97,16 @@ class _JobApplicationDetailScreenState
     // CHAT WITH JOB APPLICANT(DANCER)
     void chatWithDancer() async {
       try {
-        ConversationEntity convoEntity = ConversationEntity(
-          convoId: '',
-          participants: [dancerId, clientId],
-          lastMessageTime: DateTime.now(),
-          lastMessage: '',
-          lastMessageSenderId: '',
-          hasUnreadMessages: true,
-        );
         setState(() {
           _isChatLoading = true;
         });
 
         // Create a conversation ID (or fetch existing)
-        final result = await context
-            .read<ChatProvider>()
-            .createConversation(convoEntity: convoEntity);
+        final result = await context.read<ChatProvider>().createConversation(
+              username: clientUsername!,
+              clientId: clientId,
+              dancerId: dancerId,
+            );
 
         result.fold(
             // Handle fail
@@ -136,7 +132,7 @@ class _JobApplicationDetailScreenState
             context,
             MaterialPageRoute(
               builder: (context) => ChatDetailScreen(
-                conversationId: conversation.convoId,
+                conversationId: conversation.chatRoomId,
                 otherParticipantId: dancerId,
               ),
             ),

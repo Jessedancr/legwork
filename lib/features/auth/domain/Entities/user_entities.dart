@@ -12,6 +12,7 @@ class UserEntity {
   final String? bio;
   final String deviceToken;
   Map<String, dynamic>? profilePicture;
+  final String userId;
 
   // Constructor
   UserEntity({
@@ -23,6 +24,7 @@ class UserEntity {
     required this.phoneNumber,
     required this.userType,
     required this.deviceToken,
+    required this.userId,
     this.profilePicture,
     this.bio,
   });
@@ -39,6 +41,7 @@ class UserEntity {
       deviceToken: '',
       bio: '',
       profilePicture: {'': ''},
+      userId: '',
     );
   }
 }
@@ -58,6 +61,7 @@ class DancerEntity extends UserEntity {
     required super.phoneNumber,
     required super.userType,
     required super.deviceToken,
+    required super.userId,
     this.jobPrefs,
     super.profilePicture,
     super.bio,
@@ -87,6 +91,7 @@ class ClientEntity extends UserEntity {
     required super.password,
     required super.userType,
     required super.deviceToken,
+    required super.userId,
     this.danceStylePrefs,
     this.jobOfferings,
     super.profilePicture,

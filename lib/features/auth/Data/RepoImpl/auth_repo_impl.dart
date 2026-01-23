@@ -77,6 +77,7 @@ class AuthRepoImpl implements AuthRepo {
               userType: UserType.dancer.name,
               deviceToken: returnedUser.deviceToken,
               resume: resume,
+              userId: returnedUser.userId,
             ),
           );
         }
@@ -97,6 +98,7 @@ class AuthRepoImpl implements AuthRepo {
               organisationName: organisationName,
               jobOfferings: jobOfferings,
               hiringHistory: hiringHistory,
+              userId: returnedUser.userId,
             ),
           );
         } else {

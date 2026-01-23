@@ -142,7 +142,7 @@ class _ClientMessagesScreenState extends State<ClientMessagesScreen> {
                     context,
                     '/chatDetailScreen',
                     arguments: {
-                      'conversationId': conversation.convoId,
+                      'conversationId': conversation.chatRoomId,
                       'otherParticipantId': otherParticipantId,
                     },
                   );

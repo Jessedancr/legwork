@@ -4,6 +4,7 @@ import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
+import 'package:legwork/features/chat/data/data_sources/socket.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/provider/job_provider.dart';
 import 'package:legwork/features/home/presentation/screens/client_screens/client_tabs/closed_jobs.dart';
@@ -39,6 +40,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     phoneNumber: '',
     userType: '',
     deviceToken: '',
+    userId: '',
   );
   late MyAuthProvider authProvider;
   bool isLoading = true;
@@ -56,6 +58,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     } else {
       _fetchClientDetails();
     }
+    Socket().initSocket(authProvider.currentUser!.username);
   }
 
   Future<void> _fetchClientDetails() async {

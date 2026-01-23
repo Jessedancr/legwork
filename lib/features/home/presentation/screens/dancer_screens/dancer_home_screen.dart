@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
+import 'package:legwork/features/chat/data/data_sources/socket.dart';
 
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/all_jobs.dart';
 import 'package:legwork/features/home/presentation/screens/dancer_screens/dancer_tabs/jobs_for_you.dart';
@@ -25,6 +26,7 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
     phoneNumber: '',
     userType: '',
     deviceToken: '',
+    userId: '',
   );
   late MyAuthProvider authProvider;
   bool isLoading = true;
@@ -41,6 +43,7 @@ class _DancerHomeScreenState extends State<DancerHomeScreen> {
     } else {
       _fetchDancerDetails();
     }
+    Socket().initSocket(authProvider.currentUser!.username);
   }
 
   Future<void> _fetchDancerDetails() async {

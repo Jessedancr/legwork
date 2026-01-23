@@ -63,6 +63,7 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
             userType: UserType.client.name,
             deviceToken: deviceToken!,
             organisationName: organisationNameController.text,
+            userId: '',
           );
 
           final result = await authProvider.userSignUp(
@@ -105,7 +106,6 @@ class _ClientSignUpScreenState extends State<ClientSignUpScreen> {
           debugPrint('SIGN-UP ERROR: $e');
         }
       }
-      
     }
 
     // THIS METHOD TOGGLES THE OBSCURE TEXT PROPERTY OF THE PW TEXTFIELDS

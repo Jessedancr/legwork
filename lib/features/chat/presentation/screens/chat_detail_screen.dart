@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
+import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/features/chat/domain/entites/message_entity.dart';
+import 'package:legwork/features/chat/data/data_sources/socket.dart';
+import 'package:legwork/features/chat/data/models/send_message_model.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/widgets/chat_app_bar.dart';
 import 'package:legwork/features/chat/presentation/widgets/date_header.dart';
 import 'package:legwork/features/chat/presentation/widgets/message_input.dart';
 import 'package:legwork/features/chat/presentation/widgets/messages_list.dart';
-import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class ChatDetailScreen extends StatefulWidget {
@@ -33,6 +34,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   bool _showScrollButton = false;
   String _otherUsername = '';
   bool _isLoading = true;
+  final Socket socket = Socket();
 
   // THIS METHOD RUNS WHEN THE SCREEN IS FIRST CREATED
   @override
@@ -45,22 +47,23 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     // Load messages when the screen has fully initialised
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final currentUserId = _authProvider.getUserId();
+      // final currentUserId = _authProvider.getUserId();
 
       // Load messages and mark them as read
-      await _chatProvider.loadMessages(conversationId: widget.conversationId);
-      final messages = _chatProvider.messages[widget.conversationId];
-      if (messages != null && messages.isNotEmpty) {
-        for (final message in messages) {
-          if (!message.isRead && message.senderId != currentUserId) {
-            await _chatProvider.markMessageAsRead(message: message);
-          }
-        }
-      }
 
-      if (currentUserId.isNotEmpty) {
-        _chatProvider.loadConversation(userId: currentUserId);
-      }
+      // await _chatProvider.loadMessages(conversationId: widget.conversationId);
+      // final messages = _chatProvider.messages[widget.conversationId];
+      // if (messages != null && messages.isNotEmpty) {
+      //   for (final message in messages) {
+      //     if (!message.isRead && message.senderId != currentUserId) {
+      //       await _chatProvider.markMessageAsRead(message: message);
+      //     }
+      //   }
+      // }
+
+      // if (currentUserId.isNotEmpty) {
+      //   _chatProvider.loadConversation(userId: currentUserId);
+      // }
 
       final result =
           await _authProvider.getUserDetails(uid: widget.otherParticipantId);
@@ -125,33 +128,41 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     final content = _messageController.text.trim();
     _messageController.clear();
 
-    final currentUserId = _authProvider.getUserId();
+    final currentUserId = await _authProvider.getUid();
 
-    MessageEntity message = MessageEntity(
-      messageId: '',
-      convoId: widget.conversationId,
+    // MessageEntity messagee = MessageEntity(
+    //   messageId: '',
+    //   convoId: widget.conversationId,
+    //   senderId: currentUserId,
+    //   receiverId: widget.otherParticipantId,
+    //   content: content,
+    //   timeStamp: DateTime.now(),
+    //   isRead: false,
+    // );
+    SendMessageModel message = SendMessageModel(
+      chatRoomId: widget.conversationId,
       senderId: currentUserId,
-      receiverId: widget.otherParticipantId,
       content: content,
-      timeStamp: DateTime.now(),
-      isRead: false,
+      senderType: UserType.dancer.name,
     );
 
-    final result = await _chatProvider.sendMessage(message: message);
+    // final result = await _chatProvider.sendMessage(message: message);
 
-    result.fold(
-      (fail) {
-        LegworkSnackbar(
-          title: 'Oopes',
-          subTitle: fail,
-          imageColor: context.colorScheme.onError,
-          contentColor: context.colorScheme.error,
-        ).show(context);
-      },
-      (_) {
-        _scrollToBottom();
-      },
-    );
+    // result.fold(
+    //   (fail) {
+    //     LegworkSnackbar(
+    //       title: 'Oopes',
+    //       subTitle: fail,
+    //       imageColor: context.colorScheme.onError,
+    //       contentColor: context.colorScheme.error,
+    //     ).show(context);
+    //   },
+    //   (_) {
+    //     _scrollToBottom();
+    //   },
+    // );
+    socket.sendMessage(message: message);
+    _scrollToBottom();
   }
 
   /// ** BUILD METHOD

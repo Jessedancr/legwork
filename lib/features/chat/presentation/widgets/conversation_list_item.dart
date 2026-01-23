@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/features/auth/domain/Entities/user_entities.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
-import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/chat_room_entity.dart';
 import 'package:provider/provider.dart';
 
 class ConversationListItem extends StatelessWidget {
-  final ConversationEntity conversation;
+  final ChatRoomEntity conversation;
   final String currentUserId;
   final String? currentUserUsername;
   final VoidCallback onTap;
@@ -35,8 +35,10 @@ class ConversationListItem extends StatelessWidget {
     final timeString = formatter.format(conversation.lastMessageTime);
 
     // Is the last message from the current user
-    final isLastMessageFromMe =
-        conversation.lastMessageSenderId == currentUserId;
+    // final isLastMessageFromMe =
+    //     conversation.lastMessageSenderId == currentUserId;
+
+    final isLastMessageFromMe = conversation.participants[0] == currentUserId;
 
     return FutureBuilder<Either<String, UserEntity>>(
       future: authProvider.getUserDetails(uid: otherParticipantId),

@@ -7,6 +7,7 @@ import 'package:legwork/core/widgets/legwork_snackbar.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicator.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
+import 'package:legwork/features/chat/data/data_sources/socket.dart';
 import 'package:legwork/features/home/presentation/widgets/legwork_list_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +48,7 @@ class _DancerSettingsScreenState extends State<DancerSettingsScreen> {
           },
           // handle successful logout
           (msg) {
+            Socket().closeSocket(authProvider.currentUser!.username);
             Navigator.of(context)
                 .pushNamedAndRemoveUntil('/acctType', (route) => false);
           },

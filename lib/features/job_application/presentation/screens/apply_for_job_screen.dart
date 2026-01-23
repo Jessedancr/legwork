@@ -7,7 +7,7 @@ import 'package:legwork/features/auth/presentation/Widgets/auth_loading_indicato
 import 'package:legwork/features/auth/presentation/Widgets/blur_effect.dart';
 import 'package:legwork/features/auth/presentation/Widgets/large_textfield.dart';
 import 'package:legwork/features/auth/presentation/Widgets/legwork_elevated_button.dart';
-import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/data/data_sources/socket.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/home/domain/entities/job_entity.dart';
 import 'package:legwork/features/home/presentation/widgets/user_circle_avatar.dart';
@@ -33,6 +33,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   final TextEditingController proposalController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final emptyUserEntity = UserEntity.empty();
+  final Socket socket = Socket();
 
   bool _isChatLoading = false;
 
@@ -50,26 +51,20 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   void chatWithClient() async {
     final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
 
-    final dancerId = authProvider.getUserId();
+    final dancerId = await authProvider.getUid();
     final clientId = widget.jobEntity.clientId;
+    final username = authProvider.currentUser?.username;
 
     try {
-      ConversationEntity convoEntity = ConversationEntity(
-        convoId: '',
-        participants: [dancerId, clientId],
-        lastMessageTime: DateTime.now(),
-        lastMessage: '',
-        lastMessageSenderId: 'lastMessageSenderId',
-        hasUnreadMessages: true,
-      );
-
       setState(() {
         _isChatLoading = true;
       });
 
       // Create a conversation ID
       final result = await context.read<ChatProvider>().createConversation(
-            convoEntity: convoEntity,
+            clientId: clientId,
+            dancerId: dancerId,
+            username: username!,
           );
 
       result.fold(
@@ -99,7 +94,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           context,
           '/chatDetailScreen',
           arguments: {
-            'conversationId': conversation.convoId,
+            'conversationId': conversation.chatRoomId,
             'otherParticipantId': clientId,
           },
         );

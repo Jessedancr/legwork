@@ -25,6 +25,7 @@ class DancerModel extends DancerEntity {
     required super.username,
     required super.userType,
     required super.deviceToken,
+    required super.userId,
     super.profilePicture,
     super.bio,
     super.jobPrefs,
@@ -42,9 +43,10 @@ class DancerModel extends DancerEntity {
       phoneNumber: doc['phoneNumber'] ?? 0,
       username: doc['username'] ?? '',
       userType: doc['userType'] ?? 'dancer',
-      profilePicture: doc['profilePicture'] ?? '',
+      profilePicture: doc['profilePicture'] ?? {},
       bio: doc['bio'] ?? '',
       deviceToken: doc['deviceToken'] ?? '',
+      userId: doc['userId'],
     );
   }
 
@@ -59,9 +61,10 @@ class DancerModel extends DancerEntity {
       phoneNumber: doc['phoneNumber'] ?? '',
       username: doc['username'] ?? '',
       userType: doc['userType'] ?? 'dancer',
-      profilePicture: doc['profilePicture'] ?? '',
+      profilePicture: doc['profilePicture'] ?? {},
       bio: doc['bio'] ?? '',
       deviceToken: doc['deviceToken'] ?? '',
+      userId: doc['_id'],
     );
   }
 
@@ -98,6 +101,22 @@ class DancerModel extends DancerEntity {
       profilePicture: profilePicture,
       bio: bio,
       deviceToken: deviceToken,
+      userId: userId,
+    );
+  }
+
+  factory DancerModel.empty() {
+    return DancerModel(
+      firstName: '',
+      lastName: '',
+      resume: {},
+      email: '',
+      password: '',
+      phoneNumber: '',
+      username: '',
+      userType: '',
+      deviceToken: '',
+      userId: '',
     );
   }
 }
@@ -122,6 +141,7 @@ class ClientModel extends ClientEntity {
     super.organisationName,
     super.profilePicture,
     super.bio,
+    required super.userId,
   });
 
   /// Convert firebase doc to user profile so we can use in the app
@@ -141,6 +161,7 @@ class ClientModel extends ClientEntity {
       jobOfferings: doc['jobOfferings'] ?? [],
       hiringHistory: doc['hiringHistory'] ?? {},
       deviceToken: doc['deviceToken'] ?? '',
+      userId: doc['userId'],
     );
   }
 
@@ -153,13 +174,14 @@ class ClientModel extends ClientEntity {
       phoneNumber: doc['phoneNumber'] ?? 0,
       username: doc['username'] ?? '',
       organisationName: doc['organisationName'] ?? '',
-      profilePicture: doc['profilePicture'],
+      profilePicture: doc['profilePicture'] ?? {},
       userType: doc['userType'] ?? 'client',
       bio: doc['bio'] ?? '',
       danceStylePrefs: doc['danceStylePrefs'] ?? [],
       jobOfferings: doc['jobOfferings'] ?? [],
       hiringHistory: doc['hiringHistory'] ?? {},
       deviceToken: doc['deviceToken'] ?? '',
+      userId: doc['_id'],
     );
   }
 
@@ -200,6 +222,24 @@ class ClientModel extends ClientEntity {
       jobOfferings: jobOfferings,
       hiringHistory: hiringHistory,
       deviceToken: deviceToken,
+      userId: userId,
+    );
+  }
+
+  factory ClientModel.empty() {
+    return ClientModel(
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      phoneNumber: '',
+      username: '',
+      userType: '',
+      danceStylePrefs: [],
+      jobOfferings: [],
+      hiringHistory: {},
+      deviceToken: '',
+      userId: '',
     );
   }
 }

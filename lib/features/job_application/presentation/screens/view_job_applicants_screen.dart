@@ -38,6 +38,7 @@ class _ViewJobApplicantsScreenState extends State<ViewJobApplicantsScreen> {
     phoneNumber: 'phoneNumber',
     userType: 'userType',
     deviceToken: 'deviceToken',
+    userId: '',
   );
 
   bool isLoadingDancerDetails = true; // Track loading state for dancer details

@@ -68,6 +68,7 @@ class MyAuthProvider extends ChangeNotifier {
               resume: userEntity.asDancer?.resume,
               userType: userEntity.userType,
               deviceToken: userEntity.deviceToken,
+              userId: userEntity.userId,
             ),
           );
         } else {
@@ -85,6 +86,7 @@ class MyAuthProvider extends ChangeNotifier {
               jobOfferings: userEntity.asClient?.jobOfferings ?? [],
               hiringHistory: userEntity.asClient?.hiringHistory ?? {},
               deviceToken: userEntity.deviceToken,
+              userId: userEntity.userId,
             ),
           );
         }
@@ -145,6 +147,8 @@ class MyAuthProvider extends ChangeNotifier {
                 resume: resume,
                 userType: userEntity.userType,
                 deviceToken: userEntity.deviceToken,
+                userId: userEntity.userId,
+                profilePicture: userEntity.profilePicture,
               ),
             );
           }
@@ -161,6 +165,8 @@ class MyAuthProvider extends ChangeNotifier {
               danceStylePrefs: danceStylePrefs,
               jobOfferings: jobOfferings,
               deviceToken: userEntity.deviceToken,
+              userId: userEntity.userId,
+              profilePicture: userEntity.profilePicture,
             ),
           );
         },

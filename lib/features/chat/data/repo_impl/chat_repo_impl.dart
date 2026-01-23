@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:legwork/features/chat/data/data_sources/chat_remote_data_source.dart';
-import 'package:legwork/features/chat/data/models/conversation_model.dart';
 import 'package:legwork/features/chat/data/models/message_model.dart';
-import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/chat_room_entity.dart';
 import 'package:legwork/features/chat/domain/entites/message_entity.dart';
 import 'package:legwork/features/chat/domain/repo/chat_repo.dart';
 
@@ -11,7 +10,7 @@ class ChatRepoImpl implements ChatRepo {
   final ChatRemoteDataSource remoteDataSource = ChatRemoteDataSourceImpl();
 
   @override
-  Future<Either<String, List<ConversationEntity>>> getConversations({
+  Future<Either<String, List<ChatRoomEntity>>> getConversations({
     required String userId,
   }) async {
     try {
@@ -112,20 +111,16 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<Either<String, ConversationEntity>> createConversation({
-    required ConversationEntity convoEntity,
+  Future<Either<String, ChatRoomEntity>> createConversation({
+    required String username,
+    required String dancerId,
+    required String clientId,
   }) async {
     try {
-      final convoModel = ConversationModel(
-        convoId: convoEntity.convoId,
-        participants: convoEntity.participants,
-        lastMessage: convoEntity.lastMessage,
-        lastMessageTime: convoEntity.lastMessageTime,
-        lastMessageSenderId: convoEntity.lastMessageSenderId,
-        hasUnreadMessages: convoEntity.hasUnreadMessages,
-      );
       final result = await remoteDataSource.createConversation(
-        conversationModel: convoModel,
+        clientId: clientId,
+        dancerId: dancerId,
+        username: username,
       );
       return result.fold(
         // handle fail

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:legwork/core/Constants/helpers.dart';
-import 'package:legwork/features/chat/domain/entites/conversation_entity.dart';
+import 'package:legwork/features/chat/domain/entites/chat_room_entity.dart';
 import 'conversation_list_item.dart';
 
 class ConversationCard extends StatelessWidget {
-  final ConversationEntity conversation;
+  final ChatRoomEntity conversation;
   final String currentUserId;
   final VoidCallback onTap;
 

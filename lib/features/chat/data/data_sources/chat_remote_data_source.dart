@@ -1,16 +1,23 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:legwork/features/chat/data/models/conversation_model.dart';
+import 'package:legwork/core/network/api_client.dart';
+import 'package:legwork/features/chat/data/data_sources/socket.dart';
+import 'package:legwork/features/chat/data/models/chat_room_model.dart';
 import 'package:legwork/features/chat/data/models/message_model.dart';
+
+final ApiClient apiClient = ApiClient();
+final Socket socket = Socket();
 
 /**
  * THIS ABSTRACT CLASS DEFINES WHAT OPERATIONS IT'S IMPLEMENTATION CAN CARRY OUT
  */
 abstract class ChatRemoteDataSource {
   // GET CONVERSATIONS FOR A SPECIFIC USER
-  Future<Either<String, List<ConversationModel>>> getConversations({
+  Future<Either<String, List<ChatRoomModel>>> getConversations({
     required String userId,
   });
 
@@ -35,8 +42,10 @@ abstract class ChatRemoteDataSource {
   });
 
   // CREATE CONVERSATION
-  Future<Either<String, ConversationModel>> createConversation({
-    required ConversationModel conversationModel,
+  Future<Either<String, ChatRoomModel>> createConversation({
+    required String username,
+    required String dancerId,
+    required String clientId,
   });
 }
 
@@ -47,7 +56,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   // GET CONVERSATIONS FOR A SPECIFIC USER
   @override
-  Future<Either<String, List<ConversationModel>>> getConversations({
+  Future<Either<String, List<ChatRoomModel>>> getConversations({
     required String userId,
   }) async {
     try {
@@ -60,7 +69,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
       // Map each convo to Conversation model using the fromDocument method
       final conversations = convoSnapshot.docs
-          .map((doc) => ConversationModel.fromDocument(doc))
+          .map((doc) => ChatRoomModel.fromDocument(doc))
           .toList();
 
       return Right(conversations);
@@ -217,41 +226,39 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Either<String, ConversationModel>> createConversation({
-    required ConversationModel conversationModel,
+  Future<Either<String, ChatRoomModel>> createConversation({
+    required String username,
+    required String dancerId,
+    required String clientId,
   }) async {
     try {
-      // Check if conversation already exists
-      final existingConversation = await db
-          .collection('conversations')
-          .where('participants', isEqualTo: conversationModel.participants)
-          .get();
+      debugPrint('CLIENT ID: $clientId');
+      debugPrint('DANCER ID: $dancerId');
+      final roomId = '${dancerId}_$clientId';
 
-      if (existingConversation.docs.isNotEmpty) {
-        return Right(
-          ConversationModel.fromDocument(existingConversation.docs.first),
-        );
+      socket.joinChatRoom(
+        username: username,
+        roomId: roomId,
+      );
+
+      final res = await apiClient.post(
+        endpoint: 'chat/create-chat-room',
+        body: {'dancerId': dancerId, 'clientId': clientId},
+      );
+      final resBody = jsonDecode(res.body);
+      final message = resBody['message'];
+
+      if (res.statusCode != 200) {
+        debugPrint(message);
+        return Left(message);
       }
-
-      // Generate unique convo ID
-      final String convoId = db.collection('conversations').doc().id;
-      debugPrint('Created convo ID: $convoId');
-
-      final updatedConvoData = {
-        ...conversationModel.toMap(),
-        'convoId': convoId,
-      };
-
-      // Save created convo with explicir convoId field
-      await db.collection('conversations').doc(convoId).set(updatedConvoData);
-
-      final docSnapshot =
-          await db.collection('conversations').doc(convoId).get();
-
-      return Right(ConversationModel.fromDocument(docSnapshot));
+      debugPrint(message);
+      final Map<String, dynamic> chatRoomMap = resBody['chatRoom'];
+      final chatRoomModel = ChatRoomModel.fromJson(chatRoomMap);
+      return Right(chatRoomModel);
     } catch (e) {
       debugPrint('Error creating conversation: ${e.toString()}');
-      return Left('Error creating conversation: ${e.toString()}');
+      return const Left('Error creating conversation');
     }
   }
 }

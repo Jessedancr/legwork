@@ -63,6 +63,7 @@ class _DancerSignUpScreenState extends State<DancerSignUpScreen> {
             phoneNumber: phoneNumberController.text,
             userType: UserType.dancer.name,
             deviceToken: deviceToken!,
+            userId: '',
           );
           // Retrieve the device token
           final result = await authProvider.userSignUp(
