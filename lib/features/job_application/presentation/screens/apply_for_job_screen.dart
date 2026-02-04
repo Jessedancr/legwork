@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:legwork/core/Constants/helpers.dart';
@@ -34,6 +35,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   final _formKey = GlobalKey<FormState>();
   final emptyUserEntity = UserEntity.empty();
   final Socket socket = Socket();
+  String clientUsername = '';
 
   bool _isChatLoading = false;
 
@@ -41,9 +43,16 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<JobApplicationProvider>(context, listen: false)
-          .getClientDetails(clientId: widget.jobEntity.clientId);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var clientDetails =
+          await Provider.of<JobApplicationProvider>(context, listen: false)
+              .getClientDetails(clientId: widget.jobEntity.clientId);
+      clientDetails.fold(
+        (fail) => Left(fail),
+        (u) => setState(() {
+          clientUsername = u.username;
+        }),
+      );
     });
   }
 
@@ -53,7 +62,6 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
 
     final dancerId = await authProvider.getUid();
     final clientId = widget.jobEntity.clientId;
-    final username = authProvider.currentUser?.username;
 
     try {
       setState(() {
@@ -64,7 +72,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
       final result = await context.read<ChatProvider>().createConversation(
             clientId: clientId,
             dancerId: dancerId,
-            username: username!,
+            username: clientUsername,
           );
 
       result.fold(
@@ -96,6 +104,7 @@ class _ApplyForJobScreenState extends State<ApplyForJobScreen> {
           arguments: {
             'conversationId': conversation.chatRoomId,
             'otherParticipantId': clientId,
+            'clientUsername': clientUsername,
           },
         );
       });

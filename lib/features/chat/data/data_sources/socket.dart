@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:legwork/features/chat/data/models/send_message_model.dart';
+import 'package:legwork/features/chat/data/models/message_model.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Socket {
@@ -12,7 +12,7 @@ class Socket {
 
   void initSocket(String username) {
     socket = IO.io(
-      'http://192.168.0.3:3000/',
+      'http://192.168.0.2:3000/',
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .enableAutoConnect()
@@ -58,15 +58,20 @@ class Socket {
   }
 
   void sendMessage({
-    required SendMessageModel message,
+    required MessageModel message,
   }) {
     if (socket != null && socket!.connected) {
-      socket?.emit('send-message', {
-        'chatRoomId': message.chatRoomId,
-        'senderId': message.senderId,
-        'senderType': message.senderType,
-        'content': message.content,
-      });
+      final chat = MessageModel(
+        messageId: '',
+        chatRoomId: '',
+        senderId: message.senderId,
+        senderType: message.senderType,
+        receiverId: message.receiverId,
+        content: message.content,
+        timeStamp: DateTime.now(),
+        isRead: false,
+      );
+      socket?.emit('send-message', chat.toJson());
       debugPrint('${message.content} sent to ${message.chatRoomId}');
     } else {
       debugPrint('Cannot send message, socket not connected');

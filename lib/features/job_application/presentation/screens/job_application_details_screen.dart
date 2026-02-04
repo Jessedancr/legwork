@@ -134,6 +134,7 @@ class _JobApplicationDetailScreenState
               builder: (context) => ChatDetailScreen(
                 conversationId: conversation.chatRoomId,
                 otherParticipantId: dancerId,
+                clientUsername: clientUsername,
               ),
             ),
           );

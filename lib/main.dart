@@ -253,10 +253,12 @@ class MyApp extends StatelessWidget {
               ModalRoute.of(context)!.settings.arguments as Map<String, String>;
           final conversationId = args['conversationId'] ?? '';
           final otherParticipantId = args['otherParticipantId'] ?? '';
+          final clientUsername = args['clientUsername'] ?? '';
 
           return ChatDetailScreen(
             conversationId: conversationId,
             otherParticipantId: otherParticipantId,
+            clientUsername: clientUsername,
           );
         },
         '/paymentScreen': (context) {

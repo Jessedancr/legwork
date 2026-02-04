@@ -90,15 +90,16 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
 
     debugPrint(
-      'ChatProvider: Sending message to conversation: ${message.convoId}',
+      'ChatProvider: Sending message to conversation: ${message.chatRoomId}',
     );
 
     try {
       // MESSGAE ENTITY
       final newMessage = MessageEntity(
         messageId: message.messageId,
-        convoId: message.convoId,
+        chatRoomId: message.chatRoomId,
         senderId: message.senderId,
+        senderType: message.senderType,
         receiverId: message.receiverId,
         content: message.content,
         timeStamp: DateTime.now(),

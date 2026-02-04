@@ -54,8 +54,9 @@ class ChatRepoImpl implements ChatRepo {
       // Convert entity to model
       final messageModel = MessageModel(
         messageId: message.messageId,
-        convoId: message.convoId,
+        chatRoomId: message.chatRoomId,
         senderId: message.senderId,
+        senderType: message.senderType,
         receiverId: message.receiverId,
         content: message.content,
         timeStamp: message.timeStamp,
@@ -82,8 +83,9 @@ class ChatRepoImpl implements ChatRepo {
     try {
       final messageModel = MessageModel(
         messageId: message.messageId,
-        convoId: message.convoId,
+        chatRoomId: message.chatRoomId,
         senderId: message.senderId,
+        senderType: message.senderType,
         receiverId: message.receiverId,
         content: message.content,
         timeStamp: message.timeStamp,

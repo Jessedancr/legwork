@@ -65,31 +65,31 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
                         color: context.colorScheme.onSurface,
                       ),
                     ),
-                    StreamBuilder<List<MessageEntity>>(
-                      stream: _chatProvider.messageStrean(
-                        conversationId: widget.conversationId,
-                      ),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) return const SizedBox();
+                    // StreamBuilder<List<MessageEntity>>(
+                    //   stream: _chatProvider.messageStrean(
+                    //     conversationId: widget.conversationId,
+                    //   ),
+                    //   builder: (context, snapshot) {
+                    //     if (!snapshot.hasData) return const SizedBox();
 
-                        final isOnline = snapshot.data?.any(
-                              (msg) =>
-                                  msg.senderId == widget.otherParticipantId &&
-                                  DateTime.now()
-                                          .difference(msg.timeStamp)
-                                          .inMinutes <
-                                      5,
-                            ) ??
-                            false;
+                    //     final isOnline = snapshot.data?.any(
+                    //           (msg) =>
+                    //               msg.senderId == widget.otherParticipantId &&
+                    //               DateTime.now()
+                    //                       .difference(msg.timeStamp)
+                    //                       .inMinutes <
+                    //                   5,
+                    //         ) ??
+                    //         false;
 
-                        return Text(
-                          isOnline ? 'Online' : 'Offline',
-                          style: context.textXs?.copyWith(
-                            color: isOnline ? Colors.teal : Colors.grey,
-                          ),
-                        );
-                      },
-                    ),
+                    //     return Text(
+                    //       isOnline ? 'Online' : 'Offline',
+                    //       style: context.textXs?.copyWith(
+                    //         color: isOnline ? Colors.teal : Colors.grey,
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                   ],
                 ),
               ],

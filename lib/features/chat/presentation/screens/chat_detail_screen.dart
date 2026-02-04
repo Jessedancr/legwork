@@ -3,7 +3,7 @@ import 'package:legwork/core/Constants/helpers.dart';
 import 'package:legwork/core/enums/user_type.dart';
 import 'package:legwork/features/auth/presentation/Provider/my_auth_provider.dart';
 import 'package:legwork/features/chat/data/data_sources/socket.dart';
-import 'package:legwork/features/chat/data/models/send_message_model.dart';
+import 'package:legwork/features/chat/data/models/message_model.dart';
 import 'package:legwork/features/chat/presentation/provider/chat_provider.dart';
 import 'package:legwork/features/chat/presentation/widgets/chat_app_bar.dart';
 import 'package:legwork/features/chat/presentation/widgets/date_header.dart';
@@ -14,11 +14,13 @@ import 'package:provider/provider.dart';
 class ChatDetailScreen extends StatefulWidget {
   final String conversationId;
   final String otherParticipantId;
+  final String clientUsername;
 
   const ChatDetailScreen({
     super.key,
     required this.conversationId,
     required this.otherParticipantId,
+    required this.clientUsername,
   });
 
   @override
@@ -33,6 +35,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   bool _isTyping = false;
   bool _showScrollButton = false;
   String _otherUsername = '';
+  String _otherUserType = '';
   bool _isLoading = true;
   final Socket socket = Socket();
 
@@ -74,6 +77,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         }),
         (userEntity) => setState(() {
           _otherUsername = userEntity.username;
+          _otherUserType = userEntity.userType;
           _isLoading = false;
         }),
       );
@@ -130,37 +134,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     final currentUserId = await _authProvider.getUid();
 
-    // MessageEntity messagee = MessageEntity(
-    //   messageId: '',
-    //   convoId: widget.conversationId,
-    //   senderId: currentUserId,
-    //   receiverId: widget.otherParticipantId,
-    //   content: content,
-    //   timeStamp: DateTime.now(),
-    //   isRead: false,
-    // );
-    SendMessageModel message = SendMessageModel(
+    final message = MessageModel(
+      messageId: '',
       chatRoomId: widget.conversationId,
       senderId: currentUserId,
+      senderType: _otherUserType,
+      receiverId: widget.otherParticipantId,
       content: content,
-      senderType: UserType.dancer.name,
+      timeStamp: DateTime.now(),
+      isRead: false,
     );
 
-    // final result = await _chatProvider.sendMessage(message: message);
-
-    // result.fold(
-    //   (fail) {
-    //     LegworkSnackbar(
-    //       title: 'Oopes',
-    //       subTitle: fail,
-    //       imageColor: context.colorScheme.onError,
-    //       contentColor: context.colorScheme.error,
-    //     ).show(context);
-    //   },
-    //   (_) {
-    //     _scrollToBottom();
-    //   },
-    // );
     socket.sendMessage(message: message);
     _scrollToBottom();
   }

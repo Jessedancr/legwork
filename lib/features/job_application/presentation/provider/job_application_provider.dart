@@ -38,17 +38,7 @@ class JobApplicationProvider extends ChangeNotifier {
   // Boolean flag to track loading state
   bool isLoading = false;
 
-  // GET CURRENT USER ID
-  Future<Either<String, String>> getUserId() async {
-    try {
-      final userId = await remoteDataSource.getUserId();
-
-      return userId;
-    } catch (e) {
-      debugPrint('Error with getUserId provider: ${e.toString()}');
-      return Left('Error with getUserId provider: ${e.toString()}');
-    }
-  }
+ 
 
   Future<Either<String, UserEntity>> getUserDetails({
     required String uid,
